@@ -1,0 +1,597 @@
+﻿23:54:24.925 INFO:     Started server process [4188]
+23:54:24.931 INFO:     Waiting for application startup.
+23:54:29.972 INFO:     Application startup complete.
+23:54:29.972 INFO:     Uvicorn running on http://127.0.0.1:8017 (Press CTRL+C to quit)
+23:54:30.656 [dino] 使用随包 vendor 权重: D:\CGAIC\assets\dinov2\dinov2_vits14_pretrain.pth
+23:54:30.657 INFO:     127.0.0.1:4509 - "GET /api/health HTTP/1.1" 200 OK
+23:54:30.657 [启动] 后端就绪
+23:54:31.921 INFO:     127.0.0.1:4512 - "WebSocket /ws/tasks" [accepted]
+23:54:31.921 INFO:     connection open
+23:54:33.893 INFO:     127.0.0.1:4517 - "GET /api/augment/config HTTP/1.1" 200 OK
+23:54:33.931 INFO:     127.0.0.1:4513 - "GET /api/images?page=1&page_size=50 HTTP/1.1" 200 OK
+23:54:33.972 INFO:     127.0.0.1:4514 - "GET /api/datasources HTTP/1.1" 200 OK
+23:54:33.982 INFO:     127.0.0.1:4517 - "GET /api/eval/runs HTTP/1.1" 200 OK
+23:54:34.031 INFO:     127.0.0.1:4516 - "GET /api/images?page=1&page_size=100&label=normal HTTP/1.1" 200 OK
+23:54:34.069 INFO:     127.0.0.1:4513 - "GET /api/categories HTTP/1.1" 200 OK
+23:54:34.085 INFO:     127.0.0.1:4518 - "GET /api/feedback?page=1&page_size=200 HTTP/1.1" 200 OK
+23:54:34.090 INFO:     127.0.0.1:4522 - "GET /api/detections/misjudged?page=1&page_size=20 HTTP/1.1" 200 OK
+23:54:34.093 INFO:     127.0.0.1:4515 - "GET /api/datasets HTTP/1.1" 200 OK
+23:54:34.104 INFO:     127.0.0.1:4514 - "GET /api/feedback/summary HTTP/1.1" 200 OK
+23:54:34.123 INFO:     127.0.0.1:4521 - "GET /api/categories HTTP/1.1" 200 OK
+23:54:34.135 D:\CGAIC\assets\dinov2\dinov2\layers\swiglu_ffn.py:51: UserWarning: xFormers is not available (SwiGLU)
+23:54:34.135   warnings.warn("xFormers is not available (SwiGLU)")
+23:54:34.152 D:\CGAIC\assets\dinov2\dinov2\layers\attention.py:33: UserWarning: xFormers is not available (Attention)
+23:54:34.152   warnings.warn("xFormers is not available (Attention)")
+23:54:34.167 D:\CGAIC\assets\dinov2\dinov2\layers\block.py:40: UserWarning: xFormers is not available (Block)
+23:54:34.167   warnings.warn("xFormers is not available (Block)")
+23:54:34.193 INFO:     127.0.0.1:4521 - "GET /api/categories HTTP/1.1" 200 OK
+23:54:34.210 INFO:     127.0.0.1:4517 - "GET /api/review/queue?page=1&page_size=20 HTTP/1.1" 200 OK
+23:54:34.225 INFO:     127.0.0.1:4514 - "GET /api/categories HTTP/1.1" 200 OK
+23:54:34.284 INFO:     127.0.0.1:4520 - "GET /api/review/stats HTTP/1.1" 200 OK
+23:54:34.541 INFO:     127.0.0.1:4521 - "GET /api/stats/defect_types?range_name=30d HTTP/1.1" 200 OK
+23:54:34.542 INFO:     127.0.0.1:4514 - "GET /api/stats/mistake_trend?range_name=30d HTTP/1.1" 200 OK
+23:54:34.547 INFO:     127.0.0.1:4522 - "GET /api/stats/timeseries?days=30 HTTP/1.1" 200 OK
+23:54:34.551 INFO:     127.0.0.1:4523 - "GET /api/feedback?page=1&page_size=1&consumed=false HTTP/1.1" 200 OK
+23:54:34.552 INFO:     127.0.0.1:4525 - "GET /api/health HTTP/1.1" 200 OK
+23:54:34.559 INFO:     127.0.0.1:4517 - "GET /api/stats/batch_summary?range_name=30d HTTP/1.1" 200 OK
+23:54:34.570 INFO:     127.0.0.1:4518 - "GET /api/categories HTTP/1.1" 200 OK
+23:54:34.582 INFO:     127.0.0.1:4526 - "GET /api/system/info HTTP/1.1" 200 OK
+23:54:34.608 INFO:     127.0.0.1:4527 - "GET /api/workorders?range=all HTTP/1.1" 200 OK
+23:54:34.619 INFO:     127.0.0.1:4528 - "GET /api/workorders?range=all HTTP/1.1" 200 OK
+23:54:34.624 INFO:     127.0.0.1:4513 - "GET /api/review/stats HTTP/1.1" 200 OK
+23:54:34.694 INFO:     127.0.0.1:4529 - "DELETE /api/workorders/1 HTTP/1.1" 200 OK
+23:54:34.710 INFO:     127.0.0.1:4530 - "GET /api/datasources HTTP/1.1" 200 OK
+23:54:34.919 INFO:     127.0.0.1:4515 - "GET /api/stats/health?range_name=7d HTTP/1.1" 200 OK
+23:54:35.075 INFO:     127.0.0.1:4520 - "GET /api/stats/quality_overview?range_name=30d HTTP/1.1" 200 OK
+23:54:35.126 INFO:     127.0.0.1:4516 - "GET /api/stats/overview?range=all HTTP/1.1" 200 OK
+23:54:35.266 INFO:     127.0.0.1:4531 - "DELETE /api/datasources/1 HTTP/1.1" 200 OK
+23:54:35.334 [清理] 完成
+23:54:35.521 INFO:     127.0.0.1:4519 - "GET /api/review/incomplete_report HTTP/1.1" 200 OK
+23:54:35.783 INFO:     127.0.0.1:4524 - "GET /api/review/incomplete_report HTTP/1.1" 200 OK
+23:54:35.981 INFO:     127.0.0.1:4543 - "GET /api/file?path=D%3A%5CCGAIC%5Cdata_origin%5CMPDD%5Ctubes%5Ctrain%5Cgood%5C119.png&thumb=128 HTTP/1.1" 403 Forbidden
+23:54:35.982 INFO:     127.0.0.1:4544 - "GET /api/file?path=D%3A%5CCGAIC%5Cdata_origin%5CMPDD%5Ctubes%5Ctrain%5Cgood%5C116.png&thumb=128 HTTP/1.1" 403 Forbidden
+23:54:35.983 INFO:     127.0.0.1:4541 - "GET /api/file?path=D%3A%5CCGAIC%5Cdata_origin%5CMPDD%5Ctubes%5Ctrain%5Cgood%5C118.png&thumb=128 HTTP/1.1" 403 Forbidden
+23:54:35.985 INFO:     127.0.0.1:4546 - "GET /api/file?path=D%3A%5CCGAIC%5Cdata_origin%5CMPDD%5Ctubes%5Ctrain%5Cgood%5C114.png&thumb=128 HTTP/1.1" 403 Forbidden
+23:54:36.007 INFO:     127.0.0.1:4542 - "GET /api/file?path=D%3A%5CCGAIC%5Cdata_origin%5CMPDD%5Ctubes%5Ctrain%5Cgood%5C121.png&thumb=128 HTTP/1.1" 403 Forbidden
+23:54:36.012 INFO:     127.0.0.1:4540 - "GET /api/file?path=D%3A%5CCGAIC%5Cdata_origin%5CMPDD%5Ctubes%5Ctrain%5Cgood%5C120.png&thumb=128 HTTP/1.1" 403 Forbidden
+23:54:36.013 INFO:     127.0.0.1:4548 - "GET /api/file?path=D%3A%5CCGAIC%5Cdata_origin%5CMPDD%5Ctubes%5Ctrain%5Cgood%5C113.png&thumb=128 HTTP/1.1" 403 Forbidden
+23:54:36.013 INFO:     127.0.0.1:4545 - "GET /api/file?path=D%3A%5CCGAIC%5Cdata_origin%5CMPDD%5Ctubes%5Ctrain%5Cgood%5C115.png&thumb=128 HTTP/1.1" 403 Forbidden
+23:54:36.015 INFO:     127.0.0.1:4547 - "GET /api/file?path=D%3A%5CCGAIC%5Cdata_origin%5CMPDD%5Ctubes%5Ctrain%5Cgood%5C117.png&thumb=128 HTTP/1.1" 403 Forbidden
+23:54:36.019 INFO:     127.0.0.1:4549 - "GET /api/file?path=D%3A%5CCGAIC%5Cdata_origin%5CMPDD%5Ctubes%5Ctrain%5Cgood%5C112.png&thumb=128 HTTP/1.1" 403 Forbidden
+23:54:36.022 INFO:     127.0.0.1:4539 - "GET /api/file?path=D%3A%5CCGAIC%5CAOI_sys%5Cstorage%5Carchive%5Cbracket_black%5C20260831%5Cdet6960_det5916_det1392_031.png&thumb=128 HTTP/1.1" 200 OK
+23:54:36.023 INFO:     127.0.0.1:4550 - "GET /api/file?path=D%3A%5CCGAIC%5Cdata_origin%5CMPDD%5Ctubes%5Ctrain%5Cgood%5C111.png&thumb=128 HTTP/1.1" 403 Forbidden
+23:54:36.023 INFO:     127.0.0.1:4537 - "GET /api/file?path=D%3A%5CCGAIC%5CAOI_sys%5Cstorage%5Carchive%5Cbracket_black%5C20260831%5Cdet6971_det5916_det1392_031.png&thumb=128 HTTP/1.1" 200 OK
+23:54:36.025 INFO:     127.0.0.1:4538 - "GET /api/file?path=D%3A%5CCGAIC%5CAOI_sys%5Cstorage%5Carchive%5Cbracket_black%5C20260831%5Cdet6969_det5808_det1392_031.png&thumb=128 HTTP/1.1" 200 OK
+23:54:36.026 INFO:     127.0.0.1:4535 - "GET /api/file?path=D%3A%5CCGAIC%5CAOI_sys%5Cstorage%5Carchive%5Cbracket_black%5C20260831%5Cdet6974_det5916_det1392_031.png&thumb=128 HTTP/1.1" 200 OK
+23:54:36.026 INFO:     127.0.0.1:4536 - "GET /api/file?path=D%3A%5CCGAIC%5CAOI_sys%5Cstorage%5Carchive%5Cbracket_black%5C20260831%5Cdet6973_det5808_det1392_031.png&thumb=128 HTTP/1.1" 200 OK
+23:54:36.027 INFO:     127.0.0.1:4534 - "GET /api/file?path=D%3A%5CCGAIC%5CAOI_sys%5Cstorage%5Carchive%5Cbracket_black%5C20260831%5Cdet6981_det5808_det1392_031.png&thumb=128 HTTP/1.1" 200 OK
+23:54:36.028 INFO:     127.0.0.1:4552 - "GET /api/file?path=D%3A%5CCGAIC%5Cdata_origin%5CMPDD%5Ctubes%5Ctrain%5Cgood%5C109.png&thumb=128 HTTP/1.1" 403 Forbidden
+23:54:36.028 INFO:     127.0.0.1:4533 - "GET /api/file?path=D%3A%5CCGAIC%5CAOI_sys%5Cstorage%5Carchive%5Cbracket_black%5C20260831%5Cdet6982_det5916_det1392_031.png&thumb=128 HTTP/1.1" 200 OK
+23:54:36.030 INFO:     127.0.0.1:4551 - "GET /api/file?path=D%3A%5CCGAIC%5Cdata_origin%5CMPDD%5Ctubes%5Ctrain%5Cgood%5C110.png&thumb=128 HTTP/1.1" 403 Forbidden
+23:54:36.047 INFO:     127.0.0.1:4553 - "GET /api/file?path=D%3A%5CCGAIC%5Cdata_origin%5CMPDD%5Ctubes%5Ctrain%5Cgood%5C108.png&thumb=128 HTTP/1.1" 403 Forbidden
+23:54:36.058 INFO:     127.0.0.1:4554 - "GET /api/file?path=D%3A%5CCGAIC%5Cdata_origin%5CMPDD%5Ctubes%5Ctrain%5Cgood%5C107.png&thumb=128 HTTP/1.1" 403 Forbidden
+23:54:36.058 INFO:     127.0.0.1:4555 - "GET /api/file?path=D%3A%5CCGAIC%5Cdata_origin%5CMPDD%5Ctubes%5Ctrain%5Cgood%5C105.png&thumb=128 HTTP/1.1" 403 Forbidden
+23:54:36.065 INFO:     127.0.0.1:4556 - "GET /api/file?path=D%3A%5CCGAIC%5Cdata_origin%5CMPDD%5Ctubes%5Ctrain%5Cgood%5C106.png&thumb=128 HTTP/1.1" 403 Forbidden
+23:54:36.066 INFO:     127.0.0.1:4557 - "GET /api/file?path=D%3A%5CCGAIC%5Cdata_origin%5CMPDD%5Ctubes%5Ctrain%5Cgood%5C104.png&thumb=128 HTTP/1.1" 403 Forbidden
+23:54:36.076 INFO:     127.0.0.1:4558 - "GET /api/file?path=D%3A%5CCGAIC%5Cdata_origin%5CMPDD%5Ctubes%5Ctrain%5Cgood%5C102.png&thumb=128 HTTP/1.1" 403 Forbidden
+23:54:36.077 INFO:     127.0.0.1:4559 - "GET /api/file?path=D%3A%5CCGAIC%5Cdata_origin%5CMPDD%5Ctubes%5Ctrain%5Cgood%5C100.png&thumb=128 HTTP/1.1" 403 Forbidden
+23:54:36.082 INFO:     127.0.0.1:4560 - "GET /api/file?path=D%3A%5CCGAIC%5Cdata_origin%5CMPDD%5Ctubes%5Ctrain%5Cgood%5C103.png&thumb=128 HTTP/1.1" 403 Forbidden
+23:54:36.091 INFO:     127.0.0.1:4524 - "GET /api/datasources/1/groups HTTP/1.1" 404 Not Found
+23:54:36.095 INFO:     127.0.0.1:4561 - "GET /api/file?path=D%3A%5CCGAIC%5Cdata_origin%5CMPDD%5Ctubes%5Ctrain%5Cgood%5C101.png&thumb=128 HTTP/1.1" 403 Forbidden
+23:54:36.099 INFO:     127.0.0.1:4562 - "GET /api/file?path=D%3A%5CCGAIC%5Cdata_origin%5CMPDD%5Ctubes%5Ctrain%5Cgood%5C099.png&thumb=128 HTTP/1.1" 403 Forbidden
+23:54:36.102 INFO:     127.0.0.1:4563 - "GET /api/file?path=D%3A%5CCGAIC%5Cdata_origin%5CMPDD%5Ctubes%5Ctrain%5Cgood%5C097.png&thumb=128 HTTP/1.1" 403 Forbidden
+23:54:36.105 INFO:     127.0.0.1:4564 - "GET /api/file?path=D%3A%5CCGAIC%5Cdata_origin%5CMPDD%5Ctubes%5Ctrain%5Cgood%5C098.png&thumb=128 HTTP/1.1" 403 Forbidden
+23:54:36.109 INFO:     127.0.0.1:4565 - "GET /api/file?path=D%3A%5CCGAIC%5Cdata_origin%5CMPDD%5Ctubes%5Ctrain%5Cgood%5C094.png&thumb=128 HTTP/1.1" 403 Forbidden
+23:54:36.118 INFO:     127.0.0.1:4566 - "GET /api/file?path=D%3A%5CCGAIC%5Cdata_origin%5CMPDD%5Ctubes%5Ctrain%5Cgood%5C096.png&thumb=128 HTTP/1.1" 403 Forbidden
+23:54:36.121 INFO:     127.0.0.1:4567 - "GET /api/file?path=D%3A%5CCGAIC%5Cdata_origin%5CMPDD%5Ctubes%5Ctrain%5Cgood%5C095.png&thumb=128 HTTP/1.1" 403 Forbidden
+23:54:36.130 INFO:     127.0.0.1:4568 - "GET /api/file?path=D%3A%5CCGAIC%5Cdata_origin%5CMPDD%5Ctubes%5Ctrain%5Cgood%5C092.png&thumb=128 HTTP/1.1" 403 Forbidden
+23:54:36.137 INFO:     127.0.0.1:4569 - "GET /api/file?path=D%3A%5CCGAIC%5Cdata_origin%5CMPDD%5Ctubes%5Ctrain%5Cgood%5C093.png&thumb=128 HTTP/1.1" 403 Forbidden
+23:54:36.147 INFO:     127.0.0.1:4570 - "GET /api/file?path=D%3A%5CCGAIC%5Cdata_origin%5CMPDD%5Ctubes%5Ctrain%5Cgood%5C091.png&thumb=128 HTTP/1.1" 403 Forbidden
+23:54:36.147 INFO:     127.0.0.1:4571 - "GET /api/file?path=D%3A%5CCGAIC%5Cdata_origin%5CMPDD%5Ctubes%5Ctrain%5Cgood%5C089.png&thumb=128 HTTP/1.1" 403 Forbidden
+23:54:36.151 INFO:     127.0.0.1:4572 - "GET /api/file?path=D%3A%5CCGAIC%5Cdata_origin%5CMPDD%5Ctubes%5Ctrain%5Cgood%5C090.png&thumb=128 HTTP/1.1" 403 Forbidden
+23:54:36.165 INFO:     127.0.0.1:4573 - "GET /api/file?path=D%3A%5CCGAIC%5Cdata_origin%5CMPDD%5Ctubes%5Ctrain%5Cgood%5C088.png&thumb=128 HTTP/1.1" 403 Forbidden
+23:54:36.166 INFO:     127.0.0.1:4574 - "GET /api/file?path=D%3A%5CCGAIC%5Cdata_origin%5CMPDD%5Ctubes%5Ctrain%5Cgood%5C086.png&thumb=128 HTTP/1.1" 403 Forbidden
+23:54:36.197 INFO:     127.0.0.1:4575 - "GET /api/file?path=D%3A%5CCGAIC%5Cdata_origin%5CMPDD%5Ctubes%5Ctrain%5Cgood%5C087.png&thumb=128 HTTP/1.1" 403 Forbidden
+23:54:36.198 INFO:     127.0.0.1:4576 - "GET /api/file?path=D%3A%5CCGAIC%5Cdata_origin%5CMPDD%5Ctubes%5Ctrain%5Cgood%5C085.png&thumb=128 HTTP/1.1" 403 Forbidden
+23:54:36.199 INFO:     127.0.0.1:4577 - "GET /api/file?path=D%3A%5CCGAIC%5Cdata_origin%5CMPDD%5Ctubes%5Ctrain%5Cgood%5C084.png&thumb=128 HTTP/1.1" 403 Forbidden
+23:54:36.210 INFO:     127.0.0.1:4579 - "GET /api/file?path=D%3A%5CCGAIC%5Cdata_origin%5CMPDD%5Ctubes%5Ctrain%5Cgood%5C081.png&thumb=128 HTTP/1.1" 403 Forbidden
+23:54:36.212 INFO:     127.0.0.1:4580 - "GET /api/file?path=D%3A%5CCGAIC%5Cdata_origin%5CMPDD%5Ctubes%5Ctrain%5Cgood%5C082.png&thumb=128 HTTP/1.1" 403 Forbidden
+23:54:36.212 INFO:     127.0.0.1:4578 - "GET /api/file?path=D%3A%5CCGAIC%5Cdata_origin%5CMPDD%5Ctubes%5Ctrain%5Cgood%5C079.png&thumb=128 HTTP/1.1" 403 Forbidden
+23:54:36.219 INFO:     127.0.0.1:4581 - "GET /api/file?path=D%3A%5CCGAIC%5Cdata_origin%5CMPDD%5Ctubes%5Ctrain%5Cgood%5C078.png&thumb=128 HTTP/1.1" 403 Forbidden
+23:54:36.232 INFO:     127.0.0.1:4582 - "GET /api/file?path=D%3A%5CCGAIC%5Cdata_origin%5CMPDD%5Ctubes%5Ctrain%5Cgood%5C077.png&thumb=128 HTTP/1.1" 403 Forbidden
+23:54:36.233 INFO:     127.0.0.1:4583 - "GET /api/file?path=D%3A%5CCGAIC%5Cdata_origin%5CMPDD%5Ctubes%5Ctrain%5Cgood%5C083.png&thumb=128 HTTP/1.1" 403 Forbidden
+23:54:36.234 INFO:     127.0.0.1:4584 - "GET /api/file?path=D%3A%5CCGAIC%5Cdata_origin%5CMPDD%5Ctubes%5Ctrain%5Cgood%5C080.png&thumb=128 HTTP/1.1" 403 Forbidden
+23:54:36.246 INFO:     127.0.0.1:4536 - "GET /api/file?path=D%3A%5CCGAIC%5CAOI_sys%5Cstorage%5Carchive%5Cbracket_black%5C20260831%5Cdet6954_det5916_det1392_031.png&thumb=128 HTTP/1.1" 200 OK
+23:54:36.256 INFO:     127.0.0.1:4538 - "GET /api/file?path=D%3A%5CCGAIC%5CAOI_sys%5Cstorage%5Carchive%5Cbracket_black%5C20260831%5Cdet6952_det5808_det1392_031.png&thumb=128 HTTP/1.1" 200 OK
+23:54:36.257 INFO:     127.0.0.1:4585 - "GET /api/file?path=D%3A%5CCGAIC%5Cdata_origin%5CMPDD%5Ctubes%5Ctrain%5Cgood%5C076.png&thumb=128 HTTP/1.1" 403 Forbidden
+23:54:36.257 INFO:     127.0.0.1:4586 - "GET /api/file?path=D%3A%5CCGAIC%5Cdata_origin%5CMPDD%5Ctubes%5Ctrain%5Cgood%5C074.png&thumb=128 HTTP/1.1" 403 Forbidden
+23:54:36.261 INFO:     127.0.0.1:4535 - "GET /api/file?path=D%3A%5CCGAIC%5CAOI_sys%5Cstorage%5Carchive%5Cbracket_black%5C20260831%5Cdet6949_det5808_det1392_031.png&thumb=128 HTTP/1.1" 200 OK
+23:54:36.402 INFO:     127.0.0.1:4587 - "GET /api/file?path=D%3A%5CCGAIC%5Cdata_origin%5CMPDD%5Ctubes%5Ctrain%5Cgood%5C075.png&thumb=128 HTTP/1.1" 403 Forbidden
+23:54:36.404 INFO:     127.0.0.1:4550 - "GET /api/file?path=D%3A%5CCGAIC%5CAOI_sys%5Cstorage%5Carchive%5Cbracket_black%5C20260831%5Cdet6940_det5808_det1392_031.png&thumb=128 HTTP/1.1" 200 OK
+23:54:36.404 INFO:     127.0.0.1:4588 - "GET /api/file?path=D%3A%5CCGAIC%5Cdata_origin%5CMPDD%5Ctubes%5Ctrain%5Cgood%5C071.png&thumb=128 HTTP/1.1" 403 Forbidden
+23:54:36.410 INFO:     127.0.0.1:4534 - "GET /api/file?path=D%3A%5CCGAIC%5CAOI_sys%5Cstorage%5Carchive%5Cbracket_black%5C20260831%5Cdet6955_det5916_det1392_031.png&thumb=128 HTTP/1.1" 200 OK
+23:54:36.411 INFO:     127.0.0.1:4537 - "GET /api/file?path=D%3A%5CCGAIC%5CAOI_sys%5Cstorage%5Carchive%5Cbracket_black%5C20260831%5Cdet6958_det5808_det1392_031.png&thumb=128 HTTP/1.1" 200 OK
+23:54:36.412 INFO:     127.0.0.1:4589 - "GET /api/file?path=D%3A%5CCGAIC%5Cdata_origin%5CMPDD%5Ctubes%5Ctrain%5Cgood%5C070.png&thumb=128 HTTP/1.1" 403 Forbidden
+23:54:36.416 INFO:     127.0.0.1:4590 - "GET /api/file?path=D%3A%5CCGAIC%5Cdata_origin%5CMPDD%5Ctubes%5Ctrain%5Cgood%5C073.png&thumb=128 HTTP/1.1" 403 Forbidden
+23:54:36.432 INFO:     127.0.0.1:4539 - "GET /api/file?path=D%3A%5CCGAIC%5CAOI_sys%5Cstorage%5Carchive%5Cbracket_black%5C20260831%5Cdet6944_det5916_det1392_031.png&thumb=128 HTTP/1.1" 200 OK
+23:54:36.434 INFO:     127.0.0.1:4591 - "GET /api/file?path=D%3A%5CCGAIC%5Cdata_origin%5CMPDD%5Ctubes%5Ctrain%5Cgood%5C072.png&thumb=128 HTTP/1.1" 403 Forbidden
+23:54:36.445 INFO:     127.0.0.1:4593 - "GET /api/file?path=D%3A%5CCGAIC%5Cdata_origin%5CMPDD%5Ctubes%5Ctrain%5Cgood%5C069.png&thumb=128 HTTP/1.1" 403 Forbidden
+23:54:36.454 INFO:     127.0.0.1:4592 - "GET /api/file?path=D%3A%5CCGAIC%5Cdata_origin%5CMPDD%5Ctubes%5Ctrain%5Cgood%5C068.png&thumb=128 HTTP/1.1" 403 Forbidden
+23:54:36.454 INFO:     127.0.0.1:4519 - "GET /api/workorders?range=all HTTP/1.1" 200 OK
+23:54:36.457 INFO:     127.0.0.1:4594 - "GET /api/file?path=D%3A%5CCGAIC%5Cdata_origin%5CMPDD%5Ctubes%5Ctrain%5Cgood%5C067.png&thumb=128 HTTP/1.1" 403 Forbidden
+23:54:36.461 INFO:     127.0.0.1:4595 - "GET /api/file?path=D%3A%5CCGAIC%5Cdata_origin%5CMPDD%5Ctubes%5Ctrain%5Cgood%5C066.png&thumb=128 HTTP/1.1" 403 Forbidden
+23:54:36.466 INFO:     127.0.0.1:4596 - "GET /api/file?path=D%3A%5CCGAIC%5Cdata_origin%5CMPDD%5Ctubes%5Ctrain%5Cgood%5C064.png&thumb=128 HTTP/1.1" 403 Forbidden
+23:54:36.475 INFO:     127.0.0.1:4597 - "GET /api/file?path=D%3A%5CCGAIC%5Cdata_origin%5CMPDD%5Ctubes%5Ctrain%5Cgood%5C063.png&thumb=128 HTTP/1.1" 403 Forbidden
+23:54:36.482 INFO:     127.0.0.1:4598 - "GET /api/file?path=D%3A%5CCGAIC%5Cdata_origin%5CMPDD%5Ctubes%5Ctrain%5Cgood%5C065.png&thumb=128 HTTP/1.1" 403 Forbidden
+23:54:36.499 INFO:     127.0.0.1:4599 - "GET /api/file?path=D%3A%5CCGAIC%5Cdata_origin%5CMPDD%5Ctubes%5Ctrain%5Cgood%5C061.png&thumb=128 HTTP/1.1" 403 Forbidden
+23:54:36.504 INFO:     127.0.0.1:4524 - "GET /api/system/info HTTP/1.1" 200 OK
+23:54:36.512 INFO:     127.0.0.1:4601 - "GET /api/file?path=D%3A%5CCGAIC%5Cdata_origin%5CMPDD%5Ctubes%5Ctrain%5Cgood%5C060.png&thumb=128 HTTP/1.1" 403 Forbidden
+23:54:36.513 INFO:     127.0.0.1:4600 - "GET /api/file?path=D%3A%5CCGAIC%5Cdata_origin%5CMPDD%5Ctubes%5Ctrain%5Cgood%5C062.png&thumb=128 HTTP/1.1" 403 Forbidden
+23:54:36.527 INFO:     127.0.0.1:4602 - "GET /api/file?path=D%3A%5CCGAIC%5Cdata_origin%5CMPDD%5Ctubes%5Ctrain%5Cgood%5C058.png&thumb=128 HTTP/1.1" 403 Forbidden
+23:54:36.529 INFO:     127.0.0.1:4603 - "GET /api/file?path=D%3A%5CCGAIC%5Cdata_origin%5CMPDD%5Ctubes%5Ctrain%5Cgood%5C059.png&thumb=128 HTTP/1.1" 403 Forbidden
+23:54:36.536 INFO:     127.0.0.1:4604 - "GET /api/file?path=D%3A%5CCGAIC%5Cdata_origin%5CMPDD%5Ctubes%5Ctrain%5Cgood%5C055.png&thumb=128 HTTP/1.1" 403 Forbidden
+23:54:36.536 INFO:     127.0.0.1:4605 - "GET /api/file?path=D%3A%5CCGAIC%5Cdata_origin%5CMPDD%5Ctubes%5Ctrain%5Cgood%5C057.png&thumb=128 HTTP/1.1" 403 Forbidden
+23:54:36.541 INFO:     127.0.0.1:4606 - "GET /api/file?path=D%3A%5CCGAIC%5Cdata_origin%5CMPDD%5Ctubes%5Ctrain%5Cgood%5C056.png&thumb=128 HTTP/1.1" 403 Forbidden
+23:54:36.554 INFO:     127.0.0.1:4607 - "GET /api/file?path=D%3A%5CCGAIC%5Cdata_origin%5CMPDD%5Ctubes%5Ctrain%5Cgood%5C054.png&thumb=128 HTTP/1.1" 403 Forbidden
+23:54:36.555 INFO:     127.0.0.1:4608 - "GET /api/file?path=D%3A%5CCGAIC%5Cdata_origin%5CMPDD%5Ctubes%5Ctrain%5Cgood%5C053.png&thumb=128 HTTP/1.1" 403 Forbidden
+23:54:36.567 INFO:     127.0.0.1:4609 - "GET /api/file?path=D%3A%5CCGAIC%5Cdata_origin%5CMPDD%5Ctubes%5Ctrain%5Cgood%5C052.png&thumb=128 HTTP/1.1" 403 Forbidden
+23:54:36.571 INFO:     127.0.0.1:4611 - "GET /api/file?path=D%3A%5CCGAIC%5Cdata_origin%5CMPDD%5Ctubes%5Ctrain%5Cgood%5C049.png&thumb=128 HTTP/1.1" 403 Forbidden
+23:54:36.572 INFO:     127.0.0.1:4557 - "GET /api/file?path=D%3A%5CCGAIC%5CAOI_sys%5Cstorage%5Carchive%5Cbracket_black%5C20260831%5Cdet6937_det5916_det1392_031.png&thumb=128 HTTP/1.1" 200 OK
+23:54:36.586 INFO:     127.0.0.1:4610 - "GET /api/file?path=D%3A%5CCGAIC%5Cdata_origin%5CMPDD%5Ctubes%5Ctrain%5Cgood%5C050.png&thumb=128 HTTP/1.1" 403 Forbidden
+23:54:36.586 INFO:     127.0.0.1:4612 - "GET /api/file?path=D%3A%5CCGAIC%5Cdata_origin%5CMPDD%5Ctubes%5Ctrain%5Cgood%5C051.png&thumb=128 HTTP/1.1" 403 Forbidden
+23:54:36.588 INFO:     127.0.0.1:4613 - "GET /api/file?path=D%3A%5CCGAIC%5Cdata_origin%5CMPDD%5Ctubes%5Ctrain%5Cgood%5C047.png&thumb=128 HTTP/1.1" 403 Forbidden
+23:54:36.600 INFO:     127.0.0.1:4614 - "GET /api/file?path=D%3A%5CCGAIC%5Cdata_origin%5CMPDD%5Ctubes%5Ctrain%5Cgood%5C045.png&thumb=128 HTTP/1.1" 403 Forbidden
+23:54:36.601 INFO:     127.0.0.1:4615 - "GET /api/file?path=D%3A%5CCGAIC%5Cdata_origin%5CMPDD%5Ctubes%5Ctrain%5Cgood%5C048.png&thumb=128 HTTP/1.1" 403 Forbidden
+23:54:36.610 INFO:     127.0.0.1:4616 - "GET /api/file?path=D%3A%5CCGAIC%5Cdata_origin%5CMPDD%5Ctubes%5Ctrain%5Cgood%5C046.png&thumb=128 HTTP/1.1" 403 Forbidden
+23:54:36.614 INFO:     127.0.0.1:4617 - "GET /api/file?path=D%3A%5CCGAIC%5Cdata_origin%5CMPDD%5Ctubes%5Ctrain%5Cgood%5C044.png&thumb=128 HTTP/1.1" 403 Forbidden
+23:54:36.615 INFO:     127.0.0.1:4534 - "GET /api/file?path=D%3A%5CCGAIC%5CAOI_sys%5Cstorage%5Carchive%5Cbracket_black%5C20260831%5Cdet6922_det5916_det1392_031.png&thumb=128 HTTP/1.1" 200 OK
+23:54:36.616 INFO:     127.0.0.1:4618 - "GET /api/file?path=D%3A%5CCGAIC%5Cdata_origin%5CMPDD%5Ctubes%5Ctrain%5Cgood%5C043.png&thumb=128 HTTP/1.1" 403 Forbidden
+23:54:36.620 INFO:     127.0.0.1:4590 - "GET /api/file?path=D%3A%5CCGAIC%5CAOI_sys%5Cstorage%5Carchive%5Cbracket_black%5C20260831%5Cdet6918_det5808_det1392_031.png&thumb=128 HTTP/1.1" 200 OK
+23:54:36.621 INFO:     127.0.0.1:4619 - "GET /api/file?path=D%3A%5CCGAIC%5Cdata_origin%5CMPDD%5Ctubes%5Ctrain%5Cgood%5C042.png&thumb=128 HTTP/1.1" 403 Forbidden
+23:54:36.631 INFO:     127.0.0.1:4550 - "GET /api/file?path=D%3A%5CCGAIC%5CAOI_sys%5Cstorage%5Carchive%5Cbracket_black%5C20260831%5Cdet6923_det5808_det1392_031.png&thumb=128 HTTP/1.1" 200 OK
+23:54:36.631 
+23:54:36.632 [UI-1] 数据管理：新建数据源（标准数据集导入）
+23:54:36.635 INFO:     127.0.0.1:4620 - "GET /api/file?path=D%3A%5CCGAIC%5Cdata_origin%5CMPDD%5Ctubes%5Ctrain%5Cgood%5C040.png&thumb=128 HTTP/1.1" 403 Forbidden
+23:54:36.637 INFO:     127.0.0.1:4585 - "GET /api/file?path=D%3A%5CCGAIC%5CAOI_sys%5Cstorage%5Carchive%5Cbracket_black%5C20260831%5Cdet6927_det5916_det1392_031.png&thumb=128 HTTP/1.1" 200 OK
+23:54:36.647 INFO:     127.0.0.1:4539 - "GET /api/file?path=D%3A%5CCGAIC%5CAOI_sys%5Cstorage%5Carchive%5Cbracket_black%5C20260831%5Cdet6912_det5916_det1392_031.png&thumb=128 HTTP/1.1" 200 OK
+23:54:36.655 INFO:     127.0.0.1:4622 - "GET /api/file?path=D%3A%5CCGAIC%5Cdata_origin%5CMPDD%5Ctubes%5Ctrain%5Cgood%5C041.png&thumb=128 HTTP/1.1" 403 Forbidden
+23:54:36.656 INFO:     127.0.0.1:4621 - "GET /api/file?path=D%3A%5CCGAIC%5Cdata_origin%5CMPDD%5Ctubes%5Ctrain%5Cgood%5C038.png&thumb=128 HTTP/1.1" 403 Forbidden
+23:54:36.668 INFO:     127.0.0.1:4538 - "GET /api/file?path=D%3A%5CCGAIC%5CAOI_sys%5Cstorage%5Carchive%5Cbracket_black%5C20260831%5Cdet6933_det5808_det1392_031.png&thumb=128 HTTP/1.1" 200 OK
+23:54:36.669 INFO:     127.0.0.1:4623 - "GET /api/file?path=D%3A%5CCGAIC%5Cdata_origin%5CMPDD%5Ctubes%5Ctrain%5Cgood%5C039.png&thumb=128 HTTP/1.1" 403 Forbidden
+23:54:36.669 INFO:     127.0.0.1:4624 - "GET /api/file?path=D%3A%5CCGAIC%5Cdata_origin%5CMPDD%5Ctubes%5Ctrain%5Cgood%5C037.png&thumb=128 HTTP/1.1" 403 Forbidden
+23:54:36.676 INFO:     127.0.0.1:4625 - "GET /api/file?path=D%3A%5CCGAIC%5Cdata_origin%5CMPDD%5Ctubes%5Ctrain%5Cgood%5C036.png&thumb=128 HTTP/1.1" 403 Forbidden
+23:54:36.684 INFO:     127.0.0.1:4626 - "GET /api/file?path=D%3A%5CCGAIC%5Cdata_origin%5CMPDD%5Ctubes%5Ctrain%5Cgood%5C034.png&thumb=128 HTTP/1.1" 403 Forbidden
+23:54:36.692 INFO:     127.0.0.1:4627 - "GET /api/file?path=D%3A%5CCGAIC%5Cdata_origin%5CMPDD%5Ctubes%5Ctrain%5Cgood%5C035.png&thumb=128 HTTP/1.1" 403 Forbidden
+23:54:36.704 INFO:     127.0.0.1:4628 - "GET /api/file?path=D%3A%5CCGAIC%5Cdata_origin%5CMPDD%5Ctubes%5Ctrain%5Cgood%5C033.png&thumb=128 HTTP/1.1" 403 Forbidden
+23:54:36.716 INFO:     127.0.0.1:4629 - "GET /api/file?path=D%3A%5CCGAIC%5Cdata_origin%5CMPDD%5Ctubes%5Ctrain%5Cgood%5C031.png&thumb=128 HTTP/1.1" 403 Forbidden
+23:54:36.720 INFO:     127.0.0.1:4524 - "GET /api/datasources HTTP/1.1" 200 OK
+23:54:36.725 INFO:     127.0.0.1:4630 - "GET /api/file?path=D%3A%5CCGAIC%5Cdata_origin%5CMPDD%5Ctubes%5Ctrain%5Cgood%5C032.png&thumb=128 HTTP/1.1" 403 Forbidden
+23:54:36.730 INFO:     127.0.0.1:4631 - "GET /api/file?path=D%3A%5CCGAIC%5Cdata_origin%5CMPDD%5Ctubes%5Ctrain%5Cgood%5C029.png&thumb=128 HTTP/1.1" 403 Forbidden
+23:54:36.735 INFO:     127.0.0.1:4632 - "GET /api/file?path=D%3A%5CCGAIC%5Cdata_origin%5CMPDD%5Ctubes%5Ctrain%5Cgood%5C030.png&thumb=128 HTTP/1.1" 403 Forbidden
+23:54:36.747 INFO:     127.0.0.1:4633 - "GET /api/file?path=D%3A%5CCGAIC%5Cdata_origin%5CMPDD%5Ctubes%5Ctrain%5Cgood%5C026.png&thumb=128 HTTP/1.1" 403 Forbidden
+23:54:36.752 INFO:     127.0.0.1:4634 - "GET /api/file?path=D%3A%5CCGAIC%5Cdata_origin%5CMPDD%5Ctubes%5Ctrain%5Cgood%5C028.png&thumb=128 HTTP/1.1" 403 Forbidden
+23:54:36.757 INFO:     127.0.0.1:4635 - "GET /api/file?path=D%3A%5CCGAIC%5Cdata_origin%5CMPDD%5Ctubes%5Ctrain%5Cgood%5C027.png&thumb=128 HTTP/1.1" 403 Forbidden
+23:54:36.759 INFO:     127.0.0.1:4515 - "GET /api/datasources HTTP/1.1" 200 OK
+23:54:36.761 INFO:     127.0.0.1:4636 - "GET /api/file?path=D%3A%5CCGAIC%5Cdata_origin%5CMPDD%5Ctubes%5Ctrain%5Cgood%5C025.png&thumb=128 HTTP/1.1" 403 Forbidden
+23:54:36.765 INFO:     127.0.0.1:4593 - "GET /api/file?path=D%3A%5CCGAIC%5CAOI_sys%5Cstorage%5Carchive%5Cbracket_black%5C20260831%5Cdet6907_det5808_det1392_031.png&thumb=128 HTTP/1.1" 200 OK
+23:54:36.771 INFO:     127.0.0.1:4637 - "GET /api/file?path=D%3A%5CCGAIC%5Cdata_origin%5CMPDD%5Ctubes%5Ctrain%5Cgood%5C024.png&thumb=128 HTTP/1.1" 403 Forbidden
+23:54:36.774 INFO:     127.0.0.1:4516 - "GET /api/datasets HTTP/1.1" 200 OK
+23:54:36.775 INFO:     127.0.0.1:4638 - "GET /api/file?path=D%3A%5CCGAIC%5Cdata_origin%5CMPDD%5Ctubes%5Ctrain%5Cgood%5C022.png&thumb=128 HTTP/1.1" 403 Forbidden
+23:54:36.795 INFO:     127.0.0.1:4519 - "GET /api/images?page=1&page_size=50 HTTP/1.1" 200 OK
+23:54:36.796 INFO:     127.0.0.1:4610 - "GET /api/file?path=D%3A%5CCGAIC%5CAOI_sys%5Cstorage%5Carchive%5Cbracket_black%5C20260831%5Cdet6904_det5916_det1392_031.png&thumb=128 HTTP/1.1" 200 OK
+23:54:36.804 INFO:     127.0.0.1:4639 - "GET /api/file?path=D%3A%5CCGAIC%5Cdata_origin%5CMPDD%5Ctubes%5Ctrain%5Cgood%5C023.png&thumb=128 HTTP/1.1" 403 Forbidden
+23:54:36.804 INFO:     127.0.0.1:4532 - "GET /api/file?path=D%3A%5CCGAIC%5CAOI_sys%5Cstorage%5Carchive%5Cbracket_black%5C20260831%5Cdet6983__bench_2500.png&thumb=128 HTTP/1.1" 200 OK
+23:54:36.816 INFO:     127.0.0.1:4550 - "GET /api/file?path=D%3A%5CCGAIC%5CAOI_sys%5Cstorage%5Carchive%5Cbracket_black%5C20260831%5Cdet6897_det5916_det1392_031.png&thumb=128 HTTP/1.1" 200 OK
+23:54:36.820 INFO:     127.0.0.1:4590 - "GET /api/file?path=D%3A%5CCGAIC%5CAOI_sys%5Cstorage%5Carchive%5Cbracket_black%5C20260831%5Cdet6900_det5808_det1392_031.png&thumb=128 HTTP/1.1" 200 OK
+23:54:36.824 INFO:     127.0.0.1:4556 - "GET /api/file?path=D%3A%5CCGAIC%5CAOI_sys%5Cstorage%5Carchive%5Cbracket_black%5C20260831%5Cdet6893_det5808_det1392_031.png&thumb=128 HTTP/1.1" 200 OK
+23:54:36.826 INFO:     127.0.0.1:4513 - "GET /api/datasets HTTP/1.1" 200 OK
+23:54:36.827 INFO:     127.0.0.1:4539 - "GET /api/file?path=D%3A%5CCGAIC%5CAOI_sys%5Cstorage%5Carchive%5Cbracket_black%5C20260831%5Cdet6890_det5916_det1392_031.png&thumb=128 HTTP/1.1" 200 OK
+23:54:36.831 INFO:     127.0.0.1:4520 - "GET /api/categories HTTP/1.1" 200 OK
+23:54:36.843 INFO:     127.0.0.1:4527 - "GET /api/images?page=1&page_size=50 HTTP/1.1" 200 OK
+23:54:36.850 INFO:     127.0.0.1:4621 - "GET /api/file?path=D%3A%5CCGAIC%5CAOI_sys%5Cstorage%5Carchive%5Cbracket_black%5C20260831%5Cdet6886_det5808_det1392_031.png&thumb=128 HTTP/1.1" 200 OK
+23:54:36.861 INFO:     127.0.0.1:4625 - "GET /api/file?path=D%3A%5CCGAIC%5CAOI_sys%5Cstorage%5Carchive%5Cbracket_black%5C20260831%5Cdet6879_det5916_det1392_031.png&thumb=128 HTTP/1.1" 200 OK
+23:54:36.892 INFO:     127.0.0.1:4527 - "GET /api/datasources HTTP/1.1" 200 OK
+23:54:36.899 INFO:     127.0.0.1:4520 - "GET /api/images?page=1&page_size=50 HTTP/1.1" 200 OK
+23:54:36.917 INFO:     127.0.0.1:4513 - "GET /api/datasets HTTP/1.1" 200 OK
+23:54:36.924 INFO:     127.0.0.1:4622 - "GET /api/file?path=D%3A%5CCGAIC%5CAOI_sys%5Cstorage%5Carchive%5Cbracket_black%5C20260831%5Cdet6864_det5916_det1392_031.png&thumb=128 HTTP/1.1" 200 OK
+23:54:36.969 INFO:     127.0.0.1:4539 - "GET /api/file?path=D%3A%5CCGAIC%5CAOI_sys%5Cstorage%5Carchive%5Cbracket_black%5C20260831%5Cdet6857_det5916_det1392_031.png&thumb=128 HTTP/1.1" 200 OK
+23:54:36.970 INFO:     127.0.0.1:4637 - "GET /api/file?path=D%3A%5CCGAIC%5CAOI_sys%5Cstorage%5Carchive%5Cbracket_black%5C20260831%5Cdet6874_det5808_det1392_031.png&thumb=128 HTTP/1.1" 200 OK
+23:54:36.988 INFO:     127.0.0.1:4550 - "GET /api/file?path=D%3A%5CCGAIC%5CAOI_sys%5Cstorage%5Carchive%5Cbracket_black%5C20260831%5Cdet6867_det5916_det1392_031.png&thumb=128 HTTP/1.1" 200 OK
+23:54:36.988 INFO:     127.0.0.1:4556 - "GET /api/file?path=D%3A%5CCGAIC%5CAOI_sys%5Cstorage%5Carchive%5Cbracket_black%5C20260831%5Cdet6863_det5808_det1392_031.png&thumb=128 HTTP/1.1" 200 OK
+23:54:37.015 INFO:     127.0.0.1:4622 - "GET /api/file?path=D%3A%5CCGAIC%5CAOI_sys%5Cstorage%5Carchive%5Cbracket_black%5C20260831%5Cdet6847_det5808_det1392_031.png&thumb=128 HTTP/1.1" 200 OK
+23:54:37.023 INFO:     127.0.0.1:4621 - "GET /api/file?path=D%3A%5CCGAIC%5CAOI_sys%5Cstorage%5Carchive%5Cbracket_black%5C20260831%5Cdet6854_det5808_det1392_031.png&thumb=128 HTTP/1.1" 200 OK
+23:54:37.029 INFO:     127.0.0.1:4590 - "GET /api/file?path=D%3A%5CCGAIC%5CAOI_sys%5Cstorage%5Carchive%5Cbracket_black%5C20260831%5Cdet6861_det5808_det1392_031.png&thumb=128 HTTP/1.1" 200 OK
+23:54:37.036 INFO:     127.0.0.1:4625 - "GET /api/file?path=D%3A%5CCGAIC%5CAOI_sys%5Cstorage%5Carchive%5Cbracket_black%5C20260831%5Cdet6852_det5916_det1392_031.png&thumb=128 HTTP/1.1" 200 OK
+23:54:37.044 INFO:     127.0.0.1:4637 - "GET /api/file?path=D%3A%5CCGAIC%5CAOI_sys%5Cstorage%5Carchive%5Cbracket_black%5C20260831%5Cdet6842_det5916_det1392_031.png&thumb=128 HTTP/1.1" 200 OK
+23:54:37.071 INFO:     127.0.0.1:4622 - "GET /api/file?path=D%3A%5CCGAIC%5CAOI_sys%5Cstorage%5Carchive%5Cbracket_black%5C20260831%5Cdet6825_det5916_det1392_031.png&thumb=128 HTTP/1.1" 200 OK
+23:54:37.111 INFO:     127.0.0.1:4637 - "GET /api/file?path=D%3A%5CCGAIC%5CAOI_sys%5Cstorage%5Carchive%5Cbracket_black%5C20260831%5Cdet6810_det5916_det1392_031.png&thumb=128 HTTP/1.1" 200 OK
+23:54:37.151 INFO:     127.0.0.1:4556 - "GET /api/file?path=D%3A%5CCGAIC%5CAOI_sys%5Cstorage%5Carchive%5Cbracket_black%5C20260831%5Cdet6832_det5916_det1392_031.png&thumb=128 HTTP/1.1" 200 OK
+23:54:37.153 INFO:     127.0.0.1:4622 - "GET /api/file?path=D%3A%5CCGAIC%5CAOI_sys%5Cstorage%5Carchive%5Cbracket_black%5C20260831%5Cdet6804_det5808_det1392_031.png&thumb=128 HTTP/1.1" 200 OK
+23:54:37.167 INFO:     127.0.0.1:4556 - "GET /api/file?path=D%3A%5CCGAIC%5Cdata_origin%5CMPDD%5Cbracket_black%5Ctrain%5Cgood%5C258.png&thumb=128 HTTP/1.1" 403 Forbidden
+23:54:37.179 INFO:     127.0.0.1:4539 - "GET /api/file?path=D%3A%5CCGAIC%5CAOI_sys%5Cstorage%5Carchive%5Cbracket_black%5C20260831%5Cdet6834_det5808_det1392_031.png&thumb=128 HTTP/1.1" 200 OK
+23:54:37.199 INFO:     127.0.0.1:4622 - "GET /api/file?path=D%3A%5CCGAIC%5Cdata_origin%5CMPDD%5Cbracket_brown%5Ctrain%5Cgood%5C113.png&thumb=128 HTTP/1.1" 403 Forbidden
+23:54:37.214 INFO:     127.0.0.1:4556 - "GET /api/file?path=D%3A%5CCGAIC%5CAOI_sys%5Cstorage%5Carchive%5Cbracket_black%5C20260831%5Cdet6834_det5808_det1392_031.png&thumb=128 HTTP/1.1" 200 OK
+23:54:37.218 INFO:     127.0.0.1:4637 - "GET /api/file?path=D%3A%5CCGAIC%5CAOI_sys%5Cstorage%5Carchive%5Cbracket_black%5C20260831%5Cdet6800_det5916_det1392_031.png&thumb=128 HTTP/1.1" 200 OK
+23:54:37.229 INFO:     127.0.0.1:4550 - "GET /api/file?path=D%3A%5CCGAIC%5CAOI_sys%5Cstorage%5Carchive%5Cbracket_black%5C20260831%5Cdet6822_det5808_det1392_031.png&thumb=128 HTTP/1.1" 200 OK
+23:54:37.233 INFO:     127.0.0.1:4539 - "GET /api/file?path=D%3A%5CCGAIC%5CAOI_sys%5Cstorage%5Carchive%5Cbracket_black%5C20260831%5Cdet6822_det5808_det1392_031.png&thumb=128 HTTP/1.1" 200 OK
+23:54:37.236 INFO:     127.0.0.1:4590 - "GET /api/file?path=D%3A%5CCGAIC%5CAOI_sys%5Cstorage%5Carchive%5Cbracket_black%5C20260831%5Cdet6821_det5808_det1392_031.png&thumb=128 HTTP/1.1" 200 OK
+23:54:37.250 INFO:     127.0.0.1:4625 - "GET /api/file?path=D%3A%5CCGAIC%5CAOI_sys%5Cstorage%5Carchive%5Cbracket_black%5C20260831%5Cdet6820_det5808_det1392_031.png&thumb=128 HTTP/1.1" 200 OK
+23:54:37.253 INFO:     127.0.0.1:4621 - "GET /api/file?path=D%3A%5CCGAIC%5CAOI_sys%5Cstorage%5Carchive%5Cbracket_black%5C20260831%5Cdet6824_det5916_det1392_031.png&thumb=128 HTTP/1.1" 200 OK
+23:54:37.255 INFO:     127.0.0.1:4622 - "GET /api/file?path=D%3A%5CCGAIC%5CAOI_sys%5Cstorage%5Carchive%5Cbracket_black%5C20260831%5Cdet6824_det5916_det1392_031.png&thumb=128 HTTP/1.1" 200 OK
+23:54:37.260 INFO:     127.0.0.1:4556 - "GET /api/file?path=D%3A%5CCGAIC%5CAOI_sys%5Cstorage%5Carchive%5Cbracket_black%5C20260831%5Cdet6821_det5808_det1392_031.png&thumb=128 HTTP/1.1" 200 OK
+23:54:37.263 INFO:     127.0.0.1:4637 - "GET /api/file?path=D%3A%5CCGAIC%5CAOI_sys%5Cstorage%5Carchive%5Cbracket_black%5C20260831%5Cdet6820_det5808_det1392_031.png&thumb=128 HTTP/1.1" 200 OK
+23:54:37.268   ✅ 数据管理页有「新建数据源」按钮
+23:54:37.280 INFO:     127.0.0.1:4520 - "GET /api/system/config HTTP/1.1" 200 OK
+23:54:37.294 INFO:     127.0.0.1:4513 - "GET /api/datasource-plans HTTP/1.1" 200 OK
+23:54:37.322 INFO:     127.0.0.1:4513 - "GET /api/health HTTP/1.1" 200 OK
+23:54:37.769 QWindowsWindow::setGeometry: Unable to set geometry 460x490+689+289 (frame: 476x529+681+258) on QWidgetWindow/"QDialogClassWindow" on "HP P24h G4". Resulting geometry: 460x505+689+289 (frame: 476x544+681+258) margins: 8, 31, 8, 8 minimum size: 460x490 MINMAXINFO(maxSize=POINT(x=0, y=0), maxpos=POINT(x=0, y=0), maxtrack=POINT(x=0, y=0), mintrack=POINT(x=476, y=529)))
+23:54:38.018 [disc] 加载预训练头 D:\CGAIC\AOI_sys\assets\disc_pretrain.pt
+23:54:38.040 INFO:     127.0.0.1:4642 - "GET /api/tasks/recent HTTP/1.1" 200 OK
+23:54:38.128 INFO:     127.0.0.1:4513 - "POST /api/datasources HTTP/1.1" 200 OK
+23:54:38.139 INFO:     127.0.0.1:4513 - "GET /api/datasources HTTP/1.1" 200 OK
+23:54:38.336   [等待] MVTec 标准数据集导入…（预计 1-3 分钟）
+23:54:38.402 INFO:     127.0.0.1:4513 - "POST /api/images/import_mvtec HTTP/1.1" 200 OK
+23:54:38.576 INFO:     127.0.0.1:4643 - "GET /api/tasks/recent HTTP/1.1" 200 OK
+23:54:38.577   ✅ 识别到导入任务
+23:54:38.749 INFO:     127.0.0.1:4644 - "GET /api/tasks/28 HTTP/1.1" 200 OK
+23:54:38.750   [等待] task=28 running 0.125 3/24
+23:54:38.769 [persist][警告] 快照缺 ssocl_cfg.json（旧版快照），按硬编码模板恢复：D:\CGAIC\AOI_sys\storage\demo5\snapshots\tubes\v3
+23:54:40.769 INFO:     127.0.0.1:4513 - "GET /api/health HTTP/1.1" 200 OK
+23:54:40.930 INFO:     127.0.0.1:4646 - "GET /api/tasks/28 HTTP/1.1" 200 OK
+23:54:41.441     [extract] 20/20 (3s)
+23:54:42.343 [dino] 使用随包 vendor 权重: D:\CGAIC\assets\dinov2\dinov2_vits14_pretrain.pth
+23:54:42.343 [disc] 加载预训练头 D:\CGAIC\AOI_sys\assets\disc_pretrain.pt
+23:54:42.343 [persist][警告] 快照缺 ssocl_cfg.json（旧版快照），按硬编码模板恢复：D:\CGAIC\AOI_sys\storage\demo5\snapshots\metal_plate\v3
+23:54:43.086 INFO:     127.0.0.1:4648 - "GET /api/tasks/28 HTTP/1.1" 200 OK
+23:54:44.522     [extract] 20/20 (2s)
+23:54:45.110 [dino] 使用随包 vendor 权重: D:\CGAIC\assets\dinov2\dinov2_vits14_pretrain.pth
+23:54:45.110 [disc] 加载预训练头 D:\CGAIC\AOI_sys\assets\disc_pretrain.pt
+23:54:45.110 INFO:     127.0.0.1:4513 - "GET /api/health HTTP/1.1" 200 OK
+23:54:45.271 INFO:     127.0.0.1:4653 - "GET /api/tasks/28 HTTP/1.1" 200 OK
+23:54:45.356 [persist][警告] 快照缺 ssocl_cfg.json（旧版快照），按硬编码模板恢复：D:\CGAIC\AOI_sys\storage\demo5\snapshots\connector\v3
+23:54:47.291 INFO:     127.0.0.1:4513 - "GET /api/health HTTP/1.1" 200 OK
+23:54:47.440 INFO:     127.0.0.1:4654 - "GET /api/tasks/28 HTTP/1.1" 200 OK
+23:54:47.741     [extract] 20/20 (2s)
+23:54:48.509 [dino] 使用随包 vendor 权重: D:\CGAIC\assets\dinov2\dinov2_vits14_pretrain.pth
+23:54:48.509 [disc] 加载预训练头 D:\CGAIC\AOI_sys\assets\disc_pretrain.pt
+23:54:48.509 [persist][警告] 快照缺 ssocl_cfg.json（旧版快照），按硬编码模板恢复：D:\CGAIC\AOI_sys\storage\demo5\snapshots\bracket_white\v3
+23:54:49.462 INFO:     127.0.0.1:4513 - "GET /api/health HTTP/1.1" 200 OK
+23:54:49.618 INFO:     127.0.0.1:4655 - "GET /api/tasks/28 HTTP/1.1" 200 OK
+23:54:50.556     [extract] 20/20 (2s)
+23:54:51.447 [dino] 使用随包 vendor 权重: D:\CGAIC\assets\dinov2\dinov2_vits14_pretrain.pth
+23:54:51.447 [disc] 加载预训练头 D:\CGAIC\AOI_sys\assets\disc_pretrain.pt
+23:54:51.447 [persist][警告] 快照缺 ssocl_cfg.json（旧版快照），按硬编码模板恢复：D:\CGAIC\AOI_sys\storage\demo5\snapshots\bracket_brown\v3
+23:54:51.805 INFO:     127.0.0.1:4658 - "GET /api/tasks/28 HTTP/1.1" 200 OK
+23:54:53.738     [extract] 20/20 (2s)
+23:54:53.831 [dino] 使用随包 vendor 权重: D:\CGAIC\assets\dinov2\dinov2_vits14_pretrain.pth
+23:54:53.831 INFO:     127.0.0.1:4513 - "GET /api/health HTTP/1.1" 200 OK
+23:54:53.968 INFO:     127.0.0.1:4660 - "GET /api/tasks/28 HTTP/1.1" 200 OK
+23:54:53.968   [等待] task=28 running 0.8411764705882353 143/170
+23:54:54.691 [disc] 加载预训练头 D:\CGAIC\AOI_sys\assets\disc_pretrain.pt
+23:54:54.692 [persist][警告] 快照缺 ssocl_cfg.json（旧版快照），按硬编码模板恢复：D:\CGAIC\AOI_sys\storage\demo5\snapshots\bracket_black\v6
+23:54:55.989 INFO:     127.0.0.1:4513 - "GET /api/health HTTP/1.1" 200 OK
+23:54:56.148 INFO:     127.0.0.1:4661 - "GET /api/tasks/28 HTTP/1.1" 200 OK
+23:54:56.792     [extract] 20/20 (2s)
+23:54:58.319 INFO:     127.0.0.1:4664 - "GET /api/tasks/28 HTTP/1.1" 200 OK
+23:55:00.329 INFO:     127.0.0.1:4513 - "GET /api/health HTTP/1.1" 200 OK
+23:55:00.487 INFO:     127.0.0.1:4665 - "GET /api/tasks/28 HTTP/1.1" 200 OK
+23:55:02.496 INFO:     127.0.0.1:4513 - "GET /api/health HTTP/1.1" 200 OK
+23:55:02.657 INFO:     127.0.0.1:4672 - "GET /api/tasks/28 HTTP/1.1" 200 OK
+23:55:04.671 INFO:     127.0.0.1:4513 - "GET /api/health HTTP/1.1" 200 OK
+23:55:04.834 INFO:     127.0.0.1:4675 - "GET /api/tasks/28 HTTP/1.1" 200 OK
+23:55:07.017 INFO:     127.0.0.1:4676 - "GET /api/tasks/28 HTTP/1.1" 200 OK
+23:55:09.030 INFO:     127.0.0.1:4513 - "GET /api/health HTTP/1.1" 200 OK
+23:55:09.186 INFO:     127.0.0.1:4677 - "GET /api/tasks/28 HTTP/1.1" 200 OK
+23:55:09.186   [等待] task=28 running 0.6193415637860082 301/486
+23:55:11.197 INFO:     127.0.0.1:4513 - "GET /api/health HTTP/1.1" 200 OK
+23:55:11.352 INFO:     127.0.0.1:4680 - "GET /api/tasks/28 HTTP/1.1" 200 OK
+23:55:13.366 INFO:     127.0.0.1:4513 - "GET /api/health HTTP/1.1" 200 OK
+23:55:13.520 INFO:     127.0.0.1:4682 - "GET /api/tasks/28 HTTP/1.1" 200 OK
+23:55:15.700 INFO:     127.0.0.1:4683 - "GET /api/tasks/28 HTTP/1.1" 200 OK
+23:55:17.728 INFO:     127.0.0.1:4513 - "GET /api/health HTTP/1.1" 200 OK
+23:55:17.874 INFO:     127.0.0.1:4686 - "GET /api/tasks/28 HTTP/1.1" 200 OK
+23:55:19.903 INFO:     127.0.0.1:4513 - "GET /api/health HTTP/1.1" 200 OK
+23:55:20.036 INFO:     127.0.0.1:4688 - "GET /api/tasks/28 HTTP/1.1" 200 OK
+23:55:22.193 INFO:     127.0.0.1:4691 - "GET /api/tasks/28 HTTP/1.1" 200 OK
+23:55:22.193   ✅ 标准数据集导入完成（done 完成）
+23:55:22.200 INFO:     127.0.0.1:4692 - "GET /api/datasources HTTP/1.1" 200 OK
+23:55:22.201   ✅ 源挂载 ≥391 张（n_images=905）
+23:55:22.227 INFO:     127.0.0.1:4513 - "GET /api/images?page=1&page_size=50 HTTP/1.1" 200 OK
+23:55:22.273 INFO:     127.0.0.1:4693 - "GET /api/datasets HTTP/1.1" 200 OK
+23:55:22.288 INFO:     127.0.0.1:4694 - "GET /api/file?path=D%3A%5CCGAIC%5Cdata_local%5Csolder_smt%5Ctrain%5Cgood%5CPixPin_2026-07-01_11-26-43_OK.png&thumb=128 HTTP/1.1" 200 OK
+23:55:22.297 INFO:     127.0.0.1:4696 - "GET /api/file?path=D%3A%5CCGAIC%5Cdata_local%5Csolder_smt%5Ctrain%5Cgood%5CPixPin_2026-07-01_09-46-48_OK.png&thumb=128 HTTP/1.1" 200 OK
+23:55:22.300 INFO:     127.0.0.1:4695 - "GET /api/file?path=D%3A%5CCGAIC%5Cdata_local%5Csolder_smt%5Ctrain%5Cgood%5CPixPin_2026-07-01_09-47-28_OK.png&thumb=128 HTTP/1.1" 200 OK
+23:55:22.324 INFO:     127.0.0.1:4701 - "GET /api/file?path=D%3A%5CCGAIC%5Cdata_local%5Csolder_smt%5Ctrain%5Cgood%5CPixPin_2026-07-01_09-40-01_OK.png&thumb=128 HTTP/1.1" 200 OK
+23:55:22.324 INFO:     127.0.0.1:4699 - "GET /api/file?path=D%3A%5CCGAIC%5Cdata_local%5Csolder_smt%5Ctrain%5Cgood%5CPixPin_2026-07-01_09-41-12_OK.png&thumb=128 HTTP/1.1" 200 OK
+23:55:22.330 INFO:     127.0.0.1:4700 - "GET /api/file?path=D%3A%5CCGAIC%5Cdata_local%5Csolder_smt%5Ctrain%5Cgood%5CPixPin_2026-07-01_09-40-41_OK.png&thumb=128 HTTP/1.1" 200 OK
+23:55:22.340 INFO:     127.0.0.1:4697 - "GET /api/file?path=D%3A%5CCGAIC%5Cdata_local%5Csolder_smt%5Ctrain%5Cgood%5CPixPin_2026-07-01_09-45-30_OK.png&thumb=128 HTTP/1.1" 200 OK
+23:55:22.349 INFO:     127.0.0.1:4698 - "GET /api/file?path=D%3A%5CCGAIC%5Cdata_local%5Csolder_smt%5Ctrain%5Cgood%5CPixPin_2026-07-01_09-42-27_OK.png&thumb=128 HTTP/1.1" 200 OK
+23:55:22.357 INFO:     127.0.0.1:4696 - "GET /api/file?path=D%3A%5CCGAIC%5Cdata_local%5Csolder_smt%5Ctrain%5Cgood%5CPixPin_2026-07-01_09-26-58_OK.png&thumb=128 HTTP/1.1" 200 OK
+23:55:22.359 INFO:     127.0.0.1:4694 - "GET /api/file?path=D%3A%5CCGAIC%5Cdata_local%5Csolder_smt%5Ctrain%5Cgood%5CPixPin_2026-07-01_09-39-24_OK.png&thumb=128 HTTP/1.1" 200 OK
+23:55:22.376 INFO:     127.0.0.1:4701 - "GET /api/file?path=D%3A%5CCGAIC%5Cdata_local%5Csolder_smt%5Ctrain%5Cgood%5CPixPin_2026-07-01_09-34-45_OK.png&thumb=128 HTTP/1.1" 200 OK
+23:55:22.379 INFO:     127.0.0.1:4695 - "GET /api/file?path=D%3A%5CCGAIC%5Cdata_local%5Csolder_smt%5Ctrain%5Cgood%5CPixPin_2026-07-01_09-36-37_OK.png&thumb=128 HTTP/1.1" 200 OK
+23:55:22.392 INFO:     127.0.0.1:4697 - "GET /api/file?path=D%3A%5CCGAIC%5Cdata_local%5Csolder_smt%5Ctrain%5Cgood%5CPixPin_2026-07-01_09-28-13_OK.png&thumb=128 HTTP/1.1" 200 OK
+23:55:22.398 INFO:     127.0.0.1:4700 - "GET /api/file?path=D%3A%5CCGAIC%5Cdata_local%5Csolder_smt%5Ctrain%5Cgood%5CPixPin_2026-07-01_09-30-12_OK.png&thumb=128 HTTP/1.1" 200 OK
+23:55:22.408 INFO:     127.0.0.1:4694 - "GET /api/file?path=D%3A%5CCGAIC%5Cdata_local%5Csolder_smt%5Ctrain%5Cgood%5CPixPin_2026-07-01_09-38-07_OK.png&thumb=128 HTTP/1.1" 200 OK
+23:55:22.419 INFO:     127.0.0.1:4699 - "GET /api/file?path=D%3A%5CCGAIC%5Cdata_local%5Csolder_smt%5Ctrain%5Cgood%5CPixPin_2026-07-01_09-35-28_OK.png&thumb=128 HTTP/1.1" 200 OK
+23:55:22.420 INFO:     127.0.0.1:4696 - "GET /api/file?path=D%3A%5CCGAIC%5Cdata_local%5Csolder_smt%5Ctrain%5Cgood%5CPixPin_2026-07-01_09-27-29_OK.png&thumb=128 HTTP/1.1" 200 OK
+23:55:22.430 INFO:     127.0.0.1:4698 - "GET /api/file?path=D%3A%5CCGAIC%5Cdata_local%5Csolder_smt%5Ctrain%5Cgood%5CPixPin_2026-07-01_09-23-31_OK.png&thumb=128 HTTP/1.1" 200 OK
+23:55:22.430 INFO:     127.0.0.1:4695 - "GET /api/file?path=D%3A%5CCGAIC%5Cdata_local%5Csolder_smt%5Ctrain%5Cgood%5CPixPin_2026-07-01_09-20-45_OK.png&thumb=128 HTTP/1.1" 200 OK
+23:55:22.437 INFO:     127.0.0.1:4697 - "GET /api/file?path=D%3A%5CCGAIC%5Cdata_local%5Csolder_smt%5Ctrain%5Cgood%5CPixPin_2026-07-01_09-20-19_OK.png&thumb=128 HTTP/1.1" 200 OK
+23:55:22.444 INFO:     127.0.0.1:4701 - "GET /api/file?path=D%3A%5CCGAIC%5Cdata_local%5Csolder_smt%5Ctrain%5Cgood%5CPixPin_2026-07-01_09-22-58_OK.png&thumb=128 HTTP/1.1" 200 OK
+23:55:22.455 INFO:     127.0.0.1:4700 - "GET /api/file?path=D%3A%5CCGAIC%5Cdata_local%5Csolder_smt%5Ctrain%5Cgood%5CPixPin_2026-07-01_09-18-28_OK.png&thumb=128 HTTP/1.1" 200 OK
+23:55:22.473 INFO:     127.0.0.1:4696 - "GET /api/file?path=D%3A%5CCGAIC%5Cdata_local%5Csolder_smt%5Ctrain%5Cgood%5CPixPin_2026-07-01_09-16-48_OK.png&thumb=128 HTTP/1.1" 200 OK
+23:55:22.473 
+23:55:22.474 [UI-2] 工作台：新建工单（挂源 + 人工复判）
+23:55:22.488 INFO:     127.0.0.1:4693 - "GET /api/health HTTP/1.1" 200 OK
+23:55:22.499 INFO:     127.0.0.1:4694 - "GET /api/file?path=D%3A%5CCGAIC%5Cdata_local%5Csolder_smt%5Ctrain%5Cgood%5CPixPin_2026-07-01_09-17-36_OK.png&thumb=128 HTTP/1.1" 200 OK
+23:55:22.509 INFO:     127.0.0.1:4699 - "GET /api/file?path=D%3A%5CCGAIC%5Cdata_local%5Csolder_smt%5Ctest%5Cinsufficient%5CPixPin_2026-07-01_09-18-57.png&thumb=128 HTTP/1.1" 200 OK
+23:55:22.515 INFO:     127.0.0.1:4697 - "GET /api/file?path=D%3A%5CCGAIC%5Cdata_local%5Csolder_smt%5Ctrain%5Cgood%5CPixPin_2026-06-30_23-25-49_OK.png&thumb=128 HTTP/1.1" 200 OK
+23:55:22.517 INFO:     127.0.0.1:4700 - "GET /api/file?path=D%3A%5CCGAIC%5Cdata_local%5Csolder_smt%5Ctrain%5Cgood%5Cover_tin1_template.png&thumb=128 HTTP/1.1" 200 OK
+23:55:22.522 INFO:     127.0.0.1:4698 - "GET /api/file?path=D%3A%5CCGAIC%5Cdata_local%5Csolder_smt%5Ctrain%5Cgood%5CPixPin_2026-07-01_08-59-58_OK.png&thumb=128 HTTP/1.1" 200 OK
+23:55:22.531 INFO:     127.0.0.1:4693 - "GET /api/feedback?page=1&page_size=1&consumed=false HTTP/1.1" 200 OK
+23:55:22.532 INFO:     127.0.0.1:4701 - "GET /api/file?path=D%3A%5CCGAIC%5Cdata_local%5Csolder_smt%5Ctrain%5Cgood%5CPixPin_2026-06-30_23-16-28_OK.png&thumb=128 HTTP/1.1" 200 OK
+23:55:22.535 INFO:     127.0.0.1:4703 - "GET /api/workorders?range=all HTTP/1.1" 200 OK
+23:55:22.545 INFO:     127.0.0.1:4695 - "GET /api/file?path=D%3A%5CCGAIC%5Cdata_local%5Csolder_smt%5Ctrain%5Cgood%5CPixPin_2026-07-01_08-58-46_OK.png&thumb=128 HTTP/1.1" 200 OK
+23:55:22.547 INFO:     127.0.0.1:4696 - "GET /api/file?path=D%3A%5CCGAIC%5Cdata_local%5Csolder_smt%5Ctrain%5Cgood%5Cless_tin3_template.png&thumb=128 HTTP/1.1" 200 OK
+23:55:22.550 INFO:     127.0.0.1:4702 - "GET /api/review/stats HTTP/1.1" 200 OK
+23:55:22.568 INFO:     127.0.0.1:4694 - "GET /api/file?path=D%3A%5CCGAIC%5Cdata_local%5Csolder_smt%5Ctrain%5Cgood%5Cless_tin2_template.png&thumb=128 HTTP/1.1" 200 OK
+23:55:22.571 INFO:     127.0.0.1:4699 - "GET /api/file?path=D%3A%5CCGAIC%5Cdata_local%5Csolder_smt%5Ctrain%5Cgood%5Cless_tin2_OK.png&thumb=128 HTTP/1.1" 200 OK
+23:55:22.578 INFO:     127.0.0.1:4705 - "GET /api/system/info HTTP/1.1" 200 OK
+23:55:22.597 INFO:     127.0.0.1:4706 - "GET /api/datasources/1/groups HTTP/1.1" 200 OK
+23:55:22.609 INFO:     127.0.0.1:4697 - "GET /api/file?path=D%3A%5CCGAIC%5Cdata_local%5Csolder_smt%5Ctest%5Cinsufficient%5CPixPin_2026-07-01_11-26-06.png&thumb=128 HTTP/1.1" 200 OK
+23:55:22.620 INFO:     127.0.0.1:4694 - "GET /api/file?path=D%3A%5CCGAIC%5Cdata_local%5Csolder_smt%5Ctest%5Cinsufficient%5CPixPin_2026-07-01_09-20-19.png&thumb=128 HTTP/1.1" 200 OK
+23:55:22.626 INFO:     127.0.0.1:4701 - "GET /api/file?path=D%3A%5CCGAIC%5Cdata_local%5Csolder_smt%5Ctest%5Cinsufficient%5CPixPin_2026-07-01_11-27-58.png&thumb=128 HTTP/1.1" 200 OK
+23:55:22.627 INFO:     127.0.0.1:4697 - "GET /api/file?path=D%3A%5CCGAIC%5Cdata_local%5Csolder_smt%5Ctrain%5Cgood%5CPixPin_2026-07-01_09-16-01_OK.png&thumb=128 HTTP/1.1" 200 OK
+23:55:22.630 INFO:     127.0.0.1:4696 - "GET /api/file?path=D%3A%5CCGAIC%5Cdata_local%5Csolder_smt%5Ctest%5Cinsufficient%5CPixPin_2026-07-01_09-53-13.png&thumb=128 HTTP/1.1" 200 OK
+23:55:22.659 INFO:     127.0.0.1:4694 - "GET /api/file?path=D%3A%5CCGAIC%5Cdata_local%5Csolder_smt%5Ctest%5Cinsufficient%5CPixPin_2026-07-01_09-18-28.png&thumb=128 HTTP/1.1" 200 OK
+23:55:22.666 INFO:     127.0.0.1:4698 - "GET /api/file?path=D%3A%5CCGAIC%5Cdata_local%5Csolder_smt%5Ctrain%5Cgood%5Cless_tin1_OK.png&thumb=128 HTTP/1.1" 200 OK
+23:55:22.669 INFO:     127.0.0.1:4696 - "GET /api/file?path=D%3A%5CCGAIC%5Cdata_local%5Csolder_smt%5Ctest%5Cinsufficient%5CPixPin_2026-07-01_09-17-36.png&thumb=128 HTTP/1.1" 200 OK
+23:55:22.676 INFO:     127.0.0.1:4700 - "GET /api/file?path=D%3A%5CCGAIC%5Cdata_local%5Csolder_smt%5Ctrain%5Cgood%5Cless_tin1_template.png&thumb=128 HTTP/1.1" 200 OK
+23:55:22.682 INFO:     127.0.0.1:4701 - "GET /api/file?path=D%3A%5CCGAIC%5Cdata_local%5Csolder_smt%5Ctest%5Cinsufficient%5CPixPin_2026-07-01_09-18-11.png&thumb=128 HTTP/1.1" 200 OK
+23:55:22.684 INFO:     127.0.0.1:4696 - "GET /api/file?path=D%3A%5CCGAIC%5Cdata_local%5Csolder_smt%5Ctest%5Cinsufficient%5CPixPin_2026-07-01_09-16-16.png&thumb=128 HTTP/1.1" 200 OK
+23:55:22.690 INFO:     127.0.0.1:4699 - "GET /api/file?path=D%3A%5CCGAIC%5Cdata_local%5Csolder_smt%5Ctest%5Cinsufficient%5CPixPin_2026-07-01_09-19-30.png&thumb=128 HTTP/1.1" 200 OK
+23:55:22.705 INFO:     127.0.0.1:4700 - "GET /api/file?path=D%3A%5CCGAIC%5Cdata_local%5Csolder_smt%5Ctest%5Cinsufficient%5CPixPin_2026-07-01_09-16-01.png&thumb=128 HTTP/1.1" 200 OK
+23:55:22.706 INFO:     127.0.0.1:4697 - "GET /api/file?path=D%3A%5CCGAIC%5Cdata_local%5Csolder_smt%5Ctest%5Cinsufficient%5CPixPin_2026-07-01_09-17-50.png&thumb=128 HTTP/1.1" 200 OK
+23:55:22.708 INFO:     127.0.0.1:4694 - "GET /api/file?path=D%3A%5CCGAIC%5Cdata_local%5Csolder_smt%5Ctest%5Cinsufficient%5CPixPin_2026-07-01_09-17-02.png&thumb=128 HTTP/1.1" 200 OK
+23:55:22.712 INFO:     127.0.0.1:4513 - "GET /api/stats/overview?range=all HTTP/1.1" 200 OK
+23:55:22.713 INFO:     127.0.0.1:4698 - "GET /api/file?path=D%3A%5CCGAIC%5Cdata_local%5Csolder_smt%5Ctest%5Cinsufficient%5CPixPin_2026-07-01_09-16-48.png&thumb=128 HTTP/1.1" 200 OK
+23:55:22.725 INFO:     127.0.0.1:4695 - "GET /api/file?path=D%3A%5CCGAIC%5Cdata_local%5Csolder_smt%5Ctest%5Cinsufficient%5CPixPin_2026-07-01_09-20-45.png&thumb=128 HTTP/1.1" 200 OK
+23:55:23.063 INFO:     127.0.0.1:4704 - "GET /api/review/incomplete_report HTTP/1.1" 200 OK
+23:55:23.108   ✅ 工作台有「新建工单」按钮
+23:55:23.116 INFO:     127.0.0.1:4704 - "GET /api/workorder-templates HTTP/1.1" 200 OK
+23:55:23.126 INFO:     127.0.0.1:4513 - "GET /api/datasources HTTP/1.1" 200 OK
+23:55:24.214 INFO:     127.0.0.1:4513 - "POST /api/workorders HTTP/1.1" 200 OK
+23:55:24.250 INFO:     127.0.0.1:4703 - "GET /api/feedback?page=1&page_size=1&consumed=false HTTP/1.1" 200 OK
+23:55:24.261 INFO:     127.0.0.1:4513 - "GET /api/system/info HTTP/1.1" 200 OK
+23:55:24.285 INFO:     127.0.0.1:4702 - "GET /api/review/stats HTTP/1.1" 200 OK
+23:55:24.294 INFO:     127.0.0.1:4705 - "GET /api/workorders?range=all HTTP/1.1" 200 OK
+23:55:24.296 INFO:     127.0.0.1:4706 - "GET /api/workorders?range=all HTTP/1.1" 200 OK
+23:55:24.343 INFO:     127.0.0.1:4709 - "GET /api/feedback?page=1&page_size=1&consumed=false HTTP/1.1" 200 OK
+23:55:24.349 INFO:     127.0.0.1:4706 - "GET /api/datasources HTTP/1.1" 200 OK
+23:55:24.359 INFO:     127.0.0.1:4703 - "GET /api/stats/overview?workorder_id=1&range=all HTTP/1.1" 200 OK
+23:55:24.360 INFO:     127.0.0.1:4513 - "GET /api/review/stats HTTP/1.1" 200 OK
+23:55:24.386 INFO:     127.0.0.1:4705 - "GET /api/images?page=1&page_size=50 HTTP/1.1" 200 OK
+23:55:24.390 INFO:     127.0.0.1:4712 - "GET /api/system/info HTTP/1.1" 200 OK
+23:55:24.399 INFO:     127.0.0.1:4702 - "GET /api/datasets HTTP/1.1" 200 OK
+23:55:24.414 INFO:     127.0.0.1:4711 - "GET /api/workorders?range=all HTTP/1.1" 200 OK
+23:55:24.489 INFO:     127.0.0.1:4711 - "GET /api/datasources/1/groups HTTP/1.1" 200 OK
+23:55:24.559 INFO:     127.0.0.1:4693 - "GET /api/stats/overview?range=all HTTP/1.1" 200 OK
+23:55:24.612 INFO:     127.0.0.1:4710 - "GET /api/workorders/1/queue HTTP/1.1" 200 OK
+23:55:24.954 INFO:     127.0.0.1:4704 - "GET /api/review/incomplete_report HTTP/1.1" 200 OK
+23:55:25.117 INFO:     127.0.0.1:4713 - "GET /api/review/incomplete_report HTTP/1.1" 200 OK
+23:55:25.127 INFO:     127.0.0.1:4714 - "GET /api/workorders?range=all HTTP/1.1" 200 OK
+23:55:25.127   ✅ UI 建工单成功
+23:55:25.128   ✅ 工单聚合条件 L1a/L1b（{'label_tier': 'L1a', 'per_category': True, 'has_template': False, 'categories': ['component', 'extra_part', 'gold_finger', 'origin', 'solder_smt']}）
+23:55:25.128   ✅ 已开启人工复判
+23:55:25.128   ✅ 工单覆盖品类（component,extra_part,gold_finger,origin,solder_smt）
+23:55:25.342 INFO:     127.0.0.1:4713 - "GET /api/health HTTP/1.1" 200 OK
+23:55:25.951   ✅ 顶栏工单下拉联动（演示工单）
+23:55:26.142 
+23:55:26.142 [UI-3] 模型管理：准备模型（100+30 预训练，预计 3-10 分钟）
+23:55:26.161 INFO:     127.0.0.1:4693 - "GET /api/models HTTP/1.1" 200 OK
+23:55:26.167 INFO:     127.0.0.1:4713 - "GET /api/datasources/1/groups HTTP/1.1" 200 OK
+23:55:26.170 INFO:     127.0.0.1:4704 - "GET /api/self_learning/status HTTP/1.1" 200 OK
+23:55:26.203 INFO:     127.0.0.1:4710 - "GET /api/models/readiness HTTP/1.1" 200 OK
+23:55:27.765   ✅ 模型页「准备模型」按钮可用
+23:55:27.778 INFO:     127.0.0.1:4710 - "GET /api/models/precheck/component HTTP/1.1" 200 OK
+23:55:27.799 INFO:     127.0.0.1:4710 - "GET /api/datasources/1/groups HTTP/1.1" 200 OK
+23:55:28.339 INFO:     127.0.0.1:4710 - "GET /api/health HTTP/1.1" 200 OK
+23:55:28.658   ✅ 准备模型对话框弹出
+23:55:29.588 INFO:     127.0.0.1:4717 - "GET /api/tasks/recent HTTP/1.1" 200 OK
+23:55:29.618 INFO:     127.0.0.1:4710 - "POST /api/models/prepare HTTP/1.1" 200 OK
+23:55:29.924 [dino] 使用随包 vendor 权重: D:\CGAIC\assets\dinov2\dinov2_vits14_pretrain.pth
+23:55:29.925   [等待] 100+30 预训练…（终端进度每 15s 刷新）
+23:55:30.137 INFO:     127.0.0.1:4718 - "GET /api/tasks/recent HTTP/1.1" 200 OK
+23:55:30.137   ✅ 识别到预训练任务
+23:55:30.306 INFO:     127.0.0.1:4719 - "GET /api/tasks/29 HTTP/1.1" 200 OK
+23:55:30.307   [等待] task=29 running 0.3333333333333333 Demo5 准备（normal=8 defect=14 val=2 tpl=0 scenario=L1a profile=fast）...
+23:55:30.943 [disc] 加载预训练头 D:\CGAIC\AOI_sys\assets\disc_pretrain.pt
+23:55:30.943   [fit] init_normal 提取 8 张完成 (1s)
+23:55:31.491   [fit] init_defect 提取 14 张完成 (1s)
+23:55:31.517   [fit] 加载全局类型判别器（D:\CGAIC\AOI_sys\algo\assets\defect_clf.pkl）
+23:55:32.067   [fit] 槽位 sem 完成 (2s)
+23:55:32.067   [fit] 槽位 disc 完成 (2s)
+23:55:32.310 INFO:     127.0.0.1:4710 - "GET /api/tasks/29 HTTP/1.1" 200 OK
+23:55:32.320 INFO:     127.0.0.1:4710 - "GET /api/health HTTP/1.1" 200 OK
+23:55:32.463 INFO:     127.0.0.1:4725 - "GET /api/tasks/29 HTTP/1.1" 200 OK
+23:55:34.361 [shead] epoch 10/50 loss_n=9.7159 loss_a=4.1495
+23:55:34.431 [shead] epoch 20/50 loss_n=7.8542 loss_a=5.2199
+23:55:34.471 INFO:     127.0.0.1:4710 - "GET /api/tasks/29 HTTP/1.1" 200 OK
+23:55:34.474 INFO:     127.0.0.1:4710 - "GET /api/health HTTP/1.1" 200 OK
+23:55:34.495 INFO:     127.0.0.1:4710 - "GET /api/tasks/29 HTTP/1.1" 200 OK
+23:55:34.514 [shead] epoch 30/50 loss_n=5.2919 loss_a=6.4085
+23:55:34.582 [shead] epoch 40/50 loss_n=6.1950 loss_a=5.9686
+23:55:34.627 INFO:     127.0.0.1:4729 - "GET /api/tasks/29 HTTP/1.1" 200 OK
+23:55:34.652 [shead] epoch 50/50 loss_n=5.7981 loss_a=5.3165
+23:55:34.652 [shead] fit 完成: normal=8 pseudo=24 real_defect=14 pos_total=38 X=46 batch=32 lr=0.001
+23:55:34.655   [fit] 槽位 shead 完成 (4s)
+23:55:35.408 [fusion] sanity 加权: sem=0.519 disc=0.038 shead=0.442
+23:55:35.411 [fusion] train 域 fused AUROC=0.9821（初始权重质量，协议内）
+23:55:36.636 [route] base=0.9821 router=0.9821 enabled=False (margin=0.005)
+23:55:36.636 INFO:     127.0.0.1:4710 - "GET /api/tasks/29 HTTP/1.1" 200 OK
+23:55:36.670 INFO:     127.0.0.1:4736 - "GET /api/models HTTP/1.1" 200 OK
+23:55:36.677 INFO:     127.0.0.1:4734 - "GET /api/images?page=1&page_size=50 HTTP/1.1" 200 OK
+23:55:36.689 INFO:     127.0.0.1:4732 - "GET /api/datasets HTTP/1.1" 200 OK
+23:55:36.697 INFO:     127.0.0.1:4737 - "GET /api/self_learning/status HTTP/1.1" 200 OK
+23:55:36.740 INFO:     127.0.0.1:4735 - "GET /api/datasources/1/groups HTTP/1.1" 200 OK
+23:55:36.783 INFO:     127.0.0.1:4735 - "GET /api/datasources/1/groups HTTP/1.1" 200 OK
+23:55:36.792 INFO:     127.0.0.1:4710 - "GET /api/models/readiness HTTP/1.1" 200 OK
+23:55:36.798 INFO:     127.0.0.1:4738 - "GET /api/tasks/29 HTTP/1.1" 200 OK
+23:55:36.799   ✅ 100+30 预训练完成（done 完成）
+23:55:36.799   [信息] 预训练样本 normal=8 defect=14 val=2
+23:55:36.804 INFO:     127.0.0.1:4739 - "GET /api/models HTTP/1.1" 200 OK
+23:55:36.805   ✅ 预训练生成模型快照（version=v1 models=1）
+23:55:36.878 INFO:     127.0.0.1:4733 - "GET /api/workorders/1/queue HTTP/1.1" 200 OK
+23:55:37.357 INFO:     127.0.0.1:4733 - "GET /api/health HTTP/1.1" 200 OK
+23:55:37.835 
+23:55:37.836 [UI-4] 实时监控：产线控制 + 实时流订阅
+23:55:37.863 INFO:     127.0.0.1:4710 - "GET /api/detections/live?after_id=0&limit=50&workorder_id=1 HTTP/1.1" 200 OK
+23:55:37.929 INFO:     127.0.0.1:4735 - "GET /api/workorders/1 HTTP/1.1" 200 OK
+23:55:38.032 INFO:     127.0.0.1:4733 - "GET /api/workorders/1/queue HTTP/1.1" 200 OK
+23:55:38.471 INFO:     127.0.0.1:4733 - "GET /api/detections/live?after_id=0&limit=50&workorder_id=1 HTTP/1.1" 200 OK
+23:55:39.656   ❌ 监控页显示产线运行中（产线：已暂停）
+23:55:39.960 INFO:     127.0.0.1:4733 - "GET /api/detections/live?after_id=0&limit=50&workorder_id=1 HTTP/1.1" 200 OK
+23:55:40.359 INFO:     127.0.0.1:4733 - "GET /api/health HTTP/1.1" 200 OK
+23:55:41.160   ✅ 暂停产线后状态更新（产线：已暂停）
+23:55:41.222 INFO:     127.0.0.1:4733 - "POST /api/workorders/1/pipeline/resume HTTP/1.1" 200 OK
+23:55:41.270 INFO:     127.0.0.1:4733 - "GET /api/workorders/1 HTTP/1.1" 200 OK
+23:55:41.470 INFO:     127.0.0.1:4733 - "GET /api/detections/live?after_id=0&limit=50&workorder_id=1 HTTP/1.1" 200 OK
+23:55:42.671   ✅ 恢复产线后状态更新（产线：运行中）
+23:55:42.671   [等待] 产线自动检测落库 + 实时流订阅…
+23:55:42.700 INFO:     127.0.0.1:4745 - "GET /api/detections?page=1&page_size=1 HTTP/1.1" 200 OK
+23:55:42.808 INFO:     127.0.0.1:4746 - "GET /api/detections?page=1&page_size=1 HTTP/1.1" 200 OK
+23:55:43.415 INFO:     127.0.0.1:4733 - "GET /api/health HTTP/1.1" 200 OK
+23:55:43.438 INFO:     127.0.0.1:4748 - "GET /api/detections/live?after_id=0&limit=50&workorder_id=1 HTTP/1.1" 200 OK
+23:55:43.518 INFO:     127.0.0.1:4749 - "GET /api/detections?page=1&page_size=1 HTTP/1.1" 200 OK
+23:55:43.609 INFO:     127.0.0.1:4750 - "GET /api/file?path=D%3A%5CCGAIC%5Cdata_local%5Ccomponent%5Ctest%5Cgood%5Cshift6_template.png HTTP/1.1" 200 OK
+23:55:44.209 INFO:     127.0.0.1:4751 - "GET /api/detections?page=1&page_size=1 HTTP/1.1" 200 OK
+23:55:44.218 INFO:     127.0.0.1:4748 - "GET /api/workorders/1 HTTP/1.1" 200 OK
+23:55:44.334 INFO:     127.0.0.1:4733 - "GET /api/workorders/1/queue HTTP/1.1" 200 OK
+23:55:44.830 INFO:     127.0.0.1:4733 - "GET /api/detections/live?after_id=6986&limit=50&workorder_id=1 HTTP/1.1" 200 OK
+23:55:44.894 INFO:     127.0.0.1:4752 - "GET /api/file?path=D%3A%5CCGAIC%5Cdata_local%5Ccomponent%5Ctest%5Cmissing%5CCAPA_1_10_C2_20260606180428_MissPart_.png HTTP/1.1" 200 OK
+23:55:44.916 INFO:     127.0.0.1:4753 - "GET /api/detections?page=1&page_size=1 HTTP/1.1" 200 OK
+23:55:44.917   ✅ 产线自动检测落库 ≥3 条（n_det=5544（起=5541））
+23:55:45.012   ✅ 监控页实时流订阅到帧（按工单过滤）（frames=5）
+23:55:45.012   ✅ 流帧带判定与缺陷框（decision=anomaly）
+23:55:45.206 
+23:55:45.207 [UI-5] 错检反馈（监控页标记漏检 → 对话框提交）
+23:55:45.214 INFO:     127.0.0.1:4754 - "GET /api/detections?page=1&page_size=1 HTTP/1.1" 200 OK
+23:55:45.238 INFO:     127.0.0.1:4756 - "GET /api/file?path=D%3A%5CCGAIC%5Cdata_local%5Ccomponent%5Ctest%5Cmissing%5CCAPA_1_10_C2_20260606180504_MissPart_.png HTTP/1.1" 200 OK
+23:55:45.239 INFO:     127.0.0.1:4755 - "GET /api/file?path=D%3A%5CCGAIC%5Cdata_local%5Ccomponent%5Ctest%5Cmissing%5CCAPA_1_10_C2_20260606180504_MissPart_.png HTTP/1.1" 200 OK
+23:55:45.952 INFO:     127.0.0.1:4733 - "GET /api/detections/live?after_id=6988&limit=50&workorder_id=1 HTTP/1.1" 200 OK
+23:55:45.986 INFO:     127.0.0.1:4757 - "GET /api/file?path=D%3A%5CCGAIC%5Cdata_local%5Ccomponent%5Ctest%5Cmissing%5CCAPA_1_10_C2_20260606180548_MissPart_.png HTTP/1.1" 200 OK
+23:55:46.111   ✅ 标记漏检弹出反馈对话框
+23:55:46.345 INFO:     127.0.0.1:4733 - "GET /api/health HTTP/1.1" 200 OK
+23:55:47.427 INFO:     127.0.0.1:4733 - "POST /api/feedback HTTP/1.1" 200 OK
+23:55:47.431 QWindowsWindow::setGeometry: Unable to set geometry 560x651+639+210 (frame: 576x690+631+179) on QWidgetWindow/"FeedbackDialogClassWindow" on "HP P24h G4". Resulting geometry: 560x696+639+210 (frame: 576x735+631+179) margins: 8, 31, 8, 8 minimum size: 560x651 MINMAXINFO(maxSize=POINT(x=0, y=0), maxpos=POINT(x=0, y=0), maxtrack=POINT(x=0, y=0), mintrack=POINT(x=576, y=690)))
+23:55:47.459 INFO:     127.0.0.1:4733 - "GET /api/detections/live?after_id=6990&limit=50&workorder_id=1 HTTP/1.1" 200 OK
+23:55:47.496 INFO:     127.0.0.1:4760 - "GET /api/file?path=D%3A%5CCGAIC%5Cdata_local%5Ccomponent%5Ctest%5Cshift%5Cshift1.png HTTP/1.1" 200 OK
+23:55:48.962 INFO:     127.0.0.1:4733 - "GET /api/detections/live?after_id=6992&limit=50&workorder_id=1 HTTP/1.1" 200 OK
+23:55:48.996 INFO:     127.0.0.1:4761 - "GET /api/file?path=D%3A%5CCGAIC%5Cdata_local%5Ccomponent%5Ctest%5Cshift%5Cshift3.png HTTP/1.1" 200 OK
+23:55:49.342 INFO:     127.0.0.1:4733 - "GET /api/health HTTP/1.1" 200 OK
+23:55:49.660 INFO:     127.0.0.1:4762 - "GET /api/feedback HTTP/1.1" 200 OK
+23:55:49.661   ✅ 漏检反馈已落库
+23:55:49.875 
+23:55:49.876 [UI-6] 人工复核：待复核队列 → 判缺陷（即学）
+23:55:49.906 INFO:     127.0.0.1:4764 - "GET /api/feedback?page=1&page_size=200 HTTP/1.1" 200 OK
+23:55:49.914 INFO:     127.0.0.1:4733 - "GET /api/feedback/summary?workorder_id=1 HTTP/1.1" 200 OK
+23:55:49.917 INFO:     127.0.0.1:4766 - "GET /api/categories HTTP/1.1" 200 OK
+23:55:49.937 INFO:     127.0.0.1:4768 - "GET /api/review/queue?page=1&page_size=20 HTTP/1.1" 200 OK
+23:55:49.939 INFO:     127.0.0.1:4765 - "GET /api/review/stats HTTP/1.1" 200 OK
+23:55:49.941 INFO:     127.0.0.1:4767 - "GET /api/detections/misjudged?page=1&page_size=20 HTTP/1.1" 200 OK
+23:55:49.969 INFO:     127.0.0.1:4755 - "GET /api/file?path=D%3A%5CCGAIC%5Cdata_local%5Ccomponent%5Ctest%5Cmissing%5CCAPA_1_10_C2_20260606180504_MissPart_.png&thumb=128 HTTP/1.1" 200 OK
+23:55:50.124 INFO:     127.0.0.1:4763 - "GET /api/review/incomplete_report HTTP/1.1" 200 OK
+23:55:52.345 INFO:     127.0.0.1:4763 - "GET /api/health HTTP/1.1" 200 OK
+23:55:52.618   ✅ 复核队列非空（复判工单全量检测进队列）（rows=11）
+23:55:52.630 INFO:     127.0.0.1:4769 - "GET /api/file?path=D%3A%5CCGAIC%5Cdata_local%5Ccomponent%5Ctest%5Cshift%5Cshift4.png HTTP/1.1" 200 OK
+23:55:53.426   ✅ 判缺陷按钮可用
+23:55:53.453 INFO:     127.0.0.1:4770 - "GET /api/feedback HTTP/1.1" 200 OK
+23:55:53.704 INFO:     127.0.0.1:4763 - "POST /api/review/6995 HTTP/1.1" 200 OK
+23:55:53.777 INFO:     127.0.0.1:4763 - "GET /api/review/queue?page=1&page_size=20 HTTP/1.1" 200 OK
+23:55:53.781 INFO:     127.0.0.1:4767 - "GET /api/review/stats HTTP/1.1" 200 OK
+23:55:55.356 INFO:     127.0.0.1:4767 - "GET /api/health HTTP/1.1" 200 OK
+23:55:56.558 INFO:     127.0.0.1:4775 - "GET /api/feedback HTTP/1.1" 200 OK
+23:55:56.559   ✅ 复核判缺陷生成 review 反馈（即学）（n_review=1）
+23:55:56.764 
+23:55:56.764 [UI-7] 反馈作废：标错撤回
+23:55:58.273 INFO:     127.0.0.1:4767 - "GET /api/feedback?page=1&page_size=200 HTTP/1.1" 200 OK
+23:55:58.327 INFO:     127.0.0.1:4776 - "GET /api/file?path=D%3A%5CCGAIC%5Cdata_local%5Ccomponent%5Ctest%5Cshift%5Cshift4.png&thumb=128 HTTP/1.1" 200 OK
+23:55:58.349 INFO:     127.0.0.1:4767 - "GET /api/health HTTP/1.1" 200 OK
+23:55:59.776   ✅ 反馈记录 Tab 有「作废」按钮
+23:55:59.785 INFO:     127.0.0.1:4777 - "GET /api/feedback?page=1&page_size=200 HTTP/1.1" 200 OK
+23:55:59.786   [弹窗] QMessageBox.question（自动应答）
+23:55:59.839 INFO:     127.0.0.1:4767 - "POST /api/feedback/2/invalidate HTTP/1.1" 200 OK
+23:55:59.887 INFO:     127.0.0.1:4778 - "GET /api/feedback?page=1&page_size=200 HTTP/1.1" 200 OK
+23:55:59.896 INFO:     127.0.0.1:4767 - "GET /api/feedback/summary?workorder_id=1 HTTP/1.1" 200 OK
+23:55:59.896 INFO:     127.0.0.1:4783 - "GET /api/detections/misjudged?page=1&page_size=20 HTTP/1.1" 200 OK
+23:55:59.898 INFO:     127.0.0.1:4781 - "GET /api/categories HTTP/1.1" 200 OK
+23:55:59.913 INFO:     127.0.0.1:4779 - "GET /api/review/queue?page=1&page_size=20 HTTP/1.1" 200 OK
+23:55:59.939 INFO:     127.0.0.1:4782 - "GET /api/review/stats HTTP/1.1" 200 OK
+23:56:00.497 INFO:     127.0.0.1:4780 - "GET /api/review/incomplete_report HTTP/1.1" 200 OK
+23:56:01.350 INFO:     127.0.0.1:4780 - "GET /api/health HTTP/1.1" 200 OK
+23:56:02.384 INFO:     127.0.0.1:4794 - "GET /api/feedback?page=1&page_size=200 HTTP/1.1" 200 OK
+23:56:02.385   ✅ 作废反馈落库（invalidated）（n_invalidated=1）
+23:56:02.584 
+23:56:02.585 [UI-8] 学习提升（巩固 → 新版本）
+23:56:02.628 INFO:     127.0.0.1:4779 - "GET /api/detections/live?after_id=0&limit=50&workorder_id=1 HTTP/1.1" 200 OK
+23:56:02.761 INFO:     127.0.0.1:4795 - "GET /api/file?path=D%3A%5CCGAIC%5Cdata_local%5Ccomponent%5Ctrain%5Cgood%5C%E5%BE%AE%E4%BF%A1%E5%9B%BE%E7%89%87_20260611204957_87_18_OK_.png HTTP/1.1" 200 OK
+23:56:02.792 INFO:     127.0.0.1:4780 - "GET /api/workorders/1 HTTP/1.1" 200 OK
+23:56:02.888 INFO:     127.0.0.1:4782 - "GET /api/workorders/1/queue HTTP/1.1" 200 OK
+23:56:03.329 INFO:     127.0.0.1:4796 - "GET /api/models HTTP/1.1" 200 OK
+23:56:03.565 INFO:     127.0.0.1:4782 - "POST /api/workorders/1/learn HTTP/1.1" 200 OK
+23:56:03.651 INFO:     127.0.0.1:4782 - "GET /api/workorders/1 HTTP/1.1" 200 OK
+23:56:03.966 INFO:     127.0.0.1:4780 - "GET /api/detections/live?after_id=7007&limit=50&workorder_id=1 HTTP/1.1" 200 OK
+23:56:04.026 INFO:     127.0.0.1:4782 - "GET /api/workorders/1 HTTP/1.1" 200 OK
+23:56:04.141 INFO:     127.0.0.1:4779 - "GET /api/workorders/1/queue HTTP/1.1" 200 OK
+23:56:04.356 INFO:     127.0.0.1:4779 - "GET /api/health HTTP/1.1" 200 OK
+23:56:05.471 INFO:     127.0.0.1:4779 - "GET /api/detections/live?after_id=7007&limit=50&workorder_id=1 HTTP/1.1" 200 OK
+23:56:06.971 INFO:     127.0.0.1:4779 - "GET /api/detections/live?after_id=7007&limit=50&workorder_id=1 HTTP/1.1" 200 OK
+23:56:07.337 INFO:     127.0.0.1:4779 - "GET /api/health HTTP/1.1" 200 OK
+23:56:07.439 INFO:     127.0.0.1:4802 - "GET /api/models HTTP/1.1" 200 OK
+23:56:07.452 INFO:     127.0.0.1:4803 - "GET /api/models HTTP/1.1" 200 OK
+23:56:07.467 INFO:     127.0.0.1:4804 - "GET /api/models HTTP/1.1" 200 OK
+23:56:07.468   ✅ 学习提升后模型版本增加（1 → 2）
+23:56:07.664 
+23:56:07.664 [UI-9] 数据流队列：回队重新检测
+23:56:07.700 INFO:     127.0.0.1:4805 - "GET /api/images?page=1&page_size=50 HTTP/1.1" 200 OK
+23:56:07.706 INFO:     127.0.0.1:4782 - "GET /api/datasources HTTP/1.1" 200 OK
+23:56:07.737 INFO:     127.0.0.1:4779 - "GET /api/datasets HTTP/1.1" 200 OK
+23:56:07.779 INFO:     127.0.0.1:4807 - "GET /api/file?path=D%3A%5CCGAIC%5CAOI_sys%5Cstorage%5Carchive%5Ccomponent%5C20260831%5Cdet6999_tombstone1.png&thumb=128 HTTP/1.1" 200 OK
+23:56:07.780 INFO:     127.0.0.1:4808 - "GET /api/file?path=D%3A%5CCGAIC%5CAOI_sys%5Cstorage%5Carchive%5Ccomponent%5C20260831%5Cdet6998_shift6_2.png&thumb=128 HTTP/1.1" 200 OK
+23:56:07.801 INFO:     127.0.0.1:4809 - "GET /api/file?path=D%3A%5CCGAIC%5CAOI_sys%5Cstorage%5Carchive%5Ccomponent%5C20260831%5Cdet6997_shift6_1.png&thumb=128 HTTP/1.1" 200 OK
+23:56:07.806 INFO:     127.0.0.1:4811 - "GET /api/file?path=D%3A%5CCGAIC%5CAOI_sys%5Cstorage%5Carchive%5Ccomponent%5C20260831%5Cdet6995_shift4.png&thumb=128 HTTP/1.1" 200 OK
+23:56:07.833 INFO:     127.0.0.1:4811 - "GET /api/file?path=D%3A%5CCGAIC%5CAOI_sys%5Cstorage%5Carchive%5Ccomponent%5C20260831%5Cdet6990_CAPA_1_10_C2_20260606180548_MissPart_.png&thumb=128 HTTP/1.1" 200 OK
+23:56:07.853 INFO:     127.0.0.1:4809 - "GET /api/file?path=D%3A%5CCGAIC%5CAOI_sys%5Cstorage%5Carchive%5Ccomponent%5C20260831%5Cdet6986_shift6_template.png&thumb=128 HTTP/1.1" 200 OK
+23:56:07.857 INFO:     127.0.0.1:4811 - "GET /api/file?path=D%3A%5CCGAIC%5CAOI_sys%5Cstorage%5Carchive%5Ccomponent%5C20260831%5Cdet6988_CAPA_1_10_C2_20260606180428_MissPart_.png&thumb=128 HTTP/1.1" 200 OK
+23:56:07.878 INFO:     127.0.0.1:4811 - "GET /api/file?path=D%3A%5CCGAIC%5CAOI_sys%5Cstorage%5Carchive%5Ccomponent%5C20260831%5Cdet6989_CAPA_1_10_C2_20260606180504_MissPart_.png&thumb=128 HTTP/1.1" 200 OK
+23:56:07.889 INFO:     127.0.0.1:4810 - "GET /api/file?path=D%3A%5CCGAIC%5CAOI_sys%5Cstorage%5Carchive%5Ccomponent%5C20260831%5Cdet6996_shift5.png&thumb=128 HTTP/1.1" 200 OK
+23:56:07.894 INFO:     127.0.0.1:4807 - "GET /api/file?path=D%3A%5CCGAIC%5CAOI_sys%5Cstorage%5Carchive%5Ccomponent%5C20260831%5Cdet6991_missing1.png&thumb=128 HTTP/1.1" 200 OK
+23:56:07.905 INFO:     127.0.0.1:4809 - "GET /api/file?path=D%3A%5CCGAIC%5CAOI_sys%5Cstorage%5Carchive%5Ccomponent%5C20260831%5Cdet6987_tombstone1_template.png&thumb=128 HTTP/1.1" 200 OK
+23:56:07.921 INFO:     127.0.0.1:4808 - "GET /api/file?path=D%3A%5CCGAIC%5CAOI_sys%5Cstorage%5Carchive%5Ccomponent%5C20260831%5Cdet6992_shift1.png&thumb=128 HTTP/1.1" 200 OK
+23:56:07.927 INFO:     127.0.0.1:4811 - "GET /api/file?path=D%3A%5CCGAIC%5CAOI_sys%5Cstorage%5Carchive%5Ccomponent%5C20260831%5Cdet6985_%E5%BE%AE%E4%BF%A1%E5%9B%BE%E7%89%87_20260611205001_88_18_damage.png&thumb=128 HTTP/1.1" 200 OK
+23:56:07.936 INFO:     127.0.0.1:4813 - "GET /api/file?path=D%3A%5CCGAIC%5CAOI_sys%5Cstorage%5Carchive%5Ccomponent%5C20260831%5Cdet6993_shift2.png&thumb=128 HTTP/1.1" 200 OK
+23:56:07.937 INFO:     127.0.0.1:4810 - "GET /api/file?path=D%3A%5CCGAIC%5CAOI_sys%5Cstorage%5Carchive%5Ccomponent%5C20260831%5Cdet6984_%E5%BE%AE%E4%BF%A1%E5%9B%BE%E7%89%87_20260611204957_85_18_damage.png&thumb=128 HTTP/1.1" 200 OK
+23:56:07.968 INFO:     127.0.0.1:4780 - "GET /api/workorders/1/queue HTTP/1.1" 200 OK
+23:56:07.970 INFO:     127.0.0.1:4806 - "GET /api/file?path=D%3A%5CCGAIC%5CAOI_sys%5Cstorage%5Carchive%5Ccomponent%5C20260831%5Cdet7004_shift3_template.png&thumb=128 HTTP/1.1" 200 OK
+23:56:07.982 INFO:     127.0.0.1:4812 - "GET /api/file?path=D%3A%5CCGAIC%5CAOI_sys%5Cstorage%5Carchive%5Ccomponent%5C20260831%5Cdet6994_shift3.png&thumb=128 HTTP/1.1" 200 OK
+23:56:08.023 INFO:     127.0.0.1:4780 - "GET /api/datasources/1/groups HTTP/1.1" 200 OK
+23:56:08.692 INFO:     127.0.0.1:4814 - "GET /api/detections?page=1&page_size=1 HTTP/1.1" 200 OK
+23:56:08.694   ✅ 队列面板含 component 批次
+23:56:08.764 INFO:     127.0.0.1:4780 - "POST /api/workorders/1/queue/requeue HTTP/1.1" 200 OK
+23:56:08.989 INFO:     127.0.0.1:4780 - "GET /api/workorders/1/queue HTTP/1.1" 200 OK
+23:56:10.360 INFO:     127.0.0.1:4818 - "GET /api/workorders/1/queue HTTP/1.1" 200 OK
+23:56:10.361   ✅ UI 回队成功（component requeued=true）
+23:56:10.363 INFO:     127.0.0.1:4780 - "GET /api/health HTTP/1.1" 200 OK
+23:56:10.457 INFO:     127.0.0.1:4819 - "GET /api/detections?page=1&page_size=1 HTTP/1.1" 200 OK
+23:56:10.458   ✅ 回队后重新检测（检测数增加）（5563 → 5565）
+23:56:10.670 
+23:56:10.671 ====================================================
+23:56:11.290 发现 1 个问题 ❌（通过 31 项）
+23:56:11.290   ❌ 监控页显示产线运行中: 产线：已暂停
+23:56:11.290 [弹窗统计] QMessageBox 出现 1 次（应 0）
+23:56:11.341 INFO:     127.0.0.1:4820 - "GET /api/workorders?range=all HTTP/1.1" 200 OK
+23:56:11.424 INFO:     127.0.0.1:4821 - "DELETE /api/workorders/1 HTTP/1.1" 200 OK
+23:56:11.440 INFO:     127.0.0.1:4822 - "GET /api/datasources HTTP/1.1" 200 OK
+23:56:11.570 INFO:     127.0.0.1:4823 - "DELETE /api/datasources/1 HTTP/1.1" 200 OK
+23:56:11.571 [清理] 演示数据已移除（检测/反馈记录保留）

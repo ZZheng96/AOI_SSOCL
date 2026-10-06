@@ -1,0 +1,11 @@
+{
+  "scope": "template_algorithm",
+  "template_name": "templ_2",
+  "category": null,
+  "algorithm": "tht_多锡包锡",
+  "params": {
+    "excess_area_ratio_min": 1.15,
+    "excess_highlight_ratio_min": 0.035
+  },
+  "version": 1
+}

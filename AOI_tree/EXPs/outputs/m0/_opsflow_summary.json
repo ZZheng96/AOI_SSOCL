@@ -1,0 +1,35 @@
+{
+  "category": "bracket_black",
+  "n_issues": 0,
+  "issues": [],
+  "detect_stats": {
+    "normal": 26,
+    "gray": 5,
+    "anomaly": 9
+  },
+  "avg_ms": 223.7,
+  "fit_seconds": 55.180805921554565,
+  "train_auroc": 0.8913,
+  "fb_actions": [
+    "reflow_pending",
+    "defect_sample_add",
+    "difficult_queued",
+    "reflow_pending",
+    "active_queue"
+  ],
+  "video_summary": {
+    "anomaly_frames": 0,
+    "gray_frames": 12,
+    "total_frames": 12,
+    "fps": 10.0,
+    "anomaly_ratio": 0.0,
+    "mean_fused": 0.8036,
+    "max_fused": 0.9054,
+    "dominant_type": "常见外观缺陷",
+    "type_counter": {
+      "常见外观缺陷": 7
+    },
+    "final_decision": "gray"
+  },
+  "active_topn": 1
+}

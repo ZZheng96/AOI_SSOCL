@@ -1,0 +1,32 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+venv/
+
+# 运行时产物（快照/热图/伪异常/模型权重）
+storage/
+database/*.db
+database/*.db-journal
+database/*.db-shm
+database/*.db-wal
+database/*.db.bak-*
+
+# 数据集默认根目录（configs/default.yaml: data.default_root）
+data/
+
+# 测试运行产物
+tests/results/
+!tests/results/legacy/
+tests/report/
+
+# GUI 走查截图产物
+_ui_click_shots/
+
+# IDE / 系统
+.idea/
+.vscode/
+*.log
+Thumbs.db
+.DS_Store

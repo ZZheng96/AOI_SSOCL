@@ -1,0 +1,98 @@
+[
+  {
+    "name": "component",
+    "gate": {
+      "enabled": false,
+      "base_auc": 0.875,
+      "router_auc": 0.875,
+      "gate_margin": 0.005,
+      "train_info": {
+        "loss": 19.44817543029785,
+        "pos_mean": 15.504094123840332,
+        "neg_mean": 22.185239791870117,
+        "weight_std": 0.00193569075781852
+      }
+    },
+    "base": {
+      "auroc": 0.42857142857142855,
+      "ap": 0.827437641723356
+    },
+    "router": {
+      "auroc": 0.42857142857142855,
+      "ap": 0.827437641723356
+    },
+    "gain": 0.0
+  },
+  {
+    "name": "extra_part",
+    "gate": {
+      "enabled": false,
+      "base_auc": 0.6486,
+      "router_auc": 0.5857,
+      "gate_margin": 0.005,
+      "train_info": {
+        "loss": 37.81616973876953,
+        "pos_mean": 78.2734146118164,
+        "neg_mean": 71.77107238769531,
+        "weight_std": 0.14957189559936523
+      }
+    },
+    "base": {
+      "auroc": 0.503125,
+      "ap": 0.7030194826386776
+    },
+    "router": {
+      "auroc": 0.54375,
+      "ap": 0.7200182815550463
+    },
+    "gain": 0.0406
+  },
+  {
+    "name": "gold_finger",
+    "gate": {
+      "enabled": false,
+      "base_auc": 0.6897,
+      "router_auc": 0.626,
+      "gate_margin": 0.005,
+      "train_info": {
+        "loss": 10.271855354309082,
+        "pos_mean": 37.24277114868164,
+        "neg_mean": 20.981170654296875,
+        "weight_std": 0.10917261242866516
+      }
+    },
+    "base": {
+      "auroc": 0.33850267379679144,
+      "ap": 0.698856649535599
+    },
+    "router": {
+      "auroc": 0.19999999999999998,
+      "ap": 0.6445891088317203
+    },
+    "gain": -0.1385
+  },
+  {
+    "name": "solder_smt",
+    "gate": {
+      "enabled": false,
+      "base_auc": 0.9524,
+      "router_auc": 0.941,
+      "gate_margin": 0.005,
+      "train_info": {
+        "loss": 0.19620200991630554,
+        "pos_mean": 8.694560050964355,
+        "neg_mean": 1.372130274772644,
+        "weight_std": 0.07697732001543045
+      }
+    },
+    "base": {
+      "auroc": 0.5220700152207001,
+      "ap": 0.9121320622229192
+    },
+    "router": {
+      "auroc": 0.4771689497716895,
+      "ap": 0.9078896859834564
+    },
+    "gain": -0.0449
+  }
+]

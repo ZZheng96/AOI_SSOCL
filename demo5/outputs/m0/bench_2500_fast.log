@@ -1,0 +1,77 @@
+﻿[bench2500] config=m0_fast.yaml device=cuda images=5 rounds=6
+[dino] 使用随包 vendor 权重: D:\CGAIC\assets\dinov2\dinov2_vits14_pretrain.pth
+python : D:\CGAIC\assets\dinov2\dinov2\layers\swiglu_ffn.py:51: UserWarning: xFormers is not available (SwiGLU)
+所在位置 C:\Users\imia\AppData\Local\Temp\trae\run-command\scripts\ps-script-fc13053c-93bd-4fe0-b661-040c83af0296.ps1:19 字符
+: 5
++     python scripts\bench_2500_fast.py 2>&1 | Tee-Object outputs\m0\be ...
++     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: (D:\CGAIC\assets...ilable (SwiGLU):String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+  warnings.warn("xFormers is not available (SwiGLU)")
+D:\CGAIC\assets\dinov2\dinov2\layers\attention.py:33: UserWarning: xFormers is not available (Attention)
+  warnings.warn("xFormers is not available (Attention)")
+D:\CGAIC\assets\dinov2\dinov2\layers\block.py:40: UserWarning: xFormers is not available (Block)
+  warnings.warn("xFormers is not available (Block)")
+[disc] 加载预训练头 outputs/m0/disc_pretrain.pt
+    [extract] 20/68 (2s)
+    [extract] 40/68 (4s)
+    [extract] 60/68 (7s)
+  [fit] init_normal 提取 68 张完成 (8s)
+    [extract] 20/30 (3s)
+  [fit] init_defect 提取 30 张完成 (15s)
+  [fit] 加载全局类型判别器（D:\CGAIC\demo5\scripts\..\src\eval\..\..\outputs\m0\defect_clf.pkl）
+  [fit] 槽位 sem 完成 (16s)
+  [fit] 槽位 disc 完成 (16s)
+[shead] epoch 10/50 loss_n=5.9120 loss_a=6.7708
+[shead] epoch 20/50 loss_n=6.2242 loss_a=6.3447
+[shead] epoch 30/50 loss_n=6.6413 loss_a=5.4708
+[shead] epoch 40/50 loss_n=5.8921 loss_a=5.8092
+[shead] epoch 50/50 loss_n=5.2345 loss_a=5.0356
+[shead] fit 完成: normal=68 pseudo=204 real_defect=30 pos_total=234 X=302 batch=32 lr=0.001
+  [fit] 槽位 shead 完成 (21s)
+[fusion] sanity 加权: sem=0.512 disc=0.015 shead=0.473
+[fusion] train 域 fused AUROC=0.7657（初始权重质量，协议内）
+[route] base=0.7657 router=0.7554 enabled=False (margin=0.005)
+[bench2500] fit 22s, 槽位: ['sem', 'disc', 'shead']
+  [mkimg] bench_0.png <= 1293.jpg
+  [mkimg] bench_1.png <= 1302_repaired.jpg
+  [mkimg] bench_2.png <= t_fov_6_repaired.jpg
+  [mkimg] bench_3.png <= 2448.jpg
+  [mkimg] bench_4.png <= Image_20260116194241339.jpg
+[bench2500] warmup done
+  [1/30] model 46ms | e2e 142ms
+  [2/30] model 43ms | e2e 141ms
+  [3/30] model 263ms | e2e 253ms
+  [4/30] model 42ms | e2e 157ms
+  [5/30] model 140ms | e2e 247ms
+  [6/30] model 41ms | e2e 115ms
+  [7/30] model 40ms | e2e 104ms
+  [8/30] model 151ms | e2e 229ms
+  [9/30] model 57ms | e2e 113ms
+  [10/30] model 162ms | e2e 220ms
+  [11/30] model 54ms | e2e 111ms
+  [12/30] model 54ms | e2e 110ms
+  [13/30] model 164ms | e2e 217ms
+  [14/30] model 53ms | e2e 116ms
+  [15/30] model 157ms | e2e 241ms
+  [16/30] model 59ms | e2e 116ms
+  [17/30] model 61ms | e2e 107ms
+  [18/30] model 173ms | e2e 223ms
+  [19/30] model 56ms | e2e 115ms
+  [20/30] model 183ms | e2e 215ms
+  [21/30] model 55ms | e2e 115ms
+  [22/30] model 55ms | e2e 107ms
+  [23/30] model 159ms | e2e 236ms
+  [24/30] model 58ms | e2e 118ms
+  [25/30] model 216ms | e2e 220ms
+  [26/30] model 57ms | e2e 116ms
+  [27/30] model 57ms | e2e 112ms
+  [28/30] model 167ms | e2e 222ms
+  [29/30] model 57ms | e2e 115ms
+  [30/30] model 167ms | e2e 224ms
+
+=== 2500x2500 m0_fast.yaml (cuda) ===
+  model_ms: {'n': 30, 'mean': 101.6, 'p50': 57.5, 'p95': 183.2, 'min': 40.2, 'max': 263.1}
+  e2e_ms  : {'n': 30, 'mean': 162.5, 'p50': 129.3, 'p95': 241.3, 'min': 104.1, 'max': 253.2}
+[save] D:\CGAIC\demo5\outputs\m0\bench_2500_fast.json

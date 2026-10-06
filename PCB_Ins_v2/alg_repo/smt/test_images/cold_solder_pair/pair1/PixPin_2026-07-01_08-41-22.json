@@ -1,0 +1,316 @@
+{
+  "version": "6.3.1",
+  "flags": {},
+  "shapes": [
+    {
+      "label": "cold_solder",
+      "points": [
+        [
+          126.80808080808083,
+          103.60606060606061
+        ],
+        [
+          246.50505050505052,
+          207.64646464646466
+        ]
+      ],
+      "group_id": null,
+      "description": "",
+      "shape_type": "rectangle",
+      "flags": {},
+      "mask": null
+    },
+    {
+      "label": "pad",
+      "points": [
+        [
+          0.04040404040406109,
+          62.6969696969697
+        ],
+        [
+          196.00000000000003,
+          229.36363636363637
+        ]
+      ],
+      "group_id": null,
+      "description": "",
+      "shape_type": "rectangle",
+      "flags": {},
+      "mask": null
+    },
+    {
+      "label": "pad",
+      "points": [
+        [
+          607.1111111111111,
+          66.23232323232322
+        ],
+        [
+          765.1919191919192,
+          224.8181818181818
+        ]
+      ],
+      "group_id": null,
+      "description": "",
+      "shape_type": "rectangle",
+      "flags": {},
+      "mask": null
+    },
+    {
+      "label": "solder_mask",
+      "points": [
+        [
+          0.14507772020723986,
+          29.010362694300518
+        ],
+        [
+          197.5544041450777,
+          51.290155440414516
+        ]
+      ],
+      "group_id": null,
+      "description": "",
+      "shape_type": "rectangle",
+      "flags": {},
+      "mask": null
+    },
+    {
+      "label": "solder_mask",
+      "points": [
+        [
+          0.6632124352331464,
+          234.70984455958552
+        ],
+        [
+          245.22279792746113,
+          284.4507772020726
+        ]
+      ],
+      "group_id": null,
+      "description": "",
+      "shape_type": "rectangle",
+      "flags": {},
+      "mask": null
+    },
+    {
+      "label": "solder_mask",
+      "points": [
+        [
+          611.5440414507773,
+          234.19170984455963
+        ],
+        [
+          716.7253886010363,
+          282.37823834196894
+        ]
+      ],
+      "group_id": null,
+      "description": "",
+      "shape_type": "rectangle",
+      "flags": {},
+      "mask": null
+    },
+    {
+      "label": "silk",
+      "points": [
+        [
+          0.14507772020723986,
+          2.0673575129533717
+        ],
+        [
+          227.0880829015544,
+          16.575129533678755
+        ]
+      ],
+      "group_id": null,
+      "description": "",
+      "shape_type": "rectangle",
+      "flags": {},
+      "mask": null
+    },
+    {
+      "label": "silk",
+      "points": [
+        [
+          720.3523316062177,
+          3.103626943005189
+        ],
+        [
+          748.3316062176167,
+          29.010362694300518
+        ]
+      ],
+      "group_id": null,
+      "description": "",
+      "shape_type": "rectangle",
+      "flags": {},
+      "mask": null
+    },
+    {
+      "label": "silk",
+      "points": [
+        [
+          767.5025906735752,
+          245.59067357512953
+        ],
+        [
+          784.6010362694301,
+          265.7979274611399
+        ]
+      ],
+      "group_id": null,
+      "description": "",
+      "shape_type": "rectangle",
+      "flags": {},
+      "mask": null
+    },
+    {
+      "label": "silk",
+      "points": [
+        [
+          566.4663212435233,
+          1.549222797927463
+        ],
+        [
+          709.4715025906736,
+          18.12953367875648
+        ]
+      ],
+      "group_id": null,
+      "description": "",
+      "shape_type": "rectangle",
+      "flags": {},
+      "mask": null
+    },
+    {
+      "label": "silk",
+      "points": [
+        [
+          759.2124352331607,
+          36.264248704663224
+        ],
+        [
+          786.6735751295338,
+          60.09844559585493
+        ]
+      ],
+      "group_id": null,
+      "description": "",
+      "shape_type": "rectangle",
+      "flags": {},
+      "mask": null
+    },
+    {
+      "label": "solder_mask",
+      "points": [
+        [
+          204.8082901554404,
+          35.22797927461141
+        ],
+        [
+          247.81347150259066,
+          114.50259067357516
+        ]
+      ],
+      "group_id": null,
+      "description": "",
+      "shape_type": "rectangle",
+      "flags": {},
+      "mask": null
+    },
+    {
+      "label": "silk",
+      "points": [
+        [
+          509.9896373056995,
+          43.00000000000001
+        ],
+        [
+          525.0155440414509,
+          243.0
+        ]
+      ],
+      "group_id": null,
+      "description": "",
+      "shape_type": "rectangle",
+      "flags": {},
+      "mask": null
+    },
+    {
+      "label": "silk",
+      "points": [
+        [
+          454.03108808290153,
+          98.44041450777203
+        ],
+        [
+          457.6580310880829,
+          169.42487046632127
+        ]
+      ],
+      "group_id": null,
+      "description": "",
+      "shape_type": "rectangle",
+      "flags": {},
+      "mask": null
+    },
+    {
+      "label": "solder_mask",
+      "points": [
+        [
+          604.8082901554404,
+          31.60103626943006
+        ],
+        [
+          701.6994818652851,
+          61.134715025906736
+        ]
+      ],
+      "group_id": null,
+      "description": "",
+      "shape_type": "rectangle",
+      "flags": {},
+      "mask": null
+    },
+    {
+      "label": "crack",
+      "points": [
+        [
+          166.9844559585492,
+          115.53886010362694
+        ],
+        [
+          185.63730569948186,
+          197.40414507772022
+        ]
+      ],
+      "group_id": null,
+      "description": "",
+      "shape_type": "rectangle",
+      "flags": {},
+      "mask": null
+    },
+    {
+      "label": "solder_mask",
+      "points": [
+        [
+          245.74093264248702,
+          2.5854922279792802
+        ],
+        [
+          531.7512953367876,
+          17.093264248704664
+        ]
+      ],
+      "group_id": null,
+      "description": "",
+      "shape_type": "rectangle",
+      "flags": {},
+      "mask": null
+    }
+  ],
+  "imagePath": "PixPin_2026-07-01_08-41-22.png",
+  "imageData": null,
+  "imageHeight": 286,
+  "imageWidth": 792
+}

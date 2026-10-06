@@ -1,0 +1,113 @@
+augment:
+  enhance:
+    brightness: false
+    flip: false
+    rot90: false
+  preprocess:
+    clahe: 0.0
+    enabled: false
+    gray: false
+    median: 0
+  pseudo:
+    feather: true
+    methods:
+    - defect_transplant
+    - cutpaste
+    - color_blot
+    transplant_scale:
+    - 0.35
+    - 0.9
+backbone:
+  grid: 32
+  name: dinov2_vits14
+  output_layer: 9
+calibration:
+  cdf_bins: 256
+consensus:
+  enabled: true
+decision:
+  no_cap_fused: true
+  tau_gray: 0.95
+  tau_quantile: 0.99
+  tta:
+    brightness: false
+    brights:
+    - -25
+    - 25
+    enabled: false
+    gammas:
+    - 0.8
+    - 1.25
+    lighting: false
+    shift: 10
+device: cuda
+fusion:
+  mode: fixed_equal
+  weight_mode: sanity
+hierarchical:
+  mask_thresh: 0.5
+  min_area: 16
+  work_side: 512
+protocol:
+  forbid:
+  - test_good
+  - pairs
+  - filename_metadata
+  n_init_defect: 30
+  n_init_normal: 100
+router:
+  enabled: true
+  epochs: 50
+  gate_margin: 0.005
+  lam_entropy: 0.1
+  lr: 0.001
+  margin: 0.1
+seed: 42
+slots:
+  blob:
+    enabled: false
+  disc:
+    enabled: true
+    epochs: 30
+    freeze: true
+    hidden: 128
+    init_from: D:\CGAIC\PCB_Ins_v2\assets\disc_pretrain.pt
+    lr: 0.001
+    pseudo_per_image: 8
+  inp:
+    enabled: false
+  layout:
+    enabled: false
+  open:
+    enabled: true
+  sem:
+    block_topk: 3
+    coreset_size: 512
+    enabled: true
+    tile_topk_ratio: 0.05
+  shead:
+    batch: 32
+    enabled: true
+    epochs: 50
+    hidden: 256
+    lr: 0.001
+    margin: 5.0
+    max_base_tiles: 96
+    max_patches: 50000
+    pseudo_per_image: 3
+  tpl:
+    enabled: false
+  trad:
+    enabled: false
+tiling:
+  mode: single
+  multiscale_scales:
+  - 1
+  - 2
+  - 4
+  multiscale_weights:
+  - 0.6
+  - 0.3
+  - 0.1
+  stride: 448
+  tile_size: 512

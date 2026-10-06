@@ -1,0 +1,28 @@
+# 已知可用依赖锁定（评审整改 P1-3：依赖可复现）。
+# 来源：本项目开发虚拟环境（CGAIC/.env）pip freeze，按 requirements.txt 过滤。
+# 口径与限制：
+# - 采集环境为 Windows / Python 3.10，torch 为本机 GPU 轮子（cu126）；
+# - Docker CPU 镜像为 python:3.11-slim + pytorch CPU 源，torch/torchvision
+#   版本号后缀不同（无 +cuXXX），其余纯 Python 包可直接复用本锁；
+# - GPU 容器构建（docker-compose.gpu.yml）使用 cu121 源，torch 版本按
+#   CUDA/驱动矩阵选择后应重新 freeze 固化；
+# - 复现命令：pip install -r requirements-lock.txt（同平台同 Python 版本）。
+albumentations==2.0.8
+fastapi==0.142.1
+numpy==2.2.6
+opencv-python==5.0.0.93
+pillow==12.3.0
+pydantic==2.13.5
+pyqtgraph==0.14.0
+PySide6==6.11.2
+python-multipart==0.0.32
+PyYAML==6.0.3
+requests==2.34.2
+scikit-learn==1.7.2
+SQLAlchemy==2.0.54
+timm==1.0.30
+torch==2.14.0+cu126
+torchvision==0.29.0+cu126
+uvicorn==0.54.0
+websocket-client==1.9.2
+websockets==16.1.1

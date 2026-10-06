@@ -1,0 +1,21 @@
+{
+  "category": "gold_finger",
+  "actions": {
+    "defect_sample_add": 4,
+    "difficult_queued": 11,
+    "reflow_blocked_by_fuse_ratio": 4,
+    "reflow_rolled_back": 2
+  },
+  "reflow_reason": {
+    "reflow_blocked_by_fuse_ratio(drift=0.1088)": 1,
+    "reflow_blocked_by_fuse_ratio(drift=0.1432)": 1,
+    "reflow_blocked_by_fuse_ratio(drift=0.1099)": 1,
+    "reflow_rolled_back(drift=0.1528)": 1,
+    "reflow_blocked_by_fuse_ratio(drift=0.0579)": 1,
+    "reflow_rolled_back(drift=0.426)": 1
+  },
+  "n_feedback": 21,
+  "n_boost": 26,
+  "boost_mean": 0.03233952380952381,
+  "final_auroc": 0.1761
+}

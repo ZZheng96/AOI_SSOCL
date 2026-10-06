@@ -1,0 +1,13 @@
+{
+  "_comment": "注册示例：复制到生产池（如 cv_detect_algs.json 的 cv_algorithms）",
+  "cv_algorithms": [
+    {
+      "algorithm_code": "pcb_through_hole_solder_defect",
+      "class_path": "algorithms.pcb_through_hole.pcb_through_hole_solder_alg.PcbThroughHoleSolderAlg",
+      "description": "插件焊点缺陷检测（孔洞/少锡/多锡/连锡/不出脚）",
+      "idle_timeout": 600,
+      "timeout": 120,
+      "config_path": "./resources/config/alg/pcb_through_hole/pcb_through_hole_solder_alg.json"
+    }
+  ]
+}

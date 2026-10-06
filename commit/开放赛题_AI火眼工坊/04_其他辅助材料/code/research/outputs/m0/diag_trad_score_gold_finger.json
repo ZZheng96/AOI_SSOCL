@@ -1,0 +1,19 @@
+{
+  "category": "gold_finger",
+  "mode": "tiles36",
+  "n_test": 72,
+  "n_defect": 55,
+  "bank": {
+    "whole": 68,
+    "tile": 3894
+  },
+  "auroc": {
+    "whole_3nn": 0.0791,
+    "whole_min": 0.0695,
+    "tile_min_top3": 0.0642,
+    "tile_min_mean": 0.0866,
+    "tile_3nn_top3": 0.0567,
+    "tile_3nn_mean": 0.0984
+  },
+  "eval_sec": 964.9
+}

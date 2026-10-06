@@ -1,0 +1,10 @@
+{
+  "best_cfg": {
+    "topk": 16,
+    "recall_p": 0.2,
+    "iou_mean": 0.131,
+    "iou_median": 0.11,
+    "cover_0.3": 0.104,
+    "off_median": 0.101
+  }
+}

@@ -1,0 +1,31 @@
+# AOI 质检系统：后端服务容器化部署
+# 桌面端（PySide6）在宿主机原生运行：python main.py --server http://<宿主机IP>:8017
+services:
+  aoi-backend:
+    build:
+      context: ..
+      dockerfile: AOI_Core/Dockerfile
+    container_name: aoi-backend
+    ports:
+      - "127.0.0.1:8017:8017"
+    volumes:
+      - aoi-storage:/data/storage          # 图像/视频/伪异常/热力图/自学习模型
+      - aoi-database:/data/database        # SQLite 数据库
+    environment:
+      - AOI_CONFIG=/app/configs/docker.yaml
+      - AOI_PRODUCTION=1
+      - AOI_API_KEY=${AOI_API_KEY:?AOI_API_KEY must be set}
+      - AOI_CORS_ORIGINS=${AOI_CORS_ORIGINS:-}
+    restart: unless-stopped
+    # GPU 部署（Linux + nvidia-container-toolkit）时取消注释，并改用 cu121 torch：
+    # deploy:
+    #   resources:
+    #     reservations:
+    #       devices:
+    #         - driver: nvidia
+    #           count: 1
+    #           capabilities: [gpu]
+
+volumes:
+  aoi-storage:
+  aoi-database:

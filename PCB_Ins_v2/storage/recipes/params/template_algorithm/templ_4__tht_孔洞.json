@@ -1,0 +1,12 @@
+{
+  "scope": "template_algorithm",
+  "template_name": "templ_4",
+  "category": null,
+  "algorithm": "tht_孔洞",
+  "params": {
+    "void_preset": "MED",
+    "void_decide_area_frac": 0.0035,
+    "void_decide_min_dark": 0.8
+  },
+  "version": 1
+}

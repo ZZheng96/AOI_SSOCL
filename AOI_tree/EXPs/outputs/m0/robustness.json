@@ -1,0 +1,48 @@
+{
+  "category": "bottle",
+  "dataset": "mvtec",
+  "n_good": 15,
+  "n_defect": 15,
+  "perturbations": {
+    "gamma07": {
+      "fp": 7,
+      "fn": 0,
+      "fp_rate": 0.467,
+      "fn_rate": 0.0
+    },
+    "gamma13": {
+      "fp": 10,
+      "fn": 0,
+      "fp_rate": 0.667,
+      "fn_rate": 0.0
+    },
+    "bright+25": {
+      "fp": 8,
+      "fn": 0,
+      "fp_rate": 0.533,
+      "fn_rate": 0.0
+    },
+    "bright-25": {
+      "fp": 9,
+      "fn": 0,
+      "fp_rate": 0.6,
+      "fn_rate": 0.0
+    },
+    "contrast06": {
+      "fp": 1,
+      "fn": 0,
+      "fp_rate": 0.067,
+      "fn_rate": 0.0
+    },
+    "shift10": {
+      "fp": 14,
+      "fn": 0,
+      "fp_rate": 0.933,
+      "fn_rate": 0.0
+    }
+  },
+  "baseline": {
+    "fp_rate": 0.133,
+    "fn_rate": 0.0
+  }
+}

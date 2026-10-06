@@ -1,0 +1,29 @@
+{
+  "tol": 0.05,
+  "anchor_size": 20,
+  "anchor_paths": [
+    "D:\\CGAIC\\PCB_Ins_v2\\storage\\train\\mpdd_bracket_black\\normal\\n0023.png",
+    "D:\\CGAIC\\PCB_Ins_v2\\storage\\train\\mpdd_bracket_black\\normal\\n0024.png",
+    "D:\\CGAIC\\PCB_Ins_v2\\storage\\train\\mpdd_bracket_black\\normal\\n0026.png",
+    "D:\\CGAIC\\PCB_Ins_v2\\storage\\train\\mpdd_bracket_black\\normal\\n0036.png",
+    "D:\\CGAIC\\PCB_Ins_v2\\storage\\train\\mpdd_bracket_black\\normal\\n0056.png",
+    "D:\\CGAIC\\PCB_Ins_v2\\storage\\train\\mpdd_bracket_black\\normal\\n0118.png",
+    "D:\\CGAIC\\PCB_Ins_v2\\storage\\train\\mpdd_bracket_black\\normal\\n0119.png",
+    "D:\\CGAIC\\PCB_Ins_v2\\storage\\train\\mpdd_bracket_black\\normal\\n0130.png",
+    "D:\\CGAIC\\PCB_Ins_v2\\storage\\train\\mpdd_bracket_black\\normal\\n0146.png",
+    "D:\\CGAIC\\PCB_Ins_v2\\storage\\train\\mpdd_bracket_black\\normal\\n0147.png",
+    "D:\\CGAIC\\PCB_Ins_v2\\storage\\train\\mpdd_bracket_black\\normal\\n0178.png",
+    "D:\\CGAIC\\PCB_Ins_v2\\storage\\train\\mpdd_bracket_black\\normal\\n0193.png",
+    "D:\\CGAIC\\PCB_Ins_v2\\storage\\train\\mpdd_bracket_black\\normal\\n0203.png",
+    "D:\\CGAIC\\PCB_Ins_v2\\storage\\train\\mpdd_bracket_black\\normal\\n0207.png",
+    "D:\\CGAIC\\PCB_Ins_v2\\storage\\train\\mpdd_bracket_black\\normal\\n0209.png",
+    "D:\\CGAIC\\PCB_Ins_v2\\storage\\train\\mpdd_bracket_black\\normal\\n0215.png",
+    "D:\\CGAIC\\PCB_Ins_v2\\storage\\train\\mpdd_bracket_black\\normal\\n0224.png",
+    "D:\\CGAIC\\PCB_Ins_v2\\storage\\train\\mpdd_bracket_black\\normal\\n0236.png",
+    "D:\\CGAIC\\PCB_Ins_v2\\storage\\train\\mpdd_bracket_black\\normal\\n0241.png",
+    "D:\\CGAIC\\PCB_Ins_v2\\storage\\train\\mpdd_bracket_black\\normal\\n0274.png"
+  ],
+  "base_mean": 0.5109375,
+  "base_std": 0.13497737842067956,
+  "history": []
+}

@@ -1,0 +1,17 @@
+{
+  "scope": "algorithm_default",
+  "template_name": null,
+  "category": null,
+  "algorithm": "surface_起皱",
+  "params": {
+    "box_display_mode": "region",
+    "wrinkle_score_thresh": 0.25,
+    "lap_thresh": 5.0,
+    "curvature_ratio_min": 0.05,
+    "resize_width": 1400,
+    "dilate_px": 40,
+    "merge_gap_px": 50,
+    "max_defect_boxes": 4
+  },
+  "version": 1
+}

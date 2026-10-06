@@ -1,0 +1,18 @@
+{
+  "algorithmId": 7004,
+  "algorithmCode": "component_tombstone",
+  "version": 1,
+  "remark": "元件立碑检测：宽高比偏差+两端焊盘不对称+ROI模式联合判定",
+  "releaseUser": "administrator",
+  "releaseTime": "2026-06-30T00:00:00",
+  "defaultParam": {
+    "aspect_dev_ratio": 0.30,
+    "pad_area_ratio_max": 0.85,
+    "solder_thresh": 0,
+    "roi_diff_min": 0.28,
+    "roi_ncc_max": 0.12,
+    "roi_body_ratio_min": 0.85,
+    "roi_shape_min": 0.01,
+    "roi_pad_change_max": 0.70
+  }
+}

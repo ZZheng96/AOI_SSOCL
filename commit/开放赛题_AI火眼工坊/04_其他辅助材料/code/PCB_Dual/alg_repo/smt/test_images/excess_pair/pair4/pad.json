@@ -1,0 +1,47 @@
+{
+  "version": "6.3.1",
+  "flags": {},
+  "shapes": [
+    {
+      "label": "pad",
+      "points": [
+        [
+          81.77586206896542,
+          78.53448275862067
+        ],
+        [
+          319.70689655172407,
+          471.63793103448273
+        ]
+      ],
+      "group_id": null,
+      "description": "",
+      "shape_type": "rectangle",
+      "flags": {},
+      "mask": null
+    },
+    {
+      "label": "pad",
+      "points": [
+        [
+          1050.7413793103449,
+          43.189655172413765
+        ],
+        [
+          1273.155172413793,
+          488.8793103448276
+        ]
+      ],
+      "group_id": null,
+      "description": "",
+      "shape_type": "rectangle",
+      "flags": {},
+      "mask": null
+    }
+  ],
+  "source": "PixPin_2026-07-01_11-21-15_OK.json",
+  "imagePath": "",
+  "imageData": null,
+  "imageHeight": 0,
+  "imageWidth": 0
+}

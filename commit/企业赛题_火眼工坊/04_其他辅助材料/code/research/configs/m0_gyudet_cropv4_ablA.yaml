@@ -1,0 +1,131 @@
+seed: 42
+device: cuda
+protocol:
+  n_init_normal: 100
+  n_init_defect: 100
+  forbid:
+  - test_good
+  - pairs
+  - filename_metadata
+fusion:
+  # U73：shead 主导融合--白名单只保留 shead（权重归一化后=1.0，等价单槽融合）。
+  # 依据 U72v3：shead 单槽 test 0.8370 但等权/共识 fused 仅 0.4867，
+  # 弱槽（disc/blob/layout/trad 均 <0.45）稀释强槽信号。
+  # weight_mode=sanity 同时使共识权重跳过（U40），权重路径单一可控。
+  mode: fixed_equal
+  weight_mode: sanity
+  only_slots:
+  - shead
+backbone:
+  name: dinov2_vits14
+  output_layer: 9
+  grid: 32
+tiling:
+  mode: single
+  tile_size: 512
+  stride: 448
+  multiscale_scales:
+  - 1
+  - 2
+  - 4
+  multiscale_weights:
+  - 0.6
+  - 0.3
+  - 0.1
+slots:
+  sem:
+    enabled: true
+    coreset_size: 512
+    tile_topk_ratio: 0.05
+    block_topk: 3
+  disc:
+    enabled: true
+    hidden: 128
+    epochs: 30
+    lr: 0.001
+    pseudo_per_image: 8
+    init_from: outputs/m0/disc_pretrain.pt
+    freeze: true
+  shead:
+    enabled: true
+    hidden: 256
+    epochs: 100
+    lr: 0.001
+    batch: 32
+    margin: 5.0
+    pseudo_per_image: 0  # v4：去伪异常（真实缺陷 crop 已足量，伪异常占 pos 55% 拖低质量）
+    max_base_tiles: 96
+    max_patches: 50000
+    # U73v4 crop 级判别模式：随机滑窗训练 + 相邻一致性聚合 + shead 主导融合
+    # v3 遗留问题：训练上下文 crop 只有"缺陷居中"一种位置，测试滑窗 crop
+    #   缺陷位置/占比随机（10%-100%）；全局 topk 聚合无空间信息，孤立假阳性
+    #   与连续高分簇同权进入 topk。
+    # v4 改进：随机滑窗训练（jitter 偏移对齐测试分布）+ 3x3 平滑 max 聚合
+    #   （连续簇保持高分、孤立假阳性被邻域稀释 8/9）
+    score_mode: crop
+    crop_size: 500  # 初始值，fit 时自适应覆盖为中位数缺陷框尺寸
+    crop_pad: 0.2
+    n_fit_normal_crops: 10
+    n_bg_per_defect: 3
+    adaptive_crop_size: true
+    use_context_crops: false  # v4：被随机滑窗 crop 替代（jitter 是其超集）
+    score_overlap: 0.5
+    score_max_crops: 120
+    score_topk: 3  # fallback 聚合（截断/开关关闭时）
+    score_topk_ratio: 0.0
+    # v4 新增
+    rand_sliding_train: true
+    n_pos_slides_per_defect: 3  # 每框随机滑窗正样本数
+    slide_jitter: 0.5  # 框中心偏移幅度（crop_size 比例）
+    pos_frac_min: 0.1  # 正样本最低缺陷占比（过滤几乎纯背景 crop）
+    use_adjacent_agg: false  # 消融A：关平滑聚合（回退 topk），隔离聚合对单槽的影响
+  blob:
+    enabled: true
+    sigmas:
+    - 1
+    - 2
+    - 4
+    - 8
+    - 16
+  trad:
+    enabled: true
+  layout:
+    enabled: true
+  inp:
+    enabled: true
+  open:
+    enabled: true
+    n_components: 0.95
+    topk_ratio: 0.05
+    thresh: 0.9
+  tpl:
+    enabled: false
+    feat_weight: 0.7
+    pix_weight: 0.3
+    topk_ratio: 0.1
+router:
+  enabled: true
+  epochs: 50
+  lr: 0.001
+  margin: 0.1
+  lam_entropy: 0.1
+  gate_margin: 0.005
+consensus:
+  enabled: true
+  blend: 0.5
+calibration:
+  cdf_bins: 256
+decision:
+  tau_quantile: 0.99
+  tau_gray: 0.95
+hierarchical:
+  mask_thresh: 0.5
+  min_area: 16
+  work_side: 512
+datasets:
+  gyu_det: D:\CGAIC\data_origin\GYU-DET
+  data_local: D:\CGAIC\data_local
+  mvtec: D:\CGAIC\data_origin\mvtec
+  btad: D:\CGAIC\data_origin\BTAD\BTech_Dataset_transformed
+  mpdd: D:\CGAIC\data_origin\MPDD
+output_dir: d:\CGAIC\demo5\outputs\m0

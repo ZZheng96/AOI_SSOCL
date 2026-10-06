@@ -1,0 +1,244 @@
+{
+  "version": "6.3.1",
+  "flags": {},
+  "shapes": [
+    {
+      "label": "bridge",
+      "points": [
+        [
+          834.2058823529411,
+          419.1470588235294
+        ],
+        [
+          902.5882352941176,
+          510.3235294117647
+        ]
+      ],
+      "group_id": null,
+      "description": "",
+      "shape_type": "rectangle",
+      "flags": {},
+      "mask": null
+    },
+    {
+      "label": "pad",
+      "points": [
+        [
+          29.058823529411825,
+          47.08823529411766
+        ],
+        [
+          270.97058823529414,
+          149.29411764705884
+        ]
+      ],
+      "group_id": null,
+      "description": "",
+      "shape_type": "rectangle",
+      "flags": {},
+      "mask": null
+    },
+    {
+      "label": "pad",
+      "points": [
+        [
+          26.85294117647065,
+          204.44117647058823
+        ],
+        [
+          259.2058823529412,
+          291.94117647058823
+        ]
+      ],
+      "group_id": null,
+      "description": "",
+      "shape_type": "rectangle",
+      "flags": {},
+      "mask": null
+    },
+    {
+      "label": "pad",
+      "points": [
+        [
+          33.47058823529417,
+          351.49999999999994
+        ],
+        [
+          258.47058823529414,
+          446.35294117647055
+        ]
+      ],
+      "group_id": null,
+      "description": "",
+      "shape_type": "rectangle",
+      "flags": {},
+      "mask": null
+    },
+    {
+      "label": "pad",
+      "points": [
+        [
+          29.058823529411825,
+          496.35294117647055
+        ],
+        [
+          243.764705882353,
+          593.4117647058823
+        ]
+      ],
+      "group_id": null,
+      "description": "",
+      "shape_type": "rectangle",
+      "flags": {},
+      "mask": null
+    },
+    {
+      "label": "pad",
+      "points": [
+        [
+          739.3529411764706,
+          50.0294117647059
+        ],
+        [
+          952.5882352941177,
+          157.38235294117646
+        ]
+      ],
+      "group_id": null,
+      "description": "",
+      "shape_type": "rectangle",
+      "flags": {},
+      "mask": null
+    },
+    {
+      "label": "pad",
+      "points": [
+        [
+          740.0882352941177,
+          194.14705882352942
+        ],
+        [
+          950.3823529411765,
+          311.0588235294117
+        ]
+      ],
+      "group_id": null,
+      "description": "",
+      "shape_type": "rectangle",
+      "flags": {},
+      "mask": null
+    },
+    {
+      "label": "pad",
+      "points": [
+        [
+          741.5588235294117,
+          346.35294117647055
+        ],
+        [
+          950.3823529411765,
+          450.76470588235287
+        ]
+      ],
+      "group_id": null,
+      "description": "",
+      "shape_type": "rectangle",
+      "flags": {},
+      "mask": null
+    },
+    {
+      "label": "pad",
+      "points": [
+        [
+          743.7647058823529,
+          494.8823529411764
+        ],
+        [
+          949.6470588235294,
+          577.9705882352941
+        ]
+      ],
+      "group_id": null,
+      "description": "",
+      "shape_type": "rectangle",
+      "flags": {},
+      "mask": null
+    },
+    {
+      "label": "solder_mask",
+      "points": [
+        [
+          662.1652892561984,
+          9.971074380165287
+        ],
+        [
+          838.198347107438,
+          30.632231404958677
+        ]
+      ],
+      "group_id": null,
+      "description": "",
+      "shape_type": "rectangle",
+      "flags": {},
+      "mask": null
+    },
+    {
+      "label": "silk",
+      "points": [
+        [
+          215.05785123966945,
+          1.706611570247932
+        ],
+        [
+          282.8264462809918,
+          21.541322314049587
+        ]
+      ],
+      "group_id": null,
+      "description": "",
+      "shape_type": "rectangle",
+      "flags": {},
+      "mask": null
+    },
+    {
+      "label": "silk",
+      "points": [
+        [
+          348.1157024793389,
+          614.9297520661157
+        ],
+        [
+          623.3223140495868,
+          625.6735537190083
+        ]
+      ],
+      "group_id": null,
+      "description": "",
+      "shape_type": "rectangle",
+      "flags": {},
+      "mask": null
+    },
+    {
+      "label": "solder_mask",
+      "points": [
+        [
+          42.33057851239673,
+          615.7561983471074
+        ],
+        [
+          282.00000000000006,
+          643.8553719008265
+        ]
+      ],
+      "group_id": null,
+      "description": "",
+      "shape_type": "rectangle",
+      "flags": {},
+      "mask": null
+    }
+  ],
+  "imagePath": "PixPin_2026-07-01_09-22-58.png",
+  "imageData": null,
+  "imageHeight": 653,
+  "imageWidth": 964
+}

@@ -1,0 +1,106 @@
+# Demo5 M0 速度工作点（fast，U57）：2500² <200ms（模型运行时间口径）达标配置
+# 与 m0.yaml（精度模式，全槽位）的差异：只启用全 GPU 槽位 sem/disc/shead
+# （needs_dino=True，主线程 GPU 计算，无 CPU 慢槽）——对应 demo4 161.9ms
+# 基准的"整图单次前向 + 记忆库/判别头"简化工作点。
+# 实测（GTX 1660 SUPER，2026-08-31，scripts/bench_2500_fast.py，
+# 5 图×6 轮=30 次交替无缓存，原始记录 outputs/m0/bench_2500_fast.json）：
+#   2500×2500 模型段（内存帧：resize448+前向+融合）mean 102 / p50 58 / p95 183ms ✅<200ms
+#   2500×2500 端到端（含 imdecode 读盘）mean 163 / p50 129 / p95 241ms
+#   注：早期文档的 "69ms@2500²" 为无原始记录的单次乐观值，2026-08-31 起废弃，
+#       一切以 bench_2500_fast.json 为准（评测硬件 1660 SUPER，赛题目标机型 2060 同档）。
+# 精度：mvtec bottle fused 1.0000（=精度模式，无损）；gold_finger 0.1572
+#   （=精度模式 0.1059，反向槽剔除反而略好）
+# 精度模式（全槽位）2500² 399ms（blob 全分辨率 U22 约束 + trad GIL）——
+# 速度分以本工作点交付，学习后 AUC 以精度模式交付（双工作点）。
+seed: 42
+device: cuda
+
+protocol:
+  n_init_normal: 100      # 仅 train/good
+  n_init_defect: 30       # 仅 train/bad 或 test/defect（赛题协议）
+  forbid: [test_good, pairs, filename_metadata]   # 红线：代码断言强制
+
+fusion:
+  weight_mode: sanity     # equal | sanity（U40：sanity=init_defect 槽位 AUROC 加权，剔除反向槽；M9 验收发现双 fusion 键覆盖 bug，合并到此处）
+  mode: fixed_equal
+
+backbone:
+  name: dinov2_vits14
+  output_layer: 9
+  grid: 32                # 输入 resize 到 grid*14=448，输出 32x32 patch 网格
+
+tiling:
+  mode: single            # 图像层采样粒度：single | tiles9 | tiles36（旋钮，§6.1）
+  tile_size: 512
+  stride: 448
+  multiscale_scales: [1, 2, 4]
+  multiscale_weights: [0.6, 0.3, 0.1]
+
+slots:
+  sem:
+    enabled: true
+    coreset_size: 512
+    tile_topk_ratio: 0.05
+    block_topk: 3
+  disc:
+    enabled: true
+    hidden: 128
+    epochs: 30
+    lr: 0.001
+    pseudo_per_image: 8
+    init_from: outputs/m0/disc_pretrain.pt
+    freeze: true
+  shead:
+    enabled: true         # 图像级伪异常判别（demo4 s 分支配方移植，U51 学习曲线主力）
+    hidden: 256
+    epochs: 50
+    lr: 0.001
+    batch: 32
+    margin: 5.0
+    pseudo_per_image: 3
+    max_base_tiles: 96
+    max_patches: 50000
+  blob:
+    enabled: false        # U22：全分辨率 CPU DoG，大图 155ms/图，fast 工作点关闭
+  trad:
+    enabled: false        # 200 维传统特征，CPU ~120ms/图（GIL 争用），fast 工作点关闭
+  layout:
+    enabled: false        # 统计布局（缺件/错位），CPU，fast 工作点关闭
+  inp:
+    enabled: false        # 图内原型（GPU，但 fast 保速度余量，关闭）
+  open:
+    enabled: false        # E_open 哨兵（GPU PCA），fast 工作点关闭
+  tpl:
+    enabled: false
+
+router:
+  enabled: true           # 仅追溯（U15：路由 test 侧劣化不参与融合分）
+  epochs: 50
+  lr: 0.001
+  margin: 0.1
+  lam_entropy: 0.1
+  gate_margin: 0.005
+
+consensus:
+  enabled: true
+
+calibration:
+  cdf_bins: 256
+
+decision:
+  tau_quantile: 0.99
+  tau_gray: 0.95
+
+hierarchical:
+  mask_thresh: 0.5
+  min_area: 16
+  work_side: 512
+
+datasets:
+  gyu_det: E:\CPIPC\CGAIC\data_origin\GYU-DET
+  data_local: E:\CPIPC\CGAIC\data_local
+  mvtec: E:\CPIPC\CGAIC\data_origin\mvtec
+  btad: E:\CPIPC\CGAIC\data_origin\BTAD\BTech_Dataset_transformed
+  mpdd: E:\CPIPC\CGAIC\data_origin\MPDD
+
+output_dir: E:\CPIPC\CGAIC\review\repro\research\outputs\m0

@@ -1,0 +1,29 @@
+{
+  "category": "solder_smt",
+  "actions": {
+    "difficult_queued": 17,
+    "reflow_pending": 2,
+    "defect_sample_add": 6,
+    "reflow_blocked_by_fuse_ratio": 2
+  },
+  "reflow_reason": {
+    "reflow_pending": 2,
+    "reflow_blocked_by_fuse_ratio": 2
+  },
+  "n_feedback": 27,
+  "n_boost": 29,
+  "boost_by_label": {
+    "normal": {
+      "n": 6,
+      "nonzero": 4,
+      "mean": 0.032396666666666664
+    },
+    "defect": {
+      "n": 46,
+      "nonzero": 25,
+      "mean": 0.016200434782608696
+    }
+  },
+  "boost_mean": 0.018069230769230768,
+  "final_auroc": 0.5185
+}

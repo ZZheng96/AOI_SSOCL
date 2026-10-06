@@ -1,0 +1,25 @@
+# Docker 构建上下文（AOI_tree）裁剪：镜像只 COPY backend/algo/assets/configs，
+# 以下目录不进上下文，避免数 GB 实验产物/视频/缓存拖慢构建与泄露数据。
+.git
+**/__pycache__
+**/*.pyc
+**/.pytest_cache
+
+# 实验与数据产物（不属于运行镜像）
+EXPs/outputs
+demo5/outputs
+AOI_tree/EXPs/outputs
+PCB_Dual/storage
+AOI_Core/storage
+AOI_Core/tests/results
+AOI_Core/tests/_archive
+
+# 交付视频与录制素材（体积大，运行时不需要）
+AOI_Core/docs/视频录制素材
+**/*.mp4
+
+# 本地环境/系统文件
+.env
+*.log
+.DS_Store
+Thumbs.db

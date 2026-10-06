@@ -1,0 +1,106 @@
+{
+  "total": 12,
+  "passed": 12,
+  "failed": 0,
+  "total_checks": 167,
+  "failed_checks": 0,
+  "duration_s": 362.1,
+  "results": [
+    {
+      "test_id": "t01",
+      "name": "数据导入",
+      "status": "passed",
+      "n_checks": 20,
+      "n_failed": 0,
+      "duration_s": 46.26
+    },
+    {
+      "test_id": "t02",
+      "name": "模型准备(L1拟合+L3训练)",
+      "status": "passed",
+      "n_checks": 28,
+      "n_failed": 0,
+      "duration_s": 72.25
+    },
+    {
+      "test_id": "t03",
+      "name": "单图检测链路",
+      "status": "passed",
+      "n_checks": 18,
+      "n_failed": 0,
+      "duration_s": 5.33
+    },
+    {
+      "test_id": "t04",
+      "name": "大图分块级联",
+      "status": "passed",
+      "n_checks": 7,
+      "n_failed": 0,
+      "duration_s": 4.13
+    },
+    {
+      "test_id": "t05",
+      "name": "视频检测与WS监控",
+      "status": "passed",
+      "n_checks": 10,
+      "n_failed": 0,
+      "duration_s": 7.06
+    },
+    {
+      "test_id": "t06",
+      "name": "伪异常/增强/预处理",
+      "status": "passed",
+      "n_checks": 13,
+      "n_failed": 0,
+      "duration_s": 15.31
+    },
+    {
+      "test_id": "t09",
+      "name": "反馈闭环与自学习",
+      "status": "passed",
+      "n_checks": 16,
+      "n_failed": 0,
+      "duration_s": 14.25
+    },
+    {
+      "test_id": "t11",
+      "name": "精度评估与延迟基准",
+      "status": "passed",
+      "n_checks": 13,
+      "n_failed": 0,
+      "duration_s": 83.43
+    },
+    {
+      "test_id": "t13",
+      "name": "API覆盖与统计日志",
+      "status": "passed",
+      "n_checks": 11,
+      "n_failed": 0,
+      "duration_s": 0.78
+    },
+    {
+      "test_id": "t15",
+      "name": "UI 离屏冒烟",
+      "status": "passed",
+      "n_checks": 1,
+      "n_failed": 0,
+      "duration_s": 5.84
+    },
+    {
+      "test_id": "t17",
+      "name": "纠正-回溯-学习-效果验证",
+      "status": "passed",
+      "n_checks": 14,
+      "n_failed": 0,
+      "duration_s": 80.09
+    },
+    {
+      "test_id": "t19",
+      "name": "系统特性(校准集/AB/相机源)",
+      "status": "passed",
+      "n_checks": 16,
+      "n_failed": 0,
+      "duration_s": 27.4
+    }
+  ]
+}

@@ -1,0 +1,12 @@
+[dual_demo] WINDOW_SHOWN
+[dual_demo] step_select: 模板=SMT 焊点示例 engine_mode=dual
+[dual_demo] step_import: 队列数=1 首项=PixPin_2026-07-01_11-21-15.png
+[dual_demo] step_run: btn_run.enabled=True
+[dual_demo] step_wait: overall=NG ng=2 elapsed=448ms aoi_feature=AOI: anomaly score=1.2843 主导槽=sem (338.31ms)
+[dual_demo] DEMO_DONE
+[dual_demo] WINDOW_SHOWN
+[dual_demo] step_select: 模板=SMT 焊点示例 engine_mode=dual
+[dual_demo] step_import: 队列数=1 首项=PixPin_2026-07-01_11-21-15.png
+[dual_demo] step_run: btn_run.enabled=True
+[dual_demo] step_wait: overall=NG ng=2 elapsed=470ms aoi_feature=AOI: anomaly score=1.2843 主导槽=sem (354.91ms)
+[dual_demo] DEMO_DONE

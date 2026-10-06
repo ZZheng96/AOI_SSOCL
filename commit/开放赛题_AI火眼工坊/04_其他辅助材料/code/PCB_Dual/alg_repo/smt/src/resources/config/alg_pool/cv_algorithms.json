@@ -1,0 +1,12 @@
+{
+  "cv_algorithms": [
+    {
+      "algorithm_code": "SolderSmtAllAlg",
+      "class_path": "algorithms.solder_smt.composite_smt_all.solder_smt_all_alg.SolderSmtAllAlg",
+      "description": "SMT焊锡全缺陷检测: 多锡/少锡/连锡/虚焊",
+      "idle_timeout": 600,
+      "timeout": 120,
+      "config_path": "./resources/config/alg/solder_smt/solder_smt_all_alg.json"
+    }
+  ]
+}

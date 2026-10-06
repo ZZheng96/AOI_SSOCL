@@ -1,0 +1,118 @@
+seed: 42
+device: cuda
+protocol:
+  n_init_normal: 100
+  n_init_defect: 100
+  forbid:
+  - test_good
+  - pairs
+  - filename_metadata
+fusion:
+  mode: fixed_equal
+backbone:
+  name: dinov2_vits14
+  output_layer: 9
+  grid: 32
+tiling:
+  mode: single
+  tile_size: 512
+  stride: 448
+  multiscale_scales:
+  - 1
+  - 2
+  - 4
+  multiscale_weights:
+  - 0.6
+  - 0.3
+  - 0.1
+slots:
+  sem:
+    enabled: true
+    coreset_size: 512
+    tile_topk_ratio: 0.05
+    block_topk: 3
+  disc:
+    enabled: true
+    hidden: 128
+    epochs: 30
+    lr: 0.001
+    pseudo_per_image: 8
+    init_from: outputs/m0/disc_pretrain.pt
+    freeze: true
+  shead:
+    enabled: true
+    hidden: 256
+    epochs: 100
+    lr: 0.001
+    batch: 32
+    margin: 5.0
+    pseudo_per_image: 3
+    max_base_tiles: 96
+    max_patches: 50000
+    # U72v3 crop 级判别模式：自适应 crop_size + 缺陷上下文 crop + 滑窗评分
+    # v2 问题诊断：crop_size=500 固定不匹配缺陷尺度（中位数 760），
+    #   训练纯缺陷 crop vs 测试缺陷+背景 crop 分布不匹配，网格有间隙漏检
+    # v3 改进：自适应 crop_size + 上下文 crop（桥接分布差异）+ 滑窗（确保覆盖）
+    score_mode: crop
+    crop_size: 500  # 初始值，fit 时自适应覆盖为中位数缺陷框尺寸
+    crop_pad: 0.2
+    n_fit_normal_crops: 10
+    pseudo_per_image: 1
+    n_bg_per_defect: 3
+    # v3 新增
+    adaptive_crop_size: true
+    use_context_crops: true
+    score_overlap: 0.5
+    score_max_crops: 120
+    score_topk: 3  # 固定 topk（topk_ratio=0 时生效）
+    score_topk_ratio: 0.0  # >0 时按比例取 topk（如 0.1 = top 10%）
+  blob:
+    enabled: true
+    sigmas:
+    - 1
+    - 2
+    - 4
+    - 8
+    - 16
+  trad:
+    enabled: true
+  layout:
+    enabled: true
+  inp:
+    enabled: true
+  open:
+    enabled: true
+    n_components: 0.95
+    topk_ratio: 0.05
+    thresh: 0.9
+  tpl:
+    enabled: false
+    feat_weight: 0.7
+    pix_weight: 0.3
+    topk_ratio: 0.1
+router:
+  enabled: true
+  epochs: 50
+  lr: 0.001
+  margin: 0.1
+  lam_entropy: 0.1
+  gate_margin: 0.005
+consensus:
+  enabled: true
+  blend: 0.5
+calibration:
+  cdf_bins: 256
+decision:
+  tau_quantile: 0.99
+  tau_gray: 0.95
+hierarchical:
+  mask_thresh: 0.5
+  min_area: 16
+  work_side: 512
+datasets:
+  gyu_det: D:\CGAIC\data_origin\GYU-DET
+  data_local: D:\CGAIC\data_local
+  mvtec: D:\CGAIC\data_origin\mvtec
+  btad: D:\CGAIC\data_origin\BTAD\BTech_Dataset_transformed
+  mpdd: D:\CGAIC\data_origin\MPDD
+output_dir: d:\CGAIC\demo5\outputs\m0

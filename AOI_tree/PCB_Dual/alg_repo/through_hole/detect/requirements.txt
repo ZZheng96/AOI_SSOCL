@@ -1,0 +1,8 @@
+opencv-python>=4.8
+numpy>=1.25
+Pillow>=9.0
+PyYAML>=6.0
+
+# 以下仅用于 algorithms/ 控件封装的本仓库自测 (test_src/)，接入检测系统工程后
+# 由目标工程自身的测试环境提供，非算法运行期依赖
+pytest>=7.0

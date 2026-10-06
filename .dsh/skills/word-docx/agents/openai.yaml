@@ -1,0 +1,4 @@
+interface:
+  display_name: "Word / DOCX"
+  short_description: "Reliable Word document editing"
+  default_prompt: "Work with a Word .docx file while preserving formatting and review metadata."

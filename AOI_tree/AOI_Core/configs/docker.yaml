@@ -1,0 +1,44 @@
+# Docker 部署配置：路径指向容器内挂载点
+system:
+  host: 0.0.0.0
+  port: 8017
+  database_url: sqlite:////data/database/aoi.db
+  storage_dir: /data/storage
+  engine_storage: /data/storage/engine
+  # 引擎内存中最多缓存的品类 Pipeline 数（LRU 驱逐，评审问题 A9）
+  engine_max_cached_categories: 8
+
+security:
+  # 生产启动必须通过 AOI_API_KEY 注入，不将密钥写入仓库
+  api_key: ''
+  api_key_env: ''
+  keys: {}
+  max_upload_mb: 200
+
+pipeline:
+  tile_size: 512
+  tile_stride: 512
+  input_size: 256
+  ahl_input_size: 224
+  full_image_max_area: 1048576
+  fusion_weights: {1: 0.15, 2: 0.25, 3: 0.60}
+  video_frame_interval: 5
+  latency_budget_ms: 200
+
+pseudo_anomaly:
+  default_method: cutpaste
+  default_count: 20
+  scar_length: [10, 100]
+  scar_width: [3, 15]
+
+self_learning:
+  trigger_min_feedback: 10
+  lr: 0.00001
+  epochs: 10
+  auto_activate: false
+
+evaluation:
+  default_split: test
+  benchmark_n_images: 30
+  benchmark_warmup: 5
+  latency_budget: 200

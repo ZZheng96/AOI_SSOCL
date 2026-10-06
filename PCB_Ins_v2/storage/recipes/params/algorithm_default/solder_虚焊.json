@@ -1,0 +1,15 @@
+{
+  "scope": "algorithm_default",
+  "template_name": null,
+  "category": null,
+  "algorithm": "solder_虚焊",
+  "params": {
+    "pin_type": "gull-wing",
+    "cold_solder_dark_ratio": 0.3,
+    "cold_solder_v_dark": 80,
+    "cold_solder_rim_ratio": 0.11,
+    "toe_metal_ratio_thresh": 0.3,
+    "cold_diff_ratio_thresh": 0.38
+  },
+  "version": 1
+}

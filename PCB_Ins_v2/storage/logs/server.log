@@ -1,0 +1,58 @@
+2026-08-30 11:46:05,791 INFO dinov2: using MLP layer as FFN
+2026-08-30 11:52:35,908 INFO dinov2: using MLP layer as FFN
+2026-08-30 11:53:12,118 INFO dinov2: using MLP layer as FFN
+2026-08-30 12:20:56,525 INFO dinov2: using MLP layer as FFN
+2026-08-30 13:21:23,353 INFO server: PCB_Ins v2 后台服务启动: http://127.0.0.1:8021
+2026-08-30 13:23:48,810 INFO dinov2: using MLP layer as FFN
+2026-08-30 13:24:55,465 INFO server: PCB_Ins v2 后台服务启动: http://127.0.0.1:8021
+2026-08-30 13:25:28,140 INFO dinov2: using MLP layer as FFN
+2026-08-30 15:18:10,593 INFO server: PCB_Ins v2 后台服务启动: http://127.0.0.1:8021
+2026-08-30 15:34:31,345 INFO app.core.task_queue: [taskq] 检测任务队列已启动（2 worker）
+2026-08-30 15:35:02,142 INFO dinov2: using MLP layer as FFN
+2026-08-30 15:35:49,713 INFO server: PCB_Ins v2 后台服务启动: http://127.0.0.1:8021
+2026-08-30 15:35:50,682 INFO app.core.task_queue: [taskq] 检测任务队列已启动（2 worker）
+2026-08-30 15:47:32,273 INFO server: PCB_Ins v2 后台服务启动: http://127.0.0.1:8021
+2026-08-30 15:47:33,939 INFO app.core.task_queue: [taskq] 检测任务队列已启动（2 worker）
+2026-08-30 15:51:39,995 INFO server: PCB_Ins v2 后台服务启动: http://127.0.0.1:8021
+2026-08-30 15:51:41,807 INFO app.core.task_queue: [taskq] 检测任务队列已启动（2 worker）
+2026-08-30 16:07:42,005 INFO server: PCB_Ins v2 后台服务启动: http://127.0.0.1:8021
+2026-08-30 16:07:42,949 INFO app.core.task_queue: [taskq] 检测任务队列已启动（2 worker）
+2026-08-30 16:08:36,040 INFO server: PCB_Ins v2 后台服务启动: http://127.0.0.1:8021
+2026-08-30 16:08:37,489 INFO app.core.task_queue: [taskq] 检测任务队列已启动（2 worker）
+2026-08-30 16:10:15,476 INFO server: PCB_Ins v2 后台服务启动: http://127.0.0.1:8021
+2026-08-30 16:10:16,369 INFO app.core.task_queue: [taskq] 检测任务队列已启动（2 worker）
+2026-08-30 16:11:15,372 INFO server: PCB_Ins v2 后台服务启动: http://127.0.0.1:8021
+2026-08-30 16:11:16,357 INFO app.core.task_queue: [taskq] 检测任务队列已启动（2 worker）
+2026-08-30 16:24:44,485 INFO server: PCB_Ins v2 后台服务启动: http://127.0.0.1:8021
+2026-08-30 16:24:45,546 INFO app.core.task_queue: [taskq] 检测任务队列已启动（2 worker）
+2026-08-30 16:43:29,570 INFO server: PCB_Ins v2 后台服务启动: http://127.0.0.1:8021
+2026-08-30 16:43:30,496 INFO app.core.task_queue: [taskq] 检测任务队列已启动（2 worker）
+2026-08-30 16:45:58,237 INFO dinov2: using MLP layer as FFN
+2026-08-30 16:46:40,833 INFO server: PCB_Ins v2 后台服务启动: http://127.0.0.1:8021
+2026-08-30 16:46:41,689 INFO app.core.task_queue: [taskq] 检测任务队列已启动（2 worker）
+2026-08-30 16:47:27,576 INFO server: PCB_Ins v2 后台服务启动: http://127.0.0.1:8021
+2026-08-30 16:47:28,433 INFO app.core.task_queue: [taskq] 检测任务队列已启动（2 worker）
+2026-08-30 21:29:39,479 INFO server: PCB_Ins v2 后台服务启动: http://127.0.0.1:8021
+2026-08-30 21:29:40,408 INFO app.core.task_queue: [taskq] 检测任务队列已启动（2 worker）
+2026-08-30 21:31:18,402 INFO dinov2: using MLP layer as FFN
+2026-08-30 21:34:22,418 INFO server: PCB_Ins v2 后台服务启动: http://127.0.0.1:8021
+2026-08-30 21:34:23,281 INFO app.core.task_queue: [taskq] 检测任务队列已启动（2 worker）
+2026-08-31 11:22:39,293 INFO server: PCB_Ins v2 后台服务启动: http://127.0.0.1:8021
+2026-08-31 11:22:40,447 INFO app.core.task_queue: [taskq] 检测任务队列已启动（2 worker）
+2026-09-01 00:09:34,520 INFO server: PCB_Ins v2 后台服务启动: http://127.0.0.1:8021
+2026-09-01 00:09:35,643 INFO app.core.task_queue: [taskq] 检测任务队列已启动（2 worker）
+2026-09-01 00:09:49,999 INFO dinov2: using MLP layer as FFN
+2026-09-01 00:10:44,715 INFO server: PCB_Ins v2 后台服务启动: http://127.0.0.1:8021
+2026-09-01 00:10:46,675 INFO app.core.task_queue: [taskq] 检测任务队列已启动（2 worker）
+2026-09-01 00:11:00,756 INFO dinov2: using MLP layer as FFN
+2026-09-01 00:12:26,424 INFO server: PCB_Ins v2 后台服务启动: http://127.0.0.1:8021
+2026-09-01 00:12:28,329 INFO app.core.task_queue: [taskq] 检测任务队列已启动（2 worker）
+2026-09-01 00:12:41,765 INFO dinov2: using MLP layer as FFN
+2026-09-01 00:14:19,078 INFO server: PCB_Ins v2 后台服务启动: http://127.0.0.1:8021
+2026-09-01 00:14:20,063 INFO app.core.task_queue: [taskq] 检测任务队列已启动（2 worker）
+2026-09-01 00:14:34,168 INFO dinov2: using MLP layer as FFN
+2026-09-01 10:52:46,654 INFO server: PCB_Ins v2 后台服务启动: http://127.0.0.1:8021
+2026-09-01 10:52:51,254 INFO app.core.task_queue: [taskq] 检测任务队列已启动（2 worker）
+2026-09-01 11:37:58,623 INFO dinov2: using MLP layer as FFN
+2026-09-01 16:40:47,234 INFO server: PCB_Ins v2 后台服务启动: http://127.0.0.1:8021
+2026-09-01 16:40:49,400 INFO app.core.task_queue: [taskq] 检测任务队列已启动（2 worker）

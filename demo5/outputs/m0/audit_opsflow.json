@@ -1,0 +1,217 @@
+{
+  "system_state": {
+    "weights": {
+      "blob": 0.07275593537696802,
+      "disc": 0.10867417983202043,
+      "inp": 0.14856233769386878,
+      "layout": 0.15847731533135484,
+      "sem": 0.17854977327941196,
+      "shead": 0.11064807207020244,
+      "trad": 0.22233238641617353
+    },
+    "decider": {
+      "tau_high": 0.8521826637659856,
+      "tau_gray": 0.7319106918861049
+    },
+    "slots": [
+      "blob",
+      "disc",
+      "inp",
+      "layout",
+      "sem",
+      "shead",
+      "trad"
+    ],
+    "calibrator_bins": 256,
+    "fit_seconds": 55.180805921554565,
+    "n_records": 54,
+    "ssocl": {
+      "defect_ratio": 1.0,
+      "fuse_blocked": true,
+      "normal_bank": {
+        "ext_version": 0,
+        "ext_size": 0,
+        "core_size": 4096
+      },
+      "defect_bank": {
+        "version": 2,
+        "n_samples": 2
+      },
+      "difficult_queue": 1,
+      "high_conf_cache": 0,
+      "active_queue": 0,
+      "stats": {
+        "reflow": 0,
+        "pending": 2,
+        "defect_add": 2,
+        "router_ft": 0,
+        "rollback": 0,
+        "gate_reject": 0,
+        "height_recal": 0,
+        "thresh_recal": 0,
+        "thresh_recal_reject": 0,
+        "weight_apply": 0,
+        "weight_reject": 0
+      }
+    },
+    "router_gate": {
+      "enabled": true,
+      "base_auc": 0.8913,
+      "router_auc": 0.9974,
+      "gate_margin": 0.005,
+      "train_info": {
+        "loss": 0.1702568233013153,
+        "pos_mean": 1.3903888463974,
+        "neg_mean": 0.5632337331771851,
+        "weight_std": 0.0599188394844532
+      }
+    },
+    "consensus": {
+      "blend": 0.5,
+      "weights": {
+        "blob": 0.0728,
+        "disc": 0.1087,
+        "inp": 0.1486,
+        "layout": 0.1585,
+        "sem": 0.1785,
+        "shead": 0.1106,
+        "trad": 0.2223
+      }
+    }
+  },
+  "update_log": {
+    "feedback": [
+      {
+        "t": 1787747496.5316558,
+        "path": "D:\\CGAIC\\data_origin\\MPDD\\bracket_black\\test\\good\\016.png",
+        "verdict": "correct",
+        "label": "normal",
+        "fused": 0.3365,
+        "decision": "normal",
+        "slots": {
+          "sem": 0.1015625,
+          "disc": 0.328125,
+          "shead": 0.375,
+          "inp": 0.06640625,
+          "blob": 0.5234375,
+          "trad": 0.85546875,
+          "layout": 0.01953125
+        },
+        "box": false,
+        "action": "reflow_pending"
+      },
+      {
+        "t": 1787747496.8053362,
+        "path": "D:\\CGAIC\\data_origin\\MPDD\\bracket_black\\test\\scratches\\000.png",
+        "verdict": "correct",
+        "label": "defect",
+        "fused": 1.0,
+        "decision": "anomaly",
+        "slots": {
+          "sem": 2.0,
+          "disc": 0.19921875,
+          "shead": 2.0,
+          "inp": 0.77734375,
+          "blob": 0.67578125,
+          "trad": 0.8984375,
+          "layout": 0.88671875
+        },
+        "box": false,
+        "action": "defect_sample_add"
+      },
+      {
+        "t": 1787747496.9955974,
+        "path": "D:\\CGAIC\\data_origin\\MPDD\\bracket_black\\test\\scratches\\032.png",
+        "verdict": "wrong",
+        "label": "defect",
+        "fused": 0.6419,
+        "decision": "normal",
+        "slots": {
+          "sem": 0.953125,
+          "disc": 0.0625,
+          "shead": 1.1044158468180083,
+          "inp": 0.71875,
+          "blob": 0.97265625,
+          "trad": 0.34765625,
+          "layout": 0.5546875
+        },
+        "box": false,
+        "action": "difficult_queued",
+        "attribution": {
+          "mode": "fn",
+          "series": [
+            {
+              "step": "signal_presence",
+              "top_slot": "shead",
+              "top_cal": 1.1044,
+              "ok": true
+            },
+            {
+              "step": "fusion_dilution",
+              "fused": 0.6419
+            }
+          ],
+          "verdict": "undertrained_fusion",
+          "next": "路由定向微调（难例参与 MIL 排序）"
+        }
+      },
+      {
+        "t": 1787747497.1886075,
+        "path": "D:\\CGAIC\\data_origin\\MPDD\\bracket_black\\test\\good\\012.png",
+        "verdict": "wrong",
+        "label": "normal",
+        "fused": 0.9477,
+        "decision": "anomaly",
+        "slots": {
+          "sem": 0.83984375,
+          "disc": 0.9453125,
+          "shead": 0.98828125,
+          "inp": 0.9765625,
+          "blob": 2.0,
+          "trad": 0.63671875,
+          "layout": 0.96875
+        },
+        "box": false,
+        "action": "reflow_pending",
+        "attribution": {
+          "mode": "fp",
+          "series": [
+            {
+              "step": "bank_coverage",
+              "max_sim": 0.9978,
+              "ok": true
+            },
+            {
+              "step": "calibration_drift",
+              "fused": 0.9477,
+              "median_cal": 0.9688
+            }
+          ],
+          "verdict": "calibration_drift",
+          "next": "在线回流重建 + 重估 CDF"
+        }
+      },
+      {
+        "t": 1787747497.483291,
+        "path": "D:\\CGAIC\\data_origin\\MPDD\\bracket_black\\test\\scratches\\016.png",
+        "verdict": "none",
+        "label": "normal",
+        "fused": 0.8199,
+        "decision": "gray",
+        "slots": {
+          "sem": 2.0,
+          "disc": 0.00390625,
+          "shead": 2.0,
+          "inp": 0.08984375,
+          "blob": 0.953125,
+          "trad": 0.3984375,
+          "layout": 0.3046875
+        },
+        "box": false,
+        "action": "active_queue"
+      }
+    ],
+    "rollback": [],
+    "gate": []
+  }
+}

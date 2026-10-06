@@ -1,0 +1,15 @@
+{
+  "version": 1,
+  "parent_version": null,
+  "created_at": "2026-08-30 16:46:30",
+  "trigger": "prepare",
+  "note": "scenario=L1a, profile=fast. ",
+  "fit_seconds": 29.405763387680054,
+  "ssocl_enabled": true,
+  "weights_mode": "sanity",
+  "slot_names": [
+    "sem",
+    "disc",
+    "shead"
+  ]
+}

@@ -1,0 +1,351 @@
+{
+  "id": "PixPin_2026-07-01_11-21-15_OK",
+  "display_name": "SMT 焊点示例",
+  "version": 1,
+  "status": "published",
+  "created_at": "2026-08-30T11:27:41+08:00",
+  "updated_at": "2026-08-30T15:35:25+08:00",
+  "standard_image": {
+    "path": "<PROJECT_ROOT>\\PCB_Ins_v2\\templates\\PixPin_2026-07-01_11-21-15_OK\\standard.png",
+    "sha1": "8c28b2311df9f0ba0da6722b7f2d52166fbe3495",
+    "width": 1317,
+    "height": 545
+  },
+  "category": "插件器件",
+  "detection_items": [
+    {
+      "algorithm_id": "solder_多锡",
+      "enabled": true,
+      "params": {
+        "excess_thresh": 0.005
+      },
+      "preprocess_recipe": null,
+      "region_kind": "smt"
+    },
+    {
+      "algorithm_id": "solder_少锡",
+      "enabled": true,
+      "params": {
+        "insufficient_thresh": 0.08
+      },
+      "preprocess_recipe": null,
+      "region_kind": "smt"
+    },
+    {
+      "algorithm_id": "solder_连锡",
+      "enabled": true,
+      "params": {
+        "bridge_min_area": 20
+      },
+      "preprocess_recipe": null,
+      "region_kind": "smt"
+    },
+    {
+      "algorithm_id": "solder_虚焊",
+      "enabled": true,
+      "params": {
+        "pin_type": "terminal",
+        "cold_solder_dark_ratio": 0.3,
+        "cold_solder_v_dark": 80
+      },
+      "preprocess_recipe": null,
+      "region_kind": "smt"
+    },
+    {
+      "algorithm_id": "solder_共用参数",
+      "enabled": true,
+      "params": {
+        "template_mode": "diff_grow_ROI",
+        "mask_h_low": 57,
+        "mask_h_high": 93,
+        "mask_s_min": 61,
+        "mask_v_min": 15,
+        "silk_h_low": 81,
+        "silk_h_high": 106,
+        "silk_s_low": 61,
+        "silk_s_high": 121,
+        "silk_v_low": 90,
+        "silk_v_high": 131,
+        "RB_thresh_exc": 10,
+        "diff_thresh_exc": 5,
+        "solder_blue_h_low": 85,
+        "solder_blue_h_high": 179,
+        "solder_blue_s_min": 78,
+        "solder_blue_v_min": 70
+      },
+      "preprocess_recipe": null,
+      "region_kind": "smt"
+    }
+  ],
+  "algorithms": [
+    {
+      "algorithm_id": "solder_多锡",
+      "enabled": true,
+      "params": {
+        "excess_thresh": 0.005
+      },
+      "preprocess_recipe": null,
+      "region_kind": "smt"
+    },
+    {
+      "algorithm_id": "solder_少锡",
+      "enabled": true,
+      "params": {
+        "insufficient_thresh": 0.08
+      },
+      "preprocess_recipe": null,
+      "region_kind": "smt"
+    },
+    {
+      "algorithm_id": "solder_连锡",
+      "enabled": true,
+      "params": {
+        "bridge_min_area": 20
+      },
+      "preprocess_recipe": null,
+      "region_kind": "smt"
+    },
+    {
+      "algorithm_id": "solder_虚焊",
+      "enabled": true,
+      "params": {
+        "pin_type": "terminal",
+        "cold_solder_dark_ratio": 0.3,
+        "cold_solder_v_dark": 80
+      },
+      "preprocess_recipe": null,
+      "region_kind": "smt"
+    },
+    {
+      "algorithm_id": "solder_共用参数",
+      "enabled": true,
+      "params": {
+        "template_mode": "diff_grow_ROI",
+        "mask_h_low": 57,
+        "mask_h_high": 93,
+        "mask_s_min": 61,
+        "mask_v_min": 15,
+        "silk_h_low": 81,
+        "silk_h_high": 106,
+        "silk_s_low": 61,
+        "silk_s_high": 121,
+        "silk_v_low": 90,
+        "silk_v_high": 131,
+        "RB_thresh_exc": 10,
+        "diff_thresh_exc": 5,
+        "solder_blue_h_low": 85,
+        "solder_blue_h_high": 179,
+        "solder_blue_s_min": 78,
+        "solder_blue_v_min": 70
+      },
+      "preprocess_recipe": null,
+      "region_kind": "smt"
+    }
+  ],
+  "region_sets": {
+    "smt_pads": [
+      {
+        "shape": "rect",
+        "x": 81.77586206896542,
+        "y": 78.53448275862067,
+        "w": 237.93103448275866,
+        "h": 393.1034482758621
+      },
+      {
+        "shape": "rect",
+        "x": 1050.7413793103449,
+        "y": 43.189655172413765,
+        "w": 222.41379310344814,
+        "h": 445.68965517241384
+      }
+    ]
+  },
+  "calibration": {
+    "smt_pads": [
+      [
+        81.77586206896542,
+        78.53448275862067,
+        237.93103448275866,
+        393.1034482758621
+      ],
+      [
+        1050.7413793103449,
+        43.189655172413765,
+        222.41379310344814,
+        445.68965517241384
+      ]
+    ]
+  },
+  "gate": {
+    "size_gate_enabled": true,
+    "size_gate_max_diff_px": 10
+  },
+  "notes": "",
+  "calib_key": "PixPin_2026-07-01_11-21-15_OK",
+  "engine_mode": "dual",
+  "model_category": "smt_solder",
+  "px_calibration": {},
+  "cad_items": [
+    {
+      "position_on": "R1",
+      "material_code": "1001",
+      "pack": "0603",
+      "x_mm": 10.0,
+      "y_mm": 20.0,
+      "angle": 0.0,
+      "panel_col": 0,
+      "panel_row": 0
+    },
+    {
+      "position_on": "C1",
+      "material_code": "2002",
+      "pack": "0805",
+      "x_mm": 15.0,
+      "y_mm": 25.0,
+      "angle": 90.0,
+      "panel_col": 0,
+      "panel_row": 0
+    },
+    {
+      "position_on": "R1",
+      "material_code": "1001",
+      "pack": "0603",
+      "x_mm": 10.0,
+      "y_mm": 60.0,
+      "angle": 0.0,
+      "panel_col": 0,
+      "panel_row": 1
+    },
+    {
+      "position_on": "C1",
+      "material_code": "2002",
+      "pack": "0805",
+      "x_mm": 15.0,
+      "y_mm": 65.0,
+      "angle": 90.0,
+      "panel_col": 0,
+      "panel_row": 1
+    },
+    {
+      "position_on": "R1",
+      "material_code": "1001",
+      "pack": "0603",
+      "x_mm": 60.0,
+      "y_mm": 20.0,
+      "angle": 0.0,
+      "panel_col": 1,
+      "panel_row": 0
+    },
+    {
+      "position_on": "C1",
+      "material_code": "2002",
+      "pack": "0805",
+      "x_mm": 65.0,
+      "y_mm": 25.0,
+      "angle": 90.0,
+      "panel_col": 1,
+      "panel_row": 0
+    },
+    {
+      "position_on": "R1",
+      "material_code": "1001",
+      "pack": "0603",
+      "x_mm": 60.0,
+      "y_mm": 60.0,
+      "angle": 0.0,
+      "panel_col": 1,
+      "panel_row": 1
+    },
+    {
+      "position_on": "C1",
+      "material_code": "2002",
+      "pack": "0805",
+      "x_mm": 65.0,
+      "y_mm": 65.0,
+      "angle": 90.0,
+      "panel_col": 1,
+      "panel_row": 1
+    }
+  ],
+  "panels": {
+    "panel_dx_mm": 50.0,
+    "panel_dy_mm": 40.0,
+    "cols": 2,
+    "rows": 2,
+    "rotation": 0.0
+  },
+  "fov_grid": [
+    {
+      "row": 0,
+      "col": 0,
+      "x_mm": 0.0,
+      "y_mm": 0.0,
+      "w_mm": 40.0,
+      "h_mm": 30.0
+    },
+    {
+      "row": 0,
+      "col": 1,
+      "x_mm": 36.0,
+      "y_mm": 0.0,
+      "w_mm": 40.0,
+      "h_mm": 30.0
+    },
+    {
+      "row": 0,
+      "col": 2,
+      "x_mm": 60.0,
+      "y_mm": 0.0,
+      "w_mm": 40.0,
+      "h_mm": 30.0
+    },
+    {
+      "row": 1,
+      "col": 0,
+      "x_mm": 0.0,
+      "y_mm": 27.0,
+      "w_mm": 40.0,
+      "h_mm": 30.0
+    },
+    {
+      "row": 1,
+      "col": 1,
+      "x_mm": 36.0,
+      "y_mm": 27.0,
+      "w_mm": 40.0,
+      "h_mm": 30.0
+    },
+    {
+      "row": 1,
+      "col": 2,
+      "x_mm": 60.0,
+      "y_mm": 27.0,
+      "w_mm": 40.0,
+      "h_mm": 30.0
+    },
+    {
+      "row": 2,
+      "col": 0,
+      "x_mm": 0.0,
+      "y_mm": 50.0,
+      "w_mm": 40.0,
+      "h_mm": 30.0
+    },
+    {
+      "row": 2,
+      "col": 1,
+      "x_mm": 36.0,
+      "y_mm": 50.0,
+      "w_mm": 40.0,
+      "h_mm": 30.0
+    },
+    {
+      "row": 2,
+      "col": 2,
+      "x_mm": 60.0,
+      "y_mm": 50.0,
+      "w_mm": 40.0,
+      "h_mm": 30.0
+    }
+  ]
+}

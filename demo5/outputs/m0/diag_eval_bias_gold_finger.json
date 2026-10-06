@@ -1,0 +1,28 @@
+{
+  "category": "gold_finger",
+  "n": 72,
+  "n_defect": 55,
+  "fused_auroc": 0.2524,
+  "fused_mean_normal": 0.7209,
+  "fused_mean_defect": 0.6217,
+  "slots": {
+    "sem": {
+      "auroc": 0.1241
+    },
+    "disc": {
+      "auroc": 0.6032
+    },
+    "blob": {
+      "auroc": 0.7075
+    },
+    "trad": {
+      "auroc": 0.4091
+    },
+    "layout": {
+      "auroc": 0.1679
+    },
+    "inp": {
+      "auroc": 0.4449
+    }
+  }
+}

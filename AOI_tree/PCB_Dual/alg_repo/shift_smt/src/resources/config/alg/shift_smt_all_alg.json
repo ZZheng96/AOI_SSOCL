@@ -1,0 +1,34 @@
+{
+  "algorithmId": 3001,
+  "algorithmCode": "ShiftSmtAllAlg",
+  "version": 1,
+  "defaultParam": {
+    "feature_h_low": 0,
+    "feature_h_high": 179,
+    "feature_s_low": 0,
+    "feature_s_high": 147,
+    "feature_v_low": 0,
+    "feature_v_high": 36,
+
+    "use_hs_lut": false,
+    "hs_lut": "",
+
+    "feature_grid_size": 1,
+    "feature_mode": "avg",
+    "feature_use_edges": true,
+    "feature_edge_ratio": 0.08,
+    "feature_whole_weight": 0.5,
+    "feature_thresh": 0.05,
+    
+    "allow_out_of_bounds": false,
+
+    "shift_thresh": 10.0,
+
+    "use_rotation": true,
+    "rotation_range": 10.0,
+    "rotation_step": 1.0,
+
+    "use_autogamma": false,
+    "autogamma_target": 0.35
+  }
+}

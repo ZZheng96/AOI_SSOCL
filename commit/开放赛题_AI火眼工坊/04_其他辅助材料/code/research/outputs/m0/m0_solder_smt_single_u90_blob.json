@@ -1,0 +1,24 @@
+{
+  "name": "solder_smt",
+  "mode": "single",
+  "fit_seconds": 4.02,
+  "n_init_normal": 35,
+  "n_init_defect": 30,
+  "slot_sanity": {
+    "blob": 0.4533
+  },
+  "weights": {
+    "blob": 1.0
+  },
+  "test": {
+    "fused": {
+      "auroc": 0.7458143074581431,
+      "ap": 0.9562353422203366
+    },
+    "ms_per_image": 43.818284825580875,
+    "blob": {
+      "auroc": 0.7458143074581431,
+      "ap": 0.9562353422203366
+    }
+  }
+}

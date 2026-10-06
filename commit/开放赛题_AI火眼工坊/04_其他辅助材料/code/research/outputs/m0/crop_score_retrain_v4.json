@@ -1,0 +1,49 @@
+{
+  "results": [
+    {
+      "round": 0,
+      "valid": 0.7822,
+      "test": 0.8011
+    },
+    {
+      "round": 1,
+      "valid": 0.8222,
+      "n_retrain": 1
+    },
+    {
+      "round": 2,
+      "valid": 0.8222,
+      "n_retrain": 2
+    },
+    {
+      "round": 3,
+      "valid": 0.8222,
+      "n_retrain": 3
+    },
+    {
+      "round": 4,
+      "valid": 0.8222,
+      "n_retrain": 4
+    },
+    {
+      "round": 5,
+      "valid": 0.8222,
+      "n_retrain": 5
+    },
+    {
+      "round": 6,
+      "valid": 0.8222,
+      "n_retrain": 6
+    },
+    {
+      "round": 7,
+      "valid": 0.8222,
+      "n_retrain": 7
+    },
+    {
+      "round": 8,
+      "valid": 0.8222,
+      "n_retrain": 8
+    }
+  ]
+}

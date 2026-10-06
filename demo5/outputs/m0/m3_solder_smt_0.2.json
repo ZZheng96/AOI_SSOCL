@@ -1,0 +1,173 @@
+{
+  "name": "solder_smt",
+  "feedback_ratio": 0.2,
+  "baseline": {
+    "final_f1": 0.5455,
+    "tp": 21,
+    "fp": 3,
+    "tn": 4,
+    "fn": 32
+  },
+  "learned": {
+    "final_f1": 0.9159,
+    "tp": 49,
+    "fp": 5,
+    "tn": 2,
+    "fn": 4
+  },
+  "gap": {
+    "final_f1_gap": 0.3704,
+    "learned_f1": 0.9159,
+    "baseline_f1": 0.5455,
+    "learned_n_feedback": 13
+  },
+  "learned_trace": [
+    {
+      "step": 4,
+      "path": "D:\\CGAIC\\data_local\\solder_smt\\test\\good\\PixPin_2026-07-01_11-22-21_OK.png",
+      "y": 0,
+      "pred": 0,
+      "action": "reflow_pending",
+      "attribution": null
+    },
+    {
+      "step": 8,
+      "path": "D:\\CGAIC\\data_local\\solder_smt\\test\\bridge\\PixPin_2026-07-01_09-31-13.png",
+      "y": 1,
+      "pred": 0,
+      "action": "difficult_queued",
+      "attribution": {
+        "mode": "fn",
+        "series": [
+          {
+            "step": "signal_presence",
+            "top_slot": "trad",
+            "top_cal": 1.0,
+            "ok": true
+          },
+          {
+            "step": "fusion_dilution",
+            "fused": 0.5624
+          }
+        ],
+        "verdict": "undertrained_fusion",
+        "next": "路由定向微调（难例参与 MIL 排序）"
+      }
+    },
+    {
+      "step": 17,
+      "path": "D:\\CGAIC\\data_local\\solder_smt\\test\\bridge\\PixPin_2026-07-01_08-58-46.png",
+      "y": 1,
+      "pred": 1,
+      "action": "defect_sample_add",
+      "attribution": null
+    },
+    {
+      "step": 25,
+      "path": "D:\\CGAIC\\data_local\\solder_smt\\test\\bridge\\PixPin_2026-07-01_09-38-54.png",
+      "y": 1,
+      "pred": 1,
+      "action": "defect_sample_add",
+      "attribution": null
+    },
+    {
+      "step": 27,
+      "path": "D:\\CGAIC\\data_local\\solder_smt\\test\\good\\PixPin_2026-07-01_11-24-37_OK.png",
+      "y": 0,
+      "pred": 1,
+      "action": "reflow_pending",
+      "attribution": {
+        "mode": "fp",
+        "series": [
+          {
+            "step": "bank_coverage",
+            "max_sim": 0.9891,
+            "ok": true
+          },
+          {
+            "step": "calibration_drift",
+            "fused": 0.764,
+            "median_cal": 0.9255
+          }
+        ],
+        "verdict": "calibration_drift",
+        "next": "在线回流重建 + 重估 CDF"
+      }
+    },
+    {
+      "step": 28,
+      "path": "D:\\CGAIC\\data_local\\solder_smt\\test\\bridge\\PixPin_2026-07-01_09-37-38.png",
+      "y": 1,
+      "pred": 1,
+      "action": "defect_sample_add",
+      "attribution": null
+    },
+    {
+      "step": 35,
+      "path": "D:\\CGAIC\\data_local\\solder_smt\\test\\insufficient\\PixPin_2026-07-01_09-15-39.png",
+      "y": 1,
+      "pred": 1,
+      "action": "defect_sample_add",
+      "attribution": null
+    },
+    {
+      "step": 36,
+      "path": "D:\\CGAIC\\data_local\\solder_smt\\test\\bridge\\PixPin_2026-07-01_09-48-53.png",
+      "y": 1,
+      "pred": 1,
+      "action": "defect_sample_add",
+      "attribution": null
+    },
+    {
+      "step": 49,
+      "path": "D:\\CGAIC\\data_local\\solder_smt\\test\\insufficient\\PixPin_2026-07-01_09-20-45.png",
+      "y": 1,
+      "pred": 1,
+      "action": "defect_sample_add",
+      "attribution": null
+    },
+    {
+      "step": 50,
+      "path": "D:\\CGAIC\\data_local\\solder_smt\\test\\bridge\\PixPin_2026-07-01_09-00-21.png",
+      "y": 1,
+      "pred": 1,
+      "action": "defect_sample_add",
+      "attribution": null
+    },
+    {
+      "step": 51,
+      "path": "D:\\CGAIC\\data_local\\solder_smt\\test\\bridge\\PixPin_2026-07-01_09-23-31.png",
+      "y": 1,
+      "pred": 1,
+      "action": "defect_sample_add",
+      "attribution": null
+    },
+    {
+      "step": 58,
+      "path": "D:\\CGAIC\\data_local\\solder_smt\\test\\insufficient\\PixPin_2026-07-01_09-17-50.png",
+      "y": 1,
+      "pred": 1,
+      "action": "defect_sample_add",
+      "attribution": null
+    },
+    {
+      "step": 59,
+      "path": "D:\\CGAIC\\data_local\\solder_smt\\test\\insufficient\\less_tin3.png",
+      "y": 1,
+      "pred": 1,
+      "action": "defect_sample_add",
+      "attribution": null
+    }
+  ],
+  "ssocl_stats": {
+    "reflow": 0,
+    "pending": 2,
+    "defect_add": 11,
+    "router_ft": 0,
+    "rollback": 0,
+    "gate_reject": 0
+  },
+  "rollbacks": [],
+  "gate_history": [],
+  "incubate_log": []
+}

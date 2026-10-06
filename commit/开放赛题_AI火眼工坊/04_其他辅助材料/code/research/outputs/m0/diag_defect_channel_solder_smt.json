@@ -1,0 +1,24 @@
+{
+  "category": "solder_smt",
+  "n_eval": 30,
+  "n_defect": 27,
+  "n_bank_samples": 46,
+  "base_fused_auroc": 0.4815,
+  "v_intercept_auroc": 0.2593,
+  "v_head_auroc": 0.4074,
+  "v_rel_auroc": {
+    "1": 0.2346,
+    "4": 0.2963,
+    "8": 0.2593,
+    "16": 0.2469
+  },
+  "v_rel_sel_auroc": {
+    "1": 0.2222,
+    "4": 0.2346,
+    "8": 0.2099,
+    "16": 0.1975
+  },
+  "fuse_fused_plus_rel8": 0.3457,
+  "fuse_fused_plus_relsel8": 0.3333,
+  "fuse_max_fused_relsel4": 0.4815
+}

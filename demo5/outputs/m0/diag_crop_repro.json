@@ -1,0 +1,13 @@
+{
+  "experiment": "U71_crop_repro",
+  "auroc": 0.9651,
+  "n_train_defect": 500,
+  "n_train_normal": 500,
+  "n_test_defect": 300,
+  "n_test_normal": 300,
+  "epochs": 100,
+  "n_pseudo": 3,
+  "normal_score_mean": 0.3327347934246063,
+  "defect_score_mean": 16.419429779052734,
+  "elapsed": 118.6
+}

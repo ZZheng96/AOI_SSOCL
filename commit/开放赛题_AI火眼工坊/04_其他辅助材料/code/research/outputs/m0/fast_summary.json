@@ -1,0 +1,928 @@
+{
+  "meta": {
+    "title": "Demo5 速度工作点（configs/m0_fast.yaml：sem/disc/shead 三 GPU 槽）全数据集精度验证",
+    "date": "2026-08-17",
+    "command": "python scripts/m0_baseline.py --config configs/m0_fast.yaml",
+    "weight_mode": {
+      "mvtec": "sanity",
+      "btad": "sanity",
+      "mpdd": "sanity",
+      "data_local": "equal(consensus)",
+      "gyudet": "equal(consensus)"
+    },
+    "sampling": {
+      "mvtec": "--max-test 150 --max-eval-good 25",
+      "btad": "max-test 150",
+      "mpdd": "max-test 150",
+      "data_local": "--max-test 0 全量",
+      "gyudet": "max-test 150 分层"
+    },
+    "full_baseline": "U55 正式全量评测 outputs/m0/final_summary.json（mvtec/btad/mpdd=sanity 全量；data_local/gyudet=equal）",
+    "note": "test 只验不选；sanity 基于 init_defect（协议内）。fast 掉出 <0.9 的品类是速度-精度权衡的预期结果，精度模式（全槽位）仍达标。"
+  },
+  "mvtec": {
+    "items": {
+      "bottle": {
+        "fast": {
+          "auroc": 1.0,
+          "ap": 1.0,
+          "n": 53,
+          "ms_per_image": 56.0,
+          "fit_seconds": 13.1,
+          "slot_sanity": {
+            "sem": 0.9983,
+            "disc": 0.9017,
+            "shead": 1.0
+          },
+          "weights": {
+            "sem": 0.3559,
+            "disc": 0.2869,
+            "shead": 0.3571
+          }
+        },
+        "full_slots": {
+          "auroc": 0.9985,
+          "ap": 0.9991,
+          "f1": 0.9851,
+          "n": 53,
+          "ms_per_image": 501.0
+        },
+        "delta_fast_minus_full": 0.0015,
+        "fast_ge09": true,
+        "full_ge09": true
+      },
+      "cable": {
+        "fast": {
+          "auroc": 0.9658,
+          "ap": 0.9857,
+          "n": 87,
+          "ms_per_image": 70.0,
+          "fit_seconds": 14.7,
+          "slot_sanity": {
+            "sem": 0.9783,
+            "disc": 0.7832,
+            "shead": 0.9628
+          },
+          "weights": {
+            "sem": 0.3907,
+            "disc": 0.2313,
+            "shead": 0.378
+          }
+        },
+        "full_slots": {
+          "auroc": 0.9619,
+          "ap": 0.9667,
+          "f1": 0.8976,
+          "n": 120,
+          "ms_per_image": 527.0
+        },
+        "delta_fast_minus_full": 0.0039,
+        "fast_ge09": true,
+        "full_ge09": true
+      },
+      "capsule": {
+        "fast": {
+          "auroc": 0.9565,
+          "ap": 0.9863,
+          "n": 102,
+          "ms_per_image": 67.3,
+          "fit_seconds": 14.4,
+          "slot_sanity": {
+            "sem": 0.9898,
+            "disc": 0.5698,
+            "shead": 0.899
+          },
+          "weights": {
+            "sem": 0.511,
+            "disc": 0.0728,
+            "shead": 0.4162
+          }
+        },
+        "full_slots": {
+          "auroc": 0.9252,
+          "ap": 0.9773,
+          "f1": 0.9308,
+          "n": 102,
+          "ms_per_image": 515.0
+        },
+        "delta_fast_minus_full": 0.0313,
+        "fast_ge09": true,
+        "full_ge09": true
+      },
+      "carpet": {
+        "fast": {
+          "auroc": 0.9986,
+          "ap": 0.9994,
+          "n": 84,
+          "ms_per_image": 75.1,
+          "fit_seconds": 15.1,
+          "slot_sanity": {
+            "sem": 1.0,
+            "disc": 0.9942,
+            "shead": 1.0
+          },
+          "weights": {
+            "sem": 0.3346,
+            "disc": 0.3307,
+            "shead": 0.3346
+          }
+        },
+        "full_slots": {
+          "auroc": 0.9988,
+          "ap": 0.9994,
+          "f1": 0.9915,
+          "n": 87,
+          "ms_per_image": 551.0
+        },
+        "delta_fast_minus_full": -0.0002,
+        "fast_ge09": true,
+        "full_ge09": true
+      },
+      "grid": {
+        "fast": {
+          "auroc": 0.9967,
+          "ap": 0.9977,
+          "n": 50,
+          "ms_per_image": 56.5,
+          "fit_seconds": 12.7,
+          "slot_sanity": {
+            "sem": 1.0,
+            "disc": 0.9939,
+            "shead": 0.997
+          },
+          "weights": {
+            "sem": 0.3354,
+            "disc": 0.3313,
+            "shead": 0.3334
+          }
+        },
+        "full_slots": {
+          "auroc": 0.9852,
+          "ap": 0.9889,
+          "f1": 0.9655,
+          "n": 50,
+          "ms_per_image": 506.0
+        },
+        "delta_fast_minus_full": 0.0115,
+        "fast_ge09": true,
+        "full_ge09": true
+      },
+      "hazelnut": {
+        "fast": {
+          "auroc": 0.991,
+          "ap": 0.9946,
+          "n": 65,
+          "ms_per_image": 70.1,
+          "fit_seconds": 14.8,
+          "slot_sanity": {
+            "sem": 0.9965,
+            "disc": 0.9237,
+            "shead": 0.9955
+          },
+          "weights": {
+            "sem": 0.3507,
+            "disc": 0.2993,
+            "shead": 0.35
+          }
+        },
+        "full_slots": {
+          "auroc": 0.9906,
+          "ap": 0.991,
+          "f1": 0.963,
+          "n": 80,
+          "ms_per_image": 516.0
+        },
+        "delta_fast_minus_full": 0.0004,
+        "fast_ge09": true,
+        "full_ge09": true
+      },
+      "leather": {
+        "fast": {
+          "auroc": 1.0,
+          "ap": 1.0,
+          "n": 87,
+          "ms_per_image": 71.1,
+          "fit_seconds": 14.7,
+          "slot_sanity": {
+            "sem": 1.0,
+            "disc": 0.9888,
+            "shead": 1.0
+          },
+          "weights": {
+            "sem": 0.3358,
+            "disc": 0.3283,
+            "shead": 0.3358
+          }
+        },
+        "full_slots": {
+          "auroc": 0.996,
+          "ap": 0.9978,
+          "f1": 0.992,
+          "n": 94,
+          "ms_per_image": 528.0
+        },
+        "delta_fast_minus_full": 0.004,
+        "fast_ge09": true,
+        "full_ge09": true
+      },
+      "metal_nut": {
+        "fast": {
+          "auroc": 0.982,
+          "ap": 0.9938,
+          "n": 85,
+          "ms_per_image": 52.3,
+          "fit_seconds": 12.8,
+          "slot_sanity": {
+            "sem": 1.0,
+            "disc": 0.8997,
+            "shead": 0.9937
+          },
+          "weights": {
+            "sem": 0.3588,
+            "disc": 0.2869,
+            "shead": 0.3543
+          }
+        },
+        "full_slots": {
+          "auroc": 0.9791,
+          "ap": 0.993,
+          "f1": 0.9474,
+          "n": 85,
+          "ms_per_image": 493.0
+        },
+        "delta_fast_minus_full": 0.0029,
+        "fast_ge09": true,
+        "full_ge09": true
+      },
+      "pill": {
+        "fast": {
+          "auroc": 0.9568,
+          "ap": 0.9901,
+          "n": 136,
+          "ms_per_image": 59.4,
+          "fit_seconds": 13.2,
+          "slot_sanity": {
+            "sem": 0.9952,
+            "disc": 0.8223,
+            "shead": 0.8582
+          },
+          "weights": {
+            "sem": 0.4212,
+            "disc": 0.2741,
+            "shead": 0.3047
+          }
+        },
+        "full_slots": {
+          "auroc": 0.9744,
+          "ap": 0.9941,
+          "f1": 0.96,
+          "n": 137,
+          "ms_per_image": 487.0
+        },
+        "delta_fast_minus_full": -0.0176,
+        "fast_ge09": true,
+        "full_ge09": true
+      },
+      "screw": {
+        "fast": {
+          "auroc": 0.9596,
+          "ap": 0.985,
+          "n": 114,
+          "ms_per_image": 53.6,
+          "fit_seconds": 12.9,
+          "slot_sanity": {
+            "sem": 0.9102,
+            "disc": 0.6145,
+            "shead": 0.9713
+          },
+          "weights": {
+            "sem": 0.4118,
+            "disc": 0.115,
+            "shead": 0.4732
+          }
+        },
+        "full_slots": {
+          "auroc": 0.8715,
+          "ap": 0.9397,
+          "f1": 0.8876,
+          "n": 130,
+          "ms_per_image": 467.0
+        },
+        "delta_fast_minus_full": 0.0881,
+        "fast_ge09": true,
+        "full_ge09": false
+      },
+      "tile": {
+        "fast": {
+          "auroc": 1.0,
+          "ap": 1.0,
+          "n": 79,
+          "ms_per_image": 62.3,
+          "fit_seconds": 13.8,
+          "slot_sanity": {
+            "sem": 1.0,
+            "disc": 0.9768,
+            "shead": 1.0
+          },
+          "weights": {
+            "sem": 0.3386,
+            "disc": 0.3229,
+            "shead": 0.3386
+          }
+        },
+        "full_slots": {
+          "auroc": 0.9989,
+          "ap": 0.9993,
+          "f1": 0.9907,
+          "n": 87,
+          "ms_per_image": 506.0
+        },
+        "delta_fast_minus_full": 0.0011,
+        "fast_ge09": true,
+        "full_ge09": true
+      },
+      "transistor": {
+        "fast": {
+          "auroc": 0.986,
+          "ap": 0.9803,
+          "n": 45,
+          "ms_per_image": 69.7,
+          "fit_seconds": 13.8,
+          "slot_sanity": {
+            "sem": 0.999,
+            "disc": 0.7945,
+            "shead": 0.9868
+          },
+          "weights": {
+            "sem": 0.3898,
+            "disc": 0.23,
+            "shead": 0.3802
+          }
+        },
+        "full_slots": {
+          "auroc": 0.9633,
+          "ap": 0.8837,
+          "f1": 0.8696,
+          "n": 80,
+          "ms_per_image": 482.0
+        },
+        "delta_fast_minus_full": 0.0227,
+        "fast_ge09": true,
+        "full_ge09": true
+      },
+      "toothbrush": {
+        "fast": {
+          "auroc": 0.9889,
+          "ap": 0.9922,
+          "n": 27,
+          "ms_per_image": 64.1,
+          "fit_seconds": 8.9,
+          "slot_sanity": {
+            "sem": 0.9978,
+            "disc": 0.7739,
+            "shead": 0.9822
+          },
+          "weights": {
+            "sem": 0.397,
+            "disc": 0.2184,
+            "shead": 0.3846
+          }
+        },
+        "full_slots": {
+          "auroc": 0.9667,
+          "ap": 0.9768,
+          "f1": 0.9333,
+          "n": 27,
+          "ms_per_image": 513.0
+        },
+        "delta_fast_minus_full": 0.0222,
+        "fast_ge09": true,
+        "full_ge09": true
+      },
+      "wood": {
+        "fast": {
+          "auroc": 0.9395,
+          "ap": 0.9427,
+          "n": 49,
+          "ms_per_image": 70.5,
+          "fit_seconds": 14.7,
+          "slot_sanity": {
+            "sem": 1.0,
+            "disc": 0.9842,
+            "shead": 1.0
+          },
+          "weights": {
+            "sem": 0.3369,
+            "disc": 0.3262,
+            "shead": 0.3369
+          }
+        },
+        "full_slots": {
+          "auroc": 0.9561,
+          "ap": 0.9681,
+          "f1": 0.9492,
+          "n": 49,
+          "ms_per_image": 527.0
+        },
+        "delta_fast_minus_full": -0.0166,
+        "fast_ge09": true,
+        "full_ge09": true
+      },
+      "zipper": {
+        "fast": {
+          "auroc": 0.9946,
+          "ap": 0.9985,
+          "n": 114,
+          "ms_per_image": 54.5,
+          "fit_seconds": 12.8,
+          "slot_sanity": {
+            "sem": 1.0,
+            "disc": 0.9072,
+            "shead": 1.0
+          },
+          "weights": {
+            "sem": 0.3553,
+            "disc": 0.2894,
+            "shead": 0.3553
+          }
+        },
+        "full_slots": {
+          "auroc": 0.9849,
+          "ap": 0.995,
+          "f1": 0.9718,
+          "n": 121,
+          "ms_per_image": 580.0
+        },
+        "delta_fast_minus_full": 0.0097,
+        "fast_ge09": true,
+        "full_ge09": true
+      }
+    },
+    "summary": {
+      "n": 15,
+      "fast_mean_auroc": 0.9811,
+      "full_mean_auroc": 0.9701,
+      "fast_ge09_count": 15,
+      "full_ge09_count": 14,
+      "fast_better_count": 12,
+      "fast_dropped_below09": []
+    }
+  },
+  "btad": {
+    "items": {
+      "01": {
+        "fast": {
+          "auroc": 0.9771,
+          "ap": 0.987,
+          "n": 46,
+          "ms_per_image": 101.8,
+          "fit_seconds": 18.9,
+          "slot_sanity": {
+            "sem": 0.9504,
+            "disc": 0.1623,
+            "shead": 0.9506
+          },
+          "weights": {
+            "sem": 0.4999,
+            "disc": 0.0,
+            "shead": 0.5001
+          }
+        },
+        "full_slots": {
+          "auroc": 0.9657,
+          "ap": 0.9833,
+          "f1": 0.9796,
+          "n": 46,
+          "ms_per_image": 629.0
+        },
+        "delta_fast_minus_full": 0.0114,
+        "fast_ge09": true,
+        "full_ge09": true
+      },
+      "02": {
+        "fast": {
+          "auroc": 0.9266,
+          "ap": 0.9857,
+          "n": 150,
+          "ms_per_image": 54.7,
+          "fit_seconds": 12.2,
+          "slot_sanity": {
+            "sem": 0.9373,
+            "disc": 0.8552,
+            "shead": 0.959
+          },
+          "weights": {
+            "sem": 0.3494,
+            "disc": 0.2838,
+            "shead": 0.3668
+          }
+        },
+        "full_slots": {
+          "auroc": 0.9169,
+          "ap": 0.9847,
+          "f1": 0.9492,
+          "n": 200,
+          "ms_per_image": 473.0
+        },
+        "delta_fast_minus_full": 0.0097,
+        "fast_ge09": true,
+        "full_ge09": true
+      },
+      "03": {
+        "fast": {
+          "auroc": 1.0,
+          "ap": 1.0,
+          "n": 150,
+          "ms_per_image": 53.2,
+          "fit_seconds": 11.9,
+          "slot_sanity": {
+            "sem": 0.998,
+            "disc": 0.9055,
+            "shead": 1.0
+          },
+          "weights": {
+            "sem": 0.3548,
+            "disc": 0.2889,
+            "shead": 0.3563
+          }
+        },
+        "full_slots": {
+          "auroc": 1.0,
+          "ap": 1.0,
+          "f1": 1.0,
+          "n": 421,
+          "ms_per_image": 475.0
+        },
+        "delta_fast_minus_full": 0.0,
+        "fast_ge09": true,
+        "full_ge09": true
+      }
+    },
+    "summary": {
+      "n": 3,
+      "fast_mean_auroc": 0.9679,
+      "full_mean_auroc": 0.9609,
+      "fast_ge09_count": 3,
+      "full_ge09_count": 3,
+      "fast_better_count": 2,
+      "fast_dropped_below09": []
+    }
+  },
+  "mpdd": {
+    "items": {
+      "bracket_black": {
+        "fast": {
+          "auroc": 0.9948,
+          "ap": 0.994,
+          "n": 56,
+          "ms_per_image": 66.3,
+          "fit_seconds": 14.6,
+          "slot_sanity": {
+            "sem": 0.7826,
+            "disc": 0.1411,
+            "shead": 0.9798
+          },
+          "weights": {
+            "sem": 0.3707,
+            "disc": 0.0,
+            "shead": 0.6293
+          }
+        },
+        "full_slots": {
+          "auroc": 0.9661,
+          "ap": 0.9625,
+          "f1": 0.913,
+          "n": 56,
+          "ms_per_image": 479.0
+        },
+        "delta_fast_minus_full": 0.0287,
+        "fast_ge09": true,
+        "full_ge09": true
+      },
+      "bracket_brown": {
+        "fast": {
+          "auroc": 1.0,
+          "ap": 1.0,
+          "n": 52,
+          "ms_per_image": 66.8,
+          "fit_seconds": 13.7,
+          "slot_sanity": {
+            "sem": 0.9212,
+            "disc": 0.5356,
+            "shead": 1.0
+          },
+          "weights": {
+            "sem": 0.4402,
+            "disc": 0.0372,
+            "shead": 0.5226
+          }
+        },
+        "full_slots": {
+          "auroc": 0.997,
+          "ap": 0.9973,
+          "f1": 0.9804,
+          "n": 52,
+          "ms_per_image": 481.0
+        },
+        "delta_fast_minus_full": 0.003,
+        "fast_ge09": true,
+        "full_ge09": true
+      },
+      "bracket_white": {
+        "fast": {
+          "auroc": 0.9789,
+          "ap": 0.9631,
+          "n": 45,
+          "ms_per_image": 63.1,
+          "fit_seconds": 12.3,
+          "slot_sanity": {
+            "sem": 0.9993,
+            "disc": 0.4683,
+            "shead": 0.96
+          },
+          "weights": {
+            "sem": 0.5205,
+            "disc": 0.0,
+            "shead": 0.4795
+          }
+        },
+        "full_slots": {
+          "auroc": 0.9733,
+          "ap": 0.965,
+          "f1": 0.9286,
+          "n": 45,
+          "ms_per_image": 509.0
+        },
+        "delta_fast_minus_full": 0.0056,
+        "fast_ge09": true,
+        "full_ge09": true
+      },
+      "connector": {
+        "fast": {
+          "auroc": 1.0,
+          "ap": 1.0,
+          "n": 37,
+          "ms_per_image": 65.8,
+          "fit_seconds": 11.9,
+          "slot_sanity": {
+            "sem": 0.9864,
+            "disc": 0.3857,
+            "shead": 1.0
+          },
+          "weights": {
+            "sem": 0.4931,
+            "disc": 0.0,
+            "shead": 0.5069
+          }
+        },
+        "full_slots": {
+          "auroc": 1.0,
+          "ap": 1.0,
+          "f1": 1.0,
+          "n": 37,
+          "ms_per_image": 506.0
+        },
+        "delta_fast_minus_full": 0.0,
+        "fast_ge09": true,
+        "full_ge09": true
+      },
+      "metal_plate": {
+        "fast": {
+          "auroc": 1.0,
+          "ap": 1.0,
+          "n": 67,
+          "ms_per_image": 65.6,
+          "fit_seconds": 8.9,
+          "slot_sanity": {
+            "sem": 1.0,
+            "disc": 0.7349,
+            "shead": 1.0
+          },
+          "weights": {
+            "sem": 0.4049,
+            "disc": 0.1902,
+            "shead": 0.4049
+          }
+        },
+        "full_slots": {
+          "auroc": 1.0,
+          "ap": 1.0,
+          "f1": 1.0,
+          "n": 67,
+          "ms_per_image": 507.0
+        },
+        "delta_fast_minus_full": 0.0,
+        "fast_ge09": true,
+        "full_ge09": true
+      },
+      "tubes": {
+        "fast": {
+          "auroc": 0.9712,
+          "ap": 0.9728,
+          "n": 71,
+          "ms_per_image": 75.3,
+          "fit_seconds": 14.4,
+          "slot_sanity": {
+            "sem": 0.9683,
+            "disc": 0.5165,
+            "shead": 0.9837
+          },
+          "weights": {
+            "sem": 0.4835,
+            "disc": 0.017,
+            "shead": 0.4994
+          }
+        },
+        "full_slots": {
+          "auroc": 0.9415,
+          "ap": 0.9482,
+          "f1": 0.9024,
+          "n": 71,
+          "ms_per_image": 544.0
+        },
+        "delta_fast_minus_full": 0.0297,
+        "fast_ge09": true,
+        "full_ge09": true
+      }
+    },
+    "summary": {
+      "n": 6,
+      "fast_mean_auroc": 0.9908,
+      "full_mean_auroc": 0.9797,
+      "fast_ge09_count": 6,
+      "full_ge09_count": 6,
+      "fast_better_count": 4,
+      "fast_dropped_below09": []
+    }
+  },
+  "data_local": {
+    "items": {
+      "component": {
+        "fast": {
+          "auroc": 0.3571,
+          "ap": 0.7798,
+          "n": 9,
+          "ms_per_image": 44.2,
+          "fit_seconds": 2.8,
+          "slot_sanity": {
+            "sem": 0.9643,
+            "disc": 0.5179,
+            "shead": 0.8393
+          },
+          "weights": {
+            "disc": 0.1864,
+            "sem": 0.2355,
+            "shead": 0.5781
+          }
+        },
+        "full_slots": {
+          "auroc": 0.7143,
+          "ap": 0.9094,
+          "f1": 0.9333,
+          "n": 9,
+          "ms_per_image": 392.0
+        },
+        "delta_fast_minus_full": -0.3572,
+        "fast_ge09": false,
+        "full_ge09": false
+      },
+      "extra_part": {
+        "fast": {
+          "auroc": 0.6,
+          "ap": 0.7663,
+          "n": 28,
+          "ms_per_image": 141.7,
+          "fit_seconds": 9.5,
+          "slot_sanity": {
+            "sem": 0.8149,
+            "disc": 0.618,
+            "shead": 0.6138
+          },
+          "weights": {
+            "disc": 0.4725,
+            "sem": 0.1667,
+            "shead": 0.3609
+          }
+        },
+        "full_slots": {
+          "auroc": 0.575,
+          "ap": 0.7797,
+          "f1": 0.8333,
+          "n": 28,
+          "ms_per_image": 902.0
+        },
+        "delta_fast_minus_full": 0.025,
+        "fast_ge09": false,
+        "full_ge09": false
+      },
+      "gold_finger": {
+        "fast": {
+          "auroc": 0.1572,
+          "ap": 0.6185,
+          "n": 72,
+          "ms_per_image": 184.3,
+          "fit_seconds": 19.0,
+          "slot_sanity": {
+            "sem": 0.7446,
+            "disc": 0.5074,
+            "shead": 0.7262
+          },
+          "weights": {
+            "disc": 0.2948,
+            "sem": 0.3277,
+            "shead": 0.3775
+          }
+        },
+        "full_slots": {
+          "auroc": 0.1016,
+          "ap": 0.5995,
+          "f1": 0.8661,
+          "n": 72,
+          "ms_per_image": 1006.0
+        },
+        "delta_fast_minus_full": 0.0556,
+        "fast_ge09": false,
+        "full_ge09": false
+      },
+      "solder_smt": {
+        "fast": {
+          "auroc": 0.261,
+          "ap": 0.8188,
+          "n": 82,
+          "ms_per_image": 52.8,
+          "fit_seconds": 6.6,
+          "slot_sanity": {
+            "sem": 0.8538,
+            "disc": 0.5471,
+            "shead": 0.7657
+          },
+          "weights": {
+            "disc": 0.2838,
+            "sem": 0.2756,
+            "shead": 0.4406
+          }
+        },
+        "full_slots": {
+          "auroc": 0.223,
+          "ap": 0.8093,
+          "f1": 0.9419,
+          "n": 82,
+          "ms_per_image": 427.0
+        },
+        "delta_fast_minus_full": 0.038,
+        "fast_ge09": false,
+        "full_ge09": false
+      }
+    },
+    "summary": {
+      "n": 4,
+      "fast_mean_auroc": 0.3438,
+      "full_mean_auroc": 0.4035,
+      "fast_ge09_count": 0,
+      "full_ge09_count": 0,
+      "fast_better_count": 3,
+      "fast_dropped_below09": []
+    }
+  },
+  "gyudet": {
+    "item": {
+      "fast": {
+        "auroc": 0.611,
+        "ap": 0.779,
+        "n": 150,
+        "ms_per_image": 189.0,
+        "fit_seconds": 27.7,
+        "slot_sanity": {
+          "sem": 0.9598,
+          "disc": 0.4897,
+          "shead": 0.9363
+        },
+        "weights": {
+          "disc": 0.3824,
+          "sem": 0.3604,
+          "shead": 0.2572
+        }
+      },
+      "full_slots": {
+        "auroc": 0.5594,
+        "ap": 0.7415,
+        "f1": 0.8692,
+        "n": 150,
+        "ms_per_image": 990.0
+      },
+      "delta_fast_minus_full": 0.0516,
+      "fast_ge09": false,
+      "full_ge09": false
+    },
+    "summary": {
+      "n": 1,
+      "fast_mean_auroc": 0.611,
+      "full_mean_auroc": 0.5594,
+      "fast_ge09_count": 0,
+      "full_ge09_count": 0,
+      "fast_better_count": 1,
+      "both_below09": true,
+      "fast_dropped_below09": []
+    }
+  }
+}

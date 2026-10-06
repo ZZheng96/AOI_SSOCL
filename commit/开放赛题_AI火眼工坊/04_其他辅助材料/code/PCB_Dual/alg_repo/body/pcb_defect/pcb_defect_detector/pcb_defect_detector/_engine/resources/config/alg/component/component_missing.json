@@ -1,0 +1,19 @@
+{
+  "algorithmId": 7002,
+  "algorithmCode": "component_missing",
+  "version": 1,
+  "remark": "元件缺件检测：本体像素比+差分+边缘+暗色元件通道 联合判定",
+  "releaseUser": "administrator",
+  "releaseTime": "2026-06-30T00:00:00",
+  "defaultParam": {
+    "body_ratio_min": 0.30,
+    "presence_ok_min": 0.60,
+    "diff_thresh": 40,
+    "diff_score_max": 0.50,
+    "edge_ratio_min": 0.05,
+    "roi_body_ratio_max": 0.55,
+    "roi_diff_min": 0.28,
+    "tpl_ncc_missing_max": 0.85,
+    "diff_score_missing_min": 0.11
+  }
+}

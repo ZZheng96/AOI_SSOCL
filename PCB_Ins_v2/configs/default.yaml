@@ -1,0 +1,65 @@
+# PCB_Ins v2 主配置（融合 PCB_Ins 传统检测 + AOI_sys 特征学习）
+
+system:
+  host: "127.0.0.1"
+  port: 8021
+  name: "PCB_Ins v2"
+  pipeline_enabled: false    # 启动时是否自动跑产线消费服务
+
+storage:
+  root: "storage"
+  snapshots: "storage/snapshots"      # 品类模型快照（特征引擎）
+  logs: "storage/logs"
+  outputs: "storage/outputs"
+
+logging:
+  max_mb: 10
+  backups: 5
+
+database:
+  url: "sqlite:///storage/aoi.db"     # 检测记录/模板/工单统一入库
+
+# 传统算法仓库位置（系统内预留，未来算法放入 alg_repo/<name>）
+# SMT 仓库已从 D:\AOI\PCBA_detection\test_code\Dev_solder_smt_Alg 复制
+alg_repo:
+  root: "alg_repo"
+
+# 特征引擎（demo5 引擎，AOI_sys 迁入）
+feature_engine:
+  base_cfg: "configs/demo5_fast.yaml" # 槽位配置（DINO + 9 槽）
+  device: "auto"                      # auto / cuda / cpu
+
+# 模板库
+templates:
+  dir: "templates"
+
+# 门禁（传统引擎对位）
+gate:
+  enabled: true
+  size_gate_max_diff_px: 10
+
+# PLC/光电触发拍照检测（detect/trigger 接口）
+plc:
+  trigger_dir: ""          # 待检图落盘目录（PLC 触发拍照后写入）；空=接口报 400
+  exts: [".png", ".jpg", ".jpeg", ".bmp"]
+  template_ref: ""         # 绑定模板（可选；空则按 category 走特征引擎）
+  category: "default"
+
+# 双坐标标定（P2：pxPerMM X/Y 分离；物理原点=PCB 工艺基准角）
+coordinate:
+  px_per_mm_x: 1.0
+  px_per_mm_y: 1.0
+  origin_x_mm: 0.0
+  origin_y_mm: 0.0
+  img_origin_x: 0.0
+  img_origin_y: 0.0
+  device_code: "dev01"
+
+# MES 对接（P2：enabled 后检测完成上报；type=mock 记录到 storage/mes_outbox）
+mes:
+  enabled: false
+  type: "mock"
+
+# 权限（P2：api_key 非空则除 health 外需 X-API-Key 头）
+auth:
+  api_key: ""

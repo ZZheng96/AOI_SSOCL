@@ -1,0 +1,136 @@
+{
+  "version": "6.3.1",
+  "flags": {},
+  "shapes": [
+    {
+      "label": "bridge",
+      "points": [
+        [
+          35.423076923076906,
+          126.38461538461536
+        ],
+        [
+          103.95454545454544,
+          214.49650349650346
+        ]
+      ],
+      "group_id": null,
+      "description": "",
+      "shape_type": "rectangle",
+      "flags": {},
+      "mask": null
+    },
+    {
+      "label": "solder_mask",
+      "points": [
+        [
+          27.791338582677128,
+          10.212598425196871
+        ],
+        [
+          141.9645669291338,
+          26.748031496063014
+        ]
+      ],
+      "group_id": null,
+      "description": "",
+      "shape_type": "rectangle",
+      "flags": {},
+      "mask": null
+    },
+    {
+      "label": "silk",
+      "points": [
+        [
+          308.1062992125984,
+          17.299212598425218
+        ],
+        [
+          378.18503937007875,
+          25.173228346456714
+        ]
+      ],
+      "group_id": null,
+      "description": "",
+      "shape_type": "rectangle",
+      "flags": {},
+      "mask": null
+    },
+    {
+      "label": "silk",
+      "points": [
+        [
+          517.5551181102362,
+          16.51181102362207
+        ],
+        [
+          588.4212598425197,
+          26.748031496063014
+        ]
+      ],
+      "group_id": null,
+      "description": "",
+      "shape_type": "rectangle",
+      "flags": {},
+      "mask": null
+    },
+    {
+      "label": "silk",
+      "points": [
+        [
+          308.89370078740154,
+          579.5039370078741
+        ],
+        [
+          583.6968503937007,
+          585.0157480314962
+        ]
+      ],
+      "group_id": null,
+      "description": "",
+      "shape_type": "rectangle",
+      "flags": {},
+      "mask": null
+    },
+    {
+      "label": "silk",
+      "points": [
+        [
+          198.6574803149606,
+          3.9133858267716746
+        ],
+        [
+          241.9645669291338,
+          11.000000000000021
+        ]
+      ],
+      "group_id": null,
+      "description": "",
+      "shape_type": "rectangle",
+      "flags": {},
+      "mask": null
+    },
+    {
+      "label": "solder_mask",
+      "points": [
+        [
+          666.3740157480315,
+          581.0787401574804
+        ],
+        [
+          901.8070866141732,
+          610.2125984251969
+        ]
+      ],
+      "group_id": null,
+      "description": "",
+      "shape_type": "rectangle",
+      "flags": {},
+      "mask": null
+    }
+  ],
+  "imagePath": "PixPin_2026-07-01_09-24-39.png",
+  "imageData": null,
+  "imageHeight": 622,
+  "imageWidth": 917
+}

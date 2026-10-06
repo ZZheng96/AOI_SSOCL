@@ -1,0 +1,18 @@
+{
+  "algorithmId": 7006,
+  "algorithmCode": "component_reverse_polarity",
+  "version": 1,
+  "remark": "元件极反检测：默认丝印单路(最快)；色带/灯芯/暗标记按需开启 enable_*",
+  "releaseUser": "administrator",
+  "releaseTime": "2026-06-30T00:00:00",
+  "defaultParam": {
+    "ncc_diff_min": 0.06,
+    "mark_dark_ratio": 0.30,
+    "band_side_tol": 0.12,
+    "body_ncc_max": 0.65,
+    "enable_silkscreen": true,
+    "enable_color_band": false,
+    "enable_diode": false,
+    "enable_dark_mark": false
+  }
+}

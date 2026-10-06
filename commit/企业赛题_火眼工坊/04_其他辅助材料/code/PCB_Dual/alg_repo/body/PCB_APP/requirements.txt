@@ -1,0 +1,6 @@
+# PCB_APP 前端算法验证工具依赖
+PySide6>=6.6
+opencv-python>=4.8
+numpy>=1.24
+# 破损检测(SSIM)可选增强，缺失时算法自动降级
+scikit-image>=0.21

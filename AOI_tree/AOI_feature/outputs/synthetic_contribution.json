@@ -1,0 +1,153 @@
+{
+  "category": "synthetic",
+  "n_ref": 60,
+  "n_test": 45,
+  "n_defect": 15,
+  "full_auroc": 1.0,
+  "full_ap": 1.0,
+  "groups": {
+    "glcm": {
+      "name": "① GLCM 纹理",
+      "dim": 4,
+      "standalone_auroc": 0.8066666666666666,
+      "loo_auroc": 1.0,
+      "loo_drop": 0.0,
+      "perm_drop_mean": 0.0035555555555555783,
+      "perm_drop_std": 0.003014368881389027
+    },
+    "selfsim": {
+      "name": "② 区域自相似",
+      "dim": 5,
+      "standalone_auroc": 0.7333333333333333,
+      "loo_auroc": 1.0,
+      "loo_drop": 0.0,
+      "perm_drop_mean": 0.00488888888888892,
+      "perm_drop_std": 0.001662958838566207
+    },
+    "edge": {
+      "name": "③ 边缘梯度",
+      "dim": 28,
+      "standalone_auroc": 0.7511111111111111,
+      "loo_auroc": 1.0,
+      "loo_drop": 0.0,
+      "perm_drop_mean": 0.009777777777777774,
+      "perm_drop_std": 0.004575835618216423
+    },
+    "hog": {
+      "name": "④ HOG",
+      "dim": 11,
+      "standalone_auroc": 0.52,
+      "loo_auroc": 1.0,
+      "loo_drop": 0.0,
+      "perm_drop_mean": 0.0,
+      "perm_drop_std": 0.0
+    },
+    "shape": {
+      "name": "⑤ 形状/几何",
+      "dim": 11,
+      "standalone_auroc": 0.8555555555555555,
+      "loo_auroc": 1.0,
+      "loo_drop": 0.0,
+      "perm_drop_mean": 0.011111111111111072,
+      "perm_drop_std": 0.007166451331820911
+    },
+    "gray": {
+      "name": "⑥ 灰度统计",
+      "dim": 12,
+      "standalone_auroc": 0.9755555555555556,
+      "loo_auroc": 1.0,
+      "loo_drop": 0.0,
+      "perm_drop_mean": 0.01644444444444444,
+      "perm_drop_std": 0.007900617259836129
+    },
+    "gloss": {
+      "name": "⑦ 材质反光",
+      "dim": 4,
+      "standalone_auroc": 0.5844444444444443,
+      "loo_auroc": 1.0,
+      "loo_drop": 0.0,
+      "perm_drop_mean": 0.005777777777777793,
+      "perm_drop_std": 0.004354648431614528
+    },
+    "color": {
+      "name": "⑧ 色彩 HSV+矩",
+      "dim": 36,
+      "standalone_auroc": 1.0,
+      "loo_auroc": 1.0,
+      "loo_drop": 0.0,
+      "perm_drop_mean": 0.13733333333333336,
+      "perm_drop_std": 0.0455289895439037
+    },
+    "fft": {
+      "name": "⑨ FFT 频域",
+      "dim": 13,
+      "standalone_auroc": 0.8711111111111112,
+      "loo_auroc": 1.0,
+      "loo_drop": 0.0,
+      "perm_drop_mean": 0.005333333333333368,
+      "perm_drop_std": 0.002666666666666684
+    },
+    "wavelet": {
+      "name": "⑩ Haar 小波",
+      "dim": 40,
+      "standalone_auroc": 0.9533333333333334,
+      "loo_auroc": 1.0,
+      "loo_drop": 0.0,
+      "perm_drop_mean": 0.03866666666666663,
+      "perm_drop_std": 0.014578861748317094
+    },
+    "logic": {
+      "name": "⑪ 逻辑关系",
+      "dim": 6,
+      "standalone_auroc": 0.3333333333333333,
+      "loo_auroc": 1.0,
+      "loo_drop": 0.0,
+      "perm_drop_mean": 0.0004444444444444473,
+      "perm_drop_std": 0.0008888888888888946
+    },
+    "gabor": {
+      "name": "⑫ Gabor",
+      "dim": 8,
+      "standalone_auroc": 0.9777777777777779,
+      "loo_auroc": 1.0,
+      "loo_drop": 0.0,
+      "perm_drop_mean": 0.028888888888888832,
+      "perm_drop_std": 0.006885303726590972
+    },
+    "log": {
+      "name": "⑬ LoG 斑点",
+      "dim": 5,
+      "standalone_auroc": 0.7111111111111111,
+      "loo_auroc": 1.0,
+      "loo_drop": 0.0,
+      "perm_drop_mean": 0.0,
+      "perm_drop_std": 0.0
+    },
+    "pc": {
+      "name": "⑭ 相位一致性",
+      "dim": 3,
+      "standalone_auroc": 0.5044444444444445,
+      "loo_auroc": 1.0,
+      "loo_drop": 0.0,
+      "perm_drop_mean": 0.0,
+      "perm_drop_std": 0.0
+    },
+    "surf": {
+      "name": "⑮ SURF",
+      "dim": 14,
+      "standalone_auroc": 0.5244444444444445,
+      "loo_auroc": 1.0,
+      "loo_drop": 0.0,
+      "perm_drop_mean": 0.02488888888888887,
+      "perm_drop_std": 0.008122518614443141
+    }
+  },
+  "meta": {
+    "k": 3,
+    "n_perm": 5,
+    "seed": 42,
+    "feature_set": "trunk_200",
+    "caliber": "U27 播种 / U36 z-clip ±10 / U99 跳过自身最近邻（trad 槽位同口径）",
+    "honesty": "AUROC 不翻转；fit 仅用 train 域 init_normal；负贡献如实登记"
+  }
+}

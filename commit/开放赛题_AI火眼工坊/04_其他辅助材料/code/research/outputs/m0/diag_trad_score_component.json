@@ -1,0 +1,19 @@
+{
+  "category": "component",
+  "mode": "tiles36",
+  "n_test": 9,
+  "n_defect": 7,
+  "bank": {
+    "whole": 8,
+    "tile": 28
+  },
+  "auroc": {
+    "whole_3nn": 0.8571,
+    "whole_min": 0.7143,
+    "tile_min_top3": 0.7143,
+    "tile_min_mean": 0.7143,
+    "tile_3nn_top3": 0.7143,
+    "tile_3nn_mean": 0.7143
+  },
+  "eval_sec": 3.1
+}

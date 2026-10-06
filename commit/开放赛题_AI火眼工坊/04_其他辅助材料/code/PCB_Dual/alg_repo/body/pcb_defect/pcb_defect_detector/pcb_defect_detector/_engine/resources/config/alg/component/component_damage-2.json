@@ -1,0 +1,16 @@
+{
+  "algorithmId": 7007,
+  "algorithmCode": "component_damage",
+  "version": 1,
+  "remark": "元件破损检测：SSIM差异+轮廓matchShapes，先精对齐再判破损",
+  "releaseUser": "administrator",
+  "releaseTime": "2026-06-30T00:00:00",
+  "defaultParam": {
+    "ssim_diff_thresh": 0.08,
+    "blob_area_min": 1,
+    "shape_match_max": 0.01,
+    "morph_ksize": 3,
+    "ncc_fallback_max": 0.75,
+    "skip_structural_hint": false
+  }
+}

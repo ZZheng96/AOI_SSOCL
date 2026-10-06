@@ -1,0 +1,129 @@
+{
+  "bench": "2500x2500 speed working point",
+  "config": "m4_cpu.yaml",
+  "category": "gold_finger",
+  "side": 2500,
+  "slots": [
+    "blob",
+    "trad",
+    "layout"
+  ],
+  "fit_seconds": 64.1,
+  "hardware": {
+    "date": "2026-08-31 17:41:27",
+    "python": "3.11.9",
+    "torch": "2.5.1+cu121",
+    "cpu": "Intel64 Family 6 Model 165 Stepping 5, GenuineIntel",
+    "cpu_cores": 16,
+    "gpu": "NVIDIA GeForce GTX 1660 SUPER",
+    "cuda": "12.1"
+  },
+  "model_ms": {
+    "n": 15,
+    "mean": 256.5,
+    "p50": 249.5,
+    "p95": 317.0,
+    "min": 203.3,
+    "max": 330.4
+  },
+  "e2e_ms": {
+    "n": 15,
+    "mean": 351.3,
+    "p50": 360.0,
+    "p95": 367.7,
+    "min": 308.3,
+    "max": 373.5
+  },
+  "detail": [
+    {
+      "round": 1,
+      "image": "bench_0.png",
+      "model_ms": 317.0,
+      "e2e_ms": 364.9
+    },
+    {
+      "round": 1,
+      "image": "bench_1.png",
+      "model_ms": 203.3,
+      "e2e_ms": 373.5
+    },
+    {
+      "round": 1,
+      "image": "bench_2.png",
+      "model_ms": 301.4,
+      "e2e_ms": 367.7
+    },
+    {
+      "round": 1,
+      "image": "bench_3.png",
+      "model_ms": 249.5,
+      "e2e_ms": 360.0
+    },
+    {
+      "round": 1,
+      "image": "bench_4.png",
+      "model_ms": 236.6,
+      "e2e_ms": 328.7
+    },
+    {
+      "round": 2,
+      "image": "bench_0.png",
+      "model_ms": 330.4,
+      "e2e_ms": 365.9
+    },
+    {
+      "round": 2,
+      "image": "bench_1.png",
+      "model_ms": 219.8,
+      "e2e_ms": 337.3
+    },
+    {
+      "round": 2,
+      "image": "bench_2.png",
+      "model_ms": 263.9,
+      "e2e_ms": 361.6
+    },
+    {
+      "round": 2,
+      "image": "bench_3.png",
+      "model_ms": 240.6,
+      "e2e_ms": 350.8
+    },
+    {
+      "round": 2,
+      "image": "bench_4.png",
+      "model_ms": 222.7,
+      "e2e_ms": 336.4
+    },
+    {
+      "round": 3,
+      "image": "bench_0.png",
+      "model_ms": 291.5,
+      "e2e_ms": 361.4
+    },
+    {
+      "round": 3,
+      "image": "bench_1.png",
+      "model_ms": 227.2,
+      "e2e_ms": 357.8
+    },
+    {
+      "round": 3,
+      "image": "bench_2.png",
+      "model_ms": 284.4,
+      "e2e_ms": 366.3
+    },
+    {
+      "round": 3,
+      "image": "bench_3.png",
+      "model_ms": 252.1,
+      "e2e_ms": 308.3
+    },
+    {
+      "round": 3,
+      "image": "bench_4.png",
+      "model_ms": 207.5,
+      "e2e_ms": 329.1
+    }
+  ]
+}

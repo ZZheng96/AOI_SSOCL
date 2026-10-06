@@ -1,0 +1,134 @@
+# Demo5 M0 配置：诚实基线（sem+disc+blob 三槽位）
+seed: 42
+device: cuda
+
+protocol:
+  n_init_normal: 100      # 仅 train/good
+  n_init_defect: 30       # 仅 train/bad 或 test/defect（赛题协议）
+  forbid: [test_good, pairs, filename_metadata]   # 红线：代码断言强制
+
+fusion:
+  weight_mode: equal      # equal | sanity（U40：sanity=init_defect 槽位 AUROC 加权，剔除反向槽；默认等权保底）
+  # U113 机制C（2026-08-26）：域差品类域不变权重倾斜——train_auroc < 阈值（协议内
+  # 信号：初始融合明显欠优 = 域差/反向场景）时，融合向域不变特征（blob/disc/inp，
+  # U97 实证跨域稳定，solder blob 0.74/gold blob 0.82 实测）倾斜，避免等权被反向
+  # 槽位（sem/shead/trad/layout 跨域反向）主导。权重基于先验理论，非 test 域反推。
+  domain_train_auroc_thresh: 0.85
+  domain_weights: {blob: 0.40, disc: 0.20, inp: 0.20, sem: 0.08, shead: 0.06, trad: 0.03, layout: 0.03}
+
+backbone:
+  name: dinov2_vits14
+  output_layer: 9
+  grid: 32                # 输入 resize 到 grid*14=448，输出 32x32 patch 网格
+
+tiling:
+  mode: single            # 图像层采样粒度：single | tiles9 | tiles36（旋钮，§6.1）
+  tile_size: 512
+  stride: 448
+  # 特征图层多尺度聚合（demo4 §6.2.1 精髓，零额外前向）：
+  # sem/disc 单次前向的 (G,G) 分数图按 1/2/4 block 聚合加权，兼顾不同缺陷尺寸
+  multiscale_scales: [1, 2, 4]
+  multiscale_weights: [0.6, 0.3, 0.1]
+
+slots:
+  sem:
+    enabled: true
+    coreset_size: 512     # v2 实测甜点
+    tile_topk_ratio: 0.05 # tile 分数=patch 距离 top 5% 均值
+    block_topk: 3         # 图像分数=tile 分数 top-3 均值（v2 教训：不全局平均）
+  disc:
+    enabled: true
+    hidden: 128
+    epochs: 30
+    lr: 0.001
+    pseudo_per_image: 8   # 每张基底图生成的伪异常数
+    # 跨品类预训练初始化（§9.1，U11）：三模式实测（gold_finger 2026-08-15）：
+    #   冻结 0.6032 > 微调5ep 0.4914 > 从零 0.4235 → 生产默认冻结（fit 仅 14s）
+    init_from: outputs/m0/disc_pretrain.pt
+    freeze: true
+  shead:
+    enabled: true         # 图像级伪异常判别（demo4 s 分支配方移植）：整图单分
+                          # U51（2026-08-16）学习曲线实测：gyudet 0.6232→0.7665 显著超
+                          # U46 无 shead（0.5588→0.6599），突破 0.7；mvtec/BTAD/MPDD
+                          # 代表品类（bottle/BTAD01/bracket_white）含 shead 均 ≥ 既有
+                          # 记录无拉低 → 默认开启保持
+    hidden: 256           # demo4 DiscriminativeHead 同构（3 层 MLP+dropout 0.3）
+    epochs: 50            # demo4 _train_discriminative_head 同款
+    lr: 0.001
+    batch: 32             # demo4 同款
+    margin: 5.0           # DeviationLoss margin（demo4 同款）
+    pseudo_per_image: 3   # 每张正常图生成 randn*0.1 特征噪声正样本数（demo4 同款）
+    max_base_tiles: 96    # 基底图上限（内存控制）
+    max_patches: 50000    # 特征样本上限（图像级远低于此，保守保留）
+  blob:
+    enabled: true
+    sigmas: [1, 2, 4, 8, 16]
+  trad:
+    enabled: true         # 200 维传统特征库（demo4 移植，无网络）
+  layout:
+    enabled: true         # 统计布局模型：缺件/错位/逻辑顺序（§4.2）
+  color:
+    enabled: false        # 色彩变化检测（赛题五类，U94）：HSV 直方图卡方距离。
+                          # 默认关——U94 实测 HSV 全局直方图对"缺线/划痕"也敏感
+                          # （不色彩专属），且作为弱槽拖累标准品类融合（U59 砍槽
+                          # 净收益）。色彩变化检出已被外观槽位覆盖（U93 检出 1.0），
+                          # 精确"色彩 vs 外观"归因需局部色彩特征（图像级体系边界）
+    h_bins: 18            # 色相 bin
+    s_bins: 16            # 饱和度 bin
+    max_side: 1024        # 工作分辨率（直方图统计，降采样无损）
+  inp:
+    enabled: true         # 图内内在原型（INP）：零样本、域差免疫（L0 兜底/U4）
+  open:
+    enabled: true         # E_open 开放通道（§3.3 完备性）：PCA 重构误差哨兵（不进融合）
+    n_components: 0.95    # 正常流形 PCA 保留方差
+    topk_ratio: 0.05
+    thresh: 0.9           # open 校准分超阈值且命名槽位判 normal → 不完备报告
+  tpl:
+    enabled: false        # L3 模板差分（§4）：需用户显式提供模板图，赛题标准场景默认关
+    feat_weight: 0.7      # DINO 特征差分权重（对齐 L2 距离）
+    pix_weight: 0.3       # 像素差分权重（RGB L1 归一化）
+    topk_ratio: 0.1       # 分数图 top 10% 均值聚合为 tile 分数
+
+router:
+  enabled: true           # M2 软路由（§5）：仅追溯通道（router_w 落盘供解释）
+                          # U15 实证：门控评估集 init_defect 不可靠，路由 test 侧劣化，
+                          # 不参与融合分。融合权重由 consensus 决定。
+  epochs: 50
+  lr: 0.001
+  margin: 0.1             # MIL 排序损失 margin
+  lam_entropy: 0.1        # 负载均衡正则（防坍缩）
+  gate_margin: 0.005      # 路由 AUC ≥ 保底 + margin 才启用（仅报告）
+
+consensus:
+  enabled: true           # M2 共识自适应（§5.3，U14）：无标签槽位权重
+  blend: 0.5              # 共识权重与等权 blend（0.5=一半信共识；demo3 用 0.8 实测有效）
+                          # U15 实证：有标签门控不可靠，共识直接启用（demo3 同款）
+
+calibration:
+  cdf_bins: 256           # 逐槽位在 train/good 上拟合直方图 CDF
+
+decision:
+  tau_quantile: 0.99      # τ_high = train/good 融合分数 99% 分位
+  tau_gray: 0.95          # 灰区下限分位
+  no_cap_fused: false     # U70：true 时不 cap fused（允许 >1，防决策失效区）
+  tta:                    # U100/U101：对位偏移+光照 TTA（判 anomaly/gray 时扰动搜索取最小 fused）
+    enabled: false        # 默认关（开启后每次非 normal 样本多 ~4-6 次前向，速度成本）
+    shift: 10             # 平移步长（px）
+    lighting: false       # U101：光照 TTA（gamma 候选），独立开关
+    gammas: [0.8, 1.25]   # 光照候选 gamma 值（变亮/变暗恢复）
+    brightness: false     # U104：亮度 TTA（线性偏移候选），独立开关
+    brights: [-25, 25]    # 亮度候选偏移值
+
+hierarchical:
+  mask_thresh: 0.5        # §6.2 L2 掩码阈值（融合热力图）
+  min_area: 16            # 检测框最小连通域面积
+  work_side: 512          # 掩码/框低分辨率工作网格（热力图本为 patch 级，语义等价；提速）
+
+datasets:
+  gyu_det: D:\CGAIC\data_origin\GYU-DET
+  data_local: D:\CGAIC\data_local
+  mvtec: D:\CGAIC\data_origin\mvtec
+  btad: D:\CGAIC\data_origin\BTAD\BTech_Dataset_transformed
+  mpdd: D:\CGAIC\data_origin\MPDD
+
+output_dir: d:\CGAIC\demo5\outputs\m0

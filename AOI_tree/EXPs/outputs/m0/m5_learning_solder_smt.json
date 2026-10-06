@@ -1,0 +1,74 @@
+{
+  "selflearn_off": {
+    "initial_auroc": 0.4815,
+    "final_auroc": 0.4815,
+    "auroc_gain": 0.0,
+    "efficiency": 0.0,
+    "steps": [],
+    "auroc": [],
+    "f1": [],
+    "n_feedback": 0
+  },
+  "selflearn_on_0.5": {
+    "steps": [
+      3,
+      6,
+      9,
+      12,
+      15,
+      18,
+      21,
+      24,
+      27
+    ],
+    "auroc": [
+      0.5185,
+      0.5062,
+      0.5062,
+      0.5185,
+      0.5185,
+      0.5185,
+      0.5185,
+      0.5062,
+      0.5185
+    ],
+    "f1": [
+      0.4444,
+      0.5641,
+      0.5263,
+      0.4865,
+      0.5263,
+      0.5263,
+      0.5263,
+      0.5263,
+      0.5641
+    ],
+    "initial_auroc": 0.4815,
+    "final_auroc": 0.5185,
+    "auroc_gain": 0.037,
+    "efficiency": 0.0014,
+    "n_feedback": 27
+  },
+  "selflearn_on_0.2": {
+    "steps": [
+      3,
+      6,
+      9
+    ],
+    "auroc": [
+      0.5062,
+      0.4938,
+      0.4938
+    ],
+    "f1": [
+      0.4865,
+      0.4865,
+      0.5641
+    ],
+    "initial_auroc": 0.4815,
+    "final_auroc": 0.4938,
+    "auroc_gain": 0.0123,
+    "efficiency": 0.0011,
+    "n_feedback": 11
+  }
+}

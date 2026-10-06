@@ -1,0 +1,24 @@
+# GPU 部署覆盖文件（评审整改 P1-1：GPU 容器开箱即用）。
+#
+# 前提：Linux 宿主机 + NVIDIA 驱动 + nvidia-container-toolkit。
+# 使用（在 AOI_Core 目录下）：
+#   set AOI_API_KEY=<强随机密钥>          # Windows PowerShell: $env:AOI_API_KEY="..."
+#   docker compose -f docker-compose.yml -f docker-compose.gpu.yml up -d --build
+#
+# 与基础 compose 的差异：torch 改 cu121 轮子 + 挂载 GPU 设备。
+# 已验证矩阵（构建前请按实际驱动核对）：CUDA 12.1 轮子 / torch>=2.0 /
+# 驱动 >= 525（cu121 最低要求）。CPU 部署仍只用 docker-compose.yml。
+services:
+  aoi-backend:
+    build:
+      context: ..
+      dockerfile: AOI_Core/Dockerfile
+      args:
+        TORCH_INDEX_URL: https://download.pytorch.org/whl/cu121
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: 1
+              capabilities: [gpu]

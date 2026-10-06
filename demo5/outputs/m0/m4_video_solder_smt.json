@@ -1,0 +1,20 @@
+{
+  "category": "solder_smt",
+  "video": "d:\\CGAIC\\demo5\\outputs\\m0\\synth_solder_smt.mp4",
+  "summary": {
+    "anomaly_frames": 3,
+    "gray_frames": 8,
+    "total_frames": 60,
+    "fps": 25.0,
+    "anomaly_ratio": 0.05,
+    "mean_fused": 0.6461,
+    "max_fused": 0.8501,
+    "dominant_type": "常见外观缺陷",
+    "type_counter": {
+      "常见外观缺陷": 13,
+      "尺寸偏差": 6
+    },
+    "final_decision": "anomaly"
+  },
+  "sequence": "NNNNNNNNNNNN??NNNNNNNNNN?AAA??NNNN???NNNNNNNNNNNNNNNNNNNNNNN"
+}

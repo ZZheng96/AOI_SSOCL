@@ -1,0 +1,120 @@
+seed: 42
+device: cuda
+protocol:
+  n_init_normal: 100
+  n_init_defect: 30
+  forbid:
+  - test_good
+  - pairs
+  - filename_metadata
+fusion:
+  weight_mode: sanity
+  mode: fixed_equal
+backbone:
+  name: dinov2_vits14
+  output_layer: 9
+  grid: 32
+tiling:
+  mode: single
+  tile_size: 512
+  stride: 448
+  multiscale_scales:
+  - 1
+  - 2
+  - 4
+  multiscale_weights:
+  - 0.6
+  - 0.3
+  - 0.1
+slots:
+  sem:
+    enabled: true
+    coreset_size: 512
+    tile_topk_ratio: 0.05
+    block_topk: 3
+  disc:
+    enabled: true
+    hidden: 128
+    epochs: 30
+    lr: 0.001
+    pseudo_per_image: 8
+    init_from: ../assets/disc_pretrain.pt
+    freeze: true
+  shead:
+    enabled: true
+    hidden: 256
+    epochs: 50
+    lr: 0.001
+    batch: 32
+    margin: 5.0
+    pseudo_per_image: 3
+    max_base_tiles: 96
+    max_patches: 50000
+  blob:
+    enabled: false
+  trad:
+    enabled: false
+  layout:
+    enabled: false
+  inp:
+    enabled: false
+  open:
+    enabled: false
+  tpl:
+    enabled: false
+    feat_weight: 1.0
+    pix_weight: 0.0
+    topk_ratio: 0.1
+augment:
+  pseudo:
+    methods:
+    - defect_transplant
+    - cutpaste
+    - color_blot
+    transplant_scale:
+    - 0.35
+    - 0.9
+    feather: true
+  preprocess:
+    enabled: false
+    gray: false
+    clahe: 0.0
+    median: 0
+  enhance:
+    flip: false
+    rot90: false
+    brightness: false
+router:
+  enabled: true
+  epochs: 50
+  lr: 0.001
+  margin: 0.1
+  lam_entropy: 0.1
+  gate_margin: 0.005
+consensus:
+  enabled: true
+calibration:
+  cdf_bins: 256
+decision:
+  tau_quantile: 0.99
+  tau_gray: 0.95
+  # 2026-08-30（MPDD 评测 P0-2 修复）：fused 不 cap 1.0——U69/U70 已证
+  # min(fused+boost,1.0) 使拦截加分样本大量饱和 1.0，0.99/0.95 分位阈值
+  # 退化为 1.0（决策失效区，阈值重估被缺陷侧门控全否决）。决策用比较
+  # 运算、AUROC 只排序，均不依赖 [0,1]；旧快照 cfg 随快照固化不受影响。
+  no_cap_fused: true
+  tta:
+    enabled: false
+    shift: 10
+    lighting: false
+    gammas:
+    - 0.8
+    - 1.25
+    brightness: false
+    brights:
+    - -25
+    - 25
+hierarchical:
+  mask_thresh: 0.5
+  min_area: 16
+  work_side: 512

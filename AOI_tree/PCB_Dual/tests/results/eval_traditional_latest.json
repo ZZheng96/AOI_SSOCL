@@ -1,0 +1,63 @@
+{
+  "bench": "eval_traditional",
+  "ts": "2026-08-31 18:46:06",
+  "env": {
+    "python": "3.11.9",
+    "platform": "Windows-10-10.0.19045-SP0"
+  },
+  "caveat": "自包含带 GT 标签样本量小，仅作量化基线，勿当统计结论；GT 约定 *_OK.png=正常、缺陷样本目录=NG",
+  "cases": [
+    {
+      "group": "smt",
+      "defect": "多锡",
+      "gt_ng": true,
+      "pred_ng": true,
+      "detail": "code=0 labels=['excess'] msg=ok",
+      "ms": 49.5190997608006
+    },
+    {
+      "group": "smt",
+      "defect": "多锡(OK)",
+      "gt_ng": false,
+      "pred_ng": false,
+      "detail": "code=0 labels=- msg=ok",
+      "ms": 10.568700265139341
+    },
+    {
+      "group": "gold",
+      "defect": "金手指",
+      "gt_ng": true,
+      "pred_ng": true,
+      "detail": "缺陷数=15 板面及金手指 判定=NG，缺陷数=15，配准方式=lowconf_phase",
+      "ms": 1153.244899585843
+    },
+    {
+      "group": "gold",
+      "defect": "金手指(第二对)",
+      "gt_ng": true,
+      "pred_ng": true,
+      "detail": "缺陷数=8 板面及金手指 判定=NG，缺陷数=8，配准方式=ncc_shift",
+      "ms": 534.8923001438379
+    },
+    {
+      "group": "gold",
+      "defect": "金手指(第三对)",
+      "gt_ng": true,
+      "pred_ng": true,
+      "detail": "缺陷数=23 板面及金手指 判定=NG，缺陷数=23，配准方式=anchor_shift",
+      "ms": 578.713099937886
+    }
+  ],
+  "summary": {
+    "ng_total": 4,
+    "tp": 4,
+    "fn": 0,
+    "recall": 1.0,
+    "ok_total": 1,
+    "fp": 0,
+    "tn": 1,
+    "fpr": 0.0,
+    "ms_mean": 465.4,
+    "ms_max": 1153.2
+  }
+}

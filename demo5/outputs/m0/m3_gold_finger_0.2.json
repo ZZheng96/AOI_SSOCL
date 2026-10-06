@@ -1,0 +1,133 @@
+{
+  "name": "gold_finger",
+  "feedback_ratio": 0.2,
+  "baseline": {
+    "final_f1": 0.3636,
+    "tp": 6,
+    "fp": 1,
+    "tn": 3,
+    "fn": 20
+  },
+  "learned": {
+    "final_f1": 0.8462,
+    "tp": 22,
+    "fp": 4,
+    "tn": 0,
+    "fn": 4
+  },
+  "gap": {
+    "final_f1_gap": 0.4826,
+    "learned_f1": 0.8462,
+    "baseline_f1": 0.3636,
+    "learned_n_feedback": 6
+  },
+  "learned_trace": [
+    {
+      "step": 4,
+      "path": "D:\\CGAIC\\data_local\\gold_finger\\test\\defect\\1310.jpg",
+      "y": 1,
+      "pred": 0,
+      "action": "difficult_queued",
+      "attribution": {
+        "mode": "fn",
+        "series": [
+          {
+            "step": "signal_presence",
+            "top_slot": "trad",
+            "top_cal": 1.0,
+            "ok": true
+          },
+          {
+            "step": "fusion_dilution",
+            "fused": 0.6573
+          }
+        ],
+        "verdict": "undertrained_fusion",
+        "next": "路由定向微调（难例参与 MIL 排序）"
+      }
+    },
+    {
+      "step": 8,
+      "path": "D:\\CGAIC\\data_local\\gold_finger\\test\\defect\\1327.jpg",
+      "y": 1,
+      "pred": 1,
+      "action": "defect_sample_add",
+      "attribution": null
+    },
+    {
+      "step": 17,
+      "path": "D:\\CGAIC\\data_local\\gold_finger\\test\\defect\\Image_20260116194217730.jpg",
+      "y": 1,
+      "pred": 1,
+      "action": "defect_sample_add",
+      "attribution": null
+    },
+    {
+      "step": 25,
+      "path": "D:\\CGAIC\\data_local\\gold_finger\\test\\good\\Image_20260116193843246_repaired.jpg",
+      "y": 0,
+      "pred": 1,
+      "action": "reflow_pending",
+      "attribution": {
+        "mode": "fp",
+        "series": [
+          {
+            "step": "bank_coverage",
+            "max_sim": 0.9922,
+            "ok": true
+          },
+          {
+            "step": "calibration_drift",
+            "fused": 0.6261,
+            "median_cal": 0.7843
+          }
+        ],
+        "verdict": "calibration_drift",
+        "next": "在线回流重建 + 重估 CDF"
+      }
+    },
+    {
+      "step": 27,
+      "path": "D:\\CGAIC\\data_local\\gold_finger\\test\\defect\\0617.png",
+      "y": 1,
+      "pred": 0,
+      "action": "difficult_queued",
+      "attribution": {
+        "mode": "fn",
+        "series": [
+          {
+            "step": "signal_presence",
+            "top_slot": "trad",
+            "top_cal": 0.8275,
+            "ok": true
+          },
+          {
+            "step": "fusion_dilution",
+            "fused": 0.2267
+          }
+        ],
+        "verdict": "undertrained_fusion",
+        "next": "路由定向微调（难例参与 MIL 排序）"
+      }
+    },
+    {
+      "step": 28,
+      "path": "D:\\CGAIC\\data_local\\gold_finger\\test\\defect\\1308.jpg",
+      "y": 1,
+      "pred": 1,
+      "action": "defect_sample_add",
+      "attribution": null
+    }
+  ],
+  "ssocl_stats": {
+    "reflow": 0,
+    "pending": 1,
+    "defect_add": 5,
+    "router_ft": 0,
+    "rollback": 0,
+    "gate_reject": 0
+  },
+  "rollbacks": [],
+  "gate_history": [],
+  "incubate_log": []
+}

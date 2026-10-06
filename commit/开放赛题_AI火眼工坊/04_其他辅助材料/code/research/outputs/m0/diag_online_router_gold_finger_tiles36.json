@@ -1,0 +1,90 @@
+{
+  "category": "gold_finger",
+  "mode": "tiles36",
+  "n_test": 72,
+  "n_fb": 37,
+  "n_eval": 35,
+  "n_eval_defect": 28,
+  "fit_weights": {
+    "blob": 0.1609,
+    "disc": 0.1665,
+    "inp": 0.1898,
+    "layout": 0.1499,
+    "sem": 0.1509,
+    "trad": 0.182
+  },
+  "online_cold_weights": {
+    "blob": 0.6664,
+    "disc": 0.6665,
+    "inp": 0.6645,
+    "layout": 0.6644,
+    "sem": 0.6639,
+    "trad": 0.665
+  },
+  "online_prior_weights": {
+    "blob": 0.6427,
+    "disc": 0.6655,
+    "inp": 0.7506,
+    "layout": 0.5909,
+    "sem": 0.5927,
+    "trad": 0.7213
+  },
+  "final_auroc": {
+    "equal": 0.648,
+    "fit_weights": 0.6633,
+    "online_cold": 0.648,
+    "online_prior": 0.6633,
+    "slot_blob": 0.8495,
+    "slot_disc": 0.773,
+    "slot_inp": 0.5969,
+    "slot_layout": 0.523,
+    "slot_sem": 0.0663,
+    "slot_trad": 0.4643
+  },
+  "curve": {
+    "online_cold": [
+      {
+        "n_fb": 15,
+        "auroc": 0.2857
+      },
+      {
+        "n_fb": 20,
+        "auroc": 0.3438
+      },
+      {
+        "n_fb": 25,
+        "auroc": 0.463
+      },
+      {
+        "n_fb": 30,
+        "auroc": 0.6091
+      },
+      {
+        "n_fb": 35,
+        "auroc": 0.6818
+      }
+    ],
+    "online_prior": [
+      {
+        "n_fb": 15,
+        "auroc": 0.2857
+      },
+      {
+        "n_fb": 20,
+        "auroc": 0.3438
+      },
+      {
+        "n_fb": 25,
+        "auroc": 0.4815
+      },
+      {
+        "n_fb": 30,
+        "auroc": 0.6273
+      },
+      {
+        "n_fb": 35,
+        "auroc": 0.6948
+      }
+    ]
+  }
+}

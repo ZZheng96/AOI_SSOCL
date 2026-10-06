@@ -1,0 +1,55 @@
+{
+  "system_state": {
+    "weights": {
+      "blob": 0.16252211603932643,
+      "disc": 0.24465402995730023,
+      "inp": 0.11369992102784132,
+      "layout": 0.2449198039090063,
+      "sem": 0.12349836538254794,
+      "trad": 0.11070576368397778
+    },
+    "decider": {
+      "tau_high": 0.7554037022291229,
+      "tau_gray": 0.7072209212536844
+    },
+    "slots": [
+      "blob",
+      "disc",
+      "inp",
+      "layout",
+      "sem",
+      "trad"
+    ],
+    "calibrator_bins": 256,
+    "fit_seconds": 76.02093362808228,
+    "n_records": 20,
+    "router_gate": {
+      "enabled": true,
+      "base_auc": 0.7667,
+      "router_auc": 0.8863,
+      "gate_margin": 0.005,
+      "train_info": {
+        "loss": 0.1990477442741394,
+        "pos_mean": 0.7551465630531311,
+        "neg_mean": 0.5681686401367188,
+        "weight_std": 0.0352177619934082
+      }
+    },
+    "consensus": {
+      "blend": 0.5,
+      "weights": {
+        "blob": 0.1625,
+        "disc": 0.2447,
+        "inp": 0.1137,
+        "layout": 0.2449,
+        "sem": 0.1235,
+        "trad": 0.1107
+      }
+    }
+  },
+  "update_log": {
+    "feedback": [],
+    "rollback": [],
+    "gate": []
+  }
+}

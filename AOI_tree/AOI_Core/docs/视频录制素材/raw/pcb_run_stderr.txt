@@ -1,0 +1,13 @@
+2026-09-01 00:14:19,078 INFO server: PCB_Ins v2 后台服务启动: http://127.0.0.1:8021
+INFO:     Started server process [105320]
+INFO:     Waiting for application startup.
+2026-09-01 00:14:20,063 INFO app.core.task_queue: [taskq] 检测任务队列已启动（2 worker）
+INFO:     Application startup complete.
+INFO:     Uvicorn running on http://127.0.0.1:8021 (Press CTRL+C to quit)
+D:\CGAIC\assets\dinov2\dinov2\layers\swiglu_ffn.py:51: UserWarning: xFormers is not available (SwiGLU)
+  warnings.warn("xFormers is not available (SwiGLU)")
+D:\CGAIC\assets\dinov2\dinov2\layers\attention.py:33: UserWarning: xFormers is not available (Attention)
+  warnings.warn("xFormers is not available (Attention)")
+D:\CGAIC\assets\dinov2\dinov2\layers\block.py:40: UserWarning: xFormers is not available (Block)
+  warnings.warn("xFormers is not available (Block)")
+2026-09-01 00:14:34,168 INFO dinov2: using MLP layer as FFN

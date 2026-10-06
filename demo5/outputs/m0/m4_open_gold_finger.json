@@ -1,0 +1,9 @@
+{
+  "category": "gold_finger",
+  "n": 72,
+  "open_auroc": 0.1706,
+  "normal_open_mean": 0.8916,
+  "defect_open_mean": 0.6063,
+  "open_alerts": 11,
+  "n_normal_decision": 56
+}

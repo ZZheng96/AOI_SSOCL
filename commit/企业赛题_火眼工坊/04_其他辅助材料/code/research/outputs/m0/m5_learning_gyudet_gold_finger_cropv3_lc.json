@@ -1,0 +1,134 @@
+{
+  "selflearn_off": {
+    "initial_auroc": 0.44,
+    "final_auroc": 0.44,
+    "auroc_gain": 0.0,
+    "efficiency": 0.0,
+    "steps": [],
+    "auroc": [],
+    "f1": [],
+    "n_feedback": 0
+  },
+  "selflearn_on_0.5": {
+    "steps": [
+      3,
+      6,
+      9,
+      12,
+      15,
+      18,
+      21,
+      24,
+      27,
+      30,
+      33,
+      36,
+      39,
+      42,
+      45,
+      48,
+      51,
+      54,
+      57,
+      60
+    ],
+    "auroc": [
+      0.5725,
+      0.5725,
+      0.53,
+      0.53,
+      0.7275,
+      0.695,
+      0.69,
+      0.78,
+      0.815,
+      0.855,
+      0.85,
+      0.745,
+      0.835,
+      0.84,
+      0.85,
+      0.83,
+      0.82,
+      0.87,
+      0.87,
+      0.865
+    ],
+    "f1": [
+      0.766,
+      0.7917,
+      0.8163,
+      0.7917,
+      0.7568,
+      0.6857,
+      0.6857,
+      0.7895,
+      0.7895,
+      0.8718,
+      0.8718,
+      0.7895,
+      0.7895,
+      0.85,
+      0.8421,
+      0.8205,
+      0.8205,
+      0.8718,
+      0.85,
+      0.85
+    ],
+    "initial_auroc": 0.455,
+    "final_auroc": 0.845,
+    "auroc_gain": 0.39,
+    "efficiency": 0.0063,
+    "n_feedback": 62,
+    "box_supervised": true,
+    "n_box_feedback": 53,
+    "intercept": {
+      "n_samples": 274,
+      "n_box_samples": 243,
+      "n_hits_total": 7564,
+      "eval_n": 30,
+      "eval_boost_gt0": 26,
+      "eval_boost_gt0_defect": 19,
+      "eval_defect_n": 20
+    },
+    "head_ft": {
+      "n_ft": 0,
+      "n_reject": 0,
+      "n_pos_total": 243,
+      "n_neg_total": 9,
+      "events": []
+    },
+    "disc_ft": {
+      "n_ft": 2,
+      "n_reject": 3,
+      "n_pos_total": 12486,
+      "n_neg_total": 576,
+      "events": [
+        {
+          "t": 1787119840.657109,
+          "n_pos": 3329,
+          "n_neg": 256,
+          "drift": 0.0212,
+          "signed": -0.0212,
+          "epochs": 3,
+          "lr": 0.0001
+        },
+        {
+          "t": 1787120728.5240567,
+          "n_pos": 2446,
+          "n_neg": 128,
+          "drift": 0.0184,
+          "signed": 0.0184,
+          "epochs": 3,
+          "lr": 0.0001
+        }
+      ]
+    },
+    "thresh_recal": {
+      "n_recal": 0,
+      "n_reject": 0,
+      "events": []
+    }
+  }
+}

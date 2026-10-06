@@ -1,0 +1,231 @@
+{
+  "categories": {
+    "gold_finger": {
+      "single": {
+        "sem": 0.146,
+        "disc": 0.6032,
+        "blob": 0.7075,
+        "trad": 0.4,
+        "layout": 0.1679,
+        "inp": 0.4449
+      },
+      "strategies": {
+        "all_equal": {
+          "auroc": 0.3262,
+          "keep": [
+            "sem",
+            "disc",
+            "blob",
+            "trad",
+            "layout",
+            "inp"
+          ]
+        },
+        "drop_lt_0.5": {
+          "auroc": 0.6701,
+          "keep": [
+            "disc",
+            "blob"
+          ]
+        },
+        "drop_lt_0.6": {
+          "auroc": 0.6701,
+          "keep": [
+            "disc",
+            "blob"
+          ]
+        },
+        "keep_top2": {
+          "auroc": 0.6701,
+          "keep": [
+            "blob",
+            "disc"
+          ]
+        },
+        "consensus": {
+          "auroc": 0.3262,
+          "keep": [
+            "blob",
+            "disc",
+            "inp",
+            "layout",
+            "sem",
+            "trad"
+          ]
+        }
+      },
+      "best": "drop_lt_0.5"
+    },
+    "solder_smt": {
+      "single": {
+        "sem": 0.3672,
+        "disc": 0.6475,
+        "blob": 0.8105,
+        "trad": 0.4766,
+        "layout": 0.2832,
+        "inp": 0.5068
+      },
+      "strategies": {
+        "all_equal": {
+          "auroc": 0.5742,
+          "keep": [
+            "sem",
+            "disc",
+            "blob",
+            "trad",
+            "layout",
+            "inp"
+          ]
+        },
+        "drop_lt_0.5": {
+          "auroc": 0.6973,
+          "keep": [
+            "disc",
+            "blob",
+            "inp"
+          ]
+        },
+        "drop_lt_0.6": {
+          "auroc": 0.7725,
+          "keep": [
+            "disc",
+            "blob"
+          ]
+        },
+        "keep_top2": {
+          "auroc": 0.7725,
+          "keep": [
+            "blob",
+            "disc"
+          ]
+        },
+        "consensus": {
+          "auroc": 0.5742,
+          "keep": [
+            "blob",
+            "disc",
+            "inp",
+            "layout",
+            "sem",
+            "trad"
+          ]
+        }
+      },
+      "best": "drop_lt_0.6"
+    },
+    "component": {
+      "single": {
+        "sem": 0.5,
+        "disc": 0.5357,
+        "blob": 0.5357,
+        "trad": 0.5,
+        "layout": 0.6429,
+        "inp": 0.5714
+      },
+      "strategies": {
+        "all_equal": {
+          "auroc": 0.4286,
+          "keep": [
+            "sem",
+            "disc",
+            "blob",
+            "trad",
+            "layout",
+            "inp"
+          ]
+        },
+        "drop_lt_0.5": {
+          "auroc": 0.4286,
+          "keep": [
+            "sem",
+            "disc",
+            "blob",
+            "trad",
+            "layout",
+            "inp"
+          ]
+        },
+        "drop_lt_0.6": {
+          "auroc": 0.6429,
+          "keep": [
+            "layout"
+          ]
+        },
+        "keep_top2": {
+          "auroc": 0.7857,
+          "keep": [
+            "layout",
+            "inp"
+          ]
+        },
+        "consensus": {
+          "auroc": 0.4286,
+          "keep": [
+            "blob",
+            "disc",
+            "inp",
+            "layout",
+            "sem",
+            "trad"
+          ]
+        }
+      },
+      "best": "keep_top2"
+    },
+    "extra_part": {
+      "single": {
+        "sem": 0.5062,
+        "disc": 0.5687,
+        "blob": 0.3844,
+        "trad": 0.5,
+        "layout": 0.4937,
+        "inp": 0.5719
+      },
+      "strategies": {
+        "all_equal": {
+          "auroc": 0.525,
+          "keep": [
+            "sem",
+            "disc",
+            "blob",
+            "trad",
+            "layout",
+            "inp"
+          ]
+        },
+        "drop_lt_0.5": {
+          "auroc": 0.5437,
+          "keep": [
+            "sem",
+            "disc",
+            "trad",
+            "inp"
+          ]
+        },
+        "drop_lt_0.6": {
+          "auroc": 0.0,
+          "keep": []
+        },
+        "keep_top2": {
+          "auroc": 0.5687,
+          "keep": [
+            "inp",
+            "disc"
+          ]
+        },
+        "consensus": {
+          "auroc": 0.525,
+          "keep": [
+            "blob",
+            "disc",
+            "inp",
+            "layout",
+            "sem",
+            "trad"
+          ]
+        }
+      },
+      "best": "keep_top2"
+    }
+  }
+}

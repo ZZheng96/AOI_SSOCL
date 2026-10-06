@@ -1,0 +1,57 @@
+﻿[bench2500] config=m4_cpu.yaml device=cpu images=5 rounds=3
+    [extract] 20/68 (1s)
+    [extract] 40/68 (2s)
+    [extract] 60/68 (3s)
+  [fit] init_normal 提取 68 张完成 (4s)
+    [extract] 20/30 (1s)
+  [fit] init_defect 提取 30 张完成 (8s)
+  [fit] 加载全局类型判别器（D:\CGAIC\demo5\scripts\..\src\eval\..\..\outputs\m0\defect_clf.pkl）
+  [fit] 槽位 blob 完成 (8s)
+python : D:\CGAIC\demo5\scripts\..\src\slots\..\..\..\demo4\src\features\traditional.py:247: FutureWarning: Parameter `
+min_size` is deprecated since version 0.26.0 and will be removed in 2.0.0 (or later). To avoid this warning, please use
+ the parameter `max_size` instead. For more details, see the documentation of `remove_small_objects`. Note that the new
+ threshold removes objects smaller than **or equal to** its value, while the previous parameter only removed smaller on
+es.
+所在位置 C:\Users\imia\AppData\Local\Temp\trae\run-command\scripts\ps-script-5d61faa6-0dc3-41e5-b786-4ea5cc5d6e44.ps1:19 字符
+: 5
++     python scripts\bench_2500_fast.py --cpu 2>&1 | Tee-Object outputs ...
++     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: (D:\CGAIC\demo5\...d smaller ones.:String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+  bw = morphology.remove_small_objects(bw.astype(bool), min_size=50)
+  [fit] 槽位 trad 完成 (16s)
+  [fit] 槽位 layout 完成 (16s)
+[fusion] train 域 fused AUROC=0.6311（初始权重质量，协议内）
+[bench2500] fit 64s, 槽位: ['blob', 'trad', 'layout']
+  [mkimg] bench_0.png <= 1293.jpg
+  [mkimg] bench_1.png <= 1302_repaired.jpg
+  [mkimg] bench_2.png <= t_fov_6_repaired.jpg
+  [mkimg] bench_3.png <= 2448.jpg
+  [mkimg] bench_4.png <= Image_20260116194241339.jpg
+D:\CGAIC\demo5\scripts\..\src\slots\..\..\..\demo4\src\features\traditional.py:247: FutureWarning: Parameter `min_size`
+ is deprecated since version 0.26.0 and will be removed in 2.0.0 (or later). To avoid this warning, please use the para
+meter `max_size` instead. For more details, see the documentation of `remove_small_objects`. Note that the new threshol
+d removes objects smaller than **or equal to** its value, while the previous parameter only removed smaller ones.
+  bw = morphology.remove_small_objects(bw.astype(bool), min_size=50)
+[bench2500] warmup done
+  [1/15] model 317ms | e2e 365ms
+  [2/15] model 203ms | e2e 374ms
+  [3/15] model 301ms | e2e 368ms
+  [4/15] model 249ms | e2e 360ms
+  [5/15] model 237ms | e2e 329ms
+  [6/15] model 330ms | e2e 366ms
+  [7/15] model 220ms | e2e 337ms
+  [8/15] model 264ms | e2e 362ms
+  [9/15] model 241ms | e2e 351ms
+  [10/15] model 223ms | e2e 336ms
+  [11/15] model 292ms | e2e 361ms
+  [12/15] model 227ms | e2e 358ms
+  [13/15] model 284ms | e2e 366ms
+  [14/15] model 252ms | e2e 308ms
+  [15/15] model 207ms | e2e 329ms
+
+=== 2500x2500 m4_cpu.yaml (cpu) ===
+  model_ms: {'n': 15, 'mean': 256.5, 'p50': 249.5, 'p95': 317.0, 'min': 203.3, 'max': 330.4}
+  e2e_ms  : {'n': 15, 'mean': 351.3, 'p50': 360.0, 'p95': 367.7, 'min': 308.3, 'max': 373.5}
+[save] D:\CGAIC\demo5\outputs\m0\bench_2500_cpu.json

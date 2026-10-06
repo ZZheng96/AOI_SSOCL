@@ -1,0 +1,38 @@
+{
+  "categories": [
+    "component",
+    "extra_part",
+    "gold_finger",
+    "solder_smt"
+  ],
+  "max_eval": 60,
+  "matrix": {
+    "component": {
+      "component": 0.4286,
+      "extra_part": 0.3969,
+      "gold_finger": 0.6448,
+      "solder_smt": 0.5094
+    },
+    "extra_part": {
+      "component": 0.5,
+      "extra_part": 0.4875,
+      "gold_finger": 0.7169,
+      "solder_smt": 0.7116
+    },
+    "gold_finger": {
+      "component": 0.5714,
+      "extra_part": 0.6312,
+      "gold_finger": 0.437,
+      "solder_smt": 0.6294
+    },
+    "solder_smt": {
+      "component": 0.5,
+      "extra_part": 0.5125,
+      "gold_finger": 0.6121,
+      "solder_smt": 0.5499
+    }
+  },
+  "in_domain_mean": 0.4758,
+  "cross_domain_mean": 0.578,
+  "cross_decay": 0.1022
+}

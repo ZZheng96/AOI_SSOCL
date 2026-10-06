@@ -1,0 +1,11 @@
+{
+  "scope": "template_algorithm",
+  "template_name": "templ_4",
+  "category": null,
+  "algorithm": "tht_不出脚",
+  "params": {
+    "nolead_center_diff_min": 1.0,
+    "nolead_ring_v_delta_min": 30.0
+  },
+  "version": 1
+}

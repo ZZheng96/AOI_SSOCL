@@ -1,0 +1,20 @@
+{
+  "algorithmId": 9101,
+  "algorithmCode": "pcb_through_hole_solder_defect",
+  "version": 1,
+  "remark": "插件焊点缺陷检测：标准图对比 + pad_ring 配准 + HSV/连锡规则（孔洞/少锡/多锡/连锡/不出脚）",
+  "releaseUser": "administrator",
+  "releaseTime": "2026-07-14T00:00:00",
+  "defaultParam": {
+    "enable_review": true,
+    "solder_mode": "ellipse",
+    "solder_roi": null,
+    "template_id": null,
+    "enabled_defects": [12, 13, 14, 15, 16],
+    "bridge_joints": null,
+    "void_preset": "MED",
+    "insuf_preset": "MED",
+    "template_cache_size": 32,
+    "advanced": {}
+  }
+}

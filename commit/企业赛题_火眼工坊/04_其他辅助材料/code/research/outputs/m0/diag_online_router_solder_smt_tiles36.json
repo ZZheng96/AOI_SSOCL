@@ -1,0 +1,98 @@
+{
+  "category": "solder_smt",
+  "mode": "tiles36",
+  "n_test": 82,
+  "n_fb": 45,
+  "n_eval": 37,
+  "n_eval_defect": 32,
+  "fit_weights": {
+    "blob": 0.1396,
+    "disc": 0.2319,
+    "inp": 0.205,
+    "layout": 0.0991,
+    "sem": 0.1497,
+    "trad": 0.1747
+  },
+  "online_cold_weights": {
+    "blob": 0.6667,
+    "disc": 0.666,
+    "inp": 0.6664,
+    "layout": 0.6653,
+    "sem": 0.6651,
+    "trad": 0.6652
+  },
+  "online_prior_weights": {
+    "blob": 0.5585,
+    "disc": 0.925,
+    "inp": 0.8189,
+    "layout": 0.3914,
+    "sem": 0.5933,
+    "trad": 0.6932
+  },
+  "final_auroc": {
+    "equal": 0.5875,
+    "fit_weights": 0.6687,
+    "online_cold": 0.5875,
+    "online_prior": 0.6687,
+    "slot_blob": 0.775,
+    "slot_disc": 0.6781,
+    "slot_inp": 0.5719,
+    "slot_layout": 0.1656,
+    "slot_sem": 0.4062,
+    "slot_trad": 0.4688
+  },
+  "curve": {
+    "online_cold": [
+      {
+        "n_fb": 20,
+        "auroc": 0.5128
+      },
+      {
+        "n_fb": 25,
+        "auroc": 0.4444
+      },
+      {
+        "n_fb": 30,
+        "auroc": 0.4286
+      },
+      {
+        "n_fb": 35,
+        "auroc": 0.5417
+      },
+      {
+        "n_fb": 40,
+        "auroc": 0.5481
+      },
+      {
+        "n_fb": 45,
+        "auroc": 0.5806
+      }
+    ],
+    "online_prior": [
+      {
+        "n_fb": 20,
+        "auroc": 0.5385
+      },
+      {
+        "n_fb": 25,
+        "auroc": 0.4889
+      },
+      {
+        "n_fb": 30,
+        "auroc": 0.4762
+      },
+      {
+        "n_fb": 35,
+        "auroc": 0.6083
+      },
+      {
+        "n_fb": 40,
+        "auroc": 0.6148
+      },
+      {
+        "n_fb": 45,
+        "auroc": 0.6581
+      }
+    ]
+  }
+}

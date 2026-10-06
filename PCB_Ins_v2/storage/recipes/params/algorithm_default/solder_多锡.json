@@ -1,0 +1,11 @@
+{
+  "scope": "algorithm_default",
+  "template_name": null,
+  "category": null,
+  "algorithm": "solder_多锡",
+  "params": {
+    "excess_thresh": 0.42,
+    "pad_expand_ratio": 0.3
+  },
+  "version": 1
+}

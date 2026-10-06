@@ -1,0 +1,201 @@
+{
+  "protocol": "gyudet 跨域 train->test",
+  "max_test": 150,
+  "n_test": 150,
+  "date": "2026-08-16",
+  "baselines": {
+    "disc": 0.378,
+    "demo4_s": 0.79,
+    "demo5_fused_equal": 0.5533,
+    "demo5_online_learned": 0.6599
+  },
+  "runs": {
+    "A_shead_only": {
+      "name": "A_shead_only",
+      "note": "shead 槽位单独（等权融合=单槽）",
+      "slots": [
+        "shead"
+      ],
+      "fit_seconds": 51.09,
+      "grid": 32,
+      "n_init_normal": 100,
+      "n_init_defect": 30,
+      "slot_sanity": {
+        "shead": 0.3792
+      },
+      "test": {
+        "fused": {
+          "auroc": 0.35876584549150925,
+          "ap": 0.6668061279331143
+        },
+        "ms_per_image": 387.16005643208825,
+        "shead": {
+          "auroc": 0.35876584549150925,
+          "ap": 0.6668061279331143
+        }
+      },
+      "eval_seconds": 110.53
+    },
+    "B_all_with_shead": {
+      "name": "B_all_with_shead",
+      "note": "全槽位（shead 新增，等权）",
+      "slots": [
+        "sem",
+        "disc",
+        "shead",
+        "blob",
+        "trad",
+        "layout",
+        "inp"
+      ],
+      "fit_seconds": 141.09,
+      "grid": 32,
+      "n_init_normal": 100,
+      "n_init_defect": 30,
+      "slot_sanity": {
+        "sem": 0.9598,
+        "disc": 0.4897,
+        "shead": 0.3867,
+        "blob": 0.4542,
+        "trad": 0.9445,
+        "layout": 0.5057,
+        "inp": 0.6022
+      },
+      "test": {
+        "fused": {
+          "auroc": 0.4414015785697202,
+          "ap": 0.6899015104354558
+        },
+        "ms_per_image": 949.3949302037556,
+        "sem": {
+          "auroc": 0.603085386271227,
+          "ap": 0.7966612417407533
+        },
+        "disc": {
+          "auroc": 0.3328151160009567,
+          "ap": 0.6592555872785671
+        },
+        "shead": {
+          "auroc": 0.36845252331977996,
+          "ap": 0.6724679007116525
+        },
+        "blob": {
+          "auroc": 0.39954556326237745,
+          "ap": 0.6730936669582284
+        },
+        "trad": {
+          "auroc": 0.37479071992346324,
+          "ap": 0.6858246706945093
+        },
+        "layout": {
+          "auroc": 0.47990911265247543,
+          "ap": 0.7478753414393229
+        },
+        "inp": {
+          "auroc": 0.6054771585745038,
+          "ap": 0.7948110275236437
+        },
+        "fused_max": {
+          "auroc": 0.5652953838794547,
+          "ap": 0.7802494100220698
+        }
+      },
+      "eval_seconds": 284.8
+    },
+    "C_shead_replaces_disc": {
+      "name": "C_shead_replaces_disc",
+      "note": "全槽位除 disc（shead 替换，等权）",
+      "slots": [
+        "sem",
+        "shead",
+        "blob",
+        "trad",
+        "layout",
+        "inp"
+      ],
+      "fit_seconds": 149.82,
+      "grid": 32,
+      "n_init_normal": 100,
+      "n_init_defect": 30,
+      "slot_sanity": {
+        "sem": 0.9598,
+        "shead": 0.3792,
+        "blob": 0.4542,
+        "trad": 0.9445,
+        "layout": 0.5057,
+        "inp": 0.6022
+      },
+      "test": {
+        "fused": {
+          "auroc": 0.47775651757952636,
+          "ap": 0.7045547950904612
+        },
+        "ms_per_image": 971.808803876241,
+        "sem": {
+          "auroc": 0.603085386271227,
+          "ap": 0.7966612417407533
+        },
+        "shead": {
+          "auroc": 0.35876584549150925,
+          "ap": 0.6668061279331143
+        },
+        "blob": {
+          "auroc": 0.39954556326237745,
+          "ap": 0.6730936669582284
+        },
+        "trad": {
+          "auroc": 0.37479071992346324,
+          "ap": 0.6858246706945093
+        },
+        "layout": {
+          "auroc": 0.47990911265247543,
+          "ap": 0.7478753414393229
+        },
+        "inp": {
+          "auroc": 0.6054771585745038,
+          "ap": 0.7948110275236437
+        },
+        "fused_max": {
+          "auroc": 0.5649366180339631,
+          "ap": 0.7801572640464401
+        }
+      },
+      "eval_seconds": 297.34
+    },
+    "D_shead_896px": {
+      "name": "D_shead_896px",
+      "note": "shead-only grid=64（896px 提取）",
+      "slots": [
+        "shead"
+      ],
+      "fit_seconds": 213.01,
+      "grid": 64,
+      "n_init_normal": 100,
+      "n_init_defect": 30,
+      "slot_sanity": {
+        "shead": 0.4097
+      },
+      "test": {
+        "fused": {
+          "auroc": 0.39033723989476204,
+          "ap": 0.6847279807191924
+        },
+        "ms_per_image": 1063.1188042958577,
+        "shead": {
+          "auroc": 0.39033723989476204,
+          "ap": 0.6847279807191924
+        }
+      },
+      "eval_seconds": 374.14
+    }
+  },
+  "summary": {
+    "shead_alone_auroc": 0.3588,
+    "fused_equal_with_shead": 0.4414,
+    "fused_equal_shead_replaces_disc": 0.4778,
+    "vs_baseline_fused_0.5533": -0.1119,
+    "vs_disc_0.378": -0.0192,
+    "vs_demo4_s_0.79": -0.4312,
+    "shead_896px_auroc": 0.3903
+  }
+}

@@ -1,0 +1,222 @@
+{
+  "selflearn_off": {
+    "initial_auroc": 0.0977,
+    "final_auroc": 0.0977,
+    "auroc_gain": 0.0,
+    "efficiency": 0.0,
+    "steps": [],
+    "auroc": [],
+    "f1": [],
+    "n_feedback": 0
+  },
+  "rounds_on": {
+    "rounds": [
+      1
+    ],
+    "steps": [
+      30
+    ],
+    "auroc": [
+      0.0957
+    ],
+    "f1": [
+      0.4906
+    ],
+    "initial_auroc": 0.1055,
+    "final_auroc": 0.0957,
+    "auroc_gain": -0.0098,
+    "efficiency": -0.0003,
+    "n_feedback": 30,
+    "round_size": 30,
+    "n_rounds": 1,
+    "box_supervised": false,
+    "n_box_feedback": 0,
+    "intercept": {
+      "n_samples": 21,
+      "n_box_samples": 0,
+      "n_hits_total": 231,
+      "eval_n": 40,
+      "eval_boost_gt0": 38,
+      "eval_boost_gt0_defect": 30,
+      "eval_defect_n": 32
+    },
+    "head_ft": {
+      "n_ft": 0,
+      "n_reject": 0,
+      "n_pos_total": 0,
+      "n_neg_total": 9,
+      "events": []
+    },
+    "disc_ft": {
+      "n_ft": 0,
+      "n_reject": 0,
+      "n_pos_total": 0,
+      "n_neg_total": 576,
+      "events": []
+    },
+    "thresh_recal": {
+      "n_recal": 0,
+      "n_reject": 0,
+      "events": []
+    },
+    "weight_learn": {
+      "n_apply": 0,
+      "n_reject": 1
+    },
+    "learned": {
+      "rounds": [
+        1
+      ],
+      "n_fed": [
+        30
+      ],
+      "n_wrong_before": [
+        25
+      ],
+      "n_flip": [
+        4
+      ],
+      "learned_accs": [
+        0.3
+      ],
+      "flip_rates": [
+        0.16
+      ],
+      "defect_recalls": [
+        0.4286
+      ],
+      "relearn_every": 1,
+      "final_learned_acc": 0.3,
+      "final_flip_rate": 0.16,
+      "final_defect_recall": 0.4286
+    },
+    "eval_per_sample": {
+      "scores": [
+        0.896015,
+        0.920107,
+        0.612968,
+        0.9948,
+        0.681434,
+        1.0,
+        0.750148,
+        0.643126,
+        0.487631,
+        0.80676,
+        0.712742,
+        0.566702,
+        0.697645,
+        0.601565,
+        0.940486,
+        1.0,
+        0.889459,
+        0.923953,
+        0.50882,
+        1.0,
+        0.803294,
+        0.511445,
+        0.814577,
+        0.666451,
+        0.645338,
+        0.871946,
+        0.963442,
+        0.695528,
+        0.66407,
+        0.627084,
+        1.0,
+        1.0,
+        0.517724,
+        0.634577,
+        0.986715,
+        0.722963,
+        0.953553,
+        1.0,
+        0.835272,
+        0.897145
+      ],
+      "labels": [
+        1,
+        1,
+        1,
+        1,
+        1,
+        0,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        0,
+        1,
+        1,
+        1,
+        0,
+        1,
+        1,
+        1,
+        1,
+        1,
+        0,
+        1,
+        1,
+        1,
+        1,
+        0,
+        1,
+        1,
+        1,
+        0,
+        1,
+        1,
+        0,
+        0,
+        1
+      ],
+      "decisions": [
+        "anomaly",
+        "anomaly",
+        "normal",
+        "anomaly",
+        "normal",
+        "anomaly",
+        "normal",
+        "normal",
+        "normal",
+        "anomaly",
+        "normal",
+        "normal",
+        "normal",
+        "normal",
+        "anomaly",
+        "anomaly",
+        "anomaly",
+        "anomaly",
+        "normal",
+        "anomaly",
+        "anomaly",
+        "normal",
+        "anomaly",
+        "normal",
+        "normal",
+        "anomaly",
+        "anomaly",
+        "normal",
+        "normal",
+        "normal",
+        "anomaly",
+        "anomaly",
+        "normal",
+        "normal",
+        "anomaly",
+        "normal",
+        "anomaly",
+        "anomaly",
+        "anomaly",
+        "anomaly"
+      ]
+    }
+  }
+}

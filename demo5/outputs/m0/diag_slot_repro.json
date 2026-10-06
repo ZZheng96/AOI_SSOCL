@@ -1,0 +1,21 @@
+{
+  "per_trial": [
+    {
+      "sem": 0.511826,
+      "disc": 0.98499,
+      "blob": 0.209235,
+      "trad": 5.276122,
+      "layout": 0.28753,
+      "inp": 0.854026
+    },
+    {
+      "sem": 0.511826,
+      "disc": 0.98499,
+      "blob": 0.209235,
+      "trad": 5.278234,
+      "layout": 0.28753,
+      "inp": 0.854026
+    }
+  ],
+  "path": "D:\\CGAIC\\data_local\\solder_smt\\test\\bridge\\PixPin_2026-07-01_09-26-43.png"
+}

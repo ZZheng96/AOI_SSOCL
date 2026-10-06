@@ -1,0 +1,72 @@
+system:
+  host: 127.0.0.1
+  port: 8017
+  storage_dir: storage
+  demo5_storage: storage/demo5
+  demo5_base_cfg: configs/engine_fast.yaml
+  database_url: sqlite:///database/aoi.db
+data:
+  # UI 导入标准数据集（MVTec 等）时的默认根目录；环境变量 AOI_DATA_ROOT 优先
+  default_root: data
+pipeline:
+  tile_size: 512
+  tile_stride: 512
+  input_size: 256
+  ahl_input_size: 224
+  full_image_max_area: 1048576
+  fusion_weights:
+    1: 0.15
+    2: 0.25
+    3: 0.6
+  l1_batch_size: 8
+  overlay_max_dim: 1280
+  video_frame_interval: 5
+  latency_budget_ms: 200
+pseudo_anomaly:
+  default_method: cutpaste
+  default_count: 20
+  scar_length:
+  - 10
+  - 100
+  scar_width:
+  - 3
+  - 15
+self_learning:
+  trigger_min_feedback: 10
+  lr: 1.0e-05
+  epochs: 10
+  auto_activate: false
+evaluation:
+  default_split: test
+  benchmark_n_images: 30
+  benchmark_warmup: 5
+notify:
+  webhook_url: ''
+  events:
+  - anomaly
+  - gray
+  - alarm
+  - open_set
+  timeout_s: 3
+  alarm_window: 20
+  alarm_k: 5
+  alarm_cooldown_s: 60.0
+security:
+  api_key: ''
+  keys: {}
+logging:
+  max_mb: 10
+  backups: 5
+archive:
+  enabled: true
+  decisions:
+  - anomaly
+  - gray
+  keep_original: true
+plc:
+  trigger_dir: ''
+  exts:
+  - .png
+  - .jpg
+  - .jpeg
+  - .bmp

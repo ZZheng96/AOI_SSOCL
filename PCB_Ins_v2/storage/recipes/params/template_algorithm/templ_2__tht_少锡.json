@@ -1,0 +1,12 @@
+{
+  "scope": "template_algorithm",
+  "template_name": "templ_2",
+  "category": null,
+  "algorithm": "tht_少锡",
+  "params": {
+    "insuf_preset": "MED",
+    "insuf_area_ratio_max": 0.85,
+    "insuf_exposed_hard_min": 0.06
+  },
+  "version": 1
+}

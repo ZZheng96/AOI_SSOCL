@@ -1,0 +1,61 @@
+{
+  "_comment": "元件本体 7 项缺陷算法池注册。class_path 相对项目根解析；config_path 相对项目根。",
+  "cv_algorithms": [
+    {
+      "algorithm_code": "component_wrong_part",
+      "class_path": "algorithms.component.wrongpart.algo_trad.ComponentWrongTradAlg",
+      "description": "元件错件检测：尺寸+HSV直方图+轮廓 三特征2/3投票",
+      "idle_timeout": 600,
+      "timeout": 120,
+      "config_path": "./resources/config/alg/component/component_wrong_part.json"
+    },
+    {
+      "algorithm_code": "component_missing",
+      "class_path": "algorithms.component.missing.algo_trad.ComponentMissingTradAlg",
+      "description": "元件缺件检测：本体像素比+差分+边缘+暗色通道 联合判定",
+      "idle_timeout": 600,
+      "timeout": 120,
+      "config_path": "./resources/config/alg/component/component_missing.json"
+    },
+    {
+      "algorithm_code": "component_shift",
+      "class_path": "algorithms.component.shift.algo_trad.ComponentShiftTradAlg",
+      "description": "元件移位检测：ROI位姿估计 dx/dy/theta 超公差",
+      "idle_timeout": 600,
+      "timeout": 120,
+      "config_path": "./resources/config/alg/component/component_shift.json"
+    },
+    {
+      "algorithm_code": "component_tombstone",
+      "class_path": "algorithms.component.tombstone.algo_trad.ComponentTombstoneTradAlg",
+      "description": "元件立碑检测：宽高比+焊盘不对称+ROI模式联合",
+      "idle_timeout": 600,
+      "timeout": 120,
+      "config_path": "./resources/config/alg/component/component_tombstone.json"
+    },
+    {
+      "algorithm_code": "component_flipped",
+      "class_path": "algorithms.component.flipped.algo_trad.ComponentFlippedTradAlg",
+      "description": "元件翻件检测：NCC正面+HSV直方图 双特征2/2投票",
+      "idle_timeout": 600,
+      "timeout": 120,
+      "config_path": "./resources/config/alg/component/component_flipped.json"
+    },
+    {
+      "algorithm_code": "component_reverse_polarity",
+      "class_path": "algorithms.component.reverse_polarity.algo_trad.ComponentReversePolarityTradAlg",
+      "description": "元件极反检测：丝印+色带+灯芯 三路联合(无OCR)",
+      "idle_timeout": 600,
+      "timeout": 120,
+      "config_path": "./resources/config/alg/component/component_reverse_polarity.json"
+    },
+    {
+      "algorithm_code": "component_damage",
+      "class_path": "algorithms.component.damage.algo_trad.ComponentDamageTradAlg",
+      "description": "元件破损检测：SSIM差异+轮廓比对，先精对齐再判破损",
+      "idle_timeout": 600,
+      "timeout": 120,
+      "config_path": "./resources/config/alg/component/component_damage.json"
+    }
+  ]
+}

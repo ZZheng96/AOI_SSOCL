@@ -1,0 +1,1678 @@
+﻿[diag] gyudet: init_normal=100 init_defect=30 test=150 (grid=32, 448px)
+
+==== [run A_shead_only] shead 槽位单独（等权融合=单槽） start ====
+python : C:\Users\imia/.cache/torch/hub/facebookresearch_dinov2_main\dinov2\layers\swiglu_ffn.py:51: UserWarning: xForm
+ers is not available (SwiGLU)
+At line:15 char:3108
++ ... lyContinue; python scripts/diag_shead_gyudet.py --max-test 150 2>&1 | ...
++                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: (C:\Users\imia/....ilable (SwiGLU):String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+  warnings.warn("xFormers is not available (SwiGLU)")
+C:\Users\imia/.cache/torch/hub/facebookresearch_dinov2_main\dinov2\layers\attention.py:33: UserWarning: xFormers is not
+ available (Attention)
+  warnings.warn("xFormers is not available (Attention)")
+C:\Users\imia/.cache/torch/hub/facebookresearch_dinov2_main\dinov2\layers\block.py:40: UserWarning: xFormers is not ava
+ilable (Block)
+  warnings.warn("xFormers is not available (Block)")
+    [extract] 20/100 (2s)
+    [extract] 40/100 (4s)
+    [extract] 60/100 (8s)
+    [extract] 80/100 (12s)
+    [extract] 100/100 (15s)
+  [fit] init_normal 提取 100 张完成 (15s)
+    [extract] 20/30 (3s)
+  [fit] init_defect 提取 30 张完成 (20s)
+[shead] epoch 10/50 loss_n=6.2910 loss_a=6.3561
+[shead] epoch 20/50 loss_n=6.2247 loss_a=5.9058
+[shead] epoch 30/50 loss_n=5.6350 loss_a=5.6059
+[shead] epoch 40/50 loss_n=4.6203 loss_a=3.8738
+[shead] epoch 50/50 loss_n=1.0859 loss_a=3.8057
+[shead] fit 完成: normal=96 pseudo=288 real_defect=30 pos_total=318 X=414 batch=32 lr=0.001
+  [fit] 槽位 shead 完成 (26s)
+[route] base=0.9332 router=0.9332 enabled=False (margin=0.005)
+  [eval] 20/150 (8s)
+  [eval] 40/150 (15s)
+  [eval] 60/150 (22s)
+  [eval] 80/150 (30s)
+  [eval] 100/150 (37s)
+  [eval] 120/150 (44s)
+  [eval] 140/150 (51s)
+  [run A_shead_only] fused AUROC=0.7530
+  [run A_shead_only] shead AUROC=0.7530
+==== [run A_shead_only] end (106.53s) ====
+
+==== [run B_all_with_shead] 全槽位（shead 新增，等权） start ====
+[disc] 加载预训练头 d:\CGAIC\demo5\outputs\m0\disc_pretrain.pt
+    [extract] 20/100 (1s)
+    [extract] 40/100 (3s)
+    [extract] 60/100 (6s)
+    [extract] 80/100 (14s)
+    [extract] 100/100 (32s)
+  [fit] init_normal 提取 100 张完成 (32s)
+    [extract] 20/30 (6s)
+  [fit] init_defect 提取 30 张完成 (41s)
+  [fit] 槽位 sem 完成 (45s)
+  [fit] 槽位 disc 完成 (45s)
+[shead] epoch 10/50 loss_n=6.1205 loss_a=6.5558
+[shead] epoch 20/50 loss_n=6.3431 loss_a=5.6711
+[shead] epoch 30/50 loss_n=6.1176 loss_a=5.0779
+[shead] epoch 40/50 loss_n=4.3938 loss_a=4.0079
+[shead] epoch 50/50 loss_n=1.6490 loss_a=2.0380
+[shead] fit 完成: normal=96 pseudo=288 real_defect=30 pos_total=318 X=414 batch=32 lr=0.001
+  [fit] 槽位 shead 完成 (50s)
+  [fit] 槽位 blob 完成 (50s)
+D:\CGAIC\demo5\scripts\..\src\slots\..\..\..\demo4\src\features\traditional.py:247: FutureWarning: Parameter `min_size`
+ is deprecated since version 0.26.0 and will be removed in 2.0.0 (or later). To avoid this warning, please use the para
+meter `max_size` instead. For more details, see the documentation of `remove_small_objects`. Note that the new threshol
+d removes objects smaller than **or equal to** its value, while the previous parameter only removed smaller ones.
+  bw = morphology.remove_small_objects(bw.astype(bool), min_size=50)
+  [fit] 槽位 trad 完成 (62s)
+  [fit] 槽位 layout 完成 (63s)
+  [fit] 槽位 inp 完成 (63s)
+D:\CGAIC\demo5\scripts\..\src\slots\..\..\..\demo4\src\features\traditional.py:247: FutureWarning: Parameter `min_size`
+ is deprecated since version 0.26.0 and will be removed in 2.0.0 (or later). To avoid this warning, please use the para
+meter `max_size` instead. For more details, see the documentation of `remove_small_objects`. Note that the new threshol
+d removes objects smaller than **or equal to** its value, while the previous parameter only removed smaller ones.
+  bw = morphology.remove_small_objects(bw.astype(bool), min_size=50)
+[route] base=0.9302 router=0.9610 enabled=True (margin=0.005)
+D:\CGAIC\demo5\scripts\..\src\slots\..\..\..\demo4\src\features\traditional.py:247: FutureWarning: Parameter `min_size`
+ is deprecated since version 0.26.0 and will be removed in 2.0.0 (or later). To avoid this warning, please use the para
+meter `max_size` instead. For more details, see the documentation of `remove_small_objects`. Note that the new threshol
+d removes objects smaller than **or equal to** its value, while the previous parameter only removed smaller ones.
+  bw = morphology.remove_small_objects(bw.astype(bool), min_size=50)
+D:\CGAIC\demo5\scripts\..\src\slots\..\..\..\demo4\src\features\traditional.py:247: FutureWarning: Parameter `min_size`
+ is deprecated since version 0.26.0 and will be removed in 2.0.0 (or later). To avoid this warning, please use the para
+meter `max_size` instead. For more details, see the documentation of `remove_small_objects`. Note that the new threshol
+d removes objects smaller than **or equal to** its value, while the previous parameter only removed smaller ones.
+  bw = morphology.remove_small_objects(bw.astype(bool), min_size=50)
+D:\CGAIC\demo5\scripts\..\src\slots\..\..\..\demo4\src\features\traditional.py:247: FutureWarning: Parameter `min_size`
+ is deprecated since version 0.26.0 and will be removed in 2.0.0 (or later). To avoid this warning, please use the para
+meter `max_size` instead. For more details, see the documentation of `remove_small_objects`. Note that the new threshol
+d removes objects smaller than **or equal to** its value, while the previous parameter only removed smaller ones.
+  bw = morphology.remove_small_objects(bw.astype(bool), min_size=50)
+D:\CGAIC\demo5\scripts\..\src\slots\..\..\..\demo4\src\features\traditional.py:247: FutureWarning: Parameter `min_size`
+ is deprecated since version 0.26.0 and will be removed in 2.0.0 (or later). To avoid this warning, please use the para
+meter `max_size` instead. For more details, see the documentation of `remove_small_objects`. Note that the new threshol
+d removes objects smaller than **or equal to** its value, while the previous parameter only removed smaller ones.
+  bw = morphology.remove_small_objects(bw.astype(bool), min_size=50)
+D:\CGAIC\demo5\scripts\..\src\slots\..\..\..\demo4\src\features\traditional.py:247: FutureWarning: Parameter `min_size`
+ is deprecated since version 0.26.0 and will be removed in 2.0.0 (or later). To avoid this warning, please use the para
+meter `max_size` instead. For more details, see the documentation of `remove_small_objects`. Note that the new threshol
+d removes objects smaller than **or equal to** its value, while the previous parameter only removed smaller ones.
+  bw = morphology.remove_small_objects(bw.astype(bool), min_size=50)
+D:\CGAIC\demo5\scripts\..\src\slots\..\..\..\demo4\src\features\traditional.py:247: FutureWarning: Parameter `min_size`
+ is deprecated since version 0.26.0 and will be removed in 2.0.0 (or later). To avoid this warning, please use the para
+meter `max_size` instead. For more details, see the documentation of `remove_small_objects`. Note that the new threshol
+d removes objects smaller than **or equal to** its value, while the previous parameter only removed smaller ones.
+  bw = morphology.remove_small_objects(bw.astype(bool), min_size=50)
+D:\CGAIC\demo5\scripts\..\src\slots\..\..\..\demo4\src\features\traditional.py:247: FutureWarning: Parameter `min_size`
+ is deprecated since version 0.26.0 and will be removed in 2.0.0 (or later). To avoid this warning, please use the para
+meter `max_size` instead. For more details, see the documentation of `remove_small_objects`. Note that the new threshol
+d removes objects smaller than **or equal to** its value, while the previous parameter only removed smaller ones.
+  bw = morphology.remove_small_objects(bw.astype(bool), min_size=50)
+D:\CGAIC\demo5\scripts\..\src\slots\..\..\..\demo4\src\features\traditional.py:247: FutureWarning: Parameter `min_size`
+ is deprecated since version 0.26.0 and will be removed in 2.0.0 (or later). To avoid this warning, please use the para
+meter `max_size` instead. For more details, see the documentation of `remove_small_objects`. Note that the new threshol
+d removes objects smaller than **or equal to** its value, while the previous parameter only removed smaller ones.
+  bw = morphology.remove_small_objects(bw.astype(bool), min_size=50)
+D:\CGAIC\demo5\scripts\..\src\slots\..\..\..\demo4\src\features\traditional.py:247: FutureWarning: Parameter `min_size`
+ is deprecated since version 0.26.0 and will be removed in 2.0.0 (or later). To avoid this warning, please use the para
+meter `max_size` instead. For more details, see the documentation of `remove_small_objects`. Note that the new threshol
+d removes objects smaller than **or equal to** its value, while the previous parameter only removed smaller ones.
+  bw = morphology.remove_small_objects(bw.astype(bool), min_size=50)
+D:\CGAIC\demo5\scripts\..\src\slots\..\..\..\demo4\src\features\traditional.py:247: FutureWarning: Parameter `min_size`
+ is deprecated since version 0.26.0 and will be removed in 2.0.0 (or later). To avoid this warning, please use the para
+meter `max_size` instead. For more details, see the documentation of `remove_small_objects`. Note that the new threshol
+d removes objects smaller than **or equal to** its value, while the previous parameter only removed smaller ones.
+  bw = morphology.remove_small_objects(bw.astype(bool), min_size=50)
+D:\CGAIC\demo5\scripts\..\src\slots\..\..\..\demo4\src\features\traditional.py:247: FutureWarning: Parameter `min_size`
+ is deprecated since version 0.26.0 and will be removed in 2.0.0 (or later). To avoid this warning, please use the para
+meter `max_size` instead. For more details, see the documentation of `remove_small_objects`. Note that the new threshol
+d removes objects smaller than **or equal to** its value, while the previous parameter only removed smaller ones.
+  bw = morphology.remove_small_objects(bw.astype(bool), min_size=50)
+D:\CGAIC\demo5\scripts\..\src\slots\..\..\..\demo4\src\features\traditional.py:247: FutureWarning: Parameter `min_size`
+ is deprecated since version 0.26.0 and will be removed in 2.0.0 (or later). To avoid this warning, please use the para
+meter `max_size` instead. For more details, see the documentation of `remove_small_objects`. Note that the new threshol
+d removes objects smaller than **or equal to** its value, while the previous parameter only removed smaller ones.
+  bw = morphology.remove_small_objects(bw.astype(bool), min_size=50)
+D:\CGAIC\demo5\scripts\..\src\slots\..\..\..\demo4\src\features\traditional.py:247: FutureWarning: Parameter `min_size`
+ is deprecated since version 0.26.0 and will be removed in 2.0.0 (or later). To avoid this warning, please use the para
+meter `max_size` instead. For more details, see the documentation of `remove_small_objects`. Note that the new threshol
+d removes objects smaller than **or equal to** its value, while the previous parameter only removed smaller ones.
+  bw = morphology.remove_small_objects(bw.astype(bool), min_size=50)
+D:\CGAIC\demo5\scripts\..\src\slots\..\..\..\demo4\src\features\traditional.py:247: FutureWarning: Parameter `min_size`
+ is deprecated since version 0.26.0 and will be removed in 2.0.0 (or later). To avoid this warning, please use the para
+meter `max_size` instead. For more details, see the documentation of `remove_small_objects`. Note that the new threshol
+d removes objects smaller than **or equal to** its value, while the previous parameter only removed smaller ones.
+  bw = morphology.remove_small_objects(bw.astype(bool), min_size=50)
+D:\CGAIC\demo5\scripts\..\src\slots\..\..\..\demo4\src\features\traditional.py:247: FutureWarning: Parameter `min_size`
+ is deprecated since version 0.26.0 and will be removed in 2.0.0 (or later). To avoid this warning, please use the para
+meter `max_size` instead. For more details, see the documentation of `remove_small_objects`. Note that the new threshol
+d removes objects smaller than **or equal to** its value, while the previous parameter only removed smaller ones.
+  bw = morphology.remove_small_objects(bw.astype(bool), min_size=50)
+D:\CGAIC\demo5\scripts\..\src\slots\..\..\..\demo4\src\features\traditional.py:247: FutureWarning: Parameter `min_size`
+ is deprecated since version 0.26.0 and will be removed in 2.0.0 (or later). To avoid this warning, please use the para
+meter `max_size` instead. For more details, see the documentation of `remove_small_objects`. Note that the new threshol
+d removes objects smaller than **or equal to** its value, while the previous parameter only removed smaller ones.
+  bw = morphology.remove_small_objects(bw.astype(bool), min_size=50)
+D:\CGAIC\demo5\scripts\..\src\slots\..\..\..\demo4\src\features\traditional.py:247: FutureWarning: Parameter `min_size`
+ is deprecated since version 0.26.0 and will be removed in 2.0.0 (or later). To avoid this warning, please use the para
+meter `max_size` instead. For more details, see the documentation of `remove_small_objects`. Note that the new threshol
+d removes objects smaller than **or equal to** its value, while the previous parameter only removed smaller ones.
+  bw = morphology.remove_small_objects(bw.astype(bool), min_size=50)
+D:\CGAIC\demo5\scripts\..\src\slots\..\..\..\demo4\src\features\traditional.py:247: FutureWarning: Parameter `min_size`
+ is deprecated since version 0.26.0 and will be removed in 2.0.0 (or later). To avoid this warning, please use the para
+meter `max_size` instead. For more details, see the documentation of `remove_small_objects`. Note that the new threshol
+d removes objects smaller than **or equal to** its value, while the previous parameter only removed smaller ones.
+  bw = morphology.remove_small_objects(bw.astype(bool), min_size=50)
+D:\CGAIC\demo5\scripts\..\src\slots\..\..\..\demo4\src\features\traditional.py:247: FutureWarning: Parameter `min_size`
+ is deprecated since version 0.26.0 and will be removed in 2.0.0 (or later). To avoid this warning, please use the para
+meter `max_size` instead. For more details, see the documentation of `remove_small_objects`. Note that the new threshol
+d removes objects smaller than **or equal to** its value, while the previous parameter only removed smaller ones.
+  bw = morphology.remove_small_objects(bw.astype(bool), min_size=50)
+D:\CGAIC\demo5\scripts\..\src\slots\..\..\..\demo4\src\features\traditional.py:247: FutureWarning: Parameter `min_size`
+ is deprecated since version 0.26.0 and will be removed in 2.0.0 (or later). To avoid this warning, please use the para
+meter `max_size` instead. For more details, see the documentation of `remove_small_objects`. Note that the new threshol
+d removes objects smaller than **or equal to** its value, while the previous parameter only removed smaller ones.
+  bw = morphology.remove_small_objects(bw.astype(bool), min_size=50)
+  [eval] 20/150 (21s)
+D:\CGAIC\demo5\scripts\..\src\slots\..\..\..\demo4\src\features\traditional.py:247: FutureWarning: Parameter `min_size`
+ is deprecated since version 0.26.0 and will be removed in 2.0.0 (or later). To avoid this warning, please use the para
+meter `max_size` instead. For more details, see the documentation of `remove_small_objects`. Note that the new threshol
+d removes objects smaller than **or equal to** its value, while the previous parameter only removed smaller ones.
+  bw = morphology.remove_small_objects(bw.astype(bool), min_size=50)
+D:\CGAIC\demo5\scripts\..\src\slots\..\..\..\demo4\src\features\traditional.py:247: FutureWarning: Parameter `min_size`
+ is deprecated since version 0.26.0 and will be removed in 2.0.0 (or later). To avoid this warning, please use the para
+meter `max_size` instead. For more details, see the documentation of `remove_small_objects`. Note that the new threshol
+d removes objects smaller than **or equal to** its value, while the previous parameter only removed smaller ones.
+  bw = morphology.remove_small_objects(bw.astype(bool), min_size=50)
+D:\CGAIC\demo5\scripts\..\src\slots\..\..\..\demo4\src\features\traditional.py:247: FutureWarning: Parameter `min_size`
+ is deprecated since version 0.26.0 and will be removed in 2.0.0 (or later). To avoid this warning, please use the para
+meter `max_size` instead. For more details, see the documentation of `remove_small_objects`. Note that the new threshol
+d removes objects smaller than **or equal to** its value, while the previous parameter only removed smaller ones.
+  bw = morphology.remove_small_objects(bw.astype(bool), min_size=50)
+D:\CGAIC\demo5\scripts\..\src\slots\..\..\..\demo4\src\features\traditional.py:247: FutureWarning: Parameter `min_size`
+ is deprecated since version 0.26.0 and will be removed in 2.0.0 (or later). To avoid this warning, please use the para
+meter `max_size` instead. For more details, see the documentation of `remove_small_objects`. Note that the new threshol
+d removes objects smaller than **or equal to** its value, while the previous parameter only removed smaller ones.
+  bw = morphology.remove_small_objects(bw.astype(bool), min_size=50)
+D:\CGAIC\demo5\scripts\..\src\slots\..\..\..\demo4\src\features\traditional.py:247: FutureWarning: Parameter `min_size`
+ is deprecated since version 0.26.0 and will be removed in 2.0.0 (or later). To avoid this warning, please use the para
+meter `max_size` instead. For more details, see the documentation of `remove_small_objects`. Note that the new threshol
+d removes objects smaller than **or equal to** its value, while the previous parameter only removed smaller ones.
+  bw = morphology.remove_small_objects(bw.astype(bool), min_size=50)
+D:\CGAIC\demo5\scripts\..\src\slots\..\..\..\demo4\src\features\traditional.py:247: FutureWarning: Parameter `min_size`
+ is deprecated since version 0.26.0 and will be removed in 2.0.0 (or later). To avoid this warning, please use the para
+meter `max_size` instead. For more details, see the documentation of `remove_small_objects`. Note that the new threshol
+d removes objects smaller than **or equal to** its value, while the previous parameter only removed smaller ones.
+  bw = morphology.remove_small_objects(bw.astype(bool), min_size=50)
+D:\CGAIC\demo5\scripts\..\src\slots\..\..\..\demo4\src\features\traditional.py:247: FutureWarning: Parameter `min_size`
+ is deprecated since version 0.26.0 and will be removed in 2.0.0 (or later). To avoid this warning, please use the para
+meter `max_size` instead. For more details, see the documentation of `remove_small_objects`. Note that the new threshol
+d removes objects smaller than **or equal to** its value, while the previous parameter only removed smaller ones.
+  bw = morphology.remove_small_objects(bw.astype(bool), min_size=50)
+D:\CGAIC\demo5\scripts\..\src\slots\..\..\..\demo4\src\features\traditional.py:247: FutureWarning: Parameter `min_size`
+ is deprecated since version 0.26.0 and will be removed in 2.0.0 (or later). To avoid this warning, please use the para
+meter `max_size` instead. For more details, see the documentation of `remove_small_objects`. Note that the new threshol
+d removes objects smaller than **or equal to** its value, while the previous parameter only removed smaller ones.
+  bw = morphology.remove_small_objects(bw.astype(bool), min_size=50)
+D:\CGAIC\demo5\scripts\..\src\slots\..\..\..\demo4\src\features\traditional.py:247: FutureWarning: Parameter `min_size`
+ is deprecated since version 0.26.0 and will be removed in 2.0.0 (or later). To avoid this warning, please use the para
+meter `max_size` instead. For more details, see the documentation of `remove_small_objects`. Note that the new threshol
+d removes objects smaller than **or equal to** its value, while the previous parameter only removed smaller ones.
+  bw = morphology.remove_small_objects(bw.astype(bool), min_size=50)
+D:\CGAIC\demo5\scripts\..\src\slots\..\..\..\demo4\src\features\traditional.py:247: FutureWarning: Parameter `min_size`
+ is deprecated since version 0.26.0 and will be removed in 2.0.0 (or later). To avoid this warning, please use the para
+meter `max_size` instead. For more details, see the documentation of `remove_small_objects`. Note that the new threshol
+d removes objects smaller than **or equal to** its value, while the previous parameter only removed smaller ones.
+  bw = morphology.remove_small_objects(bw.astype(bool), min_size=50)
+D:\CGAIC\demo5\scripts\..\src\slots\..\..\..\demo4\src\features\traditional.py:247: FutureWarning: Parameter `min_size`
+ is deprecated since version 0.26.0 and will be removed in 2.0.0 (or later). To avoid this warning, please use the para
+meter `max_size` instead. For more details, see the documentation of `remove_small_objects`. Note that the new threshol
+d removes objects smaller than **or equal to** its value, while the previous parameter only removed smaller ones.
+  bw = morphology.remove_small_objects(bw.astype(bool), min_size=50)
+D:\CGAIC\demo5\scripts\..\src\slots\..\..\..\demo4\src\features\traditional.py:247: FutureWarning: Parameter `min_size`
+ is deprecated since version 0.26.0 and will be removed in 2.0.0 (or later). To avoid this warning, please use the para
+meter `max_size` instead. For more details, see the documentation of `remove_small_objects`. Note that the new threshol
+d removes objects smaller than **or equal to** its value, while the previous parameter only removed smaller ones.
+  bw = morphology.remove_small_objects(bw.astype(bool), min_size=50)
+D:\CGAIC\demo5\scripts\..\src\slots\..\..\..\demo4\src\features\traditional.py:247: FutureWarning: Parameter `min_size`
+ is deprecated since version 0.26.0 and will be removed in 2.0.0 (or later). To avoid this warning, please use the para
+meter `max_size` instead. For more details, see the documentation of `remove_small_objects`. Note that the new threshol
+d removes objects smaller than **or equal to** its value, while the previous parameter only removed smaller ones.
+  bw = morphology.remove_small_objects(bw.astype(bool), min_size=50)
+D:\CGAIC\demo5\scripts\..\src\slots\..\..\..\demo4\src\features\traditional.py:247: FutureWarning: Parameter `min_size`
+ is deprecated since version 0.26.0 and will be removed in 2.0.0 (or later). To avoid this warning, please use the para
+meter `max_size` instead. For more details, see the documentation of `remove_small_objects`. Note that the new threshol
+d removes objects smaller than **or equal to** its value, while the previous parameter only removed smaller ones.
+  bw = morphology.remove_small_objects(bw.astype(bool), min_size=50)
+D:\CGAIC\demo5\scripts\..\src\slots\..\..\..\demo4\src\features\traditional.py:247: FutureWarning: Parameter `min_size`
+ is deprecated since version 0.26.0 and will be removed in 2.0.0 (or later). To avoid this warning, please use the para
+meter `max_size` instead. For more details, see the documentation of `remove_small_objects`. Note that the new threshol
+d removes objects smaller than **or equal to** its value, while the previous parameter only removed smaller ones.
+  bw = morphology.remove_small_objects(bw.astype(bool), min_size=50)
+D:\CGAIC\demo5\scripts\..\src\slots\..\..\..\demo4\src\features\traditional.py:247: FutureWarning: Parameter `min_size`
+ is deprecated since version 0.26.0 and will be removed in 2.0.0 (or later). To avoid this warning, please use the para
+meter `max_size` instead. For more details, see the documentation of `remove_small_objects`. Note that the new threshol
+d removes objects smaller than **or equal to** its value, while the previous parameter only removed smaller ones.
+  bw = morphology.remove_small_objects(bw.astype(bool), min_size=50)
+D:\CGAIC\demo5\scripts\..\src\slots\..\..\..\demo4\src\features\traditional.py:247: FutureWarning: Parameter `min_size`
+ is deprecated since version 0.26.0 and will be removed in 2.0.0 (or later). To avoid this warning, please use the para
+meter `max_size` instead. For more details, see the documentation of `remove_small_objects`. Note that the new threshol
+d removes objects smaller than **or equal to** its value, while the previous parameter only removed smaller ones.
+  bw = morphology.remove_small_objects(bw.astype(bool), min_size=50)
+D:\CGAIC\demo5\scripts\..\src\slots\..\..\..\demo4\src\features\traditional.py:247: FutureWarning: Parameter `min_size`
+ is deprecated since version 0.26.0 and will be removed in 2.0.0 (or later). To avoid this warning, please use the para
+meter `max_size` instead. For more details, see the documentation of `remove_small_objects`. Note that the new threshol
+d removes objects smaller than **or equal to** its value, while the previous parameter only removed smaller ones.
+  bw = morphology.remove_small_objects(bw.astype(bool), min_size=50)
+D:\CGAIC\demo5\scripts\..\src\slots\..\..\..\demo4\src\features\traditional.py:247: FutureWarning: Parameter `min_size`
+ is deprecated since version 0.26.0 and will be removed in 2.0.0 (or later). To avoid this warning, please use the para
+meter `max_size` instead. For more details, see the documentation of `remove_small_objects`. Note that the new threshol
+d removes objects smaller than **or equal to** its value, while the previous parameter only removed smaller ones.
+  bw = morphology.remove_small_objects(bw.astype(bool), min_size=50)
+D:\CGAIC\demo5\scripts\..\src\slots\..\..\..\demo4\src\features\traditional.py:247: FutureWarning: Parameter `min_size`
+ is deprecated since version 0.26.0 and will be removed in 2.0.0 (or later). To avoid this warning, please use the para
+meter `max_size` instead. For more details, see the documentation of `remove_small_objects`. Note that the new threshol
+d removes objects smaller than **or equal to** its value, while the previous parameter only removed smaller ones.
+  bw = morphology.remove_small_objects(bw.astype(bool), min_size=50)
+  [eval] 40/150 (39s)
+D:\CGAIC\demo5\scripts\..\src\slots\..\..\..\demo4\src\features\traditional.py:247: FutureWarning: Parameter `min_size`
+ is deprecated since version 0.26.0 and will be removed in 2.0.0 (or later). To avoid this warning, please use the para
+meter `max_size` instead. For more details, see the documentation of `remove_small_objects`. Note that the new threshol
+d removes objects smaller than **or equal to** its value, while the previous parameter only removed smaller ones.
+  bw = morphology.remove_small_objects(bw.astype(bool), min_size=50)
+D:\CGAIC\demo5\scripts\..\src\slots\..\..\..\demo4\src\features\traditional.py:247: FutureWarning: Parameter `min_size`
+ is deprecated since version 0.26.0 and will be removed in 2.0.0 (or later). To avoid this warning, please use the para
+meter `max_size` instead. For more details, see the documentation of `remove_small_objects`. Note that the new threshol
+d removes objects smaller than **or equal to** its value, while the previous parameter only removed smaller ones.
+  bw = morphology.remove_small_objects(bw.astype(bool), min_size=50)
+D:\CGAIC\demo5\scripts\..\src\slots\..\..\..\demo4\src\features\traditional.py:247: FutureWarning: Parameter `min_size`
+ is deprecated since version 0.26.0 and will be removed in 2.0.0 (or later). To avoid this warning, please use the para
+meter `max_size` instead. For more details, see the documentation of `remove_small_objects`. Note that the new threshol
+d removes objects smaller than **or equal to** its value, while the previous parameter only removed smaller ones.
+  bw = morphology.remove_small_objects(bw.astype(bool), min_size=50)
+D:\CGAIC\demo5\scripts\..\src\slots\..\..\..\demo4\src\features\traditional.py:247: FutureWarning: Parameter `min_size`
+ is deprecated since version 0.26.0 and will be removed in 2.0.0 (or later). To avoid this warning, please use the para
+meter `max_size` instead. For more details, see the documentation of `remove_small_objects`. Note that the new threshol
+d removes objects smaller than **or equal to** its value, while the previous parameter only removed smaller ones.
+  bw = morphology.remove_small_objects(bw.astype(bool), min_size=50)
+D:\CGAIC\demo5\scripts\..\src\slots\..\..\..\demo4\src\features\traditional.py:247: FutureWarning: Parameter `min_size`
+ is deprecated since version 0.26.0 and will be removed in 2.0.0 (or later). To avoid this warning, please use the para
+meter `max_size` instead. For more details, see the documentation of `remove_small_objects`. Note that the new threshol
+d removes objects smaller than **or equal to** its value, while the previous parameter only removed smaller ones.
+  bw = morphology.remove_small_objects(bw.astype(bool), min_size=50)
+D:\CGAIC\demo5\scripts\..\src\slots\..\..\..\demo4\src\features\traditional.py:247: FutureWarning: Parameter `min_size`
+ is deprecated since version 0.26.0 and will be removed in 2.0.0 (or later). To avoid this warning, please use the para
+meter `max_size` instead. For more details, see the documentation of `remove_small_objects`. Note that the new threshol
+d removes objects smaller than **or equal to** its value, while the previous parameter only removed smaller ones.
+  bw = morphology.remove_small_objects(bw.astype(bool), min_size=50)
+D:\CGAIC\demo5\scripts\..\src\slots\..\..\..\demo4\src\features\traditional.py:247: FutureWarning: Parameter `min_size`
+ is deprecated since version 0.26.0 and will be removed in 2.0.0 (or later). To avoid this warning, please use the para
+meter `max_size` instead. For more details, see the documentation of `remove_small_objects`. Note that the new threshol
+d removes objects smaller than **or equal to** its value, while the previous parameter only removed smaller ones.
+  bw = morphology.remove_small_objects(bw.astype(bool), min_size=50)
+D:\CGAIC\demo5\scripts\..\src\slots\..\..\..\demo4\src\features\traditional.py:247: FutureWarning: Parameter `min_size`
+ is deprecated since version 0.26.0 and will be removed in 2.0.0 (or later). To avoid this warning, please use the para
+meter `max_size` instead. For more details, see the documentation of `remove_small_objects`. Note that the new threshol
+d removes objects smaller than **or equal to** its value, while the previous parameter only removed smaller ones.
+  bw = morphology.remove_small_objects(bw.astype(bool), min_size=50)
+D:\CGAIC\demo5\scripts\..\src\slots\..\..\..\demo4\src\features\traditional.py:247: FutureWarning: Parameter `min_size`
+ is deprecated since version 0.26.0 and will be removed in 2.0.0 (or later). To avoid this warning, please use the para
+meter `max_size` instead. For more details, see the documentation of `remove_small_objects`. Note that the new threshol
+d removes objects smaller than **or equal to** its value, while the previous parameter only removed smaller ones.
+  bw = morphology.remove_small_objects(bw.astype(bool), min_size=50)
+D:\CGAIC\demo5\scripts\..\src\slots\..\..\..\demo4\src\features\traditional.py:247: FutureWarning: Parameter `min_size`
+ is deprecated since version 0.26.0 and will be removed in 2.0.0 (or later). To avoid this warning, please use the para
+meter `max_size` instead. For more details, see the documentation of `remove_small_objects`. Note that the new threshol
+d removes objects smaller than **or equal to** its value, while the previous parameter only removed smaller ones.
+  bw = morphology.remove_small_objects(bw.astype(bool), min_size=50)
+D:\CGAIC\demo5\scripts\..\src\slots\..\..\..\demo4\src\features\traditional.py:247: FutureWarning: Parameter `min_size`
+ is deprecated since version 0.26.0 and will be removed in 2.0.0 (or later). To avoid this warning, please use the para
+meter `max_size` instead. For more details, see the documentation of `remove_small_objects`. Note that the new threshol
+d removes objects smaller than **or equal to** its value, while the previous parameter only removed smaller ones.
+  bw = morphology.remove_small_objects(bw.astype(bool), min_size=50)
+D:\CGAIC\demo5\scripts\..\src\slots\..\..\..\demo4\src\features\traditional.py:247: FutureWarning: Parameter `min_size`
+ is deprecated since version 0.26.0 and will be removed in 2.0.0 (or later). To avoid this warning, please use the para
+meter `max_size` instead. For more details, see the documentation of `remove_small_objects`. Note that the new threshol
+d removes objects smaller than **or equal to** its value, while the previous parameter only removed smaller ones.
+  bw = morphology.remove_small_objects(bw.astype(bool), min_size=50)
+D:\CGAIC\demo5\scripts\..\src\slots\..\..\..\demo4\src\features\traditional.py:247: FutureWarning: Parameter `min_size`
+ is deprecated since version 0.26.0 and will be removed in 2.0.0 (or later). To avoid this warning, please use the para
+meter `max_size` instead. For more details, see the documentation of `remove_small_objects`. Note that the new threshol
+d removes objects smaller than **or equal to** its value, while the previous parameter only removed smaller ones.
+  bw = morphology.remove_small_objects(bw.astype(bool), min_size=50)
+D:\CGAIC\demo5\scripts\..\src\slots\..\..\..\demo4\src\features\traditional.py:247: FutureWarning: Parameter `min_size`
+ is deprecated since version 0.26.0 and will be removed in 2.0.0 (or later). To avoid this warning, please use the para
+meter `max_size` instead. For more details, see the documentation of `remove_small_objects`. Note that the new threshol
+d removes objects smaller than **or equal to** its value, while the previous parameter only removed smaller ones.
+  bw = morphology.remove_small_objects(bw.astype(bool), min_size=50)
+D:\CGAIC\demo5\scripts\..\src\slots\..\..\..\demo4\src\features\traditional.py:247: FutureWarning: Parameter `min_size`
+ is deprecated since version 0.26.0 and will be removed in 2.0.0 (or later). To avoid this warning, please use the para
+meter `max_size` instead. For more details, see the documentation of `remove_small_objects`. Note that the new threshol
+d removes objects smaller than **or equal to** its value, while the previous parameter only removed smaller ones.
+  bw = morphology.remove_small_objects(bw.astype(bool), min_size=50)
+D:\CGAIC\demo5\scripts\..\src\slots\..\..\..\demo4\src\features\traditional.py:247: FutureWarning: Parameter `min_size`
+ is deprecated since version 0.26.0 and will be removed in 2.0.0 (or later). To avoid this warning, please use the para
+meter `max_size` instead. For more details, see the documentation of `remove_small_objects`. Note that the new threshol
+d removes objects smaller than **or equal to** its value, while the previous parameter only removed smaller ones.
+  bw = morphology.remove_small_objects(bw.astype(bool), min_size=50)
+D:\CGAIC\demo5\scripts\..\src\slots\..\..\..\demo4\src\features\traditional.py:247: FutureWarning: Parameter `min_size`
+ is deprecated since version 0.26.0 and will be removed in 2.0.0 (or later). To avoid this warning, please use the para
+meter `max_size` instead. For more details, see the documentation of `remove_small_objects`. Note that the new threshol
+d removes objects smaller than **or equal to** its value, while the previous parameter only removed smaller ones.
+  bw = morphology.remove_small_objects(bw.astype(bool), min_size=50)
+D:\CGAIC\demo5\scripts\..\src\slots\..\..\..\demo4\src\features\traditional.py:247: FutureWarning: Parameter `min_size`
+ is deprecated since version 0.26.0 and will be removed in 2.0.0 (or later). To avoid this warning, please use the para
+meter `max_size` instead. For more details, see the documentation of `remove_small_objects`. Note that the new threshol
+d removes objects smaller than **or equal to** its value, while the previous parameter only removed smaller ones.
+  bw = morphology.remove_small_objects(bw.astype(bool), min_size=50)
+D:\CGAIC\demo5\scripts\..\src\slots\..\..\..\demo4\src\features\traditional.py:247: FutureWarning: Parameter `min_size`
+ is deprecated since version 0.26.0 and will be removed in 2.0.0 (or later). To avoid this warning, please use the para
+meter `max_size` instead. For more details, see the documentation of `remove_small_objects`. Note that the new threshol
+d removes objects smaller than **or equal to** its value, while the previous parameter only removed smaller ones.
+  bw = morphology.remove_small_objects(bw.astype(bool), min_size=50)
+D:\CGAIC\demo5\scripts\..\src\slots\..\..\..\demo4\src\features\traditional.py:247: FutureWarning: Parameter `min_size`
+ is deprecated since version 0.26.0 and will be removed in 2.0.0 (or later). To avoid this warning, please use the para
+meter `max_size` instead. For more details, see the documentation of `remove_small_objects`. Note that the new threshol
+d removes objects smaller than **or equal to** its value, while the previous parameter only removed smaller ones.
+  bw = morphology.remove_small_objects(bw.astype(bool), min_size=50)
+  [eval] 60/150 (58s)
+D:\CGAIC\demo5\scripts\..\src\slots\..\..\..\demo4\src\features\traditional.py:247: FutureWarning: Parameter `min_size`
+ is deprecated since version 0.26.0 and will be removed in 2.0.0 (or later). To avoid this warning, please use the para
+meter `max_size` instead. For more details, see the documentation of `remove_small_objects`. Note that the new threshol
+d removes objects smaller than **or equal to** its value, while the previous parameter only removed smaller ones.
+  bw = morphology.remove_small_objects(bw.astype(bool), min_size=50)
+D:\CGAIC\demo5\scripts\..\src\slots\..\..\..\demo4\src\features\traditional.py:247: FutureWarning: Parameter `min_size`
+ is deprecated since version 0.26.0 and will be removed in 2.0.0 (or later). To avoid this warning, please use the para
+meter `max_size` instead. For more details, see the documentation of `remove_small_objects`. Note that the new threshol
+d removes objects smaller than **or equal to** its value, while the previous parameter only removed smaller ones.
+  bw = morphology.remove_small_objects(bw.astype(bool), min_size=50)
+D:\CGAIC\demo5\scripts\..\src\slots\..\..\..\demo4\src\features\traditional.py:247: FutureWarning: Parameter `min_size`
+ is deprecated since version 0.26.0 and will be removed in 2.0.0 (or later). To avoid this warning, please use the para
+meter `max_size` instead. For more details, see the documentation of `remove_small_objects`. Note that the new threshol
+d removes objects smaller than **or equal to** its value, while the previous parameter only removed smaller ones.
+  bw = morphology.remove_small_objects(bw.astype(bool), min_size=50)
+D:\CGAIC\demo5\scripts\..\src\slots\..\..\..\demo4\src\features\traditional.py:247: FutureWarning: Parameter `min_size`
+ is deprecated since version 0.26.0 and will be removed in 2.0.0 (or later). To avoid this warning, please use the para
+meter `max_size` instead. For more details, see the documentation of `remove_small_objects`. Note that the new threshol
+d removes objects smaller than **or equal to** its value, while the previous parameter only removed smaller ones.
+  bw = morphology.remove_small_objects(bw.astype(bool), min_size=50)
+D:\CGAIC\demo5\scripts\..\src\slots\..\..\..\demo4\src\features\traditional.py:247: FutureWarning: Parameter `min_size`
+ is deprecated since version 0.26.0 and will be removed in 2.0.0 (or later). To avoid this warning, please use the para
+meter `max_size` instead. For more details, see the documentation of `remove_small_objects`. Note that the new threshol
+d removes objects smaller than **or equal to** its value, while the previous parameter only removed smaller ones.
+  bw = morphology.remove_small_objects(bw.astype(bool), min_size=50)
+D:\CGAIC\demo5\scripts\..\src\slots\..\..\..\demo4\src\features\traditional.py:247: FutureWarning: Parameter `min_size`
+ is deprecated since version 0.26.0 and will be removed in 2.0.0 (or later). To avoid this warning, please use the para
+meter `max_size` instead. For more details, see the documentation of `remove_small_objects`. Note that the new threshol
+d removes objects smaller than **or equal to** its value, while the previous parameter only removed smaller ones.
+  bw = morphology.remove_small_objects(bw.astype(bool), min_size=50)
+D:\CGAIC\demo5\scripts\..\src\slots\..\..\..\demo4\src\features\traditional.py:247: FutureWarning: Parameter `min_size`
+ is deprecated since version 0.26.0 and will be removed in 2.0.0 (or later). To avoid this warning, please use the para
+meter `max_size` instead. For more details, see the documentation of `remove_small_objects`. Note that the new threshol
+d removes objects smaller than **or equal to** its value, while the previous parameter only removed smaller ones.
+  bw = morphology.remove_small_objects(bw.astype(bool), min_size=50)
+D:\CGAIC\demo5\scripts\..\src\slots\..\..\..\demo4\src\features\traditional.py:247: FutureWarning: Parameter `min_size`
+ is deprecated since version 0.26.0 and will be removed in 2.0.0 (or later). To avoid this warning, please use the para
+meter `max_size` instead. For more details, see the documentation of `remove_small_objects`. Note that the new threshol
+d removes objects smaller than **or equal to** its value, while the previous parameter only removed smaller ones.
+  bw = morphology.remove_small_objects(bw.astype(bool), min_size=50)
+D:\CGAIC\demo5\scripts\..\src\slots\..\..\..\demo4\src\features\traditional.py:247: FutureWarning: Parameter `min_size`
+ is deprecated since version 0.26.0 and will be removed in 2.0.0 (or later). To avoid this warning, please use the para
+meter `max_size` instead. For more details, see the documentation of `remove_small_objects`. Note that the new threshol
+d removes objects smaller than **or equal to** its value, while the previous parameter only removed smaller ones.
+  bw = morphology.remove_small_objects(bw.astype(bool), min_size=50)
+D:\CGAIC\demo5\scripts\..\src\slots\..\..\..\demo4\src\features\traditional.py:247: FutureWarning: Parameter `min_size`
+ is deprecated since version 0.26.0 and will be removed in 2.0.0 (or later). To avoid this warning, please use the para
+meter `max_size` instead. For more details, see the documentation of `remove_small_objects`. Note that the new threshol
+d removes objects smaller than **or equal to** its value, while the previous parameter only removed smaller ones.
+  bw = morphology.remove_small_objects(bw.astype(bool), min_size=50)
+D:\CGAIC\demo5\scripts\..\src\slots\..\..\..\demo4\src\features\traditional.py:247: FutureWarning: Parameter `min_size`
+ is deprecated since version 0.26.0 and will be removed in 2.0.0 (or later). To avoid this warning, please use the para
+meter `max_size` instead. For more details, see the documentation of `remove_small_objects`. Note that the new threshol
+d removes objects smaller than **or equal to** its value, while the previous parameter only removed smaller ones.
+  bw = morphology.remove_small_objects(bw.astype(bool), min_size=50)
+D:\CGAIC\demo5\scripts\..\src\slots\..\..\..\demo4\src\features\traditional.py:247: FutureWarning: Parameter `min_size`
+ is deprecated since version 0.26.0 and will be removed in 2.0.0 (or later). To avoid this warning, please use the para
+meter `max_size` instead. For more details, see the documentation of `remove_small_objects`. Note that the new threshol
+d removes objects smaller than **or equal to** its value, while the previous parameter only removed smaller ones.
+  bw = morphology.remove_small_objects(bw.astype(bool), min_size=50)
+D:\CGAIC\demo5\scripts\..\src\slots\..\..\..\demo4\src\features\traditional.py:247: FutureWarning: Parameter `min_size`
+ is deprecated since version 0.26.0 and will be removed in 2.0.0 (or later). To avoid this warning, please use the para
+meter `max_size` instead. For more details, see the documentation of `remove_small_objects`. Note that the new threshol
+d removes objects smaller than **or equal to** its value, while the previous parameter only removed smaller ones.
+  bw = morphology.remove_small_objects(bw.astype(bool), min_size=50)
+D:\CGAIC\demo5\scripts\..\src\slots\..\..\..\demo4\src\features\traditional.py:247: FutureWarning: Parameter `min_size`
+ is deprecated since version 0.26.0 and will be removed in 2.0.0 (or later). To avoid this warning, please use the para
+meter `max_size` instead. For more details, see the documentation of `remove_small_objects`. Note that the new threshol
+d removes objects smaller than **or equal to** its value, while the previous parameter only removed smaller ones.
+  bw = morphology.remove_small_objects(bw.astype(bool), min_size=50)
+D:\CGAIC\demo5\scripts\..\src\slots\..\..\..\demo4\src\features\traditional.py:247: FutureWarning: Parameter `min_size`
+ is deprecated since version 0.26.0 and will be removed in 2.0.0 (or later). To avoid this warning, please use the para
+meter `max_size` instead. For more details, see the documentation of `remove_small_objects`. Note that the new threshol
+d removes objects smaller than **or equal to** its value, while the previous parameter only removed smaller ones.
+  bw = morphology.remove_small_objects(bw.astype(bool), min_size=50)
+D:\CGAIC\demo5\scripts\..\src\slots\..\..\..\demo4\src\features\traditional.py:247: FutureWarning: Parameter `min_size`
+ is deprecated since version 0.26.0 and will be removed in 2.0.0 (or later). To avoid this warning, please use the para
+meter `max_size` instead. For more details, see the documentation of `remove_small_objects`. Note that the new threshol
+d removes objects smaller than **or equal to** its value, while the previous parameter only removed smaller ones.
+  bw = morphology.remove_small_objects(bw.astype(bool), min_size=50)
+D:\CGAIC\demo5\scripts\..\src\slots\..\..\..\demo4\src\features\traditional.py:247: FutureWarning: Parameter `min_size`
+ is deprecated since version 0.26.0 and will be removed in 2.0.0 (or later). To avoid this warning, please use the para
+meter `max_size` instead. For more details, see the documentation of `remove_small_objects`. Note that the new threshol
+d removes objects smaller than **or equal to** its value, while the previous parameter only removed smaller ones.
+  bw = morphology.remove_small_objects(bw.astype(bool), min_size=50)
+D:\CGAIC\demo5\scripts\..\src\slots\..\..\..\demo4\src\features\traditional.py:247: FutureWarning: Parameter `min_size`
+ is deprecated since version 0.26.0 and will be removed in 2.0.0 (or later). To avoid this warning, please use the para
+meter `max_size` instead. For more details, see the documentation of `remove_small_objects`. Note that the new threshol
+d removes objects smaller than **or equal to** its value, while the previous parameter only removed smaller ones.
+  bw = morphology.remove_small_objects(bw.astype(bool), min_size=50)
+D:\CGAIC\demo5\scripts\..\src\slots\..\..\..\demo4\src\features\traditional.py:247: FutureWarning: Parameter `min_size`
+ is deprecated since version 0.26.0 and will be removed in 2.0.0 (or later). To avoid this warning, please use the para
+meter `max_size` instead. For more details, see the documentation of `remove_small_objects`. Note that the new threshol
+d removes objects smaller than **or equal to** its value, while the previous parameter only removed smaller ones.
+  bw = morphology.remove_small_objects(bw.astype(bool), min_size=50)
+D:\CGAIC\demo5\scripts\..\src\slots\..\..\..\demo4\src\features\traditional.py:247: FutureWarning: Parameter `min_size`
+ is deprecated since version 0.26.0 and will be removed in 2.0.0 (or later). To avoid this warning, please use the para
+meter `max_size` instead. For more details, see the documentation of `remove_small_objects`. Note that the new threshol
+d removes objects smaller than **or equal to** its value, while the previous parameter only removed smaller ones.
+  bw = morphology.remove_small_objects(bw.astype(bool), min_size=50)
+  [eval] 80/150 (77s)
+D:\CGAIC\demo5\scripts\..\src\slots\..\..\..\demo4\src\features\traditional.py:247: FutureWarning: Parameter `min_size`
+ is deprecated since version 0.26.0 and will be removed in 2.0.0 (or later). To avoid this warning, please use the para
+meter `max_size` instead. For more details, see the documentation of `remove_small_objects`. Note that the new threshol
+d removes objects smaller than **or equal to** its value, while the previous parameter only removed smaller ones.
+  bw = morphology.remove_small_objects(bw.astype(bool), min_size=50)
+D:\CGAIC\demo5\scripts\..\src\slots\..\..\..\demo4\src\features\traditional.py:247: FutureWarning: Parameter `min_size`
+ is deprecated since version 0.26.0 and will be removed in 2.0.0 (or later). To avoid this warning, please use the para
+meter `max_size` instead. For more details, see the documentation of `remove_small_objects`. Note that the new threshol
+d removes objects smaller than **or equal to** its value, while the previous parameter only removed smaller ones.
+  bw = morphology.remove_small_objects(bw.astype(bool), min_size=50)
+D:\CGAIC\demo5\scripts\..\src\slots\..\..\..\demo4\src\features\traditional.py:247: FutureWarning: Parameter `min_size`
+ is deprecated since version 0.26.0 and will be removed in 2.0.0 (or later). To avoid this warning, please use the para
+meter `max_size` instead. For more details, see the documentation of `remove_small_objects`. Note that the new threshol
+d removes objects smaller than **or equal to** its value, while the previous parameter only removed smaller ones.
+  bw = morphology.remove_small_objects(bw.astype(bool), min_size=50)
+D:\CGAIC\demo5\scripts\..\src\slots\..\..\..\demo4\src\features\traditional.py:247: FutureWarning: Parameter `min_size`
+ is deprecated since version 0.26.0 and will be removed in 2.0.0 (or later). To avoid this warning, please use the para
+meter `max_size` instead. For more details, see the documentation of `remove_small_objects`. Note that the new threshol
+d removes objects smaller than **or equal to** its value, while the previous parameter only removed smaller ones.
+  bw = morphology.remove_small_objects(bw.astype(bool), min_size=50)
+D:\CGAIC\demo5\scripts\..\src\slots\..\..\..\demo4\src\features\traditional.py:247: FutureWarning: Parameter `min_size`
+ is deprecated since version 0.26.0 and will be removed in 2.0.0 (or later). To avoid this warning, please use the para
+meter `max_size` instead. For more details, see the documentation of `remove_small_objects`. Note that the new threshol
+d removes objects smaller than **or equal to** its value, while the previous parameter only removed smaller ones.
+  bw = morphology.remove_small_objects(bw.astype(bool), min_size=50)
+D:\CGAIC\demo5\scripts\..\src\slots\..\..\..\demo4\src\features\traditional.py:247: FutureWarning: Parameter `min_size`
+ is deprecated since version 0.26.0 and will be removed in 2.0.0 (or later). To avoid this warning, please use the para
+meter `max_size` instead. For more details, see the documentation of `remove_small_objects`. Note that the new threshol
+d removes objects smaller than **or equal to** its value, while the previous parameter only removed smaller ones.
+  bw = morphology.remove_small_objects(bw.astype(bool), min_size=50)
+D:\CGAIC\demo5\scripts\..\src\slots\..\..\..\demo4\src\features\traditional.py:247: FutureWarning: Parameter `min_size`
+ is deprecated since version 0.26.0 and will be removed in 2.0.0 (or later). To avoid this warning, please use the para
+meter `max_size` instead. For more details, see the documentation of `remove_small_objects`. Note that the new threshol
+d removes objects smaller than **or equal to** its value, while the previous parameter only removed smaller ones.
+  bw = morphology.remove_small_objects(bw.astype(bool), min_size=50)
+D:\CGAIC\demo5\scripts\..\src\slots\..\..\..\demo4\src\features\traditional.py:247: FutureWarning: Parameter `min_size`
+ is deprecated since version 0.26.0 and will be removed in 2.0.0 (or later). To avoid this warning, please use the para
+meter `max_size` instead. For more details, see the documentation of `remove_small_objects`. Note that the new threshol
+d removes objects smaller than **or equal to** its value, while the previous parameter only removed smaller ones.
+  bw = morphology.remove_small_objects(bw.astype(bool), min_size=50)
+D:\CGAIC\demo5\scripts\..\src\slots\..\..\..\demo4\src\features\traditional.py:247: FutureWarning: Parameter `min_size`
+ is deprecated since version 0.26.0 and will be removed in 2.0.0 (or later). To avoid this warning, please use the para
+meter `max_size` instead. For more details, see the documentation of `remove_small_objects`. Note that the new threshol
+d removes objects smaller than **or equal to** its value, while the previous parameter only removed smaller ones.
+  bw = morphology.remove_small_objects(bw.astype(bool), min_size=50)
+D:\CGAIC\demo5\scripts\..\src\slots\..\..\..\demo4\src\features\traditional.py:247: FutureWarning: Parameter `min_size`
+ is deprecated since version 0.26.0 and will be removed in 2.0.0 (or later). To avoid this warning, please use the para
+meter `max_size` instead. For more details, see the documentation of `remove_small_objects`. Note that the new threshol
+d removes objects smaller than **or equal to** its value, while the previous parameter only removed smaller ones.
+  bw = morphology.remove_small_objects(bw.astype(bool), min_size=50)
+D:\CGAIC\demo5\scripts\..\src\slots\..\..\..\demo4\src\features\traditional.py:247: FutureWarning: Parameter `min_size`
+ is deprecated since version 0.26.0 and will be removed in 2.0.0 (or later). To avoid this warning, please use the para
+meter `max_size` instead. For more details, see the documentation of `remove_small_objects`. Note that the new threshol
+d removes objects smaller than **or equal to** its value, while the previous parameter only removed smaller ones.
+  bw = morphology.remove_small_objects(bw.astype(bool), min_size=50)
+D:\CGAIC\demo5\scripts\..\src\slots\..\..\..\demo4\src\features\traditional.py:247: FutureWarning: Parameter `min_size`
+ is deprecated since version 0.26.0 and will be removed in 2.0.0 (or later). To avoid this warning, please use the para
+meter `max_size` instead. For more details, see the documentation of `remove_small_objects`. Note that the new threshol
+d removes objects smaller than **or equal to** its value, while the previous parameter only removed smaller ones.
+  bw = morphology.remove_small_objects(bw.astype(bool), min_size=50)
+D:\CGAIC\demo5\scripts\..\src\slots\..\..\..\demo4\src\features\traditional.py:247: FutureWarning: Parameter `min_size`
+ is deprecated since version 0.26.0 and will be removed in 2.0.0 (or later). To avoid this warning, please use the para
+meter `max_size` instead. For more details, see the documentation of `remove_small_objects`. Note that the new threshol
+d removes objects smaller than **or equal to** its value, while the previous parameter only removed smaller ones.
+  bw = morphology.remove_small_objects(bw.astype(bool), min_size=50)
+D:\CGAIC\demo5\scripts\..\src\slots\..\..\..\demo4\src\features\traditional.py:247: FutureWarning: Parameter `min_size`
+ is deprecated since version 0.26.0 and will be removed in 2.0.0 (or later). To avoid this warning, please use the para
+meter `max_size` instead. For more details, see the documentation of `remove_small_objects`. Note that the new threshol
+d removes objects smaller than **or equal to** its value, while the previous parameter only removed smaller ones.
+  bw = morphology.remove_small_objects(bw.astype(bool), min_size=50)
+D:\CGAIC\demo5\scripts\..\src\slots\..\..\..\demo4\src\features\traditional.py:247: FutureWarning: Parameter `min_size`
+ is deprecated since version 0.26.0 and will be removed in 2.0.0 (or later). To avoid this warning, please use the para
+meter `max_size` instead. For more details, see the documentation of `remove_small_objects`. Note that the new threshol
+d removes objects smaller than **or equal to** its value, while the previous parameter only removed smaller ones.
+  bw = morphology.remove_small_objects(bw.astype(bool), min_size=50)
+D:\CGAIC\demo5\scripts\..\src\slots\..\..\..\demo4\src\features\traditional.py:247: FutureWarning: Parameter `min_size`
+ is deprecated since version 0.26.0 and will be removed in 2.0.0 (or later). To avoid this warning, please use the para
+meter `max_size` instead. For more details, see the documentation of `remove_small_objects`. Note that the new threshol
+d removes objects smaller than **or equal to** its value, while the previous parameter only removed smaller ones.
+  bw = morphology.remove_small_objects(bw.astype(bool), min_size=50)
+D:\CGAIC\demo5\scripts\..\src\slots\..\..\..\demo4\src\features\traditional.py:247: FutureWarning: Parameter `min_size`
+ is deprecated since version 0.26.0 and will be removed in 2.0.0 (or later). To avoid this warning, please use the para
+meter `max_size` instead. For more details, see the documentation of `remove_small_objects`. Note that the new threshol
+d removes objects smaller than **or equal to** its value, while the previous parameter only removed smaller ones.
+  bw = morphology.remove_small_objects(bw.astype(bool), min_size=50)
+D:\CGAIC\demo5\scripts\..\src\slots\..\..\..\demo4\src\features\traditional.py:247: FutureWarning: Parameter `min_size`
+ is deprecated since version 0.26.0 and will be removed in 2.0.0 (or later). To avoid this warning, please use the para
+meter `max_size` instead. For more details, see the documentation of `remove_small_objects`. Note that the new threshol
+d removes objects smaller than **or equal to** its value, while the previous parameter only removed smaller ones.
+  bw = morphology.remove_small_objects(bw.astype(bool), min_size=50)
+D:\CGAIC\demo5\scripts\..\src\slots\..\..\..\demo4\src\features\traditional.py:247: FutureWarning: Parameter `min_size`
+ is deprecated since version 0.26.0 and will be removed in 2.0.0 (or later). To avoid this warning, please use the para
+meter `max_size` instead. For more details, see the documentation of `remove_small_objects`. Note that the new threshol
+d removes objects smaller than **or equal to** its value, while the previous parameter only removed smaller ones.
+  bw = morphology.remove_small_objects(bw.astype(bool), min_size=50)
+D:\CGAIC\demo5\scripts\..\src\slots\..\..\..\demo4\src\features\traditional.py:247: FutureWarning: Parameter `min_size`
+ is deprecated since version 0.26.0 and will be removed in 2.0.0 (or later). To avoid this warning, please use the para
+meter `max_size` instead. For more details, see the documentation of `remove_small_objects`. Note that the new threshol
+d removes objects smaller than **or equal to** its value, while the previous parameter only removed smaller ones.
+  bw = morphology.remove_small_objects(bw.astype(bool), min_size=50)
+  [eval] 100/150 (97s)
+D:\CGAIC\demo5\scripts\..\src\slots\..\..\..\demo4\src\features\traditional.py:247: FutureWarning: Parameter `min_size`
+ is deprecated since version 0.26.0 and will be removed in 2.0.0 (or later). To avoid this warning, please use the para
+meter `max_size` instead. For more details, see the documentation of `remove_small_objects`. Note that the new threshol
+d removes objects smaller than **or equal to** its value, while the previous parameter only removed smaller ones.
+  bw = morphology.remove_small_objects(bw.astype(bool), min_size=50)
+D:\CGAIC\demo5\scripts\..\src\slots\..\..\..\demo4\src\features\traditional.py:247: FutureWarning: Parameter `min_size`
+ is deprecated since version 0.26.0 and will be removed in 2.0.0 (or later). To avoid this warning, please use the para
+meter `max_size` instead. For more details, see the documentation of `remove_small_objects`. Note that the new threshol
+d removes objects smaller than **or equal to** its value, while the previous parameter only removed smaller ones.
+  bw = morphology.remove_small_objects(bw.astype(bool), min_size=50)
+D:\CGAIC\demo5\scripts\..\src\slots\..\..\..\demo4\src\features\traditional.py:247: FutureWarning: Parameter `min_size`
+ is deprecated since version 0.26.0 and will be removed in 2.0.0 (or later). To avoid this warning, please use the para
+meter `max_size` instead. For more details, see the documentation of `remove_small_objects`. Note that the new threshol
+d removes objects smaller than **or equal to** its value, while the previous parameter only removed smaller ones.
+  bw = morphology.remove_small_objects(bw.astype(bool), min_size=50)
+D:\CGAIC\demo5\scripts\..\src\slots\..\..\..\demo4\src\features\traditional.py:247: FutureWarning: Parameter `min_size`
+ is deprecated since version 0.26.0 and will be removed in 2.0.0 (or later). To avoid this warning, please use the para
+meter `max_size` instead. For more details, see the documentation of `remove_small_objects`. Note that the new threshol
+d removes objects smaller than **or equal to** its value, while the previous parameter only removed smaller ones.
+  bw = morphology.remove_small_objects(bw.astype(bool), min_size=50)
+D:\CGAIC\demo5\scripts\..\src\slots\..\..\..\demo4\src\features\traditional.py:247: FutureWarning: Parameter `min_size`
+ is deprecated since version 0.26.0 and will be removed in 2.0.0 (or later). To avoid this warning, please use the para
+meter `max_size` instead. For more details, see the documentation of `remove_small_objects`. Note that the new threshol
+d removes objects smaller than **or equal to** its value, while the previous parameter only removed smaller ones.
+  bw = morphology.remove_small_objects(bw.astype(bool), min_size=50)
+D:\CGAIC\demo5\scripts\..\src\slots\..\..\..\demo4\src\features\traditional.py:247: FutureWarning: Parameter `min_size`
+ is deprecated since version 0.26.0 and will be removed in 2.0.0 (or later). To avoid this warning, please use the para
+meter `max_size` instead. For more details, see the documentation of `remove_small_objects`. Note that the new threshol
+d removes objects smaller than **or equal to** its value, while the previous parameter only removed smaller ones.
+  bw = morphology.remove_small_objects(bw.astype(bool), min_size=50)
+D:\CGAIC\demo5\scripts\..\src\slots\..\..\..\demo4\src\features\traditional.py:247: FutureWarning: Parameter `min_size`
+ is deprecated since version 0.26.0 and will be removed in 2.0.0 (or later). To avoid this warning, please use the para
+meter `max_size` instead. For more details, see the documentation of `remove_small_objects`. Note that the new threshol
+d removes objects smaller than **or equal to** its value, while the previous parameter only removed smaller ones.
+  bw = morphology.remove_small_objects(bw.astype(bool), min_size=50)
+D:\CGAIC\demo5\scripts\..\src\slots\..\..\..\demo4\src\features\traditional.py:247: FutureWarning: Parameter `min_size`
+ is deprecated since version 0.26.0 and will be removed in 2.0.0 (or later). To avoid this warning, please use the para
+meter `max_size` instead. For more details, see the documentation of `remove_small_objects`. Note that the new threshol
+d removes objects smaller than **or equal to** its value, while the previous parameter only removed smaller ones.
+  bw = morphology.remove_small_objects(bw.astype(bool), min_size=50)
+D:\CGAIC\demo5\scripts\..\src\slots\..\..\..\demo4\src\features\traditional.py:247: FutureWarning: Parameter `min_size`
+ is deprecated since version 0.26.0 and will be removed in 2.0.0 (or later). To avoid this warning, please use the para
+meter `max_size` instead. For more details, see the documentation of `remove_small_objects`. Note that the new threshol
+d removes objects smaller than **or equal to** its value, while the previous parameter only removed smaller ones.
+  bw = morphology.remove_small_objects(bw.astype(bool), min_size=50)
+D:\CGAIC\demo5\scripts\..\src\slots\..\..\..\demo4\src\features\traditional.py:247: FutureWarning: Parameter `min_size`
+ is deprecated since version 0.26.0 and will be removed in 2.0.0 (or later). To avoid this warning, please use the para
+meter `max_size` instead. For more details, see the documentation of `remove_small_objects`. Note that the new threshol
+d removes objects smaller than **or equal to** its value, while the previous parameter only removed smaller ones.
+  bw = morphology.remove_small_objects(bw.astype(bool), min_size=50)
+D:\CGAIC\demo5\scripts\..\src\slots\..\..\..\demo4\src\features\traditional.py:247: FutureWarning: Parameter `min_size`
+ is deprecated since version 0.26.0 and will be removed in 2.0.0 (or later). To avoid this warning, please use the para
+meter `max_size` instead. For more details, see the documentation of `remove_small_objects`. Note that the new threshol
+d removes objects smaller than **or equal to** its value, while the previous parameter only removed smaller ones.
+  bw = morphology.remove_small_objects(bw.astype(bool), min_size=50)
+D:\CGAIC\demo5\scripts\..\src\slots\..\..\..\demo4\src\features\traditional.py:247: FutureWarning: Parameter `min_size`
+ is deprecated since version 0.26.0 and will be removed in 2.0.0 (or later). To avoid this warning, please use the para
+meter `max_size` instead. For more details, see the documentation of `remove_small_objects`. Note that the new threshol
+d removes objects smaller than **or equal to** its value, while the previous parameter only removed smaller ones.
+  bw = morphology.remove_small_objects(bw.astype(bool), min_size=50)
+D:\CGAIC\demo5\scripts\..\src\slots\..\..\..\demo4\src\features\traditional.py:247: FutureWarning: Parameter `min_size`
+ is deprecated since version 0.26.0 and will be removed in 2.0.0 (or later). To avoid this warning, please use the para
+meter `max_size` instead. For more details, see the documentation of `remove_small_objects`. Note that the new threshol
+d removes objects smaller than **or equal to** its value, while the previous parameter only removed smaller ones.
+  bw = morphology.remove_small_objects(bw.astype(bool), min_size=50)
+D:\CGAIC\demo5\scripts\..\src\slots\..\..\..\demo4\src\features\traditional.py:247: FutureWarning: Parameter `min_size`
+ is deprecated since version 0.26.0 and will be removed in 2.0.0 (or later). To avoid this warning, please use the para
+meter `max_size` instead. For more details, see the documentation of `remove_small_objects`. Note that the new threshol
+d removes objects smaller than **or equal to** its value, while the previous parameter only removed smaller ones.
+  bw = morphology.remove_small_objects(bw.astype(bool), min_size=50)
+D:\CGAIC\demo5\scripts\..\src\slots\..\..\..\demo4\src\features\traditional.py:247: FutureWarning: Parameter `min_size`
+ is deprecated since version 0.26.0 and will be removed in 2.0.0 (or later). To avoid this warning, please use the para
+meter `max_size` instead. For more details, see the documentation of `remove_small_objects`. Note that the new threshol
+d removes objects smaller than **or equal to** its value, while the previous parameter only removed smaller ones.
+  bw = morphology.remove_small_objects(bw.astype(bool), min_size=50)
+D:\CGAIC\demo5\scripts\..\src\slots\..\..\..\demo4\src\features\traditional.py:247: FutureWarning: Parameter `min_size`
+ is deprecated since version 0.26.0 and will be removed in 2.0.0 (or later). To avoid this warning, please use the para
+meter `max_size` instead. For more details, see the documentation of `remove_small_objects`. Note that the new threshol
+d removes objects smaller than **or equal to** its value, while the previous parameter only removed smaller ones.
+  bw = morphology.remove_small_objects(bw.astype(bool), min_size=50)
+D:\CGAIC\demo5\scripts\..\src\slots\..\..\..\demo4\src\features\traditional.py:247: FutureWarning: Parameter `min_size`
+ is deprecated since version 0.26.0 and will be removed in 2.0.0 (or later). To avoid this warning, please use the para
+meter `max_size` instead. For more details, see the documentation of `remove_small_objects`. Note that the new threshol
+d removes objects smaller than **or equal to** its value, while the previous parameter only removed smaller ones.
+  bw = morphology.remove_small_objects(bw.astype(bool), min_size=50)
+D:\CGAIC\demo5\scripts\..\src\slots\..\..\..\demo4\src\features\traditional.py:247: FutureWarning: Parameter `min_size`
+ is deprecated since version 0.26.0 and will be removed in 2.0.0 (or later). To avoid this warning, please use the para
+meter `max_size` instead. For more details, see the documentation of `remove_small_objects`. Note that the new threshol
+d removes objects smaller than **or equal to** its value, while the previous parameter only removed smaller ones.
+  bw = morphology.remove_small_objects(bw.astype(bool), min_size=50)
+D:\CGAIC\demo5\scripts\..\src\slots\..\..\..\demo4\src\features\traditional.py:247: FutureWarning: Parameter `min_size`
+ is deprecated since version 0.26.0 and will be removed in 2.0.0 (or later). To avoid this warning, please use the para
+meter `max_size` instead. For more details, see the documentation of `remove_small_objects`. Note that the new threshol
+d removes objects smaller than **or equal to** its value, while the previous parameter only removed smaller ones.
+  bw = morphology.remove_small_objects(bw.astype(bool), min_size=50)
+D:\CGAIC\demo5\scripts\..\src\slots\..\..\..\demo4\src\features\traditional.py:247: FutureWarning: Parameter `min_size`
+ is deprecated since version 0.26.0 and will be removed in 2.0.0 (or later). To avoid this warning, please use the para
+meter `max_size` instead. For more details, see the documentation of `remove_small_objects`. Note that the new threshol
+d removes objects smaller than **or equal to** its value, while the previous parameter only removed smaller ones.
+  bw = morphology.remove_small_objects(bw.astype(bool), min_size=50)
+  [eval] 120/150 (116s)
+D:\CGAIC\demo5\scripts\..\src\slots\..\..\..\demo4\src\features\traditional.py:247: FutureWarning: Parameter `min_size`
+ is deprecated since version 0.26.0 and will be removed in 2.0.0 (or later). To avoid this warning, please use the para
+meter `max_size` instead. For more details, see the documentation of `remove_small_objects`. Note that the new threshol
+d removes objects smaller than **or equal to** its value, while the previous parameter only removed smaller ones.
+  bw = morphology.remove_small_objects(bw.astype(bool), min_size=50)
+D:\CGAIC\demo5\scripts\..\src\slots\..\..\..\demo4\src\features\traditional.py:247: FutureWarning: Parameter `min_size`
+ is deprecated since version 0.26.0 and will be removed in 2.0.0 (or later). To avoid this warning, please use the para
+meter `max_size` instead. For more details, see the documentation of `remove_small_objects`. Note that the new threshol
+d removes objects smaller than **or equal to** its value, while the previous parameter only removed smaller ones.
+  bw = morphology.remove_small_objects(bw.astype(bool), min_size=50)
+D:\CGAIC\demo5\scripts\..\src\slots\..\..\..\demo4\src\features\traditional.py:247: FutureWarning: Parameter `min_size`
+ is deprecated since version 0.26.0 and will be removed in 2.0.0 (or later). To avoid this warning, please use the para
+meter `max_size` instead. For more details, see the documentation of `remove_small_objects`. Note that the new threshol
+d removes objects smaller than **or equal to** its value, while the previous parameter only removed smaller ones.
+  bw = morphology.remove_small_objects(bw.astype(bool), min_size=50)
+D:\CGAIC\demo5\scripts\..\src\slots\..\..\..\demo4\src\features\traditional.py:247: FutureWarning: Parameter `min_size`
+ is deprecated since version 0.26.0 and will be removed in 2.0.0 (or later). To avoid this warning, please use the para
+meter `max_size` instead. For more details, see the documentation of `remove_small_objects`. Note that the new threshol
+d removes objects smaller than **or equal to** its value, while the previous parameter only removed smaller ones.
+  bw = morphology.remove_small_objects(bw.astype(bool), min_size=50)
+D:\CGAIC\demo5\scripts\..\src\slots\..\..\..\demo4\src\features\traditional.py:247: FutureWarning: Parameter `min_size`
+ is deprecated since version 0.26.0 and will be removed in 2.0.0 (or later). To avoid this warning, please use the para
+meter `max_size` instead. For more details, see the documentation of `remove_small_objects`. Note that the new threshol
+d removes objects smaller than **or equal to** its value, while the previous parameter only removed smaller ones.
+  bw = morphology.remove_small_objects(bw.astype(bool), min_size=50)
+D:\CGAIC\demo5\scripts\..\src\slots\..\..\..\demo4\src\features\traditional.py:247: FutureWarning: Parameter `min_size`
+ is deprecated since version 0.26.0 and will be removed in 2.0.0 (or later). To avoid this warning, please use the para
+meter `max_size` instead. For more details, see the documentation of `remove_small_objects`. Note that the new threshol
+d removes objects smaller than **or equal to** its value, while the previous parameter only removed smaller ones.
+  bw = morphology.remove_small_objects(bw.astype(bool), min_size=50)
+D:\CGAIC\demo5\scripts\..\src\slots\..\..\..\demo4\src\features\traditional.py:247: FutureWarning: Parameter `min_size`
+ is deprecated since version 0.26.0 and will be removed in 2.0.0 (or later). To avoid this warning, please use the para
+meter `max_size` instead. For more details, see the documentation of `remove_small_objects`. Note that the new threshol
+d removes objects smaller than **or equal to** its value, while the previous parameter only removed smaller ones.
+  bw = morphology.remove_small_objects(bw.astype(bool), min_size=50)
+D:\CGAIC\demo5\scripts\..\src\slots\..\..\..\demo4\src\features\traditional.py:247: FutureWarning: Parameter `min_size`
+ is deprecated since version 0.26.0 and will be removed in 2.0.0 (or later). To avoid this warning, please use the para
+meter `max_size` instead. For more details, see the documentation of `remove_small_objects`. Note that the new threshol
+d removes objects smaller than **or equal to** its value, while the previous parameter only removed smaller ones.
+  bw = morphology.remove_small_objects(bw.astype(bool), min_size=50)
+D:\CGAIC\demo5\scripts\..\src\slots\..\..\..\demo4\src\features\traditional.py:247: FutureWarning: Parameter `min_size`
+ is deprecated since version 0.26.0 and will be removed in 2.0.0 (or later). To avoid this warning, please use the para
+meter `max_size` instead. For more details, see the documentation of `remove_small_objects`. Note that the new threshol
+d removes objects smaller than **or equal to** its value, while the previous parameter only removed smaller ones.
+  bw = morphology.remove_small_objects(bw.astype(bool), min_size=50)
+D:\CGAIC\demo5\scripts\..\src\slots\..\..\..\demo4\src\features\traditional.py:247: FutureWarning: Parameter `min_size`
+ is deprecated since version 0.26.0 and will be removed in 2.0.0 (or later). To avoid this warning, please use the para
+meter `max_size` instead. For more details, see the documentation of `remove_small_objects`. Note that the new threshol
+d removes objects smaller than **or equal to** its value, while the previous parameter only removed smaller ones.
+  bw = morphology.remove_small_objects(bw.astype(bool), min_size=50)
+D:\CGAIC\demo5\scripts\..\src\slots\..\..\..\demo4\src\features\traditional.py:247: FutureWarning: Parameter `min_size`
+ is deprecated since version 0.26.0 and will be removed in 2.0.0 (or later). To avoid this warning, please use the para
+meter `max_size` instead. For more details, see the documentation of `remove_small_objects`. Note that the new threshol
+d removes objects smaller than **or equal to** its value, while the previous parameter only removed smaller ones.
+  bw = morphology.remove_small_objects(bw.astype(bool), min_size=50)
+D:\CGAIC\demo5\scripts\..\src\slots\..\..\..\demo4\src\features\traditional.py:247: FutureWarning: Parameter `min_size`
+ is deprecated since version 0.26.0 and will be removed in 2.0.0 (or later). To avoid this warning, please use the para
+meter `max_size` instead. For more details, see the documentation of `remove_small_objects`. Note that the new threshol
+d removes objects smaller than **or equal to** its value, while the previous parameter only removed smaller ones.
+  bw = morphology.remove_small_objects(bw.astype(bool), min_size=50)
+D:\CGAIC\demo5\scripts\..\src\slots\..\..\..\demo4\src\features\traditional.py:247: FutureWarning: Parameter `min_size`
+ is deprecated since version 0.26.0 and will be removed in 2.0.0 (or later). To avoid this warning, please use the para
+meter `max_size` instead. For more details, see the documentation of `remove_small_objects`. Note that the new threshol
+d removes objects smaller than **or equal to** its value, while the previous parameter only removed smaller ones.
+  bw = morphology.remove_small_objects(bw.astype(bool), min_size=50)
+D:\CGAIC\demo5\scripts\..\src\slots\..\..\..\demo4\src\features\traditional.py:247: FutureWarning: Parameter `min_size`
+ is deprecated since version 0.26.0 and will be removed in 2.0.0 (or later). To avoid this warning, please use the para
+meter `max_size` instead. For more details, see the documentation of `remove_small_objects`. Note that the new threshol
+d removes objects smaller than **or equal to** its value, while the previous parameter only removed smaller ones.
+  bw = morphology.remove_small_objects(bw.astype(bool), min_size=50)
+D:\CGAIC\demo5\scripts\..\src\slots\..\..\..\demo4\src\features\traditional.py:247: FutureWarning: Parameter `min_size`
+ is deprecated since version 0.26.0 and will be removed in 2.0.0 (or later). To avoid this warning, please use the para
+meter `max_size` instead. For more details, see the documentation of `remove_small_objects`. Note that the new threshol
+d removes objects smaller than **or equal to** its value, while the previous parameter only removed smaller ones.
+  bw = morphology.remove_small_objects(bw.astype(bool), min_size=50)
+D:\CGAIC\demo5\scripts\..\src\slots\..\..\..\demo4\src\features\traditional.py:247: FutureWarning: Parameter `min_size`
+ is deprecated since version 0.26.0 and will be removed in 2.0.0 (or later). To avoid this warning, please use the para
+meter `max_size` instead. For more details, see the documentation of `remove_small_objects`. Note that the new threshol
+d removes objects smaller than **or equal to** its value, while the previous parameter only removed smaller ones.
+  bw = morphology.remove_small_objects(bw.astype(bool), min_size=50)
+D:\CGAIC\demo5\scripts\..\src\slots\..\..\..\demo4\src\features\traditional.py:247: FutureWarning: Parameter `min_size`
+ is deprecated since version 0.26.0 and will be removed in 2.0.0 (or later). To avoid this warning, please use the para
+meter `max_size` instead. For more details, see the documentation of `remove_small_objects`. Note that the new threshol
+d removes objects smaller than **or equal to** its value, while the previous parameter only removed smaller ones.
+  bw = morphology.remove_small_objects(bw.astype(bool), min_size=50)
+D:\CGAIC\demo5\scripts\..\src\slots\..\..\..\demo4\src\features\traditional.py:247: FutureWarning: Parameter `min_size`
+ is deprecated since version 0.26.0 and will be removed in 2.0.0 (or later). To avoid this warning, please use the para
+meter `max_size` instead. For more details, see the documentation of `remove_small_objects`. Note that the new threshol
+d removes objects smaller than **or equal to** its value, while the previous parameter only removed smaller ones.
+  bw = morphology.remove_small_objects(bw.astype(bool), min_size=50)
+D:\CGAIC\demo5\scripts\..\src\slots\..\..\..\demo4\src\features\traditional.py:247: FutureWarning: Parameter `min_size`
+ is deprecated since version 0.26.0 and will be removed in 2.0.0 (or later). To avoid this warning, please use the para
+meter `max_size` instead. For more details, see the documentation of `remove_small_objects`. Note that the new threshol
+d removes objects smaller than **or equal to** its value, while the previous parameter only removed smaller ones.
+  bw = morphology.remove_small_objects(bw.astype(bool), min_size=50)
+D:\CGAIC\demo5\scripts\..\src\slots\..\..\..\demo4\src\features\traditional.py:247: FutureWarning: Parameter `min_size`
+ is deprecated since version 0.26.0 and will be removed in 2.0.0 (or later). To avoid this warning, please use the para
+meter `max_size` instead. For more details, see the documentation of `remove_small_objects`. Note that the new threshol
+d removes objects smaller than **or equal to** its value, while the previous parameter only removed smaller ones.
+  bw = morphology.remove_small_objects(bw.astype(bool), min_size=50)
+  [eval] 140/150 (135s)
+D:\CGAIC\demo5\scripts\..\src\slots\..\..\..\demo4\src\features\traditional.py:247: FutureWarning: Parameter `min_size`
+ is deprecated since version 0.26.0 and will be removed in 2.0.0 (or later). To avoid this warning, please use the para
+meter `max_size` instead. For more details, see the documentation of `remove_small_objects`. Note that the new threshol
+d removes objects smaller than **or equal to** its value, while the previous parameter only removed smaller ones.
+  bw = morphology.remove_small_objects(bw.astype(bool), min_size=50)
+D:\CGAIC\demo5\scripts\..\src\slots\..\..\..\demo4\src\features\traditional.py:247: FutureWarning: Parameter `min_size`
+ is deprecated since version 0.26.0 and will be removed in 2.0.0 (or later). To avoid this warning, please use the para
+meter `max_size` instead. For more details, see the documentation of `remove_small_objects`. Note that the new threshol
+d removes objects smaller than **or equal to** its value, while the previous parameter only removed smaller ones.
+  bw = morphology.remove_small_objects(bw.astype(bool), min_size=50)
+D:\CGAIC\demo5\scripts\..\src\slots\..\..\..\demo4\src\features\traditional.py:247: FutureWarning: Parameter `min_size`
+ is deprecated since version 0.26.0 and will be removed in 2.0.0 (or later). To avoid this warning, please use the para
+meter `max_size` instead. For more details, see the documentation of `remove_small_objects`. Note that the new threshol
+d removes objects smaller than **or equal to** its value, while the previous parameter only removed smaller ones.
+  bw = morphology.remove_small_objects(bw.astype(bool), min_size=50)
+D:\CGAIC\demo5\scripts\..\src\slots\..\..\..\demo4\src\features\traditional.py:247: FutureWarning: Parameter `min_size`
+ is deprecated since version 0.26.0 and will be removed in 2.0.0 (or later). To avoid this warning, please use the para
+meter `max_size` instead. For more details, see the documentation of `remove_small_objects`. Note that the new threshol
+d removes objects smaller than **or equal to** its value, while the previous parameter only removed smaller ones.
+  bw = morphology.remove_small_objects(bw.astype(bool), min_size=50)
+D:\CGAIC\demo5\scripts\..\src\slots\..\..\..\demo4\src\features\traditional.py:247: FutureWarning: Parameter `min_size`
+ is deprecated since version 0.26.0 and will be removed in 2.0.0 (or later). To avoid this warning, please use the para
+meter `max_size` instead. For more details, see the documentation of `remove_small_objects`. Note that the new threshol
+d removes objects smaller than **or equal to** its value, while the previous parameter only removed smaller ones.
+  bw = morphology.remove_small_objects(bw.astype(bool), min_size=50)
+D:\CGAIC\demo5\scripts\..\src\slots\..\..\..\demo4\src\features\traditional.py:247: FutureWarning: Parameter `min_size`
+ is deprecated since version 0.26.0 and will be removed in 2.0.0 (or later). To avoid this warning, please use the para
+meter `max_size` instead. For more details, see the documentation of `remove_small_objects`. Note that the new threshol
+d removes objects smaller than **or equal to** its value, while the previous parameter only removed smaller ones.
+  bw = morphology.remove_small_objects(bw.astype(bool), min_size=50)
+D:\CGAIC\demo5\scripts\..\src\slots\..\..\..\demo4\src\features\traditional.py:247: FutureWarning: Parameter `min_size`
+ is deprecated since version 0.26.0 and will be removed in 2.0.0 (or later). To avoid this warning, please use the para
+meter `max_size` instead. For more details, see the documentation of `remove_small_objects`. Note that the new threshol
+d removes objects smaller than **or equal to** its value, while the previous parameter only removed smaller ones.
+  bw = morphology.remove_small_objects(bw.astype(bool), min_size=50)
+D:\CGAIC\demo5\scripts\..\src\slots\..\..\..\demo4\src\features\traditional.py:247: FutureWarning: Parameter `min_size`
+ is deprecated since version 0.26.0 and will be removed in 2.0.0 (or later). To avoid this warning, please use the para
+meter `max_size` instead. For more details, see the documentation of `remove_small_objects`. Note that the new threshol
+d removes objects smaller than **or equal to** its value, while the previous parameter only removed smaller ones.
+  bw = morphology.remove_small_objects(bw.astype(bool), min_size=50)
+D:\CGAIC\demo5\scripts\..\src\slots\..\..\..\demo4\src\features\traditional.py:247: FutureWarning: Parameter `min_size`
+ is deprecated since version 0.26.0 and will be removed in 2.0.0 (or later). To avoid this warning, please use the para
+meter `max_size` instead. For more details, see the documentation of `remove_small_objects`. Note that the new threshol
+d removes objects smaller than **or equal to** its value, while the previous parameter only removed smaller ones.
+  bw = morphology.remove_small_objects(bw.astype(bool), min_size=50)
+D:\CGAIC\demo5\scripts\..\src\slots\..\..\..\demo4\src\features\traditional.py:247: FutureWarning: Parameter `min_size`
+ is deprecated since version 0.26.0 and will be removed in 2.0.0 (or later). To avoid this warning, please use the para
+meter `max_size` instead. For more details, see the documentation of `remove_small_objects`. Note that the new threshol
+d removes objects smaller than **or equal to** its value, while the previous parameter only removed smaller ones.
+  bw = morphology.remove_small_objects(bw.astype(bool), min_size=50)
+  [run B_all_with_shead] fused AUROC=0.5517
+  [run B_all_with_shead] sem AUROC=0.6031
+  [run B_all_with_shead] disc AUROC=0.3328
+  [run B_all_with_shead] shead AUROC=0.7370
+  [run B_all_with_shead] blob AUROC=0.3995
+  [run B_all_with_shead] trad AUROC=0.3748
+  [run B_all_with_shead] layout AUROC=0.4799
+  [run B_all_with_shead] inp AUROC=0.6055
+  [run B_all_with_shead] fused_max AUROC=0.5661
+==== [run B_all_with_shead] end (301.16s) ====
+
+==== [run C_shead_replaces_disc] 全槽位除 disc（shead 替换，等权） start ====
+    [extract] 20/100 (2s)
+    [extract] 40/100 (4s)
+    [extract] 60/100 (9s)
+    [extract] 80/100 (13s)
+    [extract] 100/100 (16s)
+  [fit] init_normal 提取 100 张完成 (16s)
+    [extract] 20/30 (6s)
+  [fit] init_defect 提取 30 张完成 (24s)
+  [fit] 槽位 sem 完成 (26s)
+[shead] epoch 10/50 loss_n=6.2910 loss_a=6.3561
+[shead] epoch 20/50 loss_n=6.2247 loss_a=5.9058
+[shead] epoch 30/50 loss_n=5.6350 loss_a=5.6059
+[shead] epoch 40/50 loss_n=4.6203 loss_a=3.8738
+[shead] epoch 50/50 loss_n=1.0859 loss_a=3.8057
+[shead] fit 完成: normal=96 pseudo=288 real_defect=30 pos_total=318 X=414 batch=32 lr=0.001
+  [fit] 槽位 shead 完成 (33s)
+  [fit] 槽位 blob 完成 (33s)
+D:\CGAIC\demo5\scripts\..\src\slots\..\..\..\demo4\src\features\traditional.py:247: FutureWarning: Parameter `min_size`
+ is deprecated since version 0.26.0 and will be removed in 2.0.0 (or later). To avoid this warning, please use the para
+meter `max_size` instead. For more details, see the documentation of `remove_small_objects`. Note that the new threshol
+d removes objects smaller than **or equal to** its value, while the previous parameter only removed smaller ones.
+  bw = morphology.remove_small_objects(bw.astype(bool), min_size=50)
+  [fit] 槽位 trad 完成 (46s)
+  [fit] 槽位 layout 完成 (48s)
+  [fit] 槽位 inp 完成 (48s)
+D:\CGAIC\demo5\scripts\..\src\slots\..\..\..\demo4\src\features\traditional.py:247: FutureWarning: Parameter `min_size`
+ is deprecated since version 0.26.0 and will be removed in 2.0.0 (or later). To avoid this warning, please use the para
+meter `max_size` instead. For more details, see the documentation of `remove_small_objects`. Note that the new threshol
+d removes objects smaller than **or equal to** its value, while the previous parameter only removed smaller ones.
+  bw = morphology.remove_small_objects(bw.astype(bool), min_size=50)
+[route] base=0.9493 router=0.9657 enabled=True (margin=0.005)
+D:\CGAIC\demo5\scripts\..\src\slots\..\..\..\demo4\src\features\traditional.py:247: FutureWarning: Parameter `min_size`
+ is deprecated since version 0.26.0 and will be removed in 2.0.0 (or later). To avoid this warning, please use the para
+meter `max_size` instead. For more details, see the documentation of `remove_small_objects`. Note that the new threshol
+d removes objects smaller than **or equal to** its value, while the previous parameter only removed smaller ones.
+  bw = morphology.remove_small_objects(bw.astype(bool), min_size=50)
+D:\CGAIC\demo5\scripts\..\src\slots\..\..\..\demo4\src\features\traditional.py:247: FutureWarning: Parameter `min_size`
+ is deprecated since version 0.26.0 and will be removed in 2.0.0 (or later). To avoid this warning, please use the para
+meter `max_size` instead. For more details, see the documentation of `remove_small_objects`. Note that the new threshol
+d removes objects smaller than **or equal to** its value, while the previous parameter only removed smaller ones.
+  bw = morphology.remove_small_objects(bw.astype(bool), min_size=50)
+D:\CGAIC\demo5\scripts\..\src\slots\..\..\..\demo4\src\features\traditional.py:247: FutureWarning: Parameter `min_size`
+ is deprecated since version 0.26.0 and will be removed in 2.0.0 (or later). To avoid this warning, please use the para
+meter `max_size` instead. For more details, see the documentation of `remove_small_objects`. Note that the new threshol
+d removes objects smaller than **or equal to** its value, while the previous parameter only removed smaller ones.
+  bw = morphology.remove_small_objects(bw.astype(bool), min_size=50)
+D:\CGAIC\demo5\scripts\..\src\slots\..\..\..\demo4\src\features\traditional.py:247: FutureWarning: Parameter `min_size`
+ is deprecated since version 0.26.0 and will be removed in 2.0.0 (or later). To avoid this warning, please use the para
+meter `max_size` instead. For more details, see the documentation of `remove_small_objects`. Note that the new threshol
+d removes objects smaller than **or equal to** its value, while the previous parameter only removed smaller ones.
+  bw = morphology.remove_small_objects(bw.astype(bool), min_size=50)
+D:\CGAIC\demo5\scripts\..\src\slots\..\..\..\demo4\src\features\traditional.py:247: FutureWarning: Parameter `min_size`
+ is deprecated since version 0.26.0 and will be removed in 2.0.0 (or later). To avoid this warning, please use the para
+meter `max_size` instead. For more details, see the documentation of `remove_small_objects`. Note that the new threshol
+d removes objects smaller than **or equal to** its value, while the previous parameter only removed smaller ones.
+  bw = morphology.remove_small_objects(bw.astype(bool), min_size=50)
+D:\CGAIC\demo5\scripts\..\src\slots\..\..\..\demo4\src\features\traditional.py:247: FutureWarning: Parameter `min_size`
+ is deprecated since version 0.26.0 and will be removed in 2.0.0 (or later). To avoid this warning, please use the para
+meter `max_size` instead. For more details, see the documentation of `remove_small_objects`. Note that the new threshol
+d removes objects smaller than **or equal to** its value, while the previous parameter only removed smaller ones.
+  bw = morphology.remove_small_objects(bw.astype(bool), min_size=50)
+D:\CGAIC\demo5\scripts\..\src\slots\..\..\..\demo4\src\features\traditional.py:247: FutureWarning: Parameter `min_size`
+ is deprecated since version 0.26.0 and will be removed in 2.0.0 (or later). To avoid this warning, please use the para
+meter `max_size` instead. For more details, see the documentation of `remove_small_objects`. Note that the new threshol
+d removes objects smaller than **or equal to** its value, while the previous parameter only removed smaller ones.
+  bw = morphology.remove_small_objects(bw.astype(bool), min_size=50)
+D:\CGAIC\demo5\scripts\..\src\slots\..\..\..\demo4\src\features\traditional.py:247: FutureWarning: Parameter `min_size`
+ is deprecated since version 0.26.0 and will be removed in 2.0.0 (or later). To avoid this warning, please use the para
+meter `max_size` instead. For more details, see the documentation of `remove_small_objects`. Note that the new threshol
+d removes objects smaller than **or equal to** its value, while the previous parameter only removed smaller ones.
+  bw = morphology.remove_small_objects(bw.astype(bool), min_size=50)
+D:\CGAIC\demo5\scripts\..\src\slots\..\..\..\demo4\src\features\traditional.py:247: FutureWarning: Parameter `min_size`
+ is deprecated since version 0.26.0 and will be removed in 2.0.0 (or later). To avoid this warning, please use the para
+meter `max_size` instead. For more details, see the documentation of `remove_small_objects`. Note that the new threshol
+d removes objects smaller than **or equal to** its value, while the previous parameter only removed smaller ones.
+  bw = morphology.remove_small_objects(bw.astype(bool), min_size=50)
+D:\CGAIC\demo5\scripts\..\src\slots\..\..\..\demo4\src\features\traditional.py:247: FutureWarning: Parameter `min_size`
+ is deprecated since version 0.26.0 and will be removed in 2.0.0 (or later). To avoid this warning, please use the para
+meter `max_size` instead. For more details, see the documentation of `remove_small_objects`. Note that the new threshol
+d removes objects smaller than **or equal to** its value, while the previous parameter only removed smaller ones.
+  bw = morphology.remove_small_objects(bw.astype(bool), min_size=50)
+D:\CGAIC\demo5\scripts\..\src\slots\..\..\..\demo4\src\features\traditional.py:247: FutureWarning: Parameter `min_size`
+ is deprecated since version 0.26.0 and will be removed in 2.0.0 (or later). To avoid this warning, please use the para
+meter `max_size` instead. For more details, see the documentation of `remove_small_objects`. Note that the new threshol
+d removes objects smaller than **or equal to** its value, while the previous parameter only removed smaller ones.
+  bw = morphology.remove_small_objects(bw.astype(bool), min_size=50)
+D:\CGAIC\demo5\scripts\..\src\slots\..\..\..\demo4\src\features\traditional.py:247: FutureWarning: Parameter `min_size`
+ is deprecated since version 0.26.0 and will be removed in 2.0.0 (or later). To avoid this warning, please use the para
+meter `max_size` instead. For more details, see the documentation of `remove_small_objects`. Note that the new threshol
+d removes objects smaller than **or equal to** its value, while the previous parameter only removed smaller ones.
+  bw = morphology.remove_small_objects(bw.astype(bool), min_size=50)
+D:\CGAIC\demo5\scripts\..\src\slots\..\..\..\demo4\src\features\traditional.py:247: FutureWarning: Parameter `min_size`
+ is deprecated since version 0.26.0 and will be removed in 2.0.0 (or later). To avoid this warning, please use the para
+meter `max_size` instead. For more details, see the documentation of `remove_small_objects`. Note that the new threshol
+d removes objects smaller than **or equal to** its value, while the previous parameter only removed smaller ones.
+  bw = morphology.remove_small_objects(bw.astype(bool), min_size=50)
+D:\CGAIC\demo5\scripts\..\src\slots\..\..\..\demo4\src\features\traditional.py:247: FutureWarning: Parameter `min_size`
+ is deprecated since version 0.26.0 and will be removed in 2.0.0 (or later). To avoid this warning, please use the para
+meter `max_size` instead. For more details, see the documentation of `remove_small_objects`. Note that the new threshol
+d removes objects smaller than **or equal to** its value, while the previous parameter only removed smaller ones.
+  bw = morphology.remove_small_objects(bw.astype(bool), min_size=50)
+D:\CGAIC\demo5\scripts\..\src\slots\..\..\..\demo4\src\features\traditional.py:247: FutureWarning: Parameter `min_size`
+ is deprecated since version 0.26.0 and will be removed in 2.0.0 (or later). To avoid this warning, please use the para
+meter `max_size` instead. For more details, see the documentation of `remove_small_objects`. Note that the new threshol
+d removes objects smaller than **or equal to** its value, while the previous parameter only removed smaller ones.
+  bw = morphology.remove_small_objects(bw.astype(bool), min_size=50)
+D:\CGAIC\demo5\scripts\..\src\slots\..\..\..\demo4\src\features\traditional.py:247: FutureWarning: Parameter `min_size`
+ is deprecated since version 0.26.0 and will be removed in 2.0.0 (or later). To avoid this warning, please use the para
+meter `max_size` instead. For more details, see the documentation of `remove_small_objects`. Note that the new threshol
+d removes objects smaller than **or equal to** its value, while the previous parameter only removed smaller ones.
+  bw = morphology.remove_small_objects(bw.astype(bool), min_size=50)
+D:\CGAIC\demo5\scripts\..\src\slots\..\..\..\demo4\src\features\traditional.py:247: FutureWarning: Parameter `min_size`
+ is deprecated since version 0.26.0 and will be removed in 2.0.0 (or later). To avoid this warning, please use the para
+meter `max_size` instead. For more details, see the documentation of `remove_small_objects`. Note that the new threshol
+d removes objects smaller than **or equal to** its value, while the previous parameter only removed smaller ones.
+  bw = morphology.remove_small_objects(bw.astype(bool), min_size=50)
+D:\CGAIC\demo5\scripts\..\src\slots\..\..\..\demo4\src\features\traditional.py:247: FutureWarning: Parameter `min_size`
+ is deprecated since version 0.26.0 and will be removed in 2.0.0 (or later). To avoid this warning, please use the para
+meter `max_size` instead. For more details, see the documentation of `remove_small_objects`. Note that the new threshol
+d removes objects smaller than **or equal to** its value, while the previous parameter only removed smaller ones.
+  bw = morphology.remove_small_objects(bw.astype(bool), min_size=50)
+D:\CGAIC\demo5\scripts\..\src\slots\..\..\..\demo4\src\features\traditional.py:247: FutureWarning: Parameter `min_size`
+ is deprecated since version 0.26.0 and will be removed in 2.0.0 (or later). To avoid this warning, please use the para
+meter `max_size` instead. For more details, see the documentation of `remove_small_objects`. Note that the new threshol
+d removes objects smaller than **or equal to** its value, while the previous parameter only removed smaller ones.
+  bw = morphology.remove_small_objects(bw.astype(bool), min_size=50)
+D:\CGAIC\demo5\scripts\..\src\slots\..\..\..\demo4\src\features\traditional.py:247: FutureWarning: Parameter `min_size`
+ is deprecated since version 0.26.0 and will be removed in 2.0.0 (or later). To avoid this warning, please use the para
+meter `max_size` instead. For more details, see the documentation of `remove_small_objects`. Note that the new threshol
+d removes objects smaller than **or equal to** its value, while the previous parameter only removed smaller ones.
+  bw = morphology.remove_small_objects(bw.astype(bool), min_size=50)
+  [eval] 20/150 (21s)
+D:\CGAIC\demo5\scripts\..\src\slots\..\..\..\demo4\src\features\traditional.py:247: FutureWarning: Parameter `min_size`
+ is deprecated since version 0.26.0 and will be removed in 2.0.0 (or later). To avoid this warning, please use the para
+meter `max_size` instead. For more details, see the documentation of `remove_small_objects`. Note that the new threshol
+d removes objects smaller than **or equal to** its value, while the previous parameter only removed smaller ones.
+  bw = morphology.remove_small_objects(bw.astype(bool), min_size=50)
+D:\CGAIC\demo5\scripts\..\src\slots\..\..\..\demo4\src\features\traditional.py:247: FutureWarning: Parameter `min_size`
+ is deprecated since version 0.26.0 and will be removed in 2.0.0 (or later). To avoid this warning, please use the para
+meter `max_size` instead. For more details, see the documentation of `remove_small_objects`. Note that the new threshol
+d removes objects smaller than **or equal to** its value, while the previous parameter only removed smaller ones.
+  bw = morphology.remove_small_objects(bw.astype(bool), min_size=50)
+D:\CGAIC\demo5\scripts\..\src\slots\..\..\..\demo4\src\features\traditional.py:247: FutureWarning: Parameter `min_size`
+ is deprecated since version 0.26.0 and will be removed in 2.0.0 (or later). To avoid this warning, please use the para
+meter `max_size` instead. For more details, see the documentation of `remove_small_objects`. Note that the new threshol
+d removes objects smaller than **or equal to** its value, while the previous parameter only removed smaller ones.
+  bw = morphology.remove_small_objects(bw.astype(bool), min_size=50)
+D:\CGAIC\demo5\scripts\..\src\slots\..\..\..\demo4\src\features\traditional.py:247: FutureWarning: Parameter `min_size`
+ is deprecated since version 0.26.0 and will be removed in 2.0.0 (or later). To avoid this warning, please use the para
+meter `max_size` instead. For more details, see the documentation of `remove_small_objects`. Note that the new threshol
+d removes objects smaller than **or equal to** its value, while the previous parameter only removed smaller ones.
+  bw = morphology.remove_small_objects(bw.astype(bool), min_size=50)
+D:\CGAIC\demo5\scripts\..\src\slots\..\..\..\demo4\src\features\traditional.py:247: FutureWarning: Parameter `min_size`
+ is deprecated since version 0.26.0 and will be removed in 2.0.0 (or later). To avoid this warning, please use the para
+meter `max_size` instead. For more details, see the documentation of `remove_small_objects`. Note that the new threshol
+d removes objects smaller than **or equal to** its value, while the previous parameter only removed smaller ones.
+  bw = morphology.remove_small_objects(bw.astype(bool), min_size=50)
+D:\CGAIC\demo5\scripts\..\src\slots\..\..\..\demo4\src\features\traditional.py:247: FutureWarning: Parameter `min_size`
+ is deprecated since version 0.26.0 and will be removed in 2.0.0 (or later). To avoid this warning, please use the para
+meter `max_size` instead. For more details, see the documentation of `remove_small_objects`. Note that the new threshol
+d removes objects smaller than **or equal to** its value, while the previous parameter only removed smaller ones.
+  bw = morphology.remove_small_objects(bw.astype(bool), min_size=50)
+D:\CGAIC\demo5\scripts\..\src\slots\..\..\..\demo4\src\features\traditional.py:247: FutureWarning: Parameter `min_size`
+ is deprecated since version 0.26.0 and will be removed in 2.0.0 (or later). To avoid this warning, please use the para
+meter `max_size` instead. For more details, see the documentation of `remove_small_objects`. Note that the new threshol
+d removes objects smaller than **or equal to** its value, while the previous parameter only removed smaller ones.
+  bw = morphology.remove_small_objects(bw.astype(bool), min_size=50)
+D:\CGAIC\demo5\scripts\..\src\slots\..\..\..\demo4\src\features\traditional.py:247: FutureWarning: Parameter `min_size`
+ is deprecated since version 0.26.0 and will be removed in 2.0.0 (or later). To avoid this warning, please use the para
+meter `max_size` instead. For more details, see the documentation of `remove_small_objects`. Note that the new threshol
+d removes objects smaller than **or equal to** its value, while the previous parameter only removed smaller ones.
+  bw = morphology.remove_small_objects(bw.astype(bool), min_size=50)
+D:\CGAIC\demo5\scripts\..\src\slots\..\..\..\demo4\src\features\traditional.py:247: FutureWarning: Parameter `min_size`
+ is deprecated since version 0.26.0 and will be removed in 2.0.0 (or later). To avoid this warning, please use the para
+meter `max_size` instead. For more details, see the documentation of `remove_small_objects`. Note that the new threshol
+d removes objects smaller than **or equal to** its value, while the previous parameter only removed smaller ones.
+  bw = morphology.remove_small_objects(bw.astype(bool), min_size=50)
+D:\CGAIC\demo5\scripts\..\src\slots\..\..\..\demo4\src\features\traditional.py:247: FutureWarning: Parameter `min_size`
+ is deprecated since version 0.26.0 and will be removed in 2.0.0 (or later). To avoid this warning, please use the para
+meter `max_size` instead. For more details, see the documentation of `remove_small_objects`. Note that the new threshol
+d removes objects smaller than **or equal to** its value, while the previous parameter only removed smaller ones.
+  bw = morphology.remove_small_objects(bw.astype(bool), min_size=50)
+D:\CGAIC\demo5\scripts\..\src\slots\..\..\..\demo4\src\features\traditional.py:247: FutureWarning: Parameter `min_size`
+ is deprecated since version 0.26.0 and will be removed in 2.0.0 (or later). To avoid this warning, please use the para
+meter `max_size` instead. For more details, see the documentation of `remove_small_objects`. Note that the new threshol
+d removes objects smaller than **or equal to** its value, while the previous parameter only removed smaller ones.
+  bw = morphology.remove_small_objects(bw.astype(bool), min_size=50)
+D:\CGAIC\demo5\scripts\..\src\slots\..\..\..\demo4\src\features\traditional.py:247: FutureWarning: Parameter `min_size`
+ is deprecated since version 0.26.0 and will be removed in 2.0.0 (or later). To avoid this warning, please use the para
+meter `max_size` instead. For more details, see the documentation of `remove_small_objects`. Note that the new threshol
+d removes objects smaller than **or equal to** its value, while the previous parameter only removed smaller ones.
+  bw = morphology.remove_small_objects(bw.astype(bool), min_size=50)
+D:\CGAIC\demo5\scripts\..\src\slots\..\..\..\demo4\src\features\traditional.py:247: FutureWarning: Parameter `min_size`
+ is deprecated since version 0.26.0 and will be removed in 2.0.0 (or later). To avoid this warning, please use the para
+meter `max_size` instead. For more details, see the documentation of `remove_small_objects`. Note that the new threshol
+d removes objects smaller than **or equal to** its value, while the previous parameter only removed smaller ones.
+  bw = morphology.remove_small_objects(bw.astype(bool), min_size=50)
+D:\CGAIC\demo5\scripts\..\src\slots\..\..\..\demo4\src\features\traditional.py:247: FutureWarning: Parameter `min_size`
+ is deprecated since version 0.26.0 and will be removed in 2.0.0 (or later). To avoid this warning, please use the para
+meter `max_size` instead. For more details, see the documentation of `remove_small_objects`. Note that the new threshol
+d removes objects smaller than **or equal to** its value, while the previous parameter only removed smaller ones.
+  bw = morphology.remove_small_objects(bw.astype(bool), min_size=50)
+D:\CGAIC\demo5\scripts\..\src\slots\..\..\..\demo4\src\features\traditional.py:247: FutureWarning: Parameter `min_size`
+ is deprecated since version 0.26.0 and will be removed in 2.0.0 (or later). To avoid this warning, please use the para
+meter `max_size` instead. For more details, see the documentation of `remove_small_objects`. Note that the new threshol
+d removes objects smaller than **or equal to** its value, while the previous parameter only removed smaller ones.
+  bw = morphology.remove_small_objects(bw.astype(bool), min_size=50)
+D:\CGAIC\demo5\scripts\..\src\slots\..\..\..\demo4\src\features\traditional.py:247: FutureWarning: Parameter `min_size`
+ is deprecated since version 0.26.0 and will be removed in 2.0.0 (or later). To avoid this warning, please use the para
+meter `max_size` instead. For more details, see the documentation of `remove_small_objects`. Note that the new threshol
+d removes objects smaller than **or equal to** its value, while the previous parameter only removed smaller ones.
+  bw = morphology.remove_small_objects(bw.astype(bool), min_size=50)
+D:\CGAIC\demo5\scripts\..\src\slots\..\..\..\demo4\src\features\traditional.py:247: FutureWarning: Parameter `min_size`
+ is deprecated since version 0.26.0 and will be removed in 2.0.0 (or later). To avoid this warning, please use the para
+meter `max_size` instead. For more details, see the documentation of `remove_small_objects`. Note that the new threshol
+d removes objects smaller than **or equal to** its value, while the previous parameter only removed smaller ones.
+  bw = morphology.remove_small_objects(bw.astype(bool), min_size=50)
+D:\CGAIC\demo5\scripts\..\src\slots\..\..\..\demo4\src\features\traditional.py:247: FutureWarning: Parameter `min_size`
+ is deprecated since version 0.26.0 and will be removed in 2.0.0 (or later). To avoid this warning, please use the para
+meter `max_size` instead. For more details, see the documentation of `remove_small_objects`. Note that the new threshol
+d removes objects smaller than **or equal to** its value, while the previous parameter only removed smaller ones.
+  bw = morphology.remove_small_objects(bw.astype(bool), min_size=50)
+D:\CGAIC\demo5\scripts\..\src\slots\..\..\..\demo4\src\features\traditional.py:247: FutureWarning: Parameter `min_size`
+ is deprecated since version 0.26.0 and will be removed in 2.0.0 (or later). To avoid this warning, please use the para
+meter `max_size` instead. For more details, see the documentation of `remove_small_objects`. Note that the new threshol
+d removes objects smaller than **or equal to** its value, while the previous parameter only removed smaller ones.
+  bw = morphology.remove_small_objects(bw.astype(bool), min_size=50)
+D:\CGAIC\demo5\scripts\..\src\slots\..\..\..\demo4\src\features\traditional.py:247: FutureWarning: Parameter `min_size`
+ is deprecated since version 0.26.0 and will be removed in 2.0.0 (or later). To avoid this warning, please use the para
+meter `max_size` instead. For more details, see the documentation of `remove_small_objects`. Note that the new threshol
+d removes objects smaller than **or equal to** its value, while the previous parameter only removed smaller ones.
+  bw = morphology.remove_small_objects(bw.astype(bool), min_size=50)
+  [eval] 40/150 (40s)
+D:\CGAIC\demo5\scripts\..\src\slots\..\..\..\demo4\src\features\traditional.py:247: FutureWarning: Parameter `min_size`
+ is deprecated since version 0.26.0 and will be removed in 2.0.0 (or later). To avoid this warning, please use the para
+meter `max_size` instead. For more details, see the documentation of `remove_small_objects`. Note that the new threshol
+d removes objects smaller than **or equal to** its value, while the previous parameter only removed smaller ones.
+  bw = morphology.remove_small_objects(bw.astype(bool), min_size=50)
+D:\CGAIC\demo5\scripts\..\src\slots\..\..\..\demo4\src\features\traditional.py:247: FutureWarning: Parameter `min_size`
+ is deprecated since version 0.26.0 and will be removed in 2.0.0 (or later). To avoid this warning, please use the para
+meter `max_size` instead. For more details, see the documentation of `remove_small_objects`. Note that the new threshol
+d removes objects smaller than **or equal to** its value, while the previous parameter only removed smaller ones.
+  bw = morphology.remove_small_objects(bw.astype(bool), min_size=50)
+D:\CGAIC\demo5\scripts\..\src\slots\..\..\..\demo4\src\features\traditional.py:247: FutureWarning: Parameter `min_size`
+ is deprecated since version 0.26.0 and will be removed in 2.0.0 (or later). To avoid this warning, please use the para
+meter `max_size` instead. For more details, see the documentation of `remove_small_objects`. Note that the new threshol
+d removes objects smaller than **or equal to** its value, while the previous parameter only removed smaller ones.
+  bw = morphology.remove_small_objects(bw.astype(bool), min_size=50)
+D:\CGAIC\demo5\scripts\..\src\slots\..\..\..\demo4\src\features\traditional.py:247: FutureWarning: Parameter `min_size`
+ is deprecated since version 0.26.0 and will be removed in 2.0.0 (or later). To avoid this warning, please use the para
+meter `max_size` instead. For more details, see the documentation of `remove_small_objects`. Note that the new threshol
+d removes objects smaller than **or equal to** its value, while the previous parameter only removed smaller ones.
+  bw = morphology.remove_small_objects(bw.astype(bool), min_size=50)
+D:\CGAIC\demo5\scripts\..\src\slots\..\..\..\demo4\src\features\traditional.py:247: FutureWarning: Parameter `min_size`
+ is deprecated since version 0.26.0 and will be removed in 2.0.0 (or later). To avoid this warning, please use the para
+meter `max_size` instead. For more details, see the documentation of `remove_small_objects`. Note that the new threshol
+d removes objects smaller than **or equal to** its value, while the previous parameter only removed smaller ones.
+  bw = morphology.remove_small_objects(bw.astype(bool), min_size=50)
+D:\CGAIC\demo5\scripts\..\src\slots\..\..\..\demo4\src\features\traditional.py:247: FutureWarning: Parameter `min_size`
+ is deprecated since version 0.26.0 and will be removed in 2.0.0 (or later). To avoid this warning, please use the para
+meter `max_size` instead. For more details, see the documentation of `remove_small_objects`. Note that the new threshol
+d removes objects smaller than **or equal to** its value, while the previous parameter only removed smaller ones.
+  bw = morphology.remove_small_objects(bw.astype(bool), min_size=50)
+D:\CGAIC\demo5\scripts\..\src\slots\..\..\..\demo4\src\features\traditional.py:247: FutureWarning: Parameter `min_size`
+ is deprecated since version 0.26.0 and will be removed in 2.0.0 (or later). To avoid this warning, please use the para
+meter `max_size` instead. For more details, see the documentation of `remove_small_objects`. Note that the new threshol
+d removes objects smaller than **or equal to** its value, while the previous parameter only removed smaller ones.
+  bw = morphology.remove_small_objects(bw.astype(bool), min_size=50)
+D:\CGAIC\demo5\scripts\..\src\slots\..\..\..\demo4\src\features\traditional.py:247: FutureWarning: Parameter `min_size`
+ is deprecated since version 0.26.0 and will be removed in 2.0.0 (or later). To avoid this warning, please use the para
+meter `max_size` instead. For more details, see the documentation of `remove_small_objects`. Note that the new threshol
+d removes objects smaller than **or equal to** its value, while the previous parameter only removed smaller ones.
+  bw = morphology.remove_small_objects(bw.astype(bool), min_size=50)
+D:\CGAIC\demo5\scripts\..\src\slots\..\..\..\demo4\src\features\traditional.py:247: FutureWarning: Parameter `min_size`
+ is deprecated since version 0.26.0 and will be removed in 2.0.0 (or later). To avoid this warning, please use the para
+meter `max_size` instead. For more details, see the documentation of `remove_small_objects`. Note that the new threshol
+d removes objects smaller than **or equal to** its value, while the previous parameter only removed smaller ones.
+  bw = morphology.remove_small_objects(bw.astype(bool), min_size=50)
+D:\CGAIC\demo5\scripts\..\src\slots\..\..\..\demo4\src\features\traditional.py:247: FutureWarning: Parameter `min_size`
+ is deprecated since version 0.26.0 and will be removed in 2.0.0 (or later). To avoid this warning, please use the para
+meter `max_size` instead. For more details, see the documentation of `remove_small_objects`. Note that the new threshol
+d removes objects smaller than **or equal to** its value, while the previous parameter only removed smaller ones.
+  bw = morphology.remove_small_objects(bw.astype(bool), min_size=50)
+D:\CGAIC\demo5\scripts\..\src\slots\..\..\..\demo4\src\features\traditional.py:247: FutureWarning: Parameter `min_size`
+ is deprecated since version 0.26.0 and will be removed in 2.0.0 (or later). To avoid this warning, please use the para
+meter `max_size` instead. For more details, see the documentation of `remove_small_objects`. Note that the new threshol
+d removes objects smaller than **or equal to** its value, while the previous parameter only removed smaller ones.
+  bw = morphology.remove_small_objects(bw.astype(bool), min_size=50)
+D:\CGAIC\demo5\scripts\..\src\slots\..\..\..\demo4\src\features\traditional.py:247: FutureWarning: Parameter `min_size`
+ is deprecated since version 0.26.0 and will be removed in 2.0.0 (or later). To avoid this warning, please use the para
+meter `max_size` instead. For more details, see the documentation of `remove_small_objects`. Note that the new threshol
+d removes objects smaller than **or equal to** its value, while the previous parameter only removed smaller ones.
+  bw = morphology.remove_small_objects(bw.astype(bool), min_size=50)
+D:\CGAIC\demo5\scripts\..\src\slots\..\..\..\demo4\src\features\traditional.py:247: FutureWarning: Parameter `min_size`
+ is deprecated since version 0.26.0 and will be removed in 2.0.0 (or later). To avoid this warning, please use the para
+meter `max_size` instead. For more details, see the documentation of `remove_small_objects`. Note that the new threshol
+d removes objects smaller than **or equal to** its value, while the previous parameter only removed smaller ones.
+  bw = morphology.remove_small_objects(bw.astype(bool), min_size=50)
+D:\CGAIC\demo5\scripts\..\src\slots\..\..\..\demo4\src\features\traditional.py:247: FutureWarning: Parameter `min_size`
+ is deprecated since version 0.26.0 and will be removed in 2.0.0 (or later). To avoid this warning, please use the para
+meter `max_size` instead. For more details, see the documentation of `remove_small_objects`. Note that the new threshol
+d removes objects smaller than **or equal to** its value, while the previous parameter only removed smaller ones.
+  bw = morphology.remove_small_objects(bw.astype(bool), min_size=50)
+D:\CGAIC\demo5\scripts\..\src\slots\..\..\..\demo4\src\features\traditional.py:247: FutureWarning: Parameter `min_size`
+ is deprecated since version 0.26.0 and will be removed in 2.0.0 (or later). To avoid this warning, please use the para
+meter `max_size` instead. For more details, see the documentation of `remove_small_objects`. Note that the new threshol
+d removes objects smaller than **or equal to** its value, while the previous parameter only removed smaller ones.
+  bw = morphology.remove_small_objects(bw.astype(bool), min_size=50)
+D:\CGAIC\demo5\scripts\..\src\slots\..\..\..\demo4\src\features\traditional.py:247: FutureWarning: Parameter `min_size`
+ is deprecated since version 0.26.0 and will be removed in 2.0.0 (or later). To avoid this warning, please use the para
+meter `max_size` instead. For more details, see the documentation of `remove_small_objects`. Note that the new threshol
+d removes objects smaller than **or equal to** its value, while the previous parameter only removed smaller ones.
+  bw = morphology.remove_small_objects(bw.astype(bool), min_size=50)
+D:\CGAIC\demo5\scripts\..\src\slots\..\..\..\demo4\src\features\traditional.py:247: FutureWarning: Parameter `min_size`
+ is deprecated since version 0.26.0 and will be removed in 2.0.0 (or later). To avoid this warning, please use the para
+meter `max_size` instead. For more details, see the documentation of `remove_small_objects`. Note that the new threshol
+d removes objects smaller than **or equal to** its value, while the previous parameter only removed smaller ones.
+  bw = morphology.remove_small_objects(bw.astype(bool), min_size=50)
+D:\CGAIC\demo5\scripts\..\src\slots\..\..\..\demo4\src\features\traditional.py:247: FutureWarning: Parameter `min_size`
+ is deprecated since version 0.26.0 and will be removed in 2.0.0 (or later). To avoid this warning, please use the para
+meter `max_size` instead. For more details, see the documentation of `remove_small_objects`. Note that the new threshol
+d removes objects smaller than **or equal to** its value, while the previous parameter only removed smaller ones.
+  bw = morphology.remove_small_objects(bw.astype(bool), min_size=50)
+D:\CGAIC\demo5\scripts\..\src\slots\..\..\..\demo4\src\features\traditional.py:247: FutureWarning: Parameter `min_size`
+ is deprecated since version 0.26.0 and will be removed in 2.0.0 (or later). To avoid this warning, please use the para
+meter `max_size` instead. For more details, see the documentation of `remove_small_objects`. Note that the new threshol
+d removes objects smaller than **or equal to** its value, while the previous parameter only removed smaller ones.
+  bw = morphology.remove_small_objects(bw.astype(bool), min_size=50)
+D:\CGAIC\demo5\scripts\..\src\slots\..\..\..\demo4\src\features\traditional.py:247: FutureWarning: Parameter `min_size`
+ is deprecated since version 0.26.0 and will be removed in 2.0.0 (or later). To avoid this warning, please use the para
+meter `max_size` instead. For more details, see the documentation of `remove_small_objects`. Note that the new threshol
+d removes objects smaller than **or equal to** its value, while the previous parameter only removed smaller ones.
+  bw = morphology.remove_small_objects(bw.astype(bool), min_size=50)
+  [eval] 60/150 (58s)
+D:\CGAIC\demo5\scripts\..\src\slots\..\..\..\demo4\src\features\traditional.py:247: FutureWarning: Parameter `min_size`
+ is deprecated since version 0.26.0 and will be removed in 2.0.0 (or later). To avoid this warning, please use the para
+meter `max_size` instead. For more details, see the documentation of `remove_small_objects`. Note that the new threshol
+d removes objects smaller than **or equal to** its value, while the previous parameter only removed smaller ones.
+  bw = morphology.remove_small_objects(bw.astype(bool), min_size=50)
+D:\CGAIC\demo5\scripts\..\src\slots\..\..\..\demo4\src\features\traditional.py:247: FutureWarning: Parameter `min_size`
+ is deprecated since version 0.26.0 and will be removed in 2.0.0 (or later). To avoid this warning, please use the para
+meter `max_size` instead. For more details, see the documentation of `remove_small_objects`. Note that the new threshol
+d removes objects smaller than **or equal to** its value, while the previous parameter only removed smaller ones.
+  bw = morphology.remove_small_objects(bw.astype(bool), min_size=50)
+D:\CGAIC\demo5\scripts\..\src\slots\..\..\..\demo4\src\features\traditional.py:247: FutureWarning: Parameter `min_size`
+ is deprecated since version 0.26.0 and will be removed in 2.0.0 (or later). To avoid this warning, please use the para
+meter `max_size` instead. For more details, see the documentation of `remove_small_objects`. Note that the new threshol
+d removes objects smaller than **or equal to** its value, while the previous parameter only removed smaller ones.
+  bw = morphology.remove_small_objects(bw.astype(bool), min_size=50)
+D:\CGAIC\demo5\scripts\..\src\slots\..\..\..\demo4\src\features\traditional.py:247: FutureWarning: Parameter `min_size`
+ is deprecated since version 0.26.0 and will be removed in 2.0.0 (or later). To avoid this warning, please use the para
+meter `max_size` instead. For more details, see the documentation of `remove_small_objects`. Note that the new threshol
+d removes objects smaller than **or equal to** its value, while the previous parameter only removed smaller ones.
+  bw = morphology.remove_small_objects(bw.astype(bool), min_size=50)
+D:\CGAIC\demo5\scripts\..\src\slots\..\..\..\demo4\src\features\traditional.py:247: FutureWarning: Parameter `min_size`
+ is deprecated since version 0.26.0 and will be removed in 2.0.0 (or later). To avoid this warning, please use the para
+meter `max_size` instead. For more details, see the documentation of `remove_small_objects`. Note that the new threshol
+d removes objects smaller than **or equal to** its value, while the previous parameter only removed smaller ones.
+  bw = morphology.remove_small_objects(bw.astype(bool), min_size=50)
+D:\CGAIC\demo5\scripts\..\src\slots\..\..\..\demo4\src\features\traditional.py:247: FutureWarning: Parameter `min_size`
+ is deprecated since version 0.26.0 and will be removed in 2.0.0 (or later). To avoid this warning, please use the para
+meter `max_size` instead. For more details, see the documentation of `remove_small_objects`. Note that the new threshol
+d removes objects smaller than **or equal to** its value, while the previous parameter only removed smaller ones.
+  bw = morphology.remove_small_objects(bw.astype(bool), min_size=50)
+D:\CGAIC\demo5\scripts\..\src\slots\..\..\..\demo4\src\features\traditional.py:247: FutureWarning: Parameter `min_size`
+ is deprecated since version 0.26.0 and will be removed in 2.0.0 (or later). To avoid this warning, please use the para
+meter `max_size` instead. For more details, see the documentation of `remove_small_objects`. Note that the new threshol
+d removes objects smaller than **or equal to** its value, while the previous parameter only removed smaller ones.
+  bw = morphology.remove_small_objects(bw.astype(bool), min_size=50)
+D:\CGAIC\demo5\scripts\..\src\slots\..\..\..\demo4\src\features\traditional.py:247: FutureWarning: Parameter `min_size`
+ is deprecated since version 0.26.0 and will be removed in 2.0.0 (or later). To avoid this warning, please use the para
+meter `max_size` instead. For more details, see the documentation of `remove_small_objects`. Note that the new threshol
+d removes objects smaller than **or equal to** its value, while the previous parameter only removed smaller ones.
+  bw = morphology.remove_small_objects(bw.astype(bool), min_size=50)
+D:\CGAIC\demo5\scripts\..\src\slots\..\..\..\demo4\src\features\traditional.py:247: FutureWarning: Parameter `min_size`
+ is deprecated since version 0.26.0 and will be removed in 2.0.0 (or later). To avoid this warning, please use the para
+meter `max_size` instead. For more details, see the documentation of `remove_small_objects`. Note that the new threshol
+d removes objects smaller than **or equal to** its value, while the previous parameter only removed smaller ones.
+  bw = morphology.remove_small_objects(bw.astype(bool), min_size=50)
+D:\CGAIC\demo5\scripts\..\src\slots\..\..\..\demo4\src\features\traditional.py:247: FutureWarning: Parameter `min_size`
+ is deprecated since version 0.26.0 and will be removed in 2.0.0 (or later). To avoid this warning, please use the para
+meter `max_size` instead. For more details, see the documentation of `remove_small_objects`. Note that the new threshol
+d removes objects smaller than **or equal to** its value, while the previous parameter only removed smaller ones.
+  bw = morphology.remove_small_objects(bw.astype(bool), min_size=50)
+D:\CGAIC\demo5\scripts\..\src\slots\..\..\..\demo4\src\features\traditional.py:247: FutureWarning: Parameter `min_size`
+ is deprecated since version 0.26.0 and will be removed in 2.0.0 (or later). To avoid this warning, please use the para
+meter `max_size` instead. For more details, see the documentation of `remove_small_objects`. Note that the new threshol
+d removes objects smaller than **or equal to** its value, while the previous parameter only removed smaller ones.
+  bw = morphology.remove_small_objects(bw.astype(bool), min_size=50)
+D:\CGAIC\demo5\scripts\..\src\slots\..\..\..\demo4\src\features\traditional.py:247: FutureWarning: Parameter `min_size`
+ is deprecated since version 0.26.0 and will be removed in 2.0.0 (or later). To avoid this warning, please use the para
+meter `max_size` instead. For more details, see the documentation of `remove_small_objects`. Note that the new threshol
+d removes objects smaller than **or equal to** its value, while the previous parameter only removed smaller ones.
+  bw = morphology.remove_small_objects(bw.astype(bool), min_size=50)
+D:\CGAIC\demo5\scripts\..\src\slots\..\..\..\demo4\src\features\traditional.py:247: FutureWarning: Parameter `min_size`
+ is deprecated since version 0.26.0 and will be removed in 2.0.0 (or later). To avoid this warning, please use the para
+meter `max_size` instead. For more details, see the documentation of `remove_small_objects`. Note that the new threshol
+d removes objects smaller than **or equal to** its value, while the previous parameter only removed smaller ones.
+  bw = morphology.remove_small_objects(bw.astype(bool), min_size=50)
+D:\CGAIC\demo5\scripts\..\src\slots\..\..\..\demo4\src\features\traditional.py:247: FutureWarning: Parameter `min_size`
+ is deprecated since version 0.26.0 and will be removed in 2.0.0 (or later). To avoid this warning, please use the para
+meter `max_size` instead. For more details, see the documentation of `remove_small_objects`. Note that the new threshol
+d removes objects smaller than **or equal to** its value, while the previous parameter only removed smaller ones.
+  bw = morphology.remove_small_objects(bw.astype(bool), min_size=50)
+D:\CGAIC\demo5\scripts\..\src\slots\..\..\..\demo4\src\features\traditional.py:247: FutureWarning: Parameter `min_size`
+ is deprecated since version 0.26.0 and will be removed in 2.0.0 (or later). To avoid this warning, please use the para
+meter `max_size` instead. For more details, see the documentation of `remove_small_objects`. Note that the new threshol
+d removes objects smaller than **or equal to** its value, while the previous parameter only removed smaller ones.
+  bw = morphology.remove_small_objects(bw.astype(bool), min_size=50)
+D:\CGAIC\demo5\scripts\..\src\slots\..\..\..\demo4\src\features\traditional.py:247: FutureWarning: Parameter `min_size`
+ is deprecated since version 0.26.0 and will be removed in 2.0.0 (or later). To avoid this warning, please use the para
+meter `max_size` instead. For more details, see the documentation of `remove_small_objects`. Note that the new threshol
+d removes objects smaller than **or equal to** its value, while the previous parameter only removed smaller ones.
+  bw = morphology.remove_small_objects(bw.astype(bool), min_size=50)
+D:\CGAIC\demo5\scripts\..\src\slots\..\..\..\demo4\src\features\traditional.py:247: FutureWarning: Parameter `min_size`
+ is deprecated since version 0.26.0 and will be removed in 2.0.0 (or later). To avoid this warning, please use the para
+meter `max_size` instead. For more details, see the documentation of `remove_small_objects`. Note that the new threshol
+d removes objects smaller than **or equal to** its value, while the previous parameter only removed smaller ones.
+  bw = morphology.remove_small_objects(bw.astype(bool), min_size=50)
+D:\CGAIC\demo5\scripts\..\src\slots\..\..\..\demo4\src\features\traditional.py:247: FutureWarning: Parameter `min_size`
+ is deprecated since version 0.26.0 and will be removed in 2.0.0 (or later). To avoid this warning, please use the para
+meter `max_size` instead. For more details, see the documentation of `remove_small_objects`. Note that the new threshol
+d removes objects smaller than **or equal to** its value, while the previous parameter only removed smaller ones.
+  bw = morphology.remove_small_objects(bw.astype(bool), min_size=50)
+D:\CGAIC\demo5\scripts\..\src\slots\..\..\..\demo4\src\features\traditional.py:247: FutureWarning: Parameter `min_size`
+ is deprecated since version 0.26.0 and will be removed in 2.0.0 (or later). To avoid this warning, please use the para
+meter `max_size` instead. For more details, see the documentation of `remove_small_objects`. Note that the new threshol
+d removes objects smaller than **or equal to** its value, while the previous parameter only removed smaller ones.
+  bw = morphology.remove_small_objects(bw.astype(bool), min_size=50)
+D:\CGAIC\demo5\scripts\..\src\slots\..\..\..\demo4\src\features\traditional.py:247: FutureWarning: Parameter `min_size`
+ is deprecated since version 0.26.0 and will be removed in 2.0.0 (or later). To avoid this warning, please use the para
+meter `max_size` instead. For more details, see the documentation of `remove_small_objects`. Note that the new threshol
+d removes objects smaller than **or equal to** its value, while the previous parameter only removed smaller ones.
+  bw = morphology.remove_small_objects(bw.astype(bool), min_size=50)
+  [eval] 80/150 (78s)
+D:\CGAIC\demo5\scripts\..\src\slots\..\..\..\demo4\src\features\traditional.py:247: FutureWarning: Parameter `min_size`
+ is deprecated since version 0.26.0 and will be removed in 2.0.0 (or later). To avoid this warning, please use the para
+meter `max_size` instead. For more details, see the documentation of `remove_small_objects`. Note that the new threshol
+d removes objects smaller than **or equal to** its value, while the previous parameter only removed smaller ones.
+  bw = morphology.remove_small_objects(bw.astype(bool), min_size=50)
+D:\CGAIC\demo5\scripts\..\src\slots\..\..\..\demo4\src\features\traditional.py:247: FutureWarning: Parameter `min_size`
+ is deprecated since version 0.26.0 and will be removed in 2.0.0 (or later). To avoid this warning, please use the para
+meter `max_size` instead. For more details, see the documentation of `remove_small_objects`. Note that the new threshol
+d removes objects smaller than **or equal to** its value, while the previous parameter only removed smaller ones.
+  bw = morphology.remove_small_objects(bw.astype(bool), min_size=50)
+D:\CGAIC\demo5\scripts\..\src\slots\..\..\..\demo4\src\features\traditional.py:247: FutureWarning: Parameter `min_size`
+ is deprecated since version 0.26.0 and will be removed in 2.0.0 (or later). To avoid this warning, please use the para
+meter `max_size` instead. For more details, see the documentation of `remove_small_objects`. Note that the new threshol
+d removes objects smaller than **or equal to** its value, while the previous parameter only removed smaller ones.
+  bw = morphology.remove_small_objects(bw.astype(bool), min_size=50)
+D:\CGAIC\demo5\scripts\..\src\slots\..\..\..\demo4\src\features\traditional.py:247: FutureWarning: Parameter `min_size`
+ is deprecated since version 0.26.0 and will be removed in 2.0.0 (or later). To avoid this warning, please use the para
+meter `max_size` instead. For more details, see the documentation of `remove_small_objects`. Note that the new threshol
+d removes objects smaller than **or equal to** its value, while the previous parameter only removed smaller ones.
+  bw = morphology.remove_small_objects(bw.astype(bool), min_size=50)
+D:\CGAIC\demo5\scripts\..\src\slots\..\..\..\demo4\src\features\traditional.py:247: FutureWarning: Parameter `min_size`
+ is deprecated since version 0.26.0 and will be removed in 2.0.0 (or later). To avoid this warning, please use the para
+meter `max_size` instead. For more details, see the documentation of `remove_small_objects`. Note that the new threshol
+d removes objects smaller than **or equal to** its value, while the previous parameter only removed smaller ones.
+  bw = morphology.remove_small_objects(bw.astype(bool), min_size=50)
+D:\CGAIC\demo5\scripts\..\src\slots\..\..\..\demo4\src\features\traditional.py:247: FutureWarning: Parameter `min_size`
+ is deprecated since version 0.26.0 and will be removed in 2.0.0 (or later). To avoid this warning, please use the para
+meter `max_size` instead. For more details, see the documentation of `remove_small_objects`. Note that the new threshol
+d removes objects smaller than **or equal to** its value, while the previous parameter only removed smaller ones.
+  bw = morphology.remove_small_objects(bw.astype(bool), min_size=50)
+D:\CGAIC\demo5\scripts\..\src\slots\..\..\..\demo4\src\features\traditional.py:247: FutureWarning: Parameter `min_size`
+ is deprecated since version 0.26.0 and will be removed in 2.0.0 (or later). To avoid this warning, please use the para
+meter `max_size` instead. For more details, see the documentation of `remove_small_objects`. Note that the new threshol
+d removes objects smaller than **or equal to** its value, while the previous parameter only removed smaller ones.
+  bw = morphology.remove_small_objects(bw.astype(bool), min_size=50)
+D:\CGAIC\demo5\scripts\..\src\slots\..\..\..\demo4\src\features\traditional.py:247: FutureWarning: Parameter `min_size`
+ is deprecated since version 0.26.0 and will be removed in 2.0.0 (or later). To avoid this warning, please use the para
+meter `max_size` instead. For more details, see the documentation of `remove_small_objects`. Note that the new threshol
+d removes objects smaller than **or equal to** its value, while the previous parameter only removed smaller ones.
+  bw = morphology.remove_small_objects(bw.astype(bool), min_size=50)
+D:\CGAIC\demo5\scripts\..\src\slots\..\..\..\demo4\src\features\traditional.py:247: FutureWarning: Parameter `min_size`
+ is deprecated since version 0.26.0 and will be removed in 2.0.0 (or later). To avoid this warning, please use the para
+meter `max_size` instead. For more details, see the documentation of `remove_small_objects`. Note that the new threshol
+d removes objects smaller than **or equal to** its value, while the previous parameter only removed smaller ones.
+  bw = morphology.remove_small_objects(bw.astype(bool), min_size=50)
+D:\CGAIC\demo5\scripts\..\src\slots\..\..\..\demo4\src\features\traditional.py:247: FutureWarning: Parameter `min_size`
+ is deprecated since version 0.26.0 and will be removed in 2.0.0 (or later). To avoid this warning, please use the para
+meter `max_size` instead. For more details, see the documentation of `remove_small_objects`. Note that the new threshol
+d removes objects smaller than **or equal to** its value, while the previous parameter only removed smaller ones.
+  bw = morphology.remove_small_objects(bw.astype(bool), min_size=50)
+D:\CGAIC\demo5\scripts\..\src\slots\..\..\..\demo4\src\features\traditional.py:247: FutureWarning: Parameter `min_size`
+ is deprecated since version 0.26.0 and will be removed in 2.0.0 (or later). To avoid this warning, please use the para
+meter `max_size` instead. For more details, see the documentation of `remove_small_objects`. Note that the new threshol
+d removes objects smaller than **or equal to** its value, while the previous parameter only removed smaller ones.
+  bw = morphology.remove_small_objects(bw.astype(bool), min_size=50)
+D:\CGAIC\demo5\scripts\..\src\slots\..\..\..\demo4\src\features\traditional.py:247: FutureWarning: Parameter `min_size`
+ is deprecated since version 0.26.0 and will be removed in 2.0.0 (or later). To avoid this warning, please use the para
+meter `max_size` instead. For more details, see the documentation of `remove_small_objects`. Note that the new threshol
+d removes objects smaller than **or equal to** its value, while the previous parameter only removed smaller ones.
+  bw = morphology.remove_small_objects(bw.astype(bool), min_size=50)
+D:\CGAIC\demo5\scripts\..\src\slots\..\..\..\demo4\src\features\traditional.py:247: FutureWarning: Parameter `min_size`
+ is deprecated since version 0.26.0 and will be removed in 2.0.0 (or later). To avoid this warning, please use the para
+meter `max_size` instead. For more details, see the documentation of `remove_small_objects`. Note that the new threshol
+d removes objects smaller than **or equal to** its value, while the previous parameter only removed smaller ones.
+  bw = morphology.remove_small_objects(bw.astype(bool), min_size=50)
+D:\CGAIC\demo5\scripts\..\src\slots\..\..\..\demo4\src\features\traditional.py:247: FutureWarning: Parameter `min_size`
+ is deprecated since version 0.26.0 and will be removed in 2.0.0 (or later). To avoid this warning, please use the para
+meter `max_size` instead. For more details, see the documentation of `remove_small_objects`. Note that the new threshol
+d removes objects smaller than **or equal to** its value, while the previous parameter only removed smaller ones.
+  bw = morphology.remove_small_objects(bw.astype(bool), min_size=50)
+D:\CGAIC\demo5\scripts\..\src\slots\..\..\..\demo4\src\features\traditional.py:247: FutureWarning: Parameter `min_size`
+ is deprecated since version 0.26.0 and will be removed in 2.0.0 (or later). To avoid this warning, please use the para
+meter `max_size` instead. For more details, see the documentation of `remove_small_objects`. Note that the new threshol
+d removes objects smaller than **or equal to** its value, while the previous parameter only removed smaller ones.
+  bw = morphology.remove_small_objects(bw.astype(bool), min_size=50)
+D:\CGAIC\demo5\scripts\..\src\slots\..\..\..\demo4\src\features\traditional.py:247: FutureWarning: Parameter `min_size`
+ is deprecated since version 0.26.0 and will be removed in 2.0.0 (or later). To avoid this warning, please use the para
+meter `max_size` instead. For more details, see the documentation of `remove_small_objects`. Note that the new threshol
+d removes objects smaller than **or equal to** its value, while the previous parameter only removed smaller ones.
+  bw = morphology.remove_small_objects(bw.astype(bool), min_size=50)
+D:\CGAIC\demo5\scripts\..\src\slots\..\..\..\demo4\src\features\traditional.py:247: FutureWarning: Parameter `min_size`
+ is deprecated since version 0.26.0 and will be removed in 2.0.0 (or later). To avoid this warning, please use the para
+meter `max_size` instead. For more details, see the documentation of `remove_small_objects`. Note that the new threshol
+d removes objects smaller than **or equal to** its value, while the previous parameter only removed smaller ones.
+  bw = morphology.remove_small_objects(bw.astype(bool), min_size=50)
+D:\CGAIC\demo5\scripts\..\src\slots\..\..\..\demo4\src\features\traditional.py:247: FutureWarning: Parameter `min_size`
+ is deprecated since version 0.26.0 and will be removed in 2.0.0 (or later). To avoid this warning, please use the para
+meter `max_size` instead. For more details, see the documentation of `remove_small_objects`. Note that the new threshol
+d removes objects smaller than **or equal to** its value, while the previous parameter only removed smaller ones.
+  bw = morphology.remove_small_objects(bw.astype(bool), min_size=50)
+D:\CGAIC\demo5\scripts\..\src\slots\..\..\..\demo4\src\features\traditional.py:247: FutureWarning: Parameter `min_size`
+ is deprecated since version 0.26.0 and will be removed in 2.0.0 (or later). To avoid this warning, please use the para
+meter `max_size` instead. For more details, see the documentation of `remove_small_objects`. Note that the new threshol
+d removes objects smaller than **or equal to** its value, while the previous parameter only removed smaller ones.
+  bw = morphology.remove_small_objects(bw.astype(bool), min_size=50)
+D:\CGAIC\demo5\scripts\..\src\slots\..\..\..\demo4\src\features\traditional.py:247: FutureWarning: Parameter `min_size`
+ is deprecated since version 0.26.0 and will be removed in 2.0.0 (or later). To avoid this warning, please use the para
+meter `max_size` instead. For more details, see the documentation of `remove_small_objects`. Note that the new threshol
+d removes objects smaller than **or equal to** its value, while the previous parameter only removed smaller ones.
+  bw = morphology.remove_small_objects(bw.astype(bool), min_size=50)
+  [eval] 100/150 (97s)
+D:\CGAIC\demo5\scripts\..\src\slots\..\..\..\demo4\src\features\traditional.py:247: FutureWarning: Parameter `min_size`
+ is deprecated since version 0.26.0 and will be removed in 2.0.0 (or later). To avoid this warning, please use the para
+meter `max_size` instead. For more details, see the documentation of `remove_small_objects`. Note that the new threshol
+d removes objects smaller than **or equal to** its value, while the previous parameter only removed smaller ones.
+  bw = morphology.remove_small_objects(bw.astype(bool), min_size=50)
+D:\CGAIC\demo5\scripts\..\src\slots\..\..\..\demo4\src\features\traditional.py:247: FutureWarning: Parameter `min_size`
+ is deprecated since version 0.26.0 and will be removed in 2.0.0 (or later). To avoid this warning, please use the para
+meter `max_size` instead. For more details, see the documentation of `remove_small_objects`. Note that the new threshol
+d removes objects smaller than **or equal to** its value, while the previous parameter only removed smaller ones.
+  bw = morphology.remove_small_objects(bw.astype(bool), min_size=50)
+D:\CGAIC\demo5\scripts\..\src\slots\..\..\..\demo4\src\features\traditional.py:247: FutureWarning: Parameter `min_size`
+ is deprecated since version 0.26.0 and will be removed in 2.0.0 (or later). To avoid this warning, please use the para
+meter `max_size` instead. For more details, see the documentation of `remove_small_objects`. Note that the new threshol
+d removes objects smaller than **or equal to** its value, while the previous parameter only removed smaller ones.
+  bw = morphology.remove_small_objects(bw.astype(bool), min_size=50)
+D:\CGAIC\demo5\scripts\..\src\slots\..\..\..\demo4\src\features\traditional.py:247: FutureWarning: Parameter `min_size`
+ is deprecated since version 0.26.0 and will be removed in 2.0.0 (or later). To avoid this warning, please use the para
+meter `max_size` instead. For more details, see the documentation of `remove_small_objects`. Note that the new threshol
+d removes objects smaller than **or equal to** its value, while the previous parameter only removed smaller ones.
+  bw = morphology.remove_small_objects(bw.astype(bool), min_size=50)
+D:\CGAIC\demo5\scripts\..\src\slots\..\..\..\demo4\src\features\traditional.py:247: FutureWarning: Parameter `min_size`
+ is deprecated since version 0.26.0 and will be removed in 2.0.0 (or later). To avoid this warning, please use the para
+meter `max_size` instead. For more details, see the documentation of `remove_small_objects`. Note that the new threshol
+d removes objects smaller than **or equal to** its value, while the previous parameter only removed smaller ones.
+  bw = morphology.remove_small_objects(bw.astype(bool), min_size=50)
+D:\CGAIC\demo5\scripts\..\src\slots\..\..\..\demo4\src\features\traditional.py:247: FutureWarning: Parameter `min_size`
+ is deprecated since version 0.26.0 and will be removed in 2.0.0 (or later). To avoid this warning, please use the para
+meter `max_size` instead. For more details, see the documentation of `remove_small_objects`. Note that the new threshol
+d removes objects smaller than **or equal to** its value, while the previous parameter only removed smaller ones.
+  bw = morphology.remove_small_objects(bw.astype(bool), min_size=50)
+D:\CGAIC\demo5\scripts\..\src\slots\..\..\..\demo4\src\features\traditional.py:247: FutureWarning: Parameter `min_size`
+ is deprecated since version 0.26.0 and will be removed in 2.0.0 (or later). To avoid this warning, please use the para
+meter `max_size` instead. For more details, see the documentation of `remove_small_objects`. Note that the new threshol
+d removes objects smaller than **or equal to** its value, while the previous parameter only removed smaller ones.
+  bw = morphology.remove_small_objects(bw.astype(bool), min_size=50)
+D:\CGAIC\demo5\scripts\..\src\slots\..\..\..\demo4\src\features\traditional.py:247: FutureWarning: Parameter `min_size`
+ is deprecated since version 0.26.0 and will be removed in 2.0.0 (or later). To avoid this warning, please use the para
+meter `max_size` instead. For more details, see the documentation of `remove_small_objects`. Note that the new threshol
+d removes objects smaller than **or equal to** its value, while the previous parameter only removed smaller ones.
+  bw = morphology.remove_small_objects(bw.astype(bool), min_size=50)
+D:\CGAIC\demo5\scripts\..\src\slots\..\..\..\demo4\src\features\traditional.py:247: FutureWarning: Parameter `min_size`
+ is deprecated since version 0.26.0 and will be removed in 2.0.0 (or later). To avoid this warning, please use the para
+meter `max_size` instead. For more details, see the documentation of `remove_small_objects`. Note that the new threshol
+d removes objects smaller than **or equal to** its value, while the previous parameter only removed smaller ones.
+  bw = morphology.remove_small_objects(bw.astype(bool), min_size=50)
+D:\CGAIC\demo5\scripts\..\src\slots\..\..\..\demo4\src\features\traditional.py:247: FutureWarning: Parameter `min_size`
+ is deprecated since version 0.26.0 and will be removed in 2.0.0 (or later). To avoid this warning, please use the para
+meter `max_size` instead. For more details, see the documentation of `remove_small_objects`. Note that the new threshol
+d removes objects smaller than **or equal to** its value, while the previous parameter only removed smaller ones.
+  bw = morphology.remove_small_objects(bw.astype(bool), min_size=50)
+D:\CGAIC\demo5\scripts\..\src\slots\..\..\..\demo4\src\features\traditional.py:247: FutureWarning: Parameter `min_size`
+ is deprecated since version 0.26.0 and will be removed in 2.0.0 (or later). To avoid this warning, please use the para
+meter `max_size` instead. For more details, see the documentation of `remove_small_objects`. Note that the new threshol
+d removes objects smaller than **or equal to** its value, while the previous parameter only removed smaller ones.
+  bw = morphology.remove_small_objects(bw.astype(bool), min_size=50)
+D:\CGAIC\demo5\scripts\..\src\slots\..\..\..\demo4\src\features\traditional.py:247: FutureWarning: Parameter `min_size`
+ is deprecated since version 0.26.0 and will be removed in 2.0.0 (or later). To avoid this warning, please use the para
+meter `max_size` instead. For more details, see the documentation of `remove_small_objects`. Note that the new threshol
+d removes objects smaller than **or equal to** its value, while the previous parameter only removed smaller ones.
+  bw = morphology.remove_small_objects(bw.astype(bool), min_size=50)
+D:\CGAIC\demo5\scripts\..\src\slots\..\..\..\demo4\src\features\traditional.py:247: FutureWarning: Parameter `min_size`
+ is deprecated since version 0.26.0 and will be removed in 2.0.0 (or later). To avoid this warning, please use the para
+meter `max_size` instead. For more details, see the documentation of `remove_small_objects`. Note that the new threshol
+d removes objects smaller than **or equal to** its value, while the previous parameter only removed smaller ones.
+  bw = morphology.remove_small_objects(bw.astype(bool), min_size=50)
+D:\CGAIC\demo5\scripts\..\src\slots\..\..\..\demo4\src\features\traditional.py:247: FutureWarning: Parameter `min_size`
+ is deprecated since version 0.26.0 and will be removed in 2.0.0 (or later). To avoid this warning, please use the para
+meter `max_size` instead. For more details, see the documentation of `remove_small_objects`. Note that the new threshol
+d removes objects smaller than **or equal to** its value, while the previous parameter only removed smaller ones.
+  bw = morphology.remove_small_objects(bw.astype(bool), min_size=50)
+D:\CGAIC\demo5\scripts\..\src\slots\..\..\..\demo4\src\features\traditional.py:247: FutureWarning: Parameter `min_size`
+ is deprecated since version 0.26.0 and will be removed in 2.0.0 (or later). To avoid this warning, please use the para
+meter `max_size` instead. For more details, see the documentation of `remove_small_objects`. Note that the new threshol
+d removes objects smaller than **or equal to** its value, while the previous parameter only removed smaller ones.
+  bw = morphology.remove_small_objects(bw.astype(bool), min_size=50)
+D:\CGAIC\demo5\scripts\..\src\slots\..\..\..\demo4\src\features\traditional.py:247: FutureWarning: Parameter `min_size`
+ is deprecated since version 0.26.0 and will be removed in 2.0.0 (or later). To avoid this warning, please use the para
+meter `max_size` instead. For more details, see the documentation of `remove_small_objects`. Note that the new threshol
+d removes objects smaller than **or equal to** its value, while the previous parameter only removed smaller ones.
+  bw = morphology.remove_small_objects(bw.astype(bool), min_size=50)
+D:\CGAIC\demo5\scripts\..\src\slots\..\..\..\demo4\src\features\traditional.py:247: FutureWarning: Parameter `min_size`
+ is deprecated since version 0.26.0 and will be removed in 2.0.0 (or later). To avoid this warning, please use the para
+meter `max_size` instead. For more details, see the documentation of `remove_small_objects`. Note that the new threshol
+d removes objects smaller than **or equal to** its value, while the previous parameter only removed smaller ones.
+  bw = morphology.remove_small_objects(bw.astype(bool), min_size=50)
+D:\CGAIC\demo5\scripts\..\src\slots\..\..\..\demo4\src\features\traditional.py:247: FutureWarning: Parameter `min_size`
+ is deprecated since version 0.26.0 and will be removed in 2.0.0 (or later). To avoid this warning, please use the para
+meter `max_size` instead. For more details, see the documentation of `remove_small_objects`. Note that the new threshol
+d removes objects smaller than **or equal to** its value, while the previous parameter only removed smaller ones.
+  bw = morphology.remove_small_objects(bw.astype(bool), min_size=50)
+D:\CGAIC\demo5\scripts\..\src\slots\..\..\..\demo4\src\features\traditional.py:247: FutureWarning: Parameter `min_size`
+ is deprecated since version 0.26.0 and will be removed in 2.0.0 (or later). To avoid this warning, please use the para
+meter `max_size` instead. For more details, see the documentation of `remove_small_objects`. Note that the new threshol
+d removes objects smaller than **or equal to** its value, while the previous parameter only removed smaller ones.
+  bw = morphology.remove_small_objects(bw.astype(bool), min_size=50)
+D:\CGAIC\demo5\scripts\..\src\slots\..\..\..\demo4\src\features\traditional.py:247: FutureWarning: Parameter `min_size`
+ is deprecated since version 0.26.0 and will be removed in 2.0.0 (or later). To avoid this warning, please use the para
+meter `max_size` instead. For more details, see the documentation of `remove_small_objects`. Note that the new threshol
+d removes objects smaller than **or equal to** its value, while the previous parameter only removed smaller ones.
+  bw = morphology.remove_small_objects(bw.astype(bool), min_size=50)
+  [eval] 120/150 (116s)
+D:\CGAIC\demo5\scripts\..\src\slots\..\..\..\demo4\src\features\traditional.py:247: FutureWarning: Parameter `min_size`
+ is deprecated since version 0.26.0 and will be removed in 2.0.0 (or later). To avoid this warning, please use the para
+meter `max_size` instead. For more details, see the documentation of `remove_small_objects`. Note that the new threshol
+d removes objects smaller than **or equal to** its value, while the previous parameter only removed smaller ones.
+  bw = morphology.remove_small_objects(bw.astype(bool), min_size=50)
+D:\CGAIC\demo5\scripts\..\src\slots\..\..\..\demo4\src\features\traditional.py:247: FutureWarning: Parameter `min_size`
+ is deprecated since version 0.26.0 and will be removed in 2.0.0 (or later). To avoid this warning, please use the para
+meter `max_size` instead. For more details, see the documentation of `remove_small_objects`. Note that the new threshol
+d removes objects smaller than **or equal to** its value, while the previous parameter only removed smaller ones.
+  bw = morphology.remove_small_objects(bw.astype(bool), min_size=50)
+D:\CGAIC\demo5\scripts\..\src\slots\..\..\..\demo4\src\features\traditional.py:247: FutureWarning: Parameter `min_size`
+ is deprecated since version 0.26.0 and will be removed in 2.0.0 (or later). To avoid this warning, please use the para
+meter `max_size` instead. For more details, see the documentation of `remove_small_objects`. Note that the new threshol
+d removes objects smaller than **or equal to** its value, while the previous parameter only removed smaller ones.
+  bw = morphology.remove_small_objects(bw.astype(bool), min_size=50)
+D:\CGAIC\demo5\scripts\..\src\slots\..\..\..\demo4\src\features\traditional.py:247: FutureWarning: Parameter `min_size`
+ is deprecated since version 0.26.0 and will be removed in 2.0.0 (or later). To avoid this warning, please use the para
+meter `max_size` instead. For more details, see the documentation of `remove_small_objects`. Note that the new threshol
+d removes objects smaller than **or equal to** its value, while the previous parameter only removed smaller ones.
+  bw = morphology.remove_small_objects(bw.astype(bool), min_size=50)
+D:\CGAIC\demo5\scripts\..\src\slots\..\..\..\demo4\src\features\traditional.py:247: FutureWarning: Parameter `min_size`
+ is deprecated since version 0.26.0 and will be removed in 2.0.0 (or later). To avoid this warning, please use the para
+meter `max_size` instead. For more details, see the documentation of `remove_small_objects`. Note that the new threshol
+d removes objects smaller than **or equal to** its value, while the previous parameter only removed smaller ones.
+  bw = morphology.remove_small_objects(bw.astype(bool), min_size=50)
+D:\CGAIC\demo5\scripts\..\src\slots\..\..\..\demo4\src\features\traditional.py:247: FutureWarning: Parameter `min_size`
+ is deprecated since version 0.26.0 and will be removed in 2.0.0 (or later). To avoid this warning, please use the para
+meter `max_size` instead. For more details, see the documentation of `remove_small_objects`. Note that the new threshol
+d removes objects smaller than **or equal to** its value, while the previous parameter only removed smaller ones.
+  bw = morphology.remove_small_objects(bw.astype(bool), min_size=50)
+D:\CGAIC\demo5\scripts\..\src\slots\..\..\..\demo4\src\features\traditional.py:247: FutureWarning: Parameter `min_size`
+ is deprecated since version 0.26.0 and will be removed in 2.0.0 (or later). To avoid this warning, please use the para
+meter `max_size` instead. For more details, see the documentation of `remove_small_objects`. Note that the new threshol
+d removes objects smaller than **or equal to** its value, while the previous parameter only removed smaller ones.
+  bw = morphology.remove_small_objects(bw.astype(bool), min_size=50)
+D:\CGAIC\demo5\scripts\..\src\slots\..\..\..\demo4\src\features\traditional.py:247: FutureWarning: Parameter `min_size`
+ is deprecated since version 0.26.0 and will be removed in 2.0.0 (or later). To avoid this warning, please use the para
+meter `max_size` instead. For more details, see the documentation of `remove_small_objects`. Note that the new threshol
+d removes objects smaller than **or equal to** its value, while the previous parameter only removed smaller ones.
+  bw = morphology.remove_small_objects(bw.astype(bool), min_size=50)
+D:\CGAIC\demo5\scripts\..\src\slots\..\..\..\demo4\src\features\traditional.py:247: FutureWarning: Parameter `min_size`
+ is deprecated since version 0.26.0 and will be removed in 2.0.0 (or later). To avoid this warning, please use the para
+meter `max_size` instead. For more details, see the documentation of `remove_small_objects`. Note that the new threshol
+d removes objects smaller than **or equal to** its value, while the previous parameter only removed smaller ones.
+  bw = morphology.remove_small_objects(bw.astype(bool), min_size=50)
+D:\CGAIC\demo5\scripts\..\src\slots\..\..\..\demo4\src\features\traditional.py:247: FutureWarning: Parameter `min_size`
+ is deprecated since version 0.26.0 and will be removed in 2.0.0 (or later). To avoid this warning, please use the para
+meter `max_size` instead. For more details, see the documentation of `remove_small_objects`. Note that the new threshol
+d removes objects smaller than **or equal to** its value, while the previous parameter only removed smaller ones.
+  bw = morphology.remove_small_objects(bw.astype(bool), min_size=50)
+D:\CGAIC\demo5\scripts\..\src\slots\..\..\..\demo4\src\features\traditional.py:247: FutureWarning: Parameter `min_size`
+ is deprecated since version 0.26.0 and will be removed in 2.0.0 (or later). To avoid this warning, please use the para
+meter `max_size` instead. For more details, see the documentation of `remove_small_objects`. Note that the new threshol
+d removes objects smaller than **or equal to** its value, while the previous parameter only removed smaller ones.
+  bw = morphology.remove_small_objects(bw.astype(bool), min_size=50)
+D:\CGAIC\demo5\scripts\..\src\slots\..\..\..\demo4\src\features\traditional.py:247: FutureWarning: Parameter `min_size`
+ is deprecated since version 0.26.0 and will be removed in 2.0.0 (or later). To avoid this warning, please use the para
+meter `max_size` instead. For more details, see the documentation of `remove_small_objects`. Note that the new threshol
+d removes objects smaller than **or equal to** its value, while the previous parameter only removed smaller ones.
+  bw = morphology.remove_small_objects(bw.astype(bool), min_size=50)
+D:\CGAIC\demo5\scripts\..\src\slots\..\..\..\demo4\src\features\traditional.py:247: FutureWarning: Parameter `min_size`
+ is deprecated since version 0.26.0 and will be removed in 2.0.0 (or later). To avoid this warning, please use the para
+meter `max_size` instead. For more details, see the documentation of `remove_small_objects`. Note that the new threshol
+d removes objects smaller than **or equal to** its value, while the previous parameter only removed smaller ones.
+  bw = morphology.remove_small_objects(bw.astype(bool), min_size=50)
+D:\CGAIC\demo5\scripts\..\src\slots\..\..\..\demo4\src\features\traditional.py:247: FutureWarning: Parameter `min_size`
+ is deprecated since version 0.26.0 and will be removed in 2.0.0 (or later). To avoid this warning, please use the para
+meter `max_size` instead. For more details, see the documentation of `remove_small_objects`. Note that the new threshol
+d removes objects smaller than **or equal to** its value, while the previous parameter only removed smaller ones.
+  bw = morphology.remove_small_objects(bw.astype(bool), min_size=50)
+D:\CGAIC\demo5\scripts\..\src\slots\..\..\..\demo4\src\features\traditional.py:247: FutureWarning: Parameter `min_size`
+ is deprecated since version 0.26.0 and will be removed in 2.0.0 (or later). To avoid this warning, please use the para
+meter `max_size` instead. For more details, see the documentation of `remove_small_objects`. Note that the new threshol
+d removes objects smaller than **or equal to** its value, while the previous parameter only removed smaller ones.
+  bw = morphology.remove_small_objects(bw.astype(bool), min_size=50)
+D:\CGAIC\demo5\scripts\..\src\slots\..\..\..\demo4\src\features\traditional.py:247: FutureWarning: Parameter `min_size`
+ is deprecated since version 0.26.0 and will be removed in 2.0.0 (or later). To avoid this warning, please use the para
+meter `max_size` instead. For more details, see the documentation of `remove_small_objects`. Note that the new threshol
+d removes objects smaller than **or equal to** its value, while the previous parameter only removed smaller ones.
+  bw = morphology.remove_small_objects(bw.astype(bool), min_size=50)
+D:\CGAIC\demo5\scripts\..\src\slots\..\..\..\demo4\src\features\traditional.py:247: FutureWarning: Parameter `min_size`
+ is deprecated since version 0.26.0 and will be removed in 2.0.0 (or later). To avoid this warning, please use the para
+meter `max_size` instead. For more details, see the documentation of `remove_small_objects`. Note that the new threshol
+d removes objects smaller than **or equal to** its value, while the previous parameter only removed smaller ones.
+  bw = morphology.remove_small_objects(bw.astype(bool), min_size=50)
+D:\CGAIC\demo5\scripts\..\src\slots\..\..\..\demo4\src\features\traditional.py:247: FutureWarning: Parameter `min_size`
+ is deprecated since version 0.26.0 and will be removed in 2.0.0 (or later). To avoid this warning, please use the para
+meter `max_size` instead. For more details, see the documentation of `remove_small_objects`. Note that the new threshol
+d removes objects smaller than **or equal to** its value, while the previous parameter only removed smaller ones.
+  bw = morphology.remove_small_objects(bw.astype(bool), min_size=50)
+D:\CGAIC\demo5\scripts\..\src\slots\..\..\..\demo4\src\features\traditional.py:247: FutureWarning: Parameter `min_size`
+ is deprecated since version 0.26.0 and will be removed in 2.0.0 (or later). To avoid this warning, please use the para
+meter `max_size` instead. For more details, see the documentation of `remove_small_objects`. Note that the new threshol
+d removes objects smaller than **or equal to** its value, while the previous parameter only removed smaller ones.
+  bw = morphology.remove_small_objects(bw.astype(bool), min_size=50)
+D:\CGAIC\demo5\scripts\..\src\slots\..\..\..\demo4\src\features\traditional.py:247: FutureWarning: Parameter `min_size`
+ is deprecated since version 0.26.0 and will be removed in 2.0.0 (or later). To avoid this warning, please use the para
+meter `max_size` instead. For more details, see the documentation of `remove_small_objects`. Note that the new threshol
+d removes objects smaller than **or equal to** its value, while the previous parameter only removed smaller ones.
+  bw = morphology.remove_small_objects(bw.astype(bool), min_size=50)
+  [eval] 140/150 (135s)
+D:\CGAIC\demo5\scripts\..\src\slots\..\..\..\demo4\src\features\traditional.py:247: FutureWarning: Parameter `min_size`
+ is deprecated since version 0.26.0 and will be removed in 2.0.0 (or later). To avoid this warning, please use the para
+meter `max_size` instead. For more details, see the documentation of `remove_small_objects`. Note that the new threshol
+d removes objects smaller than **or equal to** its value, while the previous parameter only removed smaller ones.
+  bw = morphology.remove_small_objects(bw.astype(bool), min_size=50)
+D:\CGAIC\demo5\scripts\..\src\slots\..\..\..\demo4\src\features\traditional.py:247: FutureWarning: Parameter `min_size`
+ is deprecated since version 0.26.0 and will be removed in 2.0.0 (or later). To avoid this warning, please use the para
+meter `max_size` instead. For more details, see the documentation of `remove_small_objects`. Note that the new threshol
+d removes objects smaller than **or equal to** its value, while the previous parameter only removed smaller ones.
+  bw = morphology.remove_small_objects(bw.astype(bool), min_size=50)
+D:\CGAIC\demo5\scripts\..\src\slots\..\..\..\demo4\src\features\traditional.py:247: FutureWarning: Parameter `min_size`
+ is deprecated since version 0.26.0 and will be removed in 2.0.0 (or later). To avoid this warning, please use the para
+meter `max_size` instead. For more details, see the documentation of `remove_small_objects`. Note that the new threshol
+d removes objects smaller than **or equal to** its value, while the previous parameter only removed smaller ones.
+  bw = morphology.remove_small_objects(bw.astype(bool), min_size=50)
+D:\CGAIC\demo5\scripts\..\src\slots\..\..\..\demo4\src\features\traditional.py:247: FutureWarning: Parameter `min_size`
+ is deprecated since version 0.26.0 and will be removed in 2.0.0 (or later). To avoid this warning, please use the para
+meter `max_size` instead. For more details, see the documentation of `remove_small_objects`. Note that the new threshol
+d removes objects smaller than **or equal to** its value, while the previous parameter only removed smaller ones.
+  bw = morphology.remove_small_objects(bw.astype(bool), min_size=50)
+D:\CGAIC\demo5\scripts\..\src\slots\..\..\..\demo4\src\features\traditional.py:247: FutureWarning: Parameter `min_size`
+ is deprecated since version 0.26.0 and will be removed in 2.0.0 (or later). To avoid this warning, please use the para
+meter `max_size` instead. For more details, see the documentation of `remove_small_objects`. Note that the new threshol
+d removes objects smaller than **or equal to** its value, while the previous parameter only removed smaller ones.
+  bw = morphology.remove_small_objects(bw.astype(bool), min_size=50)
+D:\CGAIC\demo5\scripts\..\src\slots\..\..\..\demo4\src\features\traditional.py:247: FutureWarning: Parameter `min_size`
+ is deprecated since version 0.26.0 and will be removed in 2.0.0 (or later). To avoid this warning, please use the para
+meter `max_size` instead. For more details, see the documentation of `remove_small_objects`. Note that the new threshol
+d removes objects smaller than **or equal to** its value, while the previous parameter only removed smaller ones.
+  bw = morphology.remove_small_objects(bw.astype(bool), min_size=50)
+D:\CGAIC\demo5\scripts\..\src\slots\..\..\..\demo4\src\features\traditional.py:247: FutureWarning: Parameter `min_size`
+ is deprecated since version 0.26.0 and will be removed in 2.0.0 (or later). To avoid this warning, please use the para
+meter `max_size` instead. For more details, see the documentation of `remove_small_objects`. Note that the new threshol
+d removes objects smaller than **or equal to** its value, while the previous parameter only removed smaller ones.
+  bw = morphology.remove_small_objects(bw.astype(bool), min_size=50)
+D:\CGAIC\demo5\scripts\..\src\slots\..\..\..\demo4\src\features\traditional.py:247: FutureWarning: Parameter `min_size`
+ is deprecated since version 0.26.0 and will be removed in 2.0.0 (or later). To avoid this warning, please use the para
+meter `max_size` instead. For more details, see the documentation of `remove_small_objects`. Note that the new threshol
+d removes objects smaller than **or equal to** its value, while the previous parameter only removed smaller ones.
+  bw = morphology.remove_small_objects(bw.astype(bool), min_size=50)
+D:\CGAIC\demo5\scripts\..\src\slots\..\..\..\demo4\src\features\traditional.py:247: FutureWarning: Parameter `min_size`
+ is deprecated since version 0.26.0 and will be removed in 2.0.0 (or later). To avoid this warning, please use the para
+meter `max_size` instead. For more details, see the documentation of `remove_small_objects`. Note that the new threshol
+d removes objects smaller than **or equal to** its value, while the previous parameter only removed smaller ones.
+  bw = morphology.remove_small_objects(bw.astype(bool), min_size=50)
+D:\CGAIC\demo5\scripts\..\src\slots\..\..\..\demo4\src\features\traditional.py:247: FutureWarning: Parameter `min_size`
+ is deprecated since version 0.26.0 and will be removed in 2.0.0 (or later). To avoid this warning, please use the para
+meter `max_size` instead. For more details, see the documentation of `remove_small_objects`. Note that the new threshol
+d removes objects smaller than **or equal to** its value, while the previous parameter only removed smaller ones.
+  bw = morphology.remove_small_objects(bw.astype(bool), min_size=50)
+  [run C_shead_replaces_disc] fused AUROC=0.6069
+  [run C_shead_replaces_disc] sem AUROC=0.6031
+  [run C_shead_replaces_disc] shead AUROC=0.7530
+  [run C_shead_replaces_disc] blob AUROC=0.3995
+  [run C_shead_replaces_disc] trad AUROC=0.3748
+  [run C_shead_replaces_disc] layout AUROC=0.4799
+  [run C_shead_replaces_disc] inp AUROC=0.6055
+  [run C_shead_replaces_disc] fused_max AUROC=0.5647
+==== [run C_shead_replaces_disc] end (287.04s) ====
+
+[shead] shead AUROC=0.7530，追加 896px 分辨率对照
+
+==== [run D_shead_896px] shead-only grid=64（896px 提取） start ====
+    [extract] 20/100 (5s)
+    [extract] 40/100 (10s)
+    [extract] 60/100 (16s)
+    [extract] 80/100 (22s)
+    [extract] 100/100 (28s)
+  [fit] init_normal 提取 100 张完成 (28s)
+    [extract] 20/30 (7s)
+  [fit] init_defect 提取 30 张完成 (38s)
+[shead] epoch 10/50 loss_n=5.9498 loss_a=6.3487
+[shead] epoch 20/50 loss_n=6.0420 loss_a=6.1958
+[shead] epoch 30/50 loss_n=6.2115 loss_a=5.1156
+[shead] epoch 40/50 loss_n=6.0789 loss_a=2.9587
+[shead] epoch 50/50 loss_n=1.0798 loss_a=3.2232
+[shead] fit 完成: normal=96 pseudo=288 real_defect=30 pos_total=318 X=414 batch=32 lr=0.001
+  [fit] 槽位 shead 完成 (63s)
+[route] base=0.8680 router=0.8680 enabled=False (margin=0.005)
+  [eval] 20/150 (22s)
+  [eval] 40/150 (43s)
+  [eval] 60/150 (64s)
+  [eval] 80/150 (85s)
+  [eval] 100/150 (107s)
+  [eval] 120/150 (128s)
+  [eval] 140/150 (149s)
+  [run D_shead_896px] fused AUROC=0.7826
+  [run D_shead_896px] shead AUROC=0.7826
+==== [run D_shead_896px] end (330.78s) ====
+
+[diag] 结果已存 d:\CGAIC\demo5\outputs\m0\shead_v2_gyudet.json
+[summary] {"shead_alone_auroc": 0.753, "fused_equal_with_shead": 0.5517, "fused_equal_shead_replaces_disc": 0.6069, "vs_shead_v1_0.359": 0.394, "vs_demo4_s_0.79": -0.037, "vs_baseline_fused_0.5533": -0.0016, "shead_896px_auroc": 0.7826}

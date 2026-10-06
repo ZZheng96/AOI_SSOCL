@@ -1,0 +1,19 @@
+# 已知可用依赖锁定（评审整改 A19：依赖可复现）。
+# 来源：本项目开发虚拟环境（CGAIC/.env）pip freeze，按 requirements.txt 过滤。
+# 口径与限制：
+# - 采集环境为 Windows / Python 3.10，torch 为本机 GPU 轮子（cu126）；
+# - 其他平台/CUDA 组合需按 CUDA/驱动矩阵选择 torch 后重新 freeze 固化；
+# - 复现命令：pip install -r requirements-lock.txt（同平台同 Python 版本）。
+fastapi==0.142.1
+uvicorn==0.54.0
+python-multipart==0.0.32
+requests==2.34.2
+SQLAlchemy==2.0.54
+PyYAML==6.0.3
+numpy==2.2.6
+opencv-python==5.0.0.93
+pillow==12.3.0
+scikit-learn==1.7.2
+torch==2.14.0+cu126
+torchvision==0.29.0+cu126
+timm==1.0.30

@@ -1,0 +1,10 @@
+{
+  "scope": "template_algorithm",
+  "template_name": "9_4",
+  "category": null,
+  "algorithm": "body_极反",
+  "params": {
+    "ncc_diff_min": 0.06
+  },
+  "version": 1
+}

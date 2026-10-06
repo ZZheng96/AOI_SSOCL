@@ -1,0 +1,24 @@
+{
+  "name": "gold_finger",
+  "mode": "single",
+  "fit_seconds": 38.18,
+  "n_init_normal": 68,
+  "n_init_defect": 30,
+  "slot_sanity": {
+    "blob": 0.4338
+  },
+  "weights": {
+    "blob": 1.0
+  },
+  "test": {
+    "fused": {
+      "auroc": 0.7074866310160428,
+      "ap": 0.9064476623836901
+    },
+    "ms_per_image": 423.45840069982745,
+    "blob": {
+      "auroc": 0.7074866310160428,
+      "ap": 0.9064476623836901
+    }
+  }
+}

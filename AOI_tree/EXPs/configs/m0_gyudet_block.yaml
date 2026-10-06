@@ -1,0 +1,123 @@
+seed: 42
+device: cuda
+protocol:
+  n_init_normal: 100
+  n_init_defect: 100
+  forbid:
+  - test_good
+  - pairs
+  - filename_metadata
+fusion:
+  # U75：shead 主导融合（U73 验证：only_slots 消除弱槽稀释，fused=shead 单槽）
+  # skip_zero_weight（速度红线）：只 fit/打分/校准白名单槽位--v2 smoke 实测
+  # 非融合槽位（trad/sem/disc/open）逐块打分占单图耗时 ~40%，跳过后预计 <800ms
+  mode: fixed_equal
+  weight_mode: sanity
+  skip_zero_weight: true
+  only_slots:
+  - shead
+backbone:
+  name: dinov2_vits14
+  output_layer: 9
+  grid: 32
+  extract_batch: 32  # U75 速度红线：30 块 1 批前向（vs 默认 16 的 2 批，-250ms）
+tiling:
+  # U75 块模式（用户分块方案）：multi-tile 896/672（25% 重叠）
+  # 3000×4000 图 -> 5×6 = 30 块；块 896 ≈ 1.28×中位缺陷框 699
+  # 速度红线检查：30 块一次 batch 前向 ~250ms + 槽位打分 ~200ms ≈ 0.4-0.5s/图 ✅
+  mode: multi
+  tile_size: 896
+  stride: 672
+  multiscale_scales:
+  - 1
+  - 2
+  - 4
+  multiscale_weights:
+  - 0.6
+  - 0.3
+  - 0.1
+slots:
+  sem:
+    enabled: true
+    coreset_size: 512
+    tile_topk_ratio: 0.05
+    block_topk: 3
+  disc:
+    enabled: true
+    hidden: 128
+    epochs: 30
+    lr: 0.001
+    pseudo_per_image: 8
+    init_from: outputs/m0/disc_pretrain.pt
+    freeze: true
+  shead:
+    enabled: true
+    hidden: 256
+    epochs: 100
+    lr: 0.001
+    batch: 32
+    margin: 5.0
+    pseudo_per_image: 0  # U73 ablB 教训：真实块样本足量，伪异常拖低质量
+    max_base_tiles: 96
+    max_patches: 50000
+    # U75 块模式（用户分块方案）：multi-tile 分块 + 框重叠比例块级标签
+    # - 缺陷块：块含框面积占比>=0.15 或 框被块覆盖>=0.5（小缺陷跨界保底）
+    # - 无缺陷块：占比与覆盖均<=0.05（纯背景）
+    # - 中间占比块：丢弃（U74 教训：低占比正样本是噪声）
+    # 训练块与测试块同一分块函数 -> 完全同分布（U71 离线 0.9651 核心经验）
+    score_mode: block
+    # v2 修正（smoke 回退诊断）：收紧正块阈值，禁用 cover 保底
+    # - v1 教训：cover>=0.5 保底放进小缺陷低占比块（8-18%），正是 U74 的
+    #   噪声正样本 -> AUROC 0.7081；小缺陷留给阶段 3 双尺度解决
+    block_pos_thresh: 0.25   # 只留较高占比缺陷块（v1 是 0.15）
+    block_neg_thresh: 0.05
+    block_cover_min: 0.95    # 实质禁用保底（v1 是 0.5）
+    n_fit_normal_blocks: 6   # 每正常图随机取 6 块（100 图 -> 600 负块）
+    n_fit_bg_blocks: 6       # 每缺陷图背景块上限（100 图 -> ~600 背景负块）
+    block_score_topk: 3      # 30 块取 top-3 均值聚合（抗单块假阳性）
+  # 速度红线适配：关闭 multi-tile 下逐块处理的 CPU 重槽
+  # （inpainting/blob/layout 逐 30 块处理单图将超 1s 红线；shead 主导融合不依赖它们）
+  blob:
+    enabled: false
+  trad:
+    enabled: true
+  layout:
+    enabled: false
+  inp:
+    enabled: false
+  open:
+    enabled: true
+    n_components: 0.95
+    topk_ratio: 0.05
+    thresh: 0.9
+  tpl:
+    enabled: false
+    feat_weight: 0.7
+    pix_weight: 0.3
+    topk_ratio: 0.1
+router:
+  enabled: true
+  epochs: 50
+  lr: 0.001
+  margin: 0.1
+  lam_entropy: 0.1
+  gate_margin: 0.005
+consensus:
+  enabled: true
+  blend: 0.5
+calibration:
+  cdf_bins: 256
+decision:
+  tau_quantile: 0.99
+  tau_gray: 0.95
+hierarchical:
+  mask_thresh: 0.5
+  min_area: 16
+  work_side: 512
+datasets:
+  gyu_det: D:\CGAIC\data_origin\GYU-DET
+  data_local: D:\CGAIC\data_local
+  mvtec: D:\CGAIC\data_origin\mvtec
+  btad: D:\CGAIC\data_origin\BTAD\BTech_Dataset_transformed
+  mpdd: D:\CGAIC\data_origin\MPDD
+output_dir: d:\CGAIC\demo5\outputs\m0

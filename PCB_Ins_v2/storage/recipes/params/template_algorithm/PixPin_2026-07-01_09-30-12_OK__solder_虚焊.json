@@ -1,0 +1,11 @@
+{
+  "scope": "template_algorithm",
+  "template_name": "PixPin_2026-07-01_09-30-12_OK",
+  "category": null,
+  "algorithm": "solder_虚焊",
+  "params": {
+    "cold_solder_dark_ratio": 0.3,
+    "cold_solder_v_dark": 80
+  },
+  "version": 1
+}

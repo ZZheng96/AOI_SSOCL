@@ -1,0 +1,11 @@
+{
+  "scope": "template_algorithm",
+  "template_name": "1_14",
+  "category": null,
+  "algorithm": "body_翻件",
+  "params": {
+    "ncc_front_min": 0.55,
+    "hist_corr_min": 0.75
+  },
+  "version": 1
+}

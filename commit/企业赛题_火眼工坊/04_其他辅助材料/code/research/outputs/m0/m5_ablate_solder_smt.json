@@ -1,0 +1,37 @@
+{
+  "full": {
+    "initial_auroc": 0.4568,
+    "final_auroc": 0.3704,
+    "auroc_gain": -0.0864,
+    "efficiency": -0.0108,
+    "n_feedback": 8
+  },
+  "intercept_only": {
+    "initial_auroc": 0.4691,
+    "final_auroc": 0.4383,
+    "auroc_gain": -0.0309,
+    "efficiency": -0.0039,
+    "n_feedback": 8
+  },
+  "reflow_only": {
+    "initial_auroc": 0.4321,
+    "final_auroc": 0.4444,
+    "auroc_gain": 0.0123,
+    "efficiency": 0.0015,
+    "n_feedback": 8
+  },
+  "no_cdf": {
+    "initial_auroc": 0.3951,
+    "final_auroc": 0.321,
+    "auroc_gain": -0.0741,
+    "efficiency": -0.0093,
+    "n_feedback": 8
+  },
+  "no_sem": {
+    "initial_auroc": 0.4568,
+    "final_auroc": 0.4383,
+    "auroc_gain": -0.0185,
+    "efficiency": -0.0023,
+    "n_feedback": 8
+  }
+}

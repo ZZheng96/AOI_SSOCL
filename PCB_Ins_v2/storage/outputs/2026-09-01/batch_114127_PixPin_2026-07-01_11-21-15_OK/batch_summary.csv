@@ -1,0 +1,3 @@
+﻿test_image,overall,elapsed_ms,ng_count,gate_message,result_folder,ng_algorithms
+D:\CGAIC\PCB_Ins_v2\alg_repo\smt\test_images\bridge_pair\pair4\PixPin_2026-07-01_09-24-26.png,NG,187,1,标准图尺寸 1317x545 与测试图尺寸 869x587 差异过大（高差42px/宽差448px，超过门禁阈值 10px），已拦截，未执行检测,,aoi_feature
+D:\CGAIC\PCB_Ins_v2\alg_repo\smt\test_images\excess_pair\pair4\PixPin_2026-07-01_11-21-15.png,NG,410,2,,D:\CGAIC\PCB_Ins_v2\storage\outputs\2026-09-01\114127_PixPin_2026-07-01_11-21-15,"solder_多锡,aoi_feature"

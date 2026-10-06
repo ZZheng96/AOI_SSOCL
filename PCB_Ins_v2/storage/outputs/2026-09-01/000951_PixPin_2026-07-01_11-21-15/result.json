@@ -1,0 +1,357 @@
+{
+  "time": "2026-09-01T00:09:51",
+  "template_name": "PixPin_2026-07-01_11-21-15_OK",
+  "template_id": "PixPin_2026-07-01_11-21-15_OK",
+  "template_version": 1,
+  "standard_image": "D:\\CGAIC\\PCB_Ins_v2\\templates\\PixPin_2026-07-01_11-21-15_OK\\standard.png",
+  "test_image": "D:\\CGAIC\\PCB_Ins_v2\\alg_repo\\smt\\test_images\\excess_pair\\pair4\\PixPin_2026-07-01_11-21-15.png",
+  "category": "插件器件",
+  "overall": "NG",
+  "elapsed_ms": 504,
+  "ng_count": 2,
+  "source": "inspect",
+  "algorithms_selected": [
+    "solder_多锡",
+    "solder_少锡",
+    "solder_连锡",
+    "solder_虚焊"
+  ],
+  "rule_snapshot": {
+    "template_id": "PixPin_2026-07-01_11-21-15_OK",
+    "template_version": 1,
+    "display_name": "SMT 焊点示例",
+    "category": "插件器件",
+    "calib_key": "PixPin_2026-07-01_11-21-15_OK",
+    "detection_items": [
+      {
+        "algorithm_id": "solder_多锡",
+        "enabled": true,
+        "params": {
+          "excess_thresh": 0.005
+        },
+        "preprocess_recipe": null,
+        "region_kind": "smt"
+      },
+      {
+        "algorithm_id": "solder_少锡",
+        "enabled": true,
+        "params": {
+          "insufficient_thresh": 0.08
+        },
+        "preprocess_recipe": null,
+        "region_kind": "smt"
+      },
+      {
+        "algorithm_id": "solder_连锡",
+        "enabled": true,
+        "params": {
+          "bridge_min_area": 20
+        },
+        "preprocess_recipe": null,
+        "region_kind": "smt"
+      },
+      {
+        "algorithm_id": "solder_虚焊",
+        "enabled": true,
+        "params": {
+          "pin_type": "terminal",
+          "cold_solder_dark_ratio": 0.3,
+          "cold_solder_v_dark": 80
+        },
+        "preprocess_recipe": null,
+        "region_kind": "smt"
+      },
+      {
+        "algorithm_id": "solder_共用参数",
+        "enabled": true,
+        "params": {
+          "template_mode": "diff_grow_ROI",
+          "mask_h_low": 57,
+          "mask_h_high": 93,
+          "mask_s_min": 61,
+          "mask_v_min": 15,
+          "silk_h_low": 81,
+          "silk_h_high": 106,
+          "silk_s_low": 61,
+          "silk_s_high": 121,
+          "silk_v_low": 90,
+          "silk_v_high": 131,
+          "RB_thresh_exc": 10,
+          "diff_thresh_exc": 5,
+          "solder_blue_h_low": 85,
+          "solder_blue_h_high": 179,
+          "solder_blue_s_min": 78,
+          "solder_blue_v_min": 70
+        },
+        "preprocess_recipe": null,
+        "region_kind": "smt"
+      }
+    ],
+    "algorithms": [
+      {
+        "algorithm_id": "solder_多锡",
+        "enabled": true,
+        "params": {
+          "excess_thresh": 0.005
+        },
+        "preprocess_recipe": null,
+        "region_kind": "smt"
+      },
+      {
+        "algorithm_id": "solder_少锡",
+        "enabled": true,
+        "params": {
+          "insufficient_thresh": 0.08
+        },
+        "preprocess_recipe": null,
+        "region_kind": "smt"
+      },
+      {
+        "algorithm_id": "solder_连锡",
+        "enabled": true,
+        "params": {
+          "bridge_min_area": 20
+        },
+        "preprocess_recipe": null,
+        "region_kind": "smt"
+      },
+      {
+        "algorithm_id": "solder_虚焊",
+        "enabled": true,
+        "params": {
+          "pin_type": "terminal",
+          "cold_solder_dark_ratio": 0.3,
+          "cold_solder_v_dark": 80
+        },
+        "preprocess_recipe": null,
+        "region_kind": "smt"
+      },
+      {
+        "algorithm_id": "solder_共用参数",
+        "enabled": true,
+        "params": {
+          "template_mode": "diff_grow_ROI",
+          "mask_h_low": 57,
+          "mask_h_high": 93,
+          "mask_s_min": 61,
+          "mask_v_min": 15,
+          "silk_h_low": 81,
+          "silk_h_high": 106,
+          "silk_s_low": 61,
+          "silk_s_high": 121,
+          "silk_v_low": 90,
+          "silk_v_high": 131,
+          "RB_thresh_exc": 10,
+          "diff_thresh_exc": 5,
+          "solder_blue_h_low": 85,
+          "solder_blue_h_high": 179,
+          "solder_blue_s_min": 78,
+          "solder_blue_v_min": 70
+        },
+        "preprocess_recipe": null,
+        "region_kind": "smt"
+      }
+    ],
+    "region_sets": {
+      "smt_pads": [
+        {
+          "shape": "rect",
+          "x": 81.77586206896542,
+          "y": 78.53448275862067,
+          "w": 237.93103448275866,
+          "h": 393.1034482758621
+        },
+        {
+          "shape": "rect",
+          "x": 1050.7413793103449,
+          "y": 43.189655172413765,
+          "w": 222.41379310344814,
+          "h": 445.68965517241384
+        }
+      ]
+    },
+    "calibration": {
+      "smt_pads": [
+        [
+          81.77586206896542,
+          78.53448275862067,
+          237.93103448275866,
+          393.1034482758621
+        ],
+        [
+          1050.7413793103449,
+          43.189655172413765,
+          222.41379310344814,
+          445.68965517241384
+        ]
+      ]
+    },
+    "gate": {
+      "size_gate_enabled": true,
+      "size_gate_max_diff_px": 10
+    }
+  },
+  "ng_list": [
+    {
+      "algorithm": "solder_多锡",
+      "item_id": "solder_多锡",
+      "display_name": "多锡",
+      "defect_type": "多锡",
+      "defect_count": 1,
+      "message": "多锡(包锡) 判定=NG，缺陷数=1，焊盘数=2",
+      "boxes": [
+        {
+          "x": 316,
+          "y": 181,
+          "w": 46,
+          "h": 16,
+          "label": "多锡(包锡)",
+          "color": "#ca8a04",
+          "item_id": "solder_多锡"
+        }
+      ]
+    },
+    {
+      "algorithm": "aoi_feature",
+      "item_id": "aoi_feature",
+      "display_name": "AOI 特征学习",
+      "defect_type": "",
+      "defect_count": 1,
+      "message": "AOI: anomaly score=1.2843 主导槽=sem (360.11ms)",
+      "boxes": [
+        {
+          "x": 262,
+          "y": 84,
+          "w": 141,
+          "h": 137,
+          "label": "AOI·sem"
+        }
+      ]
+    }
+  ],
+  "results": [
+    {
+      "algorithm": "solder_多锡",
+      "item_id": "solder_多锡",
+      "display_name": "多锡",
+      "ok": false,
+      "status": "NG",
+      "message": "多锡(包锡) 判定=NG，缺陷数=1，焊盘数=2",
+      "defect_type": "多锡",
+      "defect_count": 1,
+      "elapsed_ms": 39,
+      "algorithm_version": "1.0.0",
+      "error_code": null,
+      "error_message": null,
+      "skipped": false,
+      "skip_reason": null,
+      "hit_layer": "全局默认 | 参数:模板冻结参数(+共用)",
+      "param_schema_version": 1,
+      "boxes": [
+        {
+          "x": 316,
+          "y": 181,
+          "w": 46,
+          "h": 16,
+          "label": "多锡(包锡)",
+          "color": "#ca8a04",
+          "item_id": "solder_多锡"
+        }
+      ],
+      "manual_verdict": null
+    },
+    {
+      "algorithm": "solder_少锡",
+      "item_id": "solder_少锡",
+      "display_name": "少锡",
+      "ok": true,
+      "status": "OK",
+      "message": "少锡 判定=OK，缺陷数=0，焊盘数=2",
+      "defect_type": "",
+      "defect_count": 0,
+      "elapsed_ms": 12,
+      "algorithm_version": "1.0.0",
+      "error_code": null,
+      "error_message": null,
+      "skipped": false,
+      "skip_reason": null,
+      "hit_layer": "全局默认 | 参数:模板冻结参数(+共用)",
+      "param_schema_version": 1,
+      "boxes": [],
+      "manual_verdict": null
+    },
+    {
+      "algorithm": "solder_连锡",
+      "item_id": "solder_连锡",
+      "display_name": "连锡",
+      "ok": true,
+      "status": "OK",
+      "message": "连锡 判定=OK，缺陷数=0，焊盘数=2",
+      "defect_type": "",
+      "defect_count": 0,
+      "elapsed_ms": 16,
+      "algorithm_version": "1.0.0",
+      "error_code": null,
+      "error_message": null,
+      "skipped": false,
+      "skip_reason": null,
+      "hit_layer": "全局默认 | 参数:模板冻结参数(+共用)",
+      "param_schema_version": 1,
+      "boxes": [],
+      "manual_verdict": null
+    },
+    {
+      "algorithm": "solder_虚焊",
+      "item_id": "solder_虚焊",
+      "display_name": "虚焊",
+      "ok": true,
+      "status": "OK",
+      "message": "虚焊 判定=OK，缺陷数=0，焊盘数=2",
+      "defect_type": "",
+      "defect_count": 0,
+      "elapsed_ms": 19,
+      "algorithm_version": "1.0.0",
+      "error_code": null,
+      "error_message": null,
+      "skipped": false,
+      "skip_reason": null,
+      "hit_layer": "全局默认 | 参数:模板冻结参数(+共用)",
+      "param_schema_version": 1,
+      "boxes": [],
+      "manual_verdict": null
+    },
+    {
+      "algorithm": "aoi_feature",
+      "item_id": "aoi_feature",
+      "display_name": "AOI 特征学习",
+      "ok": false,
+      "status": "NG",
+      "message": "AOI: anomaly score=1.2843 主导槽=sem (360.11ms)",
+      "defect_type": "",
+      "defect_count": 1,
+      "elapsed_ms": 360,
+      "algorithm_version": "",
+      "error_code": null,
+      "error_message": null,
+      "skipped": false,
+      "skip_reason": null,
+      "hit_layer": "特征引擎",
+      "param_schema_version": 1,
+      "boxes": [
+        {
+          "x": 262,
+          "y": 84,
+          "w": 141,
+          "h": 137,
+          "label": "AOI·sem"
+        }
+      ],
+      "manual_verdict": null
+    }
+  ],
+  "vis_file": "result_vis.png",
+  "gate_blocked": false,
+  "gate_message": "",
+  "gate_note": "",
+  "manual_overall_verdict": null
+}

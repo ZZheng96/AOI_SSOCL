@@ -1,0 +1,13 @@
+# 算法核心依赖
+opencv-python>=4.5.0
+numpy>=1.20.0
+Pillow>=8.0.0
+
+# 测试依赖
+pytest>=7.0.0
+
+# C++加速模块 (构建依赖: g++/clang, cmake, opencv-dev)
+pybind11>=2.10.0
+
+# tuner依赖 (tkinter为Python标准库，Linux需安装: sudo apt-get install python3-tk)
+# tkinter  # 标准库，无需pip安装

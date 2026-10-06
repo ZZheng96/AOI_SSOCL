@@ -1,0 +1,13 @@
+{
+  "tol": 0.05,
+  "anchor_size": 20,
+  "anchor_paths": [
+    "<PROJECT_ROOT>\\PCB_Ins_v2\\storage\\train\\smt\\normal\\n000.png",
+    "<PROJECT_ROOT>\\PCB_Ins_v2\\storage\\train\\smt\\normal\\n001.png",
+    "<PROJECT_ROOT>\\PCB_Ins_v2\\storage\\train\\smt\\normal\\n002.png",
+    "<PROJECT_ROOT>\\PCB_Ins_v2\\storage\\train\\smt\\normal\\n003.png"
+  ],
+  "base_mean": 0.49902343750000006,
+  "base_std": 0.31730562428810066,
+  "history": []
+}

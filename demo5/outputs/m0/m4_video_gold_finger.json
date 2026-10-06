@@ -1,0 +1,17 @@
+{
+  "category": "gold_finger",
+  "video": "d:\\CGAIC\\demo5\\outputs\\m0\\synth_gold_finger.mp4",
+  "summary": {
+    "anomaly_frames": 0,
+    "gray_frames": 0,
+    "total_frames": 60,
+    "fps": 25.0,
+    "anomaly_ratio": 0.0,
+    "mean_fused": 0.5361,
+    "max_fused": 0.6439,
+    "dominant_type": null,
+    "type_counter": {},
+    "final_decision": "normal"
+  },
+  "sequence": "NNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNN"
+}

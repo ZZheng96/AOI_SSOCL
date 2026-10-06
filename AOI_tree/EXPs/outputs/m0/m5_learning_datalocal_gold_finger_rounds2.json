@@ -1,0 +1,149 @@
+{
+  "selflearn_off": {
+    "initial_auroc": 0.0,
+    "final_auroc": 0.0,
+    "auroc_gain": 0.0,
+    "efficiency": 0.0,
+    "steps": [],
+    "auroc": [],
+    "f1": [],
+    "n_feedback": 0
+  },
+  "rounds_on": {
+    "rounds": [
+      1,
+      2
+    ],
+    "steps": [
+      30,
+      60
+    ],
+    "auroc": [
+      0.9091,
+      0.9091
+    ],
+    "f1": [
+      0.5333,
+      0.4286
+    ],
+    "initial_auroc": 0.0,
+    "final_auroc": 0.9091,
+    "auroc_gain": 0.9091,
+    "efficiency": 0.0152,
+    "n_feedback": 60,
+    "round_size": 30,
+    "n_rounds": 2,
+    "box_supervised": false,
+    "n_box_feedback": 0,
+    "intercept": {
+      "n_samples": 44,
+      "n_box_samples": 0,
+      "n_hits_total": 990,
+      "eval_n": 12,
+      "eval_boost_gt0": 12,
+      "eval_boost_gt0_defect": 11,
+      "eval_defect_n": 11
+    },
+    "head_ft": {
+      "n_ft": 0,
+      "n_reject": 0,
+      "n_pos_total": 0,
+      "n_neg_total": 16,
+      "events": []
+    },
+    "disc_ft": {
+      "n_ft": 0,
+      "n_reject": 0,
+      "n_pos_total": 0,
+      "n_neg_total": 1024,
+      "events": []
+    },
+    "thresh_recal": {
+      "n_recal": 0,
+      "n_reject": 0,
+      "events": []
+    },
+    "weight_learn": {
+      "n_apply": 12,
+      "n_reject": 1
+    },
+    "learned": {
+      "rounds": [
+        1,
+        2
+      ],
+      "n_fed": [
+        30,
+        60
+      ],
+      "n_wrong_before": [
+        21,
+        36
+      ],
+      "n_flip": [
+        8,
+        9
+      ],
+      "learned_accs": [
+        0.4667,
+        0.5
+      ],
+      "flip_rates": [
+        0.381,
+        0.25
+      ],
+      "defect_recalls": [
+        0.2727,
+        0.3182
+      ],
+      "relearn_every": 1,
+      "final_learned_acc": 0.5,
+      "final_flip_rate": 0.25,
+      "final_defect_recall": 0.3182
+    },
+    "eval_per_sample": {
+      "scores": [
+        0.747945,
+        0.489171,
+        0.871673,
+        0.601722,
+        0.452533,
+        0.320862,
+        0.701727,
+        0.960635,
+        0.561476,
+        0.232818,
+        0.614326,
+        0.990868
+      ],
+      "labels": [
+        1,
+        1,
+        1,
+        1,
+        1,
+        0,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1
+      ],
+      "decisions": [
+        "normal",
+        "normal",
+        "anomaly",
+        "normal",
+        "normal",
+        "normal",
+        "normal",
+        "anomaly",
+        "normal",
+        "normal",
+        "normal",
+        "anomaly"
+      ]
+    }
+  }
+}

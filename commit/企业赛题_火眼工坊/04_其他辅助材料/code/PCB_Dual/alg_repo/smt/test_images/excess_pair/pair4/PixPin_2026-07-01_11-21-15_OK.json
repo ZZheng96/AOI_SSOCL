@@ -1,0 +1,46 @@
+{
+  "version": "6.3.1",
+  "flags": {},
+  "shapes": [
+    {
+      "label": "pad",
+      "points": [
+        [
+          49.01724137931026,
+          66.4655172413793
+        ],
+        [
+          319.70689655172407,
+          471.63793103448273
+        ]
+      ],
+      "group_id": null,
+      "description": "",
+      "shape_type": "rectangle",
+      "flags": {},
+      "mask": null
+    },
+    {
+      "label": "pad",
+      "points": [
+        [
+          1050.7413793103449,
+          43.189655172413765
+        ],
+        [
+          1285.2241379310344,
+          493.1896551724138
+        ]
+      ],
+      "group_id": null,
+      "description": "",
+      "shape_type": "rectangle",
+      "flags": {},
+      "mask": null
+    }
+  ],
+  "imagePath": "PixPin_2026-07-01_11-21-15_OK.png",
+  "imageData": null,
+  "imageHeight": 545,
+  "imageWidth": 1317
+}

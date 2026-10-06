@@ -1,0 +1,11 @@
+{
+  "scope": "template_algorithm",
+  "template_name": "1_18",
+  "category": null,
+  "algorithm": "body_立碑",
+  "params": {
+    "aspect_dev_ratio": 0.3,
+    "pad_area_ratio_max": 0.85
+  },
+  "version": 1
+}

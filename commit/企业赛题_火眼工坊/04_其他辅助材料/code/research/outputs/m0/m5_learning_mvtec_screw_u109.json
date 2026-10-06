@@ -1,0 +1,135 @@
+{
+  "selflearn_off": {
+    "initial_auroc": 0.8836,
+    "final_auroc": 0.8836,
+    "auroc_gain": 0.0,
+    "efficiency": 0.0,
+    "steps": [],
+    "auroc": [],
+    "f1": [],
+    "n_feedback": 0
+  },
+  "selflearn_on_0.5": {
+    "steps": [
+      3,
+      6,
+      9,
+      12,
+      15,
+      18,
+      21,
+      24,
+      27,
+      30,
+      33,
+      36,
+      39,
+      42,
+      45,
+      48,
+      51
+    ],
+    "auroc": [
+      0.8677,
+      0.873,
+      0.9233,
+      0.9233,
+      0.9312,
+      0.9259,
+      0.9735,
+      0.9735,
+      0.918,
+      0.918,
+      0.918,
+      0.918,
+      0.918,
+      0.918,
+      0.918,
+      0.9312,
+      0.9286
+    ],
+    "f1": [
+      0.878,
+      0.878,
+      0.9524,
+      0.9524,
+      0.9524,
+      0.9524,
+      0.9091,
+      0.9524,
+      0.9302,
+      0.9302,
+      0.9302,
+      0.9302,
+      0.9302,
+      0.9302,
+      0.9302,
+      0.9524,
+      0.9524
+    ],
+    "initial_auroc": 0.8677,
+    "final_auroc": 0.9286,
+    "auroc_gain": 0.0608,
+    "efficiency": 0.0011,
+    "a_recheck_auroc": 0.9352,
+    "a_recheck_n_defect": 30,
+    "a_recheck_n_normal": 9,
+    "n_feedback": 53,
+    "box_supervised": false,
+    "n_box_feedback": 0,
+    "intercept": {
+      "n_samples": 30,
+      "n_box_samples": 0,
+      "n_hits_total": 465,
+      "eval_n": 30,
+      "eval_boost_gt0": 24,
+      "eval_boost_gt0_defect": 19,
+      "eval_defect_n": 21
+    },
+    "head_ft": {
+      "n_ft": 0,
+      "n_reject": 0,
+      "n_pos_total": 0,
+      "n_neg_total": 23,
+      "events": []
+    },
+    "disc_ft": {
+      "n_ft": 0,
+      "n_reject": 0,
+      "n_pos_total": 0,
+      "n_neg_total": 1472,
+      "events": []
+    },
+    "thresh_recal": {
+      "n_recal": 1,
+      "n_reject": 1,
+      "events": [
+        {
+          "t": 1787666328.4206507,
+          "n_normal": 20,
+          "fp_before": 0.15,
+          "fp_after": 0.05,
+          "leak_before": 0.0714,
+          "leak_after": 0.1429,
+          "tau_high": 0.8919,
+          "tau_gray": 0.8189,
+          "status": "rejected",
+          "reason": "defect_leak"
+        },
+        {
+          "t": 1787666479.2968035,
+          "n_normal": 21,
+          "fp_before": 0.1429,
+          "fp_after": 0.0952,
+          "tau_high": 0.8909,
+          "tau_gray": 0.8141,
+          "status": "applied"
+        }
+      ]
+    },
+    "weight_learn": {
+      "n_apply": 26,
+      "n_reject": 2
+    }
+  }
+}

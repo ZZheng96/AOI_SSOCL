@@ -1,0 +1,12 @@
+{
+  "scope": "template_algorithm",
+  "template_name": "2_1",
+  "category": null,
+  "algorithm": "body_破损",
+  "params": {
+    "ssim_diff_thresh": 0.35,
+    "shape_match_max": 0.3,
+    "blob_area_min": 30
+  },
+  "version": 1
+}

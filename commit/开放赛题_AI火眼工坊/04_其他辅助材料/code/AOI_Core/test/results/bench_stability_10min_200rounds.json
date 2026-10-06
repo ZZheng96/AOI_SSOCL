@@ -1,0 +1,40 @@
+{
+  "category": "bracket_black",
+  "rounds": 200,
+  "duration_min": 0.0,
+  "concurrency": 4,
+  "total": 800,
+  "elapsed_s": 63.0,
+  "n_ok": 800,
+  "n_err": 0,
+  "errors": [],
+  "over_red_line": {
+    "count": 0,
+    "samples": []
+  },
+  "latency_ms": {
+    "p50": 50.0,
+    "p95": 132.5,
+    "max": 385.2,
+    "mean": 65.6
+  },
+  "latency_e2e_ms": {
+    "p50": 142.7,
+    "p95": 343.9,
+    "max": 560.4,
+    "mean": 154.8
+  },
+  "wall_ms_queue_included": {
+    "p50": 262.7,
+    "p95": 596.7,
+    "max": 1739.7,
+    "mean": 306.9
+  },
+  "server_rss_mb": {
+    "first": 2809.5,
+    "peak": 2885.7,
+    "last": 2857.2,
+    "growth_mb": 47.7,
+    "pid": 92076
+  }
+}

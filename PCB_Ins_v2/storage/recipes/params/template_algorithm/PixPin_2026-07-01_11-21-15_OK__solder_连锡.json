@@ -1,0 +1,10 @@
+{
+  "scope": "template_algorithm",
+  "template_name": "PixPin_2026-07-01_11-21-15_OK",
+  "category": null,
+  "algorithm": "solder_连锡",
+  "params": {
+    "bridge_min_area": 20
+  },
+  "version": 1
+}

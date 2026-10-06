@@ -1,0 +1,10 @@
+[dual_demo] WINDOW_SHOWN
+[dual_demo] step_select: 模板=SMT 焊点示例 engine_mode=dual
+[dual_demo] step_import: 队列数=1 首项=PixPin_2026-07-01_11-21-15.png
+[dual_demo] step_run: btn_run.enabled=True
+[dino] 使用随包 vendor 权重: D:\CGAIC\assets\dinov2\dinov2_vits14_pretrain.pth
+[disc] 加载预训练头 D:\CGAIC\PCB_Ins_v2\assets\disc_pretrain.pt
+[persist][警告] 快照缺 ssocl_cfg.json（旧版快照），按硬编码模板恢复：D:\CGAIC\PCB_Ins_v2\storage\snapshots\smt_solder\v1
+[persist] 锚定集特征重建失败（门控回落缓存路径）: [Errno 2] No such file or directory: '<PROJECT_ROOT>\\PCB_Ins_v2\\storage\\train\\smt\\normal\\n000.png'
+[dual_demo] step_wait: overall=NG ng=2 elapsed=470ms aoi_feature=AOI: anomaly score=1.2843 主导槽=sem (354.91ms)
+[dual_demo] DEMO_DONE

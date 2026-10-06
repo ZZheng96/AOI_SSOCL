@@ -1,0 +1,11 @@
+{
+  "n_boxes": 183,
+  "A_unsup": {
+    "mean_rank": 0.05,
+    "recall_top10": 0.847
+  },
+  "B_sem": {
+    "mean_rank": 0.045,
+    "recall_top10": 0.902
+  }
+}

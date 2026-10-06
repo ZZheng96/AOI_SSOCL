@@ -1,0 +1,4 @@
+# PCB 元件缺陷检测器 - 对外封装包依赖
+opencv-python>=4.8
+numpy>=1.24
+scikit-image>=0.20    # 可选：破损检测 SSIM 用，缺失时自动降级

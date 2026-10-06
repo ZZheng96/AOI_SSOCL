@@ -1,0 +1,12 @@
+{
+  "cv_algorithms": [
+    {
+      "name": "ShiftSmtAllAlg",
+      "class_path": "algorithms.component_detect.shift_smt_all_alg.ShiftSmtAllAlg",
+      "description": "贴片电容移位检测算法",
+      "idle_timeout": 600,
+      "timeout": 120,
+      "config_path": "./resources/config/alg/shift_smt_all_alg.json"
+    }
+  ]
+}

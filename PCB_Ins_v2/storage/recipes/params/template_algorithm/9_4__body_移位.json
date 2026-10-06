@@ -1,0 +1,11 @@
+{
+  "scope": "template_algorithm",
+  "template_name": "9_4",
+  "category": null,
+  "algorithm": "body_移位",
+  "params": {
+    "pos_tol_mm": 0.3,
+    "angle_tol_deg": 6.0
+  },
+  "version": 1
+}

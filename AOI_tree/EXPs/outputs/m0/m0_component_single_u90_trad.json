@@ -1,0 +1,24 @@
+{
+  "name": "component",
+  "mode": "single",
+  "fit_seconds": 3.55,
+  "n_init_normal": 8,
+  "n_init_defect": 7,
+  "slot_sanity": {
+    "trad": 0.9286
+  },
+  "weights": {
+    "trad": 1.0
+  },
+  "test": {
+    "fused": {
+      "auroc": 0.8571428571428571,
+      "ap": 0.9682539682539683
+    },
+    "ms_per_image": 95.46674622429742,
+    "trad": {
+      "auroc": 0.8571428571428571,
+      "ap": 0.9682539682539683
+    }
+  }
+}

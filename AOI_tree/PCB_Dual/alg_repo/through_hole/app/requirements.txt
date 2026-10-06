@@ -1,0 +1,8 @@
+# 界面本身
+PySide6>=6.6
+
+# 复用 ../detect 算法包（run() 内部依赖，界面进程内同样需要）
+opencv-python>=4.8
+numpy>=1.25
+Pillow>=9.0
+PyYAML>=6.0

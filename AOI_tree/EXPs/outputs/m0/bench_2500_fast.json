@@ -1,0 +1,219 @@
+{
+  "bench": "2500x2500 speed working point",
+  "config": "m0_fast.yaml",
+  "category": "gold_finger",
+  "side": 2500,
+  "slots": [
+    "sem",
+    "disc",
+    "shead"
+  ],
+  "fit_seconds": 22.4,
+  "hardware": {
+    "date": "2026-08-31 17:29:34",
+    "python": "3.11.9",
+    "torch": "2.5.1+cu121",
+    "cpu": "Intel64 Family 6 Model 165 Stepping 5, GenuineIntel",
+    "cpu_cores": 16,
+    "gpu": "NVIDIA GeForce GTX 1660 SUPER",
+    "cuda": "12.1"
+  },
+  "model_ms": {
+    "n": 30,
+    "mean": 101.6,
+    "p50": 57.5,
+    "p95": 183.2,
+    "min": 40.2,
+    "max": 263.1
+  },
+  "e2e_ms": {
+    "n": 30,
+    "mean": 162.5,
+    "p50": 129.3,
+    "p95": 241.3,
+    "min": 104.1,
+    "max": 253.2
+  },
+  "detail": [
+    {
+      "round": 1,
+      "image": "bench_0.png",
+      "model_ms": 45.6,
+      "e2e_ms": 142.3
+    },
+    {
+      "round": 1,
+      "image": "bench_1.png",
+      "model_ms": 43.4,
+      "e2e_ms": 140.9
+    },
+    {
+      "round": 1,
+      "image": "bench_2.png",
+      "model_ms": 263.1,
+      "e2e_ms": 253.2
+    },
+    {
+      "round": 1,
+      "image": "bench_3.png",
+      "model_ms": 42.4,
+      "e2e_ms": 157.3
+    },
+    {
+      "round": 1,
+      "image": "bench_4.png",
+      "model_ms": 140.1,
+      "e2e_ms": 247.5
+    },
+    {
+      "round": 2,
+      "image": "bench_0.png",
+      "model_ms": 40.5,
+      "e2e_ms": 115.2
+    },
+    {
+      "round": 2,
+      "image": "bench_1.png",
+      "model_ms": 40.2,
+      "e2e_ms": 104.1
+    },
+    {
+      "round": 2,
+      "image": "bench_2.png",
+      "model_ms": 151.3,
+      "e2e_ms": 228.5
+    },
+    {
+      "round": 2,
+      "image": "bench_3.png",
+      "model_ms": 56.6,
+      "e2e_ms": 113.4
+    },
+    {
+      "round": 2,
+      "image": "bench_4.png",
+      "model_ms": 162.1,
+      "e2e_ms": 219.7
+    },
+    {
+      "round": 3,
+      "image": "bench_0.png",
+      "model_ms": 54.3,
+      "e2e_ms": 110.7
+    },
+    {
+      "round": 3,
+      "image": "bench_1.png",
+      "model_ms": 54.4,
+      "e2e_ms": 109.5
+    },
+    {
+      "round": 3,
+      "image": "bench_2.png",
+      "model_ms": 163.7,
+      "e2e_ms": 217.3
+    },
+    {
+      "round": 3,
+      "image": "bench_3.png",
+      "model_ms": 53.4,
+      "e2e_ms": 116.2
+    },
+    {
+      "round": 3,
+      "image": "bench_4.png",
+      "model_ms": 157.5,
+      "e2e_ms": 241.3
+    },
+    {
+      "round": 4,
+      "image": "bench_0.png",
+      "model_ms": 58.7,
+      "e2e_ms": 115.9
+    },
+    {
+      "round": 4,
+      "image": "bench_1.png",
+      "model_ms": 60.7,
+      "e2e_ms": 106.9
+    },
+    {
+      "round": 4,
+      "image": "bench_2.png",
+      "model_ms": 173.4,
+      "e2e_ms": 223.3
+    },
+    {
+      "round": 4,
+      "image": "bench_3.png",
+      "model_ms": 56.4,
+      "e2e_ms": 114.6
+    },
+    {
+      "round": 4,
+      "image": "bench_4.png",
+      "model_ms": 183.2,
+      "e2e_ms": 215.4
+    },
+    {
+      "round": 5,
+      "image": "bench_0.png",
+      "model_ms": 55.0,
+      "e2e_ms": 115.1
+    },
+    {
+      "round": 5,
+      "image": "bench_1.png",
+      "model_ms": 54.6,
+      "e2e_ms": 106.9
+    },
+    {
+      "round": 5,
+      "image": "bench_2.png",
+      "model_ms": 158.8,
+      "e2e_ms": 235.7
+    },
+    {
+      "round": 5,
+      "image": "bench_3.png",
+      "model_ms": 57.6,
+      "e2e_ms": 117.6
+    },
+    {
+      "round": 5,
+      "image": "bench_4.png",
+      "model_ms": 215.6,
+      "e2e_ms": 219.6
+    },
+    {
+      "round": 6,
+      "image": "bench_0.png",
+      "model_ms": 57.1,
+      "e2e_ms": 115.7
+    },
+    {
+      "round": 6,
+      "image": "bench_1.png",
+      "model_ms": 57.3,
+      "e2e_ms": 111.5
+    },
+    {
+      "round": 6,
+      "image": "bench_2.png",
+      "model_ms": 166.6,
+      "e2e_ms": 222.5
+    },
+    {
+      "round": 6,
+      "image": "bench_3.png",
+      "model_ms": 56.9,
+      "e2e_ms": 114.7
+    },
+    {
+      "round": 6,
+      "image": "bench_4.png",
+      "model_ms": 166.5,
+      "e2e_ms": 223.5
+    }
+  ]
+}

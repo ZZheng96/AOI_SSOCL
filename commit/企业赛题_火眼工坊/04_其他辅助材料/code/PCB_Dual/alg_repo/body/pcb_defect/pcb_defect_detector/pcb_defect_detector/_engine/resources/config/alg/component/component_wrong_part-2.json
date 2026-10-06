@@ -1,0 +1,15 @@
+{
+  "algorithmId": 7001,
+  "algorithmCode": "component_wrong_part",
+  "version": 1,
+  "remark": "元件错件检测：尺寸偏差+HSV直方图+轮廓matchShapes 三特征2/3投票",
+  "releaseUser": "administrator",
+  "releaseTime": "2026-06-30T00:00:00",
+  "defaultParam": {
+    "size_tol_ratio": 0.20,
+    "hist_corr_min": 0.943,
+    "shape_match_max": 0.25,
+    "vote_fail_min": 1,
+    "skip_structural_hint": false
+  }
+}

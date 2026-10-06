@@ -1,0 +1,66 @@
+{
+  "results": [
+    {
+      "round": 0,
+      "valid": 0.7822,
+      "test": 0.8011,
+      "A_recheck_base": 0.8056
+    },
+    {
+      "round": 1,
+      "valid": 0.8222,
+      "n_retrain": 1,
+      "A_recheck": 0.9017,
+      "B_general": 0.8667
+    },
+    {
+      "round": 2,
+      "valid": 0.8222,
+      "n_retrain": 2,
+      "A_recheck": 0.8967,
+      "B_general": 0.8311
+    },
+    {
+      "round": 3,
+      "valid": 0.8222,
+      "n_retrain": 3,
+      "A_recheck": 0.885,
+      "B_general": 0.8311
+    },
+    {
+      "round": 4,
+      "valid": 0.8222,
+      "n_retrain": 4,
+      "A_recheck": 0.8794,
+      "B_general": 0.8311
+    },
+    {
+      "round": 5,
+      "valid": 0.8222,
+      "n_retrain": 5,
+      "A_recheck": 0.8673,
+      "B_general": 0.8311
+    },
+    {
+      "round": 6,
+      "valid": 0.84,
+      "n_retrain": 6,
+      "A_recheck": 0.9018,
+      "B_general": 0.8422
+    },
+    {
+      "round": 7,
+      "valid": 0.84,
+      "n_retrain": 7,
+      "A_recheck": 0.8973,
+      "B_general": 0.8422
+    },
+    {
+      "round": 8,
+      "valid": 0.84,
+      "n_retrain": 8,
+      "A_recheck": 0.9048,
+      "B_general": 0.8422
+    }
+  ]
+}

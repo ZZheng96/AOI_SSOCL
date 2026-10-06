@@ -1,0 +1,241 @@
+{
+  "selflearn_off": {
+    "initial_auroc": 0.457,
+    "final_auroc": 0.457,
+    "auroc_gain": 0.0,
+    "efficiency": 0.0,
+    "steps": [],
+    "auroc": [],
+    "f1": [],
+    "n_feedback": 0
+  },
+  "rounds_on": {
+    "rounds": [
+      1
+    ],
+    "steps": [
+      30
+    ],
+    "auroc": [
+      0.7148
+    ],
+    "f1": [
+      0.5455
+    ],
+    "initial_auroc": 0.457,
+    "final_auroc": 0.7148,
+    "auroc_gain": 0.2578,
+    "efficiency": 0.0086,
+    "n_feedback": 30,
+    "round_size": 30,
+    "n_rounds": 1,
+    "box_supervised": false,
+    "n_box_feedback": 0,
+    "intercept": {
+      "n_samples": 21,
+      "n_box_samples": 0,
+      "n_hits_total": 231,
+      "eval_n": 40,
+      "eval_boost_gt0": 37,
+      "eval_boost_gt0_defect": 29,
+      "eval_defect_n": 32
+    },
+    "head_ft": {
+      "n_ft": 0,
+      "n_reject": 0,
+      "n_pos_total": 0,
+      "n_neg_total": 9,
+      "events": []
+    },
+    "disc_ft": {
+      "n_ft": 2,
+      "n_reject": 1,
+      "n_pos_total": 5376,
+      "n_neg_total": 576,
+      "events": [
+        {
+          "t": 1787717051.5704556,
+          "n_pos": 256,
+          "n_neg": 128,
+          "drift": 0.0344,
+          "signed": 0.0344,
+          "epochs": 3,
+          "lr": 0.0001
+        },
+        {
+          "t": 1787717135.3012352,
+          "n_pos": 2560,
+          "n_neg": 128,
+          "drift": 0.0475,
+          "signed": 0.0475,
+          "epochs": 3,
+          "lr": 0.0001
+        }
+      ]
+    },
+    "thresh_recal": {
+      "n_recal": 0,
+      "n_reject": 0,
+      "events": []
+    },
+    "weight_learn": {
+      "n_apply": 13,
+      "n_reject": 1
+    },
+    "learned": {
+      "rounds": [
+        1
+      ],
+      "n_fed": [
+        30
+      ],
+      "n_wrong_before": [
+        19
+      ],
+      "n_flip": [
+        6
+      ],
+      "learned_accs": [
+        0.5333
+      ],
+      "flip_rates": [
+        0.3158
+      ],
+      "defect_recalls": [
+        0.381
+      ],
+      "relearn_every": 1,
+      "final_learned_acc": 0.5333,
+      "final_flip_rate": 0.3158,
+      "final_defect_recall": 0.381
+    },
+    "eval_per_sample": {
+      "scores": [
+        0.649563,
+        0.589007,
+        0.791811,
+        0.687605,
+        0.547462,
+        0.275403,
+        0.773286,
+        0.865933,
+        0.602286,
+        0.240882,
+        0.703979,
+        0.96085,
+        0.740757,
+        0.911568,
+        0.400778,
+        0.283669,
+        0.294973,
+        0.222254,
+        0.759941,
+        0.703465,
+        0.918742,
+        0.169522,
+        0.595379,
+        0.787107,
+        1.0,
+        0.337605,
+        0.426622,
+        0.102356,
+        0.656395,
+        0.698773,
+        0.537207,
+        0.247118,
+        0.202542,
+        0.175394,
+        0.201761,
+        0.798263,
+        0.352685,
+        0.536459,
+        0.281236,
+        0.765479
+      ],
+      "labels": [
+        1,
+        1,
+        1,
+        1,
+        1,
+        0,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        0,
+        1,
+        1,
+        1,
+        0,
+        1,
+        1,
+        1,
+        1,
+        1,
+        0,
+        1,
+        1,
+        1,
+        1,
+        0,
+        1,
+        1,
+        1,
+        0,
+        1,
+        1,
+        0,
+        0,
+        1
+      ],
+      "decisions": [
+        "normal",
+        "normal",
+        "gray",
+        "normal",
+        "normal",
+        "normal",
+        "gray",
+        "anomaly",
+        "normal",
+        "normal",
+        "normal",
+        "anomaly",
+        "gray",
+        "anomaly",
+        "normal",
+        "normal",
+        "normal",
+        "normal",
+        "gray",
+        "normal",
+        "anomaly",
+        "normal",
+        "normal",
+        "gray",
+        "anomaly",
+        "normal",
+        "normal",
+        "normal",
+        "normal",
+        "normal",
+        "normal",
+        "normal",
+        "normal",
+        "normal",
+        "normal",
+        "gray",
+        "normal",
+        "normal",
+        "normal",
+        "gray"
+      ]
+    }
+  }
+}

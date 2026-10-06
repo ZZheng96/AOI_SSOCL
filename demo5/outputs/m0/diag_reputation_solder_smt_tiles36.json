@@ -1,0 +1,75 @@
+{
+  "category": "solder_smt",
+  "mode": "tiles36",
+  "n_test": 82,
+  "n_fb": 45,
+  "n_eval": 37,
+  "n_eval_defect": 32,
+  "reputation_U": {
+    "blob": 0.744,
+    "disc": 0.616,
+    "inp": 0.695,
+    "layout": 0.415,
+    "sem": 0.0,
+    "trad": 0.0
+  },
+  "final_weights": {
+    "blob": 0.1984,
+    "disc": 0.1708,
+    "inp": 0.1896,
+    "layout": 0.1471,
+    "sem": 0.1471,
+    "trad": 0.1471
+  },
+  "lam": 0.118,
+  "auroc_fit_weights": 0.6687,
+  "auroc_equal": 0.5875,
+  "auroc_reputation": 0.6125,
+  "curve": [
+    {
+      "n_fb": 5,
+      "auroc": 0.2,
+      "lam": 0.032
+    },
+    {
+      "n_fb": 10,
+      "auroc": 0.1667,
+      "lam": 0.032
+    },
+    {
+      "n_fb": 15,
+      "auroc": 0.5152,
+      "lam": 0.032
+    },
+    {
+      "n_fb": 20,
+      "auroc": 0.5128,
+      "lam": 0.091
+    },
+    {
+      "n_fb": 25,
+      "auroc": 0.5111,
+      "lam": 0.118
+    },
+    {
+      "n_fb": 30,
+      "auroc": 0.4762,
+      "lam": 0.118
+    },
+    {
+      "n_fb": 35,
+      "auroc": 0.575,
+      "lam": 0.118
+    },
+    {
+      "n_fb": 40,
+      "auroc": 0.5704,
+      "lam": 0.118
+    },
+    {
+      "n_fb": 45,
+      "auroc": 0.6065,
+      "lam": 0.118
+    }
+  ]
+}

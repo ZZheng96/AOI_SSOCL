@@ -1,0 +1,13 @@
+{
+  "algorithmId": 7003,
+  "algorithmCode": "component_shift",
+  "version": 1,
+  "remark": "元件移位检测：ROI位姿估计(PCA+边缘角度) dx/dy/theta 超公差判定",
+  "releaseUser": "administrator",
+  "releaseTime": "2026-06-30T00:00:00",
+  "defaultParam": {
+    "pos_tol_mm": 0.05,
+    "angle_tol_deg": 2.0,
+    "polarity_precheck": "off"
+  }
+}

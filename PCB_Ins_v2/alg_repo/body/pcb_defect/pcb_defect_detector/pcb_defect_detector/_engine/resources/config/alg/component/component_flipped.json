@@ -1,0 +1,13 @@
+{
+  "algorithmId": 7005,
+  "algorithmCode": "component_flipped",
+  "version": 1,
+  "remark": "元件翻件检测：NCC正面得分+HSV直方图相关 双特征2/2投票",
+  "releaseUser": "administrator",
+  "releaseTime": "2026-06-30T00:00:00",
+  "defaultParam": {
+    "ncc_front_min": 0.55,
+    "hist_corr_min": 0.75,
+    "vote_fail_min": 2
+  }
+}

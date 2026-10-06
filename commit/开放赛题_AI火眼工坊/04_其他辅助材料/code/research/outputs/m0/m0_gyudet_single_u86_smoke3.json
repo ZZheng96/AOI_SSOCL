@@ -1,0 +1,43 @@
+{
+  "name": "gyudet",
+  "mode": "single",
+  "fit_seconds": 332.83,
+  "u86_head": "u86v8_head.pt",
+  "u86_test_final_60": 0.8856,
+  "n_init_normal": 100,
+  "n_init_defect": 100,
+  "slot_sanity": {
+    "shead": 0.9476
+  },
+  "weights": {
+    "sem": 0.0,
+    "disc": 0.0,
+    "shead": 1.0,
+    "blob": 0.0,
+    "trad": 0.0,
+    "layout": 0.0,
+    "inp": 0.0
+  },
+  "val": {
+    "fused": {
+      "auroc": 0.7703703703703703,
+      "ap": 0.8829786378400165
+    },
+    "ms_per_image": 1368.7496225039165,
+    "shead": {
+      "auroc": 0.7703703703703703,
+      "ap": 0.8829786378400165
+    }
+  },
+  "test": {
+    "fused": {
+      "auroc": 0.7777777777777778,
+      "ap": 0.9170281935316591
+    },
+    "ms_per_image": 1454.0076931317647,
+    "shead": {
+      "auroc": 0.7777777777777778,
+      "ap": 0.9170281935316591
+    }
+  }
+}

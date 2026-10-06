@@ -1,0 +1,19 @@
+{
+  "category": "solder_smt",
+  "mode": "tiles36",
+  "n_test": 82,
+  "n_defect": 73,
+  "bank": {
+    "whole": 35,
+    "tile": 104
+  },
+  "auroc": {
+    "whole_3nn": 0.2725,
+    "whole_min": 0.2009,
+    "tile_min_top3": 0.2161,
+    "tile_min_mean": 0.2161,
+    "tile_3nn_top3": 0.2359,
+    "tile_3nn_mean": 0.2359
+  },
+  "eval_sec": 51.0
+}

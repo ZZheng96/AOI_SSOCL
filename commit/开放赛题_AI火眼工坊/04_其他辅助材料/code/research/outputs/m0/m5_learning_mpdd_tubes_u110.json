@@ -1,0 +1,83 @@
+{
+  "selflearn_off": {
+    "initial_auroc": 1.0,
+    "final_auroc": 1.0,
+    "auroc_gain": 0.0,
+    "efficiency": 0.0,
+    "steps": [],
+    "auroc": [],
+    "f1": [],
+    "n_feedback": 0
+  },
+  "selflearn_on_0.5": {
+    "steps": [
+      3,
+      6,
+      9,
+      12,
+      15,
+      18,
+      21
+    ],
+    "auroc": [
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0
+    ],
+    "f1": [
+      0.8571,
+      0.8571,
+      0.8571,
+      0.8571,
+      0.8571,
+      0.8571,
+      0.8571
+    ],
+    "initial_auroc": 1.0,
+    "final_auroc": 1.0,
+    "auroc_gain": 0.0,
+    "efficiency": 0.0,
+    "a_recheck_auroc": 1.0,
+    "a_recheck_n_defect": 10,
+    "a_recheck_n_normal": 15,
+    "n_feedback": 21,
+    "box_supervised": false,
+    "n_box_feedback": 0,
+    "intercept": {
+      "n_samples": 10,
+      "n_box_samples": 0,
+      "n_hits_total": 55,
+      "eval_n": 30,
+      "eval_boost_gt0": 23,
+      "eval_boost_gt0_defect": 15,
+      "eval_defect_n": 15
+    },
+    "head_ft": {
+      "n_ft": 0,
+      "n_reject": 0,
+      "n_pos_total": 0,
+      "n_neg_total": 11,
+      "events": []
+    },
+    "disc_ft": {
+      "n_ft": 0,
+      "n_reject": 0,
+      "n_pos_total": 0,
+      "n_neg_total": 704,
+      "events": []
+    },
+    "thresh_recal": {
+      "n_recal": 0,
+      "n_reject": 0,
+      "events": []
+    },
+    "weight_learn": {
+      "n_apply": 0,
+      "n_reject": 0
+    }
+  }
+}

@@ -1,0 +1,12 @@
+{
+  "scope": "global_default",
+  "category": null,
+  "algorithm": null,
+  "preprocess": {
+    "color": "NONE",
+    "enhance": "NONE",
+    "filter": "NONE",
+    "morphology": "NONE"
+  },
+  "version": 1
+}

@@ -1,0 +1,11 @@
+{
+  "scope": "template_algorithm",
+  "template_name": "PixPin_2026-07-01_09-30-12_OK",
+  "category": null,
+  "algorithm": "solder_多锡",
+  "params": {
+    "excess_thresh": 0.15,
+    "pad_expand_ratio": 0.3
+  },
+  "version": 1
+}

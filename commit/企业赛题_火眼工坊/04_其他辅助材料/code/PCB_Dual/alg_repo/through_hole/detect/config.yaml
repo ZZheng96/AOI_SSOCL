@@ -1,0 +1,296 @@
+# 插件焊点缺陷检测 — 可调参数
+# 用法: python run.py --config config.yaml
+# 优先级: config.py 默认值 → 本文件（含 void_preset / insuf_preset）
+# solder_mode（ellipse/contour/roi）由控件或 templ_N.json 传入；本文件阈值三种模式共用。
+
+# --- 全局开关 ---
+enable_calibration: true    # 是否对测试图做平移校准
+work_max_dim: 256           # 标准图长边上限(像素)，null 表示不缩放
+
+# --- 孔洞 / 少锡 预设挡位 (LOW=宽松 MED=默认 HIGH=严格，仅在此修改) ---
+void_preset: MED
+insuf_preset: MED
+
+# --- 标准/测试锡面尺寸公差圈 (孔洞掩膜差 & 少锡面积比共用) ---
+edge_align:
+  tol_px: 4                 # 腐蚀核最小半径(像素)；整圈偏差约在此量级时可增大到 5~8
+  erode_frac: 0.035           # 相对 ROI 短边的腐蚀比例；锡面较大时可略增 (0.04~0.06)
+  artifact_ring_min_frac: 0.75  # 候选≥此比例落在标准核心内缘环 → 视为尺寸差误检
+  missing_min_frac: 0.85      # 候选≥此比例来自掩膜差 missing
+  near_test_min_frac: 0.55    # 候选≥此比例贴近测试锡面外缘
+  in_test_max_frac: 0.12      # 候选在测试锡面内的占比上限
+  max_dark_frac: 0.88         # dark 超过此值视为真暗孔，不剔除
+
+# --- 图像校准 (平移/NCC/相位) ---
+# feature=pad_ring：在锡面环上配准并压掉中心引脚，避免引脚偏心拖歪检测区。
+align:
+  template_margin: 12
+  search_radius: 18
+  max_shift_px: 18
+  ncc_min: 0.22
+  phase_min_response: 0.60
+  phase_downsample: 1.0
+  channel: v                        # gray | v | l
+  feature: pad_ring                 # pad_ring | full
+  pin_suppress_frac: 0.30           # 中心压掉比例；引脚偏大可调到 0.34~0.38
+
+# --- 标准图 profile (HSV 自适应范围 / 环带统计) ---
+profile:
+  hsv_margin_h: 10
+  hsv_margin_sv: 22
+  ring_inner_frac: 0.26
+  ring_outer_frac: 0.68
+  prior_dilate: 11
+
+# --- HSV 分割与形态学 ---
+segment:
+  solder_hsv_low: [82, 45, 55]       # 锡面 HSV 下限 (OpenCV H:0-179)
+  solder_hsv_high: [132, 255, 255]
+  solder_wide_hsv_low: [75, 28, 48]  # 宽 HSV 回退
+  solder_wide_hsv_high: [135, 255, 255]
+  solder_use_standard_prior: true
+  solder_punch_center: false
+  solder_keep_largest: true
+  solder_exclude_red: true
+  solder_red_band: 13                # 锡面内红/粉并入锡面的膨胀带宽
+  morph_kernel: 3
+  solder_morph_close: 5
+  solder_morph_open: 3
+  solder_median: 0
+  solder_min_area_frac: 0.02
+  red1_hsv_low: [0, 50, 60]
+  red1_hsv_high: [12, 255, 255]
+  red2_hsv_low: [168, 50, 60]
+  red2_hsv_high: [179, 255, 255]
+  void_v_max: 85                     # 孔洞暗区 V 上限 (严格度会覆盖)
+  void_morph_kernel: 3
+  solder_void_strip_v_max: 85        # 构造孔洞候选掩膜用 (固定，不随 void_preset 变)
+  solder_void_strip_s_max: 130
+  highlight_v_min: 235               # 多锡高亮
+  highlight_s_max: 60
+  edge_ring_inner: 0.38              # 少锡「薄锡型」统计环带 (相对 ROI 半轴)
+  edge_ring_outer: 0.48
+
+# --- 缺陷判定阈值 (TH 字典，键名与代码一致) ---
+thresholds:
+  border_reject_margin: 6
+
+  # ===== 12 孔洞 (相对锡面统计) =====
+  void_v_rel_margin: 3.0
+  void_v_rel_median_k: 0.70
+  void_v_abs_floor: 60
+  void_s_rel_margin: 50.0
+  void_min_area: 35                  # [兼容保留] 旧绝对像素门槛，判定已改为占比
+  void_min_area_ratio: 0.005         # 候选连通域相对 ROI/锡面面积的最小占比
+  # --- 孔洞简化判定：面积占比 + 暗度 ---
+  void_decide_min_area: 180          # [兼容保留] 旧绝对像素判定门槛，已不再作主判据
+  void_decide_area_frac: 0.0035      # 判定：孔洞相对锡面面积的最小占比（界面「面积占比」）
+  void_decide_min_dark: 0.90         # 暗度占比下限
+  void_decide_min_miss: 0.90         # 颜色证据重合度下限
+  void_enc_min: 0.28                 # 边界落在锡面内比例下限（防外缘误报）
+  void_enc_max: 0.52                 # 同上上限（防引脚中心误报）
+  void_path_a_area_frac: 0.0048      # [兼容旧配置] 以下多路径键简化后不再参与判定
+  void_dark_path_area_frac: 0.016
+  void_dark_compact_area_frac: 0.0103
+  void_solid_dark_area_frac: 0.008
+  void_path_b_min_miss: 0.35
+  void_path_b_min_enc: 0.12
+  void_min_circularity: 0.28         # 形状过滤（内部固定）
+  void_max_aspect_ratio: 4.0
+  void_max_count: 12
+  void_use_mask_diff: true
+  void_dark_s_max: 130
+  void_desat_s_rel_margin: 40.0
+  void_desat_s_floor: 40
+  void_min_desat_frac: 0.75
+  void_min_enclosure: 0.35           # [兼容旧配置]
+  void_min_miss_frac: 0.98
+  void_path_a_min_area: 300
+  void_path_a_min_dark: 0.32
+  void_path_a_max_enc: 0.40
+  void_border_margin_px: 3
+  void_dark_min_frac: 0.84
+  void_core_min_frac: 0.68
+  void_dark_path_min_area: 1000
+  void_dark_path_min_enclosure: 0.25
+  void_dark_path_miss_frac: 0.94
+  void_dark_compact_min_area: 650
+  void_dark_compact_min_enclosure: 0.28
+  void_solid_dark_min_area: 500
+  void_solid_dark_min_enclosure: 0.30
+  void_solid_dark_min_miss: 0.95
+  void_type2_min_area: 300
+  void_type2_area_frac: 0.006
+  void_type2_min_dark: 0.94
+  void_type2_min_miss: 0.94
+  void_type2_min_enc: 0.28
+  void_type2_max_enc: 0.38
+  void_type2_min_core: 0.65
+  void_core_compact_min_area: 200
+  void_core_compact_area_frac: 0.004
+  void_core_compact_min_dark: 0.98
+  void_core_compact_min_miss: 0.97
+  void_core_compact_min_core: 0.95
+  void_core_compact_max_enc: 0.50
+  void_edge_shadow_max_enc: 0.32
+  void_edge_shadow_min_dark: 0.92
+  void_edge_shadow_border_px: 8
+
+  # ===== 13 少锡 (仅露铜型/薄锡型两类; 露铜型统一含裸铜红/裸底两种颜色表现) =====
+  insuf_area_ratio_min: 0.20         # 有效检测区(标准锡面∩配准有效区域)内覆盖率低于此直接跳过 (防极端)
+  insuf_exposed_v_min: 90            # 裸底: 暴露金属 V 下限 (绝对兜底)
+  insuf_exposed_s_max: 110           # 裸底: S 上限 (绝对兜底)
+  insuf_exposed_v_rel_drop: 40.0     # 裸底: 相对标准锡面 V 中位数下降量
+  insuf_exposed_s_rel_margin: 30.0   # 裸底: 相对标准锡面 S 中位数上浮量
+  insuf_core_erode_frac: 0.12        # [已废弃不再使用, 保留兼容旧配置文件]
+  insuf_exposed_hard_min: 0.06       # 硬缺口裸露占比 (挡位无关，必 NG)
+  insuf_exposed_hard_roi_min: 0.04    # [已废弃不再使用, 保留兼容旧配置文件]
+  insuf_exposed_hard_red_min: 0.015  # 硬缺口裸铜红占比
+  insuf_copper_tex_max: 0.25         # [兼容旧配置]
+  insuf_thin_over_exposed_tex: 0.35  # [兼容旧配置]
+  insuf_thin_ring_prefer: 0.03       # 边缘环带红 >= 此值优先判薄锡
+  insuf_copper_exposed_prefer: 0.10  # 核心裸露 >= 此值且环带红很少优先判露铜
+  insuf_thin_support_ar_max: 0.72    # 面积比高于此的薄锡路径需裸露/边缘红佐证
+  insuf_thin_support_exposed_min: 0.03
+  insuf_thin_support_ring_min: 0.02
+  insuf_nolead_center_ar_min: 0.82   # 不出脚时抑制少锡: 核心面积比下限
+  insuf_nolead_center_red_max: 0.04  # 不出脚时抑制少锡: 红区上限
+  insuf_nolead_center_ring_max: 0.06 # 不出脚时抑制少锡: 边缘红上限
+  insuf_nolead_center_diff_min: 2.0  # 或中心 diff 超过此值
+  insuf_shift_nolead_ar_max: 0.65    # 严重少锡时抑制不出脚
+  insuf_shift_nolead_exposed_min: 0.12
+  insuf_shift_nolead_ring_min: 0.12
+
+  # ===== 14 多锡(包锡) =====
+  excess_area_ratio_min: 1.15
+  excess_extra_solder_frac_min: 0.025  # 外扩型: 掩膜差面积占标准锡面比例
+  highlight_v_rel_delta: 85.0
+  highlight_v_rel_p25_delta: 60.0
+  highlight_s_rel_margin: 20.0
+  excess_highlight_ratio_min: 0.035
+  excess_circularity_min: 0.55
+  excess_solidity_min: 0.82
+  excess_bright_closure_min: 0.60
+  pin_top_frac: 0.18
+  pin_top_dark_tol: 15.0
+  pin_top_core_std_min: 200
+  pin_top_core_roi_frac: 0.008
+  pin_top_core_std_frac: 0.35
+  excess_bulge_pin_ret_min: 0.82
+  excess_bulge_pin_ret_max: 0.96
+  excess_bulge_extra_cyan_min: 0.032
+  excess_bulge_diff_min: 1.15
+  excess_bulge_diff_max: 1.45
+  excess_bulge_ncc_max: -0.20
+  excess_bulge_area_min: 0.92
+  excess_bulge_area_max: 1.05
+
+  # ===== 16 不出脚 =====
+  nolead_cyan_h_low: 82
+  nolead_cyan_h_high: 104
+  nolead_cyan_s_min: 90
+  nolead_cyan_v_min: 160
+  nolead_center_frac: 0.30
+  nolead_center_cyan_abs: 0.22
+  nolead_std_cyan_min: 0.10
+  nolead_center_cyan_delta: 0.08
+  nolead_std_v_peak_min: 130
+  nolead_std_grad_min: 18.0
+  nolead_patch_ncc_max: -0.15
+  nolead_center_diff_min: 1.00
+  nolead_center_diff_soft: 0.90
+  nolead_peak_ratio_max: 0.50
+  nolead_diff_ok_max: 1.15
+  nolead_cyan_match_max: 0.12
+  nolead_pin_visible_peak_min: 1.05
+  nolead_pin_likely_peak_min: 0.98   # 薄锡+peak>=此值时抑制不出脚叠加
+  nolead_pin_visible_diff_max: 1.60
+  nolead_pin_high_diff_min: 1.60     # peak 高时 diff 需超过此值才算不出脚
+  nolead_cyan_override_delta: 0.25   # 中心亮青占比超标准此增量 => 亮峰判据失效
+  nolead_transition_ring_inner: 0.12
+  nolead_transition_ring_outer: 0.22
+  nolead_ring_v_delta_min: 30.0
+  nolead_ring_contrast_drop_min: 28.0
+  nolead_min_votes: 1              # 不出脚多特征融合最低得分
+  nolead_ring_vote_weight: 2       # 过渡环缺失计分权重
+
+  # ===== 15 连锡 (与其余四类共用 pad_ring 配准) =====
+  bridge_erode_frac: 0.18
+  bridge_erode_min_px: 4
+  bridge_search_margin: 12
+  bridge_exclude_margin: 2
+  bridge_k_sigma: 2.2
+  bridge_change_k: 1.0
+  bridge_change_blur_ksize: 5
+  bridge_open_ksize: 3
+  bridge_min_bridge_pixels: 6       # 颜色桥连：桥区最少像素
+  bridge_min_clearance_ratio: 0.35  # 缝隙相对模板收窄比低于此 → 连锡
+  bridge_min_clearance_px: 2        # 缝隙绝对宽度下限（含闭合 0）
+
+# --- 少锡预设三挡 (覆盖 thresholds 中对应键；露铜硬阈值挡位无关) ---
+# LOW=宽 (轻度薄锡可放行) | MED=默认 | HIGH=严 (边缘薄锡全抓)
+insuf_presets:
+  HIGH:
+    insuf_area_ratio_max: 0.92
+    insuf_red_ratio_min: 0.04
+    insuf_ring_red_min: 0.08
+    insuf_thin_area_max: 0.98
+    insuf_exposed_core_min: 0.08
+  MED:
+    insuf_area_ratio_max: 0.85
+    insuf_red_ratio_min: 0.06
+    insuf_ring_red_min: 0.10
+    insuf_thin_area_max: 0.90
+    insuf_exposed_core_min: 0.08
+  LOW:
+    insuf_area_ratio_max: 0.78
+    insuf_red_ratio_min: 0.08
+    insuf_ring_red_min: 0.14
+    insuf_thin_area_max: 0.82
+    insuf_exposed_core_min: 0.12
+
+# --- 孔洞预设三挡 (主要覆盖面积门槛与暗度敏感度) ---
+void_presets:
+  LOW:
+    VOID_V_MAX: 78
+    void_min_area: 45
+    void_min_area_ratio: 0.008
+    void_min_circularity: 0.32
+    void_dark_s_max: 115
+    void_decide_min_area: 250
+    void_decide_area_frac: 0.005
+    void_decide_min_dark: 0.94
+    void_decide_min_miss: 0.95
+    void_enc_min: 0.32
+    void_enc_max: 0.48
+  MED: {}
+  HIGH:
+    VOID_V_MAX: 92
+    void_min_area: 30
+    void_min_area_ratio: 0.004
+    void_min_circularity: 0.22
+    void_dark_s_max: 140
+    void_decide_min_area: 150
+    void_decide_area_frac: 0.0025
+    void_decide_min_dark: 0.86
+    void_decide_min_miss: 0.86
+    void_enc_min: 0.25
+    void_enc_max: 0.55
+
+# =============================================================================
+# 模板模型配置 (TemplateModel: 缺陷类型开关 / 覆盖率早停)
+# =============================================================================
+
+# --- 启用的缺陷类型 (12孔洞 13少锡 14多锡 15连锡 16不出脚；运行时按框数分流) ---
+enabled_defects: [12, 13, 14, 15, 16]
+
+# --- 按标准图 (templ_N) 覆盖 enabled_defects，未列出的模板使用全局 enabled_defects ---
+# 示例: 若 templ_5 只需要检测孔洞与少锡，可写:
+#   template_overrides:
+#     "5": [12, 13]
+template_overrides: {}
+
+# --- 覆盖率早停 (配准后校验测试锡面与模板锡面的重合度，不达标转入待复检) ---
+coverage:
+  ok_min: 0.97       # 覆盖率不低于此值视为可靠，正常进入四规则检测
+  review_min: 0.85   # 覆盖率低于此值判定为待复检 (提前返回，不进入后续检测)

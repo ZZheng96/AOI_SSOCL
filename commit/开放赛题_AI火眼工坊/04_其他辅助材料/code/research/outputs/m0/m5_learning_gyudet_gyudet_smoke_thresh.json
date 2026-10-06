@@ -1,0 +1,133 @@
+{
+  "selflearn_off": {
+    "initial_auroc": 0.6229,
+    "final_auroc": 0.6229,
+    "auroc_gain": 0.0,
+    "efficiency": 0.0,
+    "steps": [],
+    "auroc": [],
+    "f1": [],
+    "n_feedback": 0
+  },
+  "rounds_on": {
+    "rounds": [
+      1,
+      2,
+      3
+    ],
+    "steps": [
+      10,
+      20,
+      30
+    ],
+    "auroc": [
+      0.6019,
+      0.7029,
+      0.6933
+    ],
+    "f1": [
+      0.8101,
+      0.7463,
+      0.7188
+    ],
+    "initial_auroc": 0.619,
+    "final_auroc": 0.6933,
+    "auroc_gain": 0.0743,
+    "efficiency": 0.0025,
+    "n_feedback": 30,
+    "round_size": 10,
+    "n_rounds": 3,
+    "box_supervised": true,
+    "n_box_feedback": 25,
+    "intercept": {
+      "n_samples": 168,
+      "n_box_samples": 143,
+      "n_hits_total": 2031,
+      "eval_n": 50,
+      "eval_boost_gt0": 45,
+      "eval_boost_gt0_defect": 33,
+      "eval_defect_n": 35
+    },
+    "head_ft": {
+      "n_ft": 0,
+      "n_reject": 0,
+      "n_pos_total": 143,
+      "n_neg_total": 5,
+      "events": []
+    },
+    "disc_ft": {
+      "n_ft": 1,
+      "n_reject": 2,
+      "n_pos_total": 8698,
+      "n_neg_total": 320,
+      "events": [
+        {
+          "t": 1787037659.945314,
+          "n_pos": 3002,
+          "n_neg": 128,
+          "drift": 0.0409,
+          "signed": 0.0409,
+          "epochs": 3,
+          "lr": 0.0001
+        }
+      ]
+    },
+    "thresh_recal": {
+      "n_recal": 0,
+      "n_reject": 1,
+      "events": [
+        {
+          "t": 1787037831.5334344,
+          "n_normal": 5,
+          "fp_before": 0.8,
+          "fp_after": 0.6,
+          "tau_high": 1.0,
+          "tau_gray": 1.0,
+          "status": "rejected",
+          "reason": "fp_rise"
+        }
+      ]
+    },
+    "learned": {
+      "rounds": [
+        1,
+        2,
+        3
+      ],
+      "n_fed": [
+        10,
+        20,
+        30
+      ],
+      "n_wrong_before": [
+        3,
+        4,
+        8
+      ],
+      "n_flip": [
+        1,
+        2,
+        3
+      ],
+      "learned_accs": [
+        0.8,
+        0.85,
+        0.8
+      ],
+      "flip_rates": [
+        0.3333,
+        0.5,
+        0.375
+      ],
+      "defect_recalls": [
+        1.0,
+        0.875,
+        0.8
+      ],
+      "relearn_every": 1,
+      "final_learned_acc": 0.8,
+      "final_flip_rate": 0.375,
+      "final_defect_recall": 0.8
+    }
+  }
+}

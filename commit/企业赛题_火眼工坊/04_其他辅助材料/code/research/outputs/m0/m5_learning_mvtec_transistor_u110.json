@@ -1,0 +1,96 @@
+{
+  "selflearn_off": {
+    "initial_auroc": 0.9814,
+    "final_auroc": 0.9814,
+    "auroc_gain": 0.0,
+    "efficiency": 0.0,
+    "steps": [],
+    "auroc": [],
+    "f1": [],
+    "n_feedback": 0
+  },
+  "selflearn_on_0.5": {
+    "steps": [
+      3,
+      6,
+      9,
+      12,
+      15,
+      18,
+      21,
+      24
+    ],
+    "auroc": [
+      0.9814,
+      0.9814,
+      0.9814,
+      0.9814,
+      0.9814,
+      0.9814,
+      0.9814,
+      0.9814
+    ],
+    "f1": [
+      0.7368,
+      0.7368,
+      0.7368,
+      0.7368,
+      0.7368,
+      0.7368,
+      0.7368,
+      0.7368
+    ],
+    "initial_auroc": 0.9814,
+    "final_auroc": 0.9814,
+    "auroc_gain": 0.0,
+    "efficiency": 0.0,
+    "a_recheck_auroc": 0.9913,
+    "a_recheck_n_defect": 5,
+    "a_recheck_n_normal": 23,
+    "n_feedback": 25,
+    "box_supervised": false,
+    "n_box_feedback": 0,
+    "intercept": {
+      "n_samples": 5,
+      "n_box_samples": 0,
+      "n_hits_total": 15,
+      "eval_n": 30,
+      "eval_boost_gt0": 21,
+      "eval_boost_gt0_defect": 5,
+      "eval_defect_n": 7
+    },
+    "head_ft": {
+      "n_ft": 0,
+      "n_reject": 0,
+      "n_pos_total": 0,
+      "n_neg_total": 20,
+      "events": []
+    },
+    "disc_ft": {
+      "n_ft": 0,
+      "n_reject": 0,
+      "n_pos_total": 0,
+      "n_neg_total": 1280,
+      "events": []
+    },
+    "thresh_recal": {
+      "n_recal": 1,
+      "n_reject": 0,
+      "events": [
+        {
+          "t": 1787667858.6362202,
+          "n_normal": 20,
+          "fp_before": 0.1,
+          "fp_after": 0.05,
+          "tau_high": 0.8292,
+          "tau_gray": 0.8279,
+          "status": "applied"
+        }
+      ]
+    },
+    "weight_learn": {
+      "n_apply": 0,
+      "n_reject": 0
+    }
+  }
+}

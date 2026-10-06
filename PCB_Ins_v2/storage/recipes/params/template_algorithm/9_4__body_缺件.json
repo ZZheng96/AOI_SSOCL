@@ -1,0 +1,12 @@
+{
+  "scope": "template_algorithm",
+  "template_name": "9_4",
+  "category": null,
+  "algorithm": "body_缺件",
+  "params": {
+    "body_ratio_min": 0.3,
+    "presence_ok_min": 0.6,
+    "diff_score_max": 0.5
+  },
+  "version": 1
+}

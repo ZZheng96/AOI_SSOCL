@@ -1,0 +1,12 @@
+{
+  "cv_algorithms": [
+    {
+      "algorithm_code": "surface_wrinkle",
+      "class_path": "algorithms.surface_wrinkle.surface_wrinkle_alg.SurfaceWrinkleAlg",
+      "description": "PCB 表皮起皱检测（免模板）",
+      "idle_timeout": 600,
+      "timeout": 120,
+      "config_path": "./resources/config/alg/surface_wrinkle/surface_wrinkle_alg.json"
+    }
+  ]
+}

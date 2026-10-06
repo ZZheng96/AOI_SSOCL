@@ -1,0 +1,23 @@
+# PCB_Ins v2 依赖（AOI_sys 同栈）
+# 服务
+fastapi>=0.110
+uvicorn[standard]>=0.29
+python-multipart>=0.0.9
+requests>=2.31
+sqlalchemy>=2.0
+
+# 数据/算法
+PyYAML>=6.0
+numpy>=1.24
+opencv-python>=4.8
+Pillow>=10.0
+scikit-learn>=1.3
+
+# 特征引擎（demo5 / AOI_sys）
+torch>=2.0
+torchvision>=0.15
+timm>=0.9
+
+# 桌面端（P7 阶段）
+# PySide6>=6.6
+# pyqtgraph>=0.13

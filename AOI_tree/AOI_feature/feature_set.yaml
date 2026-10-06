@@ -1,0 +1,110 @@
+name: trunk_200
+version: 1
+preprocess:
+  max_side: 256
+  min_side: 32
+groups:
+- key: glcm
+  enabled: true
+  params:
+    distances:
+    - 1
+    angles_deg:
+    - 0
+    - 45
+    - 90
+    - 135
+    levels: 256
+    props:
+    - contrast
+    - correlation
+    - energy
+    - homogeneity
+- key: selfsim
+  enabled: true
+  params:
+    scales:
+    - 4
+    - 8
+    - 16
+    max_blocks: 100
+- key: edge
+  enabled: true
+  params:
+    canny_sigmas:
+    - 1
+    - 2
+    - 3
+    grad_bins: 16
+    lbp_P: 8
+    lbp_R: 1
+    lbp_bins: 6
+- key: hog
+  enabled: true
+  params:
+    orientations: 9
+    cell: 16
+    block: 2
+    out_dim: 11
+- key: shape
+  enabled: true
+  params: {}
+- key: gray
+  enabled: true
+  params: {}
+- key: gloss
+  enabled: true
+  params:
+    sigma_mult: 2.0
+    min_size: 50
+- key: color
+  enabled: true
+  params:
+    hsv_bins: 8
+- key: fft
+  enabled: true
+  params:
+    radius_frac: 4
+    radial_bins: 10
+- key: wavelet
+  enabled: true
+  params:
+    levels: 3
+- key: logic
+  enabled: true
+  params: {}
+- key: gabor
+  enabled: true
+  params:
+    thetas_deg:
+    - 0
+    - 45
+    - 90
+    - 135
+    freqs:
+    - 0.1
+    - 0.3
+    ksize: 21
+    sigma: 4.0
+    gamma: 0.5
+- key: log
+  enabled: true
+  params:
+    sigmas:
+    - 1
+    - 2
+    - 4
+    - 8
+    - 16
+- key: pc
+  enabled: true
+  params:
+    nscale: 4
+- key: surf
+  enabled: true
+  params:
+    n_octaves: 3
+    n_scales: 3
+    base_sigma: 1.6
+    sigma_step: 1.26
+    rel_thresh: 0.01

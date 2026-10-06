@@ -1,0 +1,497 @@
+{
+  "selflearn_off": {
+    "initial_auroc": 0.545,
+    "final_auroc": 0.545,
+    "auroc_gain": 0.0,
+    "efficiency": 0.0,
+    "steps": [],
+    "auroc": [],
+    "f1": [],
+    "n_feedback": 0
+  },
+  "rounds_on": {
+    "rounds": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8,
+      9,
+      10
+    ],
+    "steps": [
+      30,
+      60,
+      90,
+      120,
+      150,
+      180,
+      210,
+      240,
+      270,
+      300
+    ],
+    "auroc": [
+      0.55,
+      0.665,
+      0.665,
+      0.7,
+      0.715,
+      0.7075,
+      0.725,
+      0.7225,
+      0.705,
+      0.71
+    ],
+    "f1": [
+      0.1778,
+      0.6875,
+      0.7714,
+      0.7273,
+      0.6667,
+      0.7077,
+      0.6452,
+      0.7273,
+      0.7463,
+      0.7647
+    ],
+    "initial_auroc": 0.545,
+    "final_auroc": 0.71,
+    "auroc_gain": 0.165,
+    "efficiency": 0.0006,
+    "n_feedback": 300,
+    "round_size": 30,
+    "n_rounds": 10,
+    "box_supervised": true,
+    "n_box_feedback": 256,
+    "intercept": {
+      "n_samples": 1448,
+      "n_box_samples": 1231,
+      "n_hits_total": 189505,
+      "eval_n": 50,
+      "eval_boost_gt0": 47,
+      "eval_boost_gt0_defect": 38,
+      "eval_defect_n": 40
+    },
+    "head_ft": {
+      "n_ft": 0,
+      "n_reject": 5,
+      "n_pos_total": 1231,
+      "n_neg_total": 44,
+      "events": []
+    },
+    "disc_ft": {
+      "n_ft": 18,
+      "n_reject": 4,
+      "n_pos_total": 62549,
+      "n_neg_total": 2816,
+      "events": [
+        {
+          "t": 1787040699.371031,
+          "n_pos": 1679,
+          "n_neg": 128,
+          "drift": 0.036,
+          "signed": 0.036,
+          "epochs": 3,
+          "lr": 0.0001
+        },
+        {
+          "t": 1787040884.4991248,
+          "n_pos": 6217,
+          "n_neg": 128,
+          "drift": 0.1206,
+          "signed": -0.1206,
+          "epochs": 3,
+          "lr": 0.0001
+        },
+        {
+          "t": 1787040912.6622543,
+          "n_pos": 259,
+          "n_neg": 128,
+          "drift": 0.2398,
+          "signed": -0.2398,
+          "epochs": 3,
+          "lr": 0.0001
+        },
+        {
+          "t": 1787041323.8242753,
+          "n_pos": 3805,
+          "n_neg": 128,
+          "drift": 0.0159,
+          "signed": 0.0159,
+          "epochs": 3,
+          "lr": 0.0001
+        },
+        {
+          "t": 1787041547.6712554,
+          "n_pos": 2592,
+          "n_neg": 128,
+          "drift": 0.0087,
+          "signed": 0.0087,
+          "epochs": 3,
+          "lr": 0.0001
+        },
+        {
+          "t": 1787042218.1765459,
+          "n_pos": 6300,
+          "n_neg": 576,
+          "drift": 0.1036,
+          "signed": -0.1036,
+          "epochs": 3,
+          "lr": 0.0001
+        },
+        {
+          "t": 1787042244.6097836,
+          "n_pos": 621,
+          "n_neg": 128,
+          "drift": 0.042,
+          "signed": -0.042,
+          "epochs": 3,
+          "lr": 0.0001
+        },
+        {
+          "t": 1787042897.3683293,
+          "n_pos": 5691,
+          "n_neg": 128,
+          "drift": 0.102,
+          "signed": -0.102,
+          "epochs": 3,
+          "lr": 0.0001
+        },
+        {
+          "t": 1787043917.4555364,
+          "n_pos": 4733,
+          "n_neg": 128,
+          "drift": 0.0634,
+          "signed": -0.0634,
+          "epochs": 3,
+          "lr": 0.0001
+        },
+        {
+          "t": 1787043994.4614341,
+          "n_pos": 407,
+          "n_neg": 128,
+          "drift": 0.0139,
+          "signed": -0.0139,
+          "epochs": 3,
+          "lr": 0.0001
+        },
+        {
+          "t": 1787044184.1811962,
+          "n_pos": 2712,
+          "n_neg": 128,
+          "drift": 0.0797,
+          "signed": -0.0797,
+          "epochs": 3,
+          "lr": 0.0001
+        },
+        {
+          "t": 1787044888.3088927,
+          "n_pos": 5355,
+          "n_neg": 128,
+          "drift": 0.1388,
+          "signed": -0.1388,
+          "epochs": 3,
+          "lr": 0.0001
+        },
+        {
+          "t": 1787045181.5126717,
+          "n_pos": 1499,
+          "n_neg": 128,
+          "drift": 0.2253,
+          "signed": -0.2253,
+          "epochs": 3,
+          "lr": 0.0001
+        },
+        {
+          "t": 1787045791.8045526,
+          "n_pos": 700,
+          "n_neg": 128,
+          "drift": 0.2197,
+          "signed": -0.2197,
+          "epochs": 3,
+          "lr": 0.0001
+        },
+        {
+          "t": 1787046504.896261,
+          "n_pos": 6488,
+          "n_neg": 128,
+          "drift": 0.18,
+          "signed": -0.18,
+          "epochs": 3,
+          "lr": 0.0001
+        },
+        {
+          "t": 1787047233.3491077,
+          "n_pos": 2123,
+          "n_neg": 128,
+          "drift": 0.1638,
+          "signed": -0.1638,
+          "epochs": 3,
+          "lr": 0.0001
+        },
+        {
+          "t": 1787047301.531981,
+          "n_pos": 2005,
+          "n_neg": 128,
+          "drift": 0.0956,
+          "signed": -0.0956,
+          "epochs": 3,
+          "lr": 0.0001
+        },
+        {
+          "t": 1787048082.2815177,
+          "n_pos": 2441,
+          "n_neg": 128,
+          "drift": 0.0467,
+          "signed": -0.0467,
+          "epochs": 3,
+          "lr": 0.0001
+        }
+      ]
+    },
+    "thresh_recal": {
+      "n_recal": 0,
+      "n_reject": 12,
+      "events": [
+        {
+          "t": 1787042224.0028703,
+          "n_normal": 20,
+          "fp_before": 0.4,
+          "fp_after": 0.15,
+          "leak_before": 0.382,
+          "leak_after": 0.6966,
+          "tau_high": 1.0,
+          "tau_gray": 1.0,
+          "status": "rejected",
+          "reason": "defect_leak"
+        },
+        {
+          "t": 1787042480.0464294,
+          "n_normal": 22,
+          "fp_before": 0.3636,
+          "fp_after": 0.1364,
+          "leak_before": 0.3838,
+          "leak_after": 0.7172,
+          "tau_high": 1.0,
+          "tau_gray": 1.0,
+          "status": "rejected",
+          "reason": "defect_leak"
+        },
+        {
+          "t": 1787042889.9591699,
+          "n_normal": 23,
+          "fp_before": 0.3913,
+          "fp_after": 0.1304,
+          "leak_before": 0.4037,
+          "leak_after": 0.7339,
+          "tau_high": 1.0,
+          "tau_gray": 1.0,
+          "status": "rejected",
+          "reason": "defect_leak"
+        },
+        {
+          "t": 1787043897.4815254,
+          "n_normal": 24,
+          "fp_before": 0.375,
+          "fp_after": 0.125,
+          "leak_before": 0.4122,
+          "leak_after": 0.7557,
+          "tau_high": 1.0,
+          "tau_gray": 1.0,
+          "status": "rejected",
+          "reason": "defect_leak"
+        },
+        {
+          "t": 1787044167.4053893,
+          "n_normal": 28,
+          "fp_before": 0.3571,
+          "fp_after": 0.1071,
+          "leak_before": 0.4218,
+          "leak_after": 0.7755,
+          "tau_high": 1.0,
+          "tau_gray": 1.0,
+          "status": "rejected",
+          "reason": "defect_leak"
+        },
+        {
+          "t": 1787044734.7531025,
+          "n_normal": 30,
+          "fp_before": 0.3667,
+          "fp_after": 0.1,
+          "leak_before": 0.4321,
+          "leak_after": 0.784,
+          "tau_high": 1.0,
+          "tau_gray": 1.0,
+          "status": "rejected",
+          "reason": "defect_leak"
+        },
+        {
+          "t": 1787045173.9749,
+          "n_normal": 33,
+          "fp_before": 0.3333,
+          "fp_after": 0.0909,
+          "leak_before": 0.4318,
+          "leak_after": 0.7784,
+          "tau_high": 1.0,
+          "tau_gray": 1.0,
+          "status": "rejected",
+          "reason": "defect_leak"
+        },
+        {
+          "t": 1787046352.1290507,
+          "n_normal": 36,
+          "fp_before": 0.3611,
+          "fp_after": 0.1111,
+          "leak_before": 0.4416,
+          "leak_after": 0.797,
+          "tau_high": 1.0,
+          "tau_gray": 1.0,
+          "status": "rejected",
+          "reason": "defect_leak"
+        },
+        {
+          "t": 1787047188.2202213,
+          "n_normal": 38,
+          "fp_before": 0.3421,
+          "fp_after": 0.1053,
+          "leak_before": 0.4381,
+          "leak_after": 0.8048,
+          "tau_high": 1.0,
+          "tau_gray": 1.0,
+          "status": "rejected",
+          "reason": "defect_leak"
+        },
+        {
+          "t": 1787047264.2055647,
+          "n_normal": 40,
+          "fp_before": 0.35,
+          "fp_after": 0.1,
+          "leak_before": 0.4182,
+          "leak_after": 0.8091,
+          "tau_high": 1.0,
+          "tau_gray": 1.0,
+          "status": "rejected",
+          "reason": "defect_leak"
+        },
+        {
+          "t": 1787048063.8911226,
+          "n_normal": 43,
+          "fp_before": 0.3256,
+          "fp_after": 0.093,
+          "leak_before": 0.4123,
+          "leak_after": 0.8114,
+          "tau_high": 1.0,
+          "tau_gray": 1.0,
+          "status": "rejected",
+          "reason": "defect_leak"
+        },
+        {
+          "t": 1787048227.4326766,
+          "n_normal": 44,
+          "fp_before": 0.3182,
+          "fp_after": 0.0909,
+          "leak_before": 0.4083,
+          "leak_after": 0.8167,
+          "tau_high": 1.0,
+          "tau_gray": 1.0,
+          "status": "rejected",
+          "reason": "defect_leak"
+        }
+      ]
+    },
+    "learned": {
+      "rounds": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10
+      ],
+      "n_fed": [
+        30,
+        60,
+        90,
+        120,
+        150,
+        180,
+        210,
+        240,
+        270,
+        300
+      ],
+      "n_wrong_before": [
+        11,
+        24,
+        33,
+        46,
+        60,
+        74,
+        88,
+        102,
+        108,
+        119
+      ],
+      "n_flip": [
+        3,
+        15,
+        17,
+        19,
+        24,
+        26,
+        32,
+        41,
+        46,
+        52
+      ],
+      "learned_accs": [
+        0.2,
+        0.6833,
+        0.7222,
+        0.6917,
+        0.66,
+        0.6722,
+        0.6333,
+        0.7042,
+        0.7333,
+        0.74
+      ],
+      "flip_rates": [
+        0.2727,
+        0.625,
+        0.5152,
+        0.413,
+        0.4,
+        0.3514,
+        0.3636,
+        0.402,
+        0.4259,
+        0.437
+      ],
+      "defect_recalls": [
+        0.1111,
+        0.6863,
+        0.75,
+        0.697,
+        0.6535,
+        0.6623,
+        0.6136,
+        0.7094,
+        0.7368,
+        0.7422
+      ],
+      "relearn_every": 1,
+      "final_learned_acc": 0.74,
+      "final_flip_rate": 0.437,
+      "final_defect_recall": 0.7422
+    }
+  }
+}

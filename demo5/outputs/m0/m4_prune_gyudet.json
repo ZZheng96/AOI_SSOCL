@@ -1,0 +1,53 @@
+{
+  "val_single": {
+    "sem": 0.6501,
+    "disc": 0.372,
+    "blob": 0.4036,
+    "trad": 0.5,
+    "layout": 0.4754,
+    "inp": 0.5383
+  },
+  "strategies": {
+    "all_equal": {
+      "val_auroc": 0.4111,
+      "test_auroc": 0.4258,
+      "keep": [
+        "sem",
+        "disc",
+        "blob",
+        "trad",
+        "layout",
+        "inp"
+      ]
+    },
+    "drop_lt_0.5": {
+      "val_auroc": 0.5619,
+      "test_auroc": 0.6116,
+      "keep": [
+        "sem",
+        "trad",
+        "inp"
+      ]
+    },
+    "drop_lt_0.6": {
+      "val_auroc": 0.6501,
+      "test_auroc": 0.62,
+      "keep": [
+        "sem"
+      ]
+    },
+    "keep_top2": {
+      "val_auroc": 0.5619,
+      "test_auroc": 0.6116,
+      "keep": [
+        "sem",
+        "inp"
+      ]
+    }
+  },
+  "test": {},
+  "best_on_val": "drop_lt_0.6",
+  "full_test": 0.4258,
+  "prune_test": 0.62,
+  "test_gain": 0.1942
+}

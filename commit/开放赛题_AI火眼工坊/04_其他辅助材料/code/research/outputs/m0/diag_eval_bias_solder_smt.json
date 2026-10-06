@@ -1,0 +1,28 @@
+{
+  "category": "solder_smt",
+  "n": 30,
+  "n_defect": 27,
+  "fused_auroc": 0.4815,
+  "fused_mean_normal": 0.6587,
+  "fused_mean_defect": 0.6485,
+  "slots": {
+    "sem": {
+      "auroc": 0.2037
+    },
+    "disc": {
+      "auroc": 0.7284
+    },
+    "blob": {
+      "auroc": 0.4753
+    },
+    "trad": {
+      "auroc": 0.5
+    },
+    "layout": {
+      "auroc": 0.4136
+    },
+    "inp": {
+      "auroc": 0.3519
+    }
+  }
+}

@@ -1,0 +1,70 @@
+{
+  "results": [
+    {
+      "round": 0,
+      "block_auc": 0.7501,
+      "img_auc": 0.7867
+    },
+    {
+      "round": 1,
+      "block_auc": 0.756,
+      "img_auc": 0.7867
+    },
+    {
+      "round": 2,
+      "block_auc": 0.7543,
+      "img_auc": 0.7822
+    },
+    {
+      "round": 3,
+      "block_auc": 0.7539,
+      "img_auc": 0.7822
+    },
+    {
+      "round": 4,
+      "block_auc": 0.7559,
+      "img_auc": 0.7822
+    },
+    {
+      "round": 5,
+      "block_auc": 0.7588,
+      "img_auc": 0.7822
+    },
+    {
+      "round": 6,
+      "block_auc": 0.7605,
+      "img_auc": 0.7822
+    },
+    {
+      "round": 7,
+      "block_auc": 0.7576,
+      "img_auc": 0.7822
+    },
+    {
+      "round": 8,
+      "block_auc": 0.7593,
+      "img_auc": 0.7867
+    },
+    {
+      "round": 9,
+      "block_auc": 0.7642,
+      "img_auc": 0.7822
+    },
+    {
+      "round": 10,
+      "block_auc": 0.7633,
+      "img_auc": 0.7822
+    }
+  ],
+  "state": {
+    "n_normal": 409,
+    "n_defect": 985,
+    "stats": {
+      "fp_add": 27,
+      "fn_add": 166,
+      "crop_add": 371,
+      "shrink": 98,
+      "n_learn": 100
+    }
+  }
+}

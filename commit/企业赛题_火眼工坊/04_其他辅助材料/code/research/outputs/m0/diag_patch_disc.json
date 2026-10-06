@@ -1,0 +1,6 @@
+{
+  "auc_train_knn": 0.5768,
+  "auc_cross_patch": 0.5333,
+  "auc_lr_patch": 0.7435,
+  "auc_img_top5": 0.6522
+}

@@ -1,0 +1,66 @@
+{
+  "results": [
+    {
+      "round": 0,
+      "crop_img": 0.8789,
+      "block": 0.7017,
+      "block_img": 0.8333
+    },
+    {
+      "round": 1,
+      "crop_img": 0.9233,
+      "block": 0.7417,
+      "block_img": 0.8578,
+      "n_retrain": 1
+    },
+    {
+      "round": 2,
+      "crop_img": 0.9233,
+      "block": 0.7417,
+      "block_img": 0.8578,
+      "n_retrain": 2
+    },
+    {
+      "round": 3,
+      "crop_img": 0.9233,
+      "block": 0.7417,
+      "block_img": 0.8578,
+      "n_retrain": 3
+    },
+    {
+      "round": 4,
+      "crop_img": 0.9233,
+      "block": 0.7417,
+      "block_img": 0.8578,
+      "n_retrain": 4
+    },
+    {
+      "round": 5,
+      "crop_img": 0.9233,
+      "block": 0.7417,
+      "block_img": 0.8578,
+      "n_retrain": 5
+    },
+    {
+      "round": 6,
+      "crop_img": 0.9233,
+      "block": 0.7417,
+      "block_img": 0.8578,
+      "n_retrain": 6
+    },
+    {
+      "round": 7,
+      "crop_img": 0.9233,
+      "block": 0.7417,
+      "block_img": 0.8578,
+      "n_retrain": 7
+    },
+    {
+      "round": 8,
+      "crop_img": 0.9233,
+      "block": 0.7417,
+      "block_img": 0.8578,
+      "n_retrain": 8
+    }
+  ]
+}

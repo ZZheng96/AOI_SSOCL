@@ -1,0 +1,9 @@
+{
+  "n_boxes": 183,
+  "in_patch_median": 10,
+  "in_p10_mean": 3.22,
+  "in_p10_median": 1,
+  "in_p10_ge1": 0.661,
+  "in_p10_ge2": 0.454,
+  "in_p10_ge4": 0.273
+}

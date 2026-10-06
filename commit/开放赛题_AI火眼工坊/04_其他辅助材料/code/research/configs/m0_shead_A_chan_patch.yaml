@@ -1,0 +1,103 @@
+seed: 42
+device: cuda
+protocol:
+  n_init_normal: 100
+  n_init_defect: 30
+  forbid:
+  - test_good
+  - pairs
+  - filename_metadata
+fusion:
+  mode: fixed_equal
+backbone:
+  name: dinov2_vits14
+  output_layer: 9
+  grid: 32
+tiling:
+  mode: single
+  tile_size: 512
+  stride: 448
+  multiscale_scales:
+  - 1
+  - 2
+  - 4
+  multiscale_weights:
+  - 0.6
+  - 0.3
+  - 0.1
+slots:
+  sem:
+    enabled: true
+    coreset_size: 512
+    tile_topk_ratio: 0.05
+    block_topk: 3
+  disc:
+    enabled: true
+    hidden: 128
+    epochs: 30
+    lr: 0.001
+    pseudo_per_image: 8
+    init_from: outputs/m0/disc_pretrain.pt
+    freeze: true
+  shead:
+    enabled: true
+    hidden: 256
+    epochs: 100
+    lr: 0.001
+    batch: 32
+    margin: 5.0
+    pseudo_per_image: 3
+    max_base_tiles: 96
+    max_patches: 50000
+    chan_stats: true
+    patch_stats: true
+  blob:
+    enabled: true
+    sigmas:
+    - 1
+    - 2
+    - 4
+    - 8
+    - 16
+  trad:
+    enabled: true
+  layout:
+    enabled: true
+  inp:
+    enabled: true
+  open:
+    enabled: true
+    n_components: 0.95
+    topk_ratio: 0.05
+    thresh: 0.9
+  tpl:
+    enabled: false
+    feat_weight: 0.7
+    pix_weight: 0.3
+    topk_ratio: 0.1
+router:
+  enabled: true
+  epochs: 50
+  lr: 0.001
+  margin: 0.1
+  lam_entropy: 0.1
+  gate_margin: 0.005
+consensus:
+  enabled: true
+  blend: 0.5
+calibration:
+  cdf_bins: 256
+decision:
+  tau_quantile: 0.99
+  tau_gray: 0.95
+hierarchical:
+  mask_thresh: 0.5
+  min_area: 16
+  work_side: 512
+datasets:
+  gyu_det: D:\CGAIC\data_origin\GYU-DET
+  data_local: D:\CGAIC\data_local
+  mvtec: D:\CGAIC\data_origin\mvtec
+  btad: D:\CGAIC\data_origin\BTAD\BTech_Dataset_transformed
+  mpdd: D:\CGAIC\data_origin\MPDD
+output_dir: d:\CGAIC\demo5\outputs\m0

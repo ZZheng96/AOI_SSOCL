@@ -1,0 +1,123 @@
+{
+  "selflearn_off": {
+    "initial_auroc": 0.8836,
+    "final_auroc": 0.8836,
+    "auroc_gain": 0.0,
+    "efficiency": 0.0,
+    "steps": [],
+    "auroc": [],
+    "f1": [],
+    "n_feedback": 0
+  },
+  "selflearn_on_0.5": {
+    "steps": [
+      3,
+      6,
+      9,
+      12,
+      15,
+      18,
+      21,
+      24,
+      27,
+      30,
+      33,
+      36,
+      39,
+      42,
+      45,
+      48,
+      51
+    ],
+    "auroc": [
+      0.8677,
+      0.873,
+      0.8677,
+      0.8571,
+      0.8571,
+      0.8571,
+      0.8624,
+      0.8624,
+      0.8651,
+      0.8757,
+      0.8757,
+      0.8757,
+      0.8757,
+      0.8757,
+      0.8757,
+      0.8757,
+      0.8757
+    ],
+    "f1": [
+      0.878,
+      0.878,
+      0.85,
+      0.878,
+      0.878,
+      0.878,
+      0.878,
+      0.85,
+      0.85,
+      0.9048,
+      0.878,
+      0.8205,
+      0.8205,
+      0.8205,
+      0.8205,
+      0.8205,
+      0.8205
+    ],
+    "initial_auroc": 0.8677,
+    "final_auroc": 0.8757,
+    "auroc_gain": 0.0079,
+    "efficiency": 0.0001,
+    "a_recheck_auroc": 0.8852,
+    "a_recheck_n_defect": 30,
+    "a_recheck_n_normal": 9,
+    "n_feedback": 53,
+    "box_supervised": false,
+    "n_box_feedback": 0,
+    "intercept": {
+      "n_samples": 30,
+      "n_box_samples": 0,
+      "n_hits_total": 465,
+      "eval_n": 30,
+      "eval_boost_gt0": 24,
+      "eval_boost_gt0_defect": 19,
+      "eval_defect_n": 21
+    },
+    "head_ft": {
+      "n_ft": 0,
+      "n_reject": 0,
+      "n_pos_total": 0,
+      "n_neg_total": 23,
+      "events": []
+    },
+    "disc_ft": {
+      "n_ft": 0,
+      "n_reject": 0,
+      "n_pos_total": 0,
+      "n_neg_total": 1472,
+      "events": []
+    },
+    "thresh_recal": {
+      "n_recal": 1,
+      "n_reject": 0,
+      "events": [
+        {
+          "t": 1787663811.2151299,
+          "n_normal": 20,
+          "fp_before": 0.25,
+          "fp_after": 0.05,
+          "tau_high": 0.9362,
+          "tau_gray": 0.7785,
+          "status": "applied"
+        }
+      ]
+    },
+    "weight_learn": {
+      "n_apply": 0,
+      "n_reject": 0
+    }
+  }
+}

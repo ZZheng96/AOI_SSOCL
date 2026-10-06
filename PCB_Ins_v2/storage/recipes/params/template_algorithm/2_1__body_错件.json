@@ -1,0 +1,13 @@
+{
+  "scope": "template_algorithm",
+  "template_name": "2_1",
+  "category": null,
+  "algorithm": "body_错件",
+  "params": {
+    "vote_fail_min": 2,
+    "size_tol_ratio": 0.2,
+    "hist_corr_min": 0.8,
+    "shape_match_max": 0.25
+  },
+  "version": 1
+}

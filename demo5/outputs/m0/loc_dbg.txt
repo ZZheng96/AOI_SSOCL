@@ -1,0 +1,120 @@
+﻿python : C:\Users\imia/.cache/torch/hub/facebookresearch_dinov2_main\dinov2\layers\swiglu_ffn.py:51: UserWarning: xForm
+ers is not available (SwiGLU)
+At line:15 char:3030
++ ... pgrep\bin'; python -B scripts\diag_loc_eval.py 10 > outputs\m0\loc_db ...
++                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: (C:\Users\imia/....ilable (SwiGLU):String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+  warnings.warn("xFormers is not available (SwiGLU)")
+C:\Users\imia/.cache/torch/hub/facebookresearch_dinov2_main\dinov2\layers\attention.py:33: UserWarning: xFormers is not
+ available (Attention)
+  warnings.warn("xFormers is not available (Attention)")
+C:\Users\imia/.cache/torch/hub/facebookresearch_dinov2_main\dinov2\layers\block.py:40: UserWarning: xFormers is not ava
+ilable (Block)
+  warnings.warn("xFormers is not available (Block)")
+[disc] 加载预训练头 d:\CGAIC\demo5\outputs\m0\disc_pretrain.pt
+    [extract] 20/100 (1s)
+    [extract] 40/100 (3s)
+    [extract] 60/100 (6s)
+    [extract] 80/100 (9s)
+    [extract] 100/100 (11s)
+  [fit] init_normal 提取 100 张完成 (11s)
+    [extract] 20/30 (2s)
+  [fit] init_defect 提取 30 张完成 (15s)
+  [fit] 槽位 sem 完成 (16s)
+  [fit] 槽位 disc 完成 (16s)
+[shead] epoch 10/100 loss_n=6.1205 loss_a=6.5558
+[shead] epoch 20/100 loss_n=6.3431 loss_a=5.6712
+[shead] epoch 30/100 loss_n=6.1176 loss_a=5.0779
+[shead] epoch 40/100 loss_n=4.3938 loss_a=4.0080
+[shead] epoch 50/100 loss_n=1.8055 loss_a=1.9236
+[shead] epoch 60/100 loss_n=0.5471 loss_a=0.9219
+[shead] epoch 70/100 loss_n=0.5994 loss_a=0.7577
+[shead] epoch 80/100 loss_n=0.2129 loss_a=0.2740
+[shead] epoch 90/100 loss_n=0.2280 loss_a=0.2104
+[shead] epoch 100/100 loss_n=1.0433 loss_a=0.0992
+[shead] fit 完成: normal=96 pseudo=288 real_defect=30 pos_total=318 X=414 batch=32 lr=0.001
+  [fit] 槽位 shead 完成 (23s)
+  [fit] 槽位 blob 完成 (23s)
+D:\CGAIC\demo5\scripts\..\src\slots\..\..\..\demo4\src\features\traditional.py:247: FutureWarning: Parameter `min_size`
+ is deprecated since version 0.26.0 and will be removed in 2.0.0 (or later). To avoid this warning, please use the para
+meter `max_size` instead. For more details, see the documentation of `remove_small_objects`. Note that the new threshol
+d removes objects smaller than **or equal to** its value, while the previous parameter only removed smaller ones.
+  bw = morphology.remove_small_objects(bw.astype(bool), min_size=50)
+  [fit] 槽位 trad 完成 (34s)
+  [fit] 槽位 layout 完成 (35s)
+  [fit] 槽位 inp 完成 (35s)
+D:\CGAIC\demo5\scripts\..\src\slots\..\..\..\demo4\src\features\traditional.py:247: FutureWarning: Parameter `min_size`
+ is deprecated since version 0.26.0 and will be removed in 2.0.0 (or later). To avoid this warning, please use the para
+meter `max_size` instead. For more details, see the documentation of `remove_small_objects`. Note that the new threshol
+d removes objects smaller than **or equal to** its value, while the previous parameter only removed smaller ones.
+  bw = morphology.remove_small_objects(bw.astype(bool), min_size=50)
+[route] base=0.9428 router=0.9827 enabled=True (margin=0.005)
+[consensus] (报告) base=0.9428 consensus=0.9263 启用=是 blend=0.5
+[loc] fit 完成，槽位: ['sem', 'disc', 'shead', 'blob', 'trad', 'layout', 'inp']
+D:\CGAIC\demo5\scripts\..\src\slots\..\..\..\demo4\src\features\traditional.py:247: FutureWarning: Parameter `min_size`
+ is deprecated since version 0.26.0 and will be removed in 2.0.0 (or later). To avoid this warning, please use the para
+meter `max_size` instead. For more details, see the documentation of `remove_small_objects`. Note that the new threshol
+d removes objects smaller than **or equal to** its value, while the previous parameter only removed smaller ones.
+  bw = morphology.remove_small_objects(bw.astype(bool), min_size=50)
+  [dbg] 槽位 sem: hms len=1 hms[0]=(32, 32)
+  [dbg] 槽位 disc: hms len=1 hms[0]=(32, 32)
+  [dbg] 槽位 shead: hms len=1 hms[0]=(32, 32)
+  [dbg] 槽位 inp: hms len=1 hms[0]=(32, 32)
+  [dbg] 槽位 blob: hms len=1 hms[0]=None
+  [dbg] 槽位 trad: hms len=1 hms[0]=None
+  [dbg] 槽位 layout: hms len=1 hms[0]=None
+D:\CGAIC\demo5\scripts\..\src\slots\..\..\..\demo4\src\features\traditional.py:247: FutureWarning: Parameter `min_size`
+ is deprecated since version 0.26.0 and will be removed in 2.0.0 (or later). To avoid this warning, please use the para
+meter `max_size` instead. For more details, see the documentation of `remove_small_objects`. Note that the new threshol
+d removes objects smaller than **or equal to** its value, while the previous parameter only removed smaller ones.
+  bw = morphology.remove_small_objects(bw.astype(bool), min_size=50)
+D:\CGAIC\demo5\scripts\..\src\slots\..\..\..\demo4\src\features\traditional.py:247: FutureWarning: Parameter `min_size`
+ is deprecated since version 0.26.0 and will be removed in 2.0.0 (or later). To avoid this warning, please use the para
+meter `max_size` instead. For more details, see the documentation of `remove_small_objects`. Note that the new threshol
+d removes objects smaller than **or equal to** its value, while the previous parameter only removed smaller ones.
+  bw = morphology.remove_small_objects(bw.astype(bool), min_size=50)
+D:\CGAIC\demo5\scripts\..\src\slots\..\..\..\demo4\src\features\traditional.py:247: FutureWarning: Parameter `min_size`
+ is deprecated since version 0.26.0 and will be removed in 2.0.0 (or later). To avoid this warning, please use the para
+meter `max_size` instead. For more details, see the documentation of `remove_small_objects`. Note that the new threshol
+d removes objects smaller than **or equal to** its value, while the previous parameter only removed smaller ones.
+  bw = morphology.remove_small_objects(bw.astype(bool), min_size=50)
+D:\CGAIC\demo5\scripts\..\src\slots\..\..\..\demo4\src\features\traditional.py:247: FutureWarning: Parameter `min_size`
+ is deprecated since version 0.26.0 and will be removed in 2.0.0 (or later). To avoid this warning, please use the para
+meter `max_size` instead. For more details, see the documentation of `remove_small_objects`. Note that the new threshol
+d removes objects smaller than **or equal to** its value, while the previous parameter only removed smaller ones.
+  bw = morphology.remove_small_objects(bw.astype(bool), min_size=50)
+D:\CGAIC\demo5\scripts\..\src\slots\..\..\..\demo4\src\features\traditional.py:247: FutureWarning: Parameter `min_size`
+ is deprecated since version 0.26.0 and will be removed in 2.0.0 (or later). To avoid this warning, please use the para
+meter `max_size` instead. For more details, see the documentation of `remove_small_objects`. Note that the new threshol
+d removes objects smaller than **or equal to** its value, while the previous parameter only removed smaller ones.
+  bw = morphology.remove_small_objects(bw.astype(bool), min_size=50)
+D:\CGAIC\demo5\scripts\..\src\slots\..\..\..\demo4\src\features\traditional.py:247: FutureWarning: Parameter `min_size`
+ is deprecated since version 0.26.0 and will be removed in 2.0.0 (or later). To avoid this warning, please use the para
+meter `max_size` instead. For more details, see the documentation of `remove_small_objects`. Note that the new threshol
+d removes objects smaller than **or equal to** its value, while the previous parameter only removed smaller ones.
+  bw = morphology.remove_small_objects(bw.astype(bool), min_size=50)
+D:\CGAIC\demo5\scripts\..\src\slots\..\..\..\demo4\src\features\traditional.py:247: FutureWarning: Parameter `min_size`
+ is deprecated since version 0.26.0 and will be removed in 2.0.0 (or later). To avoid this warning, please use the para
+meter `max_size` instead. For more details, see the documentation of `remove_small_objects`. Note that the new threshol
+d removes objects smaller than **or equal to** its value, while the previous parameter only removed smaller ones.
+  bw = morphology.remove_small_objects(bw.astype(bool), min_size=50)
+D:\CGAIC\demo5\scripts\..\src\slots\..\..\..\demo4\src\features\traditional.py:247: FutureWarning: Parameter `min_size`
+ is deprecated since version 0.26.0 and will be removed in 2.0.0 (or later). To avoid this warning, please use the para
+meter `max_size` instead. For more details, see the documentation of `remove_small_objects`. Note that the new threshol
+d removes objects smaller than **or equal to** its value, while the previous parameter only removed smaller ones.
+  bw = morphology.remove_small_objects(bw.astype(bool), min_size=50)
+D:\CGAIC\demo5\scripts\..\src\slots\..\..\..\demo4\src\features\traditional.py:247: FutureWarning: Parameter `min_size`
+ is deprecated since version 0.26.0 and will be removed in 2.0.0 (or later). To avoid this warning, please use the para
+meter `max_size` instead. For more details, see the documentation of `remove_small_objects`. Note that the new threshol
+d removes objects smaller than **or equal to** its value, while the previous parameter only removed smaller ones.
+  bw = morphology.remove_small_objects(bw.astype(bool), min_size=50)
+
+=== 定位基线（test 缺陷图 n=10，含框图 10，grid=32）===
+槽位       HitRate@top1%       框内能量占比    样本
+sem             0.290        0.251    10
+disc            0.230        0.241    10
+shead           0.010        0.185    10
+inp             0.180        0.259    10
+fused           0.240        0.242    10

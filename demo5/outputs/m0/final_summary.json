@@ -1,0 +1,300 @@
+{
+  "mvtec": {
+    "bottle": {
+      "auroc": 0.9985,
+      "ap": 0.9991,
+      "f1": 0.9851,
+      "n": 53,
+      "ms_per_image": 501.0,
+      "fit_seconds": 85.3,
+      "n_init_normal": 100,
+      "n_init_defect": 30
+    },
+    "cable": {
+      "auroc": 0.9619,
+      "ap": 0.9667,
+      "f1": 0.8976,
+      "n": 120,
+      "ms_per_image": 527.0,
+      "fit_seconds": 89.2,
+      "n_init_normal": 100,
+      "n_init_defect": 30
+    },
+    "capsule": {
+      "auroc": 0.9252,
+      "ap": 0.9773,
+      "f1": 0.9308,
+      "n": 102,
+      "ms_per_image": 515.0,
+      "fit_seconds": 81.6,
+      "n_init_normal": 100,
+      "n_init_defect": 30
+    },
+    "carpet": {
+      "auroc": 0.9988,
+      "ap": 0.9994,
+      "f1": 0.9915,
+      "n": 87,
+      "ms_per_image": 551.0,
+      "fit_seconds": 85.4,
+      "n_init_normal": 100,
+      "n_init_defect": 30
+    },
+    "grid": {
+      "auroc": 0.9852,
+      "ap": 0.9889,
+      "f1": 0.9655,
+      "n": 50,
+      "ms_per_image": 506.0,
+      "fit_seconds": 81.3,
+      "n_init_normal": 100,
+      "n_init_defect": 28
+    },
+    "hazelnut": {
+      "auroc": 0.9906,
+      "ap": 0.991,
+      "f1": 0.963,
+      "n": 80,
+      "ms_per_image": 516.0,
+      "fit_seconds": 82.5,
+      "n_init_normal": 100,
+      "n_init_defect": 30
+    },
+    "leather": {
+      "auroc": 0.996,
+      "ap": 0.9978,
+      "f1": 0.992,
+      "n": 94,
+      "ms_per_image": 528.0,
+      "fit_seconds": 86.0,
+      "n_init_normal": 100,
+      "n_init_defect": 30
+    },
+    "metal_nut": {
+      "auroc": 0.9791,
+      "ap": 0.993,
+      "f1": 0.9474,
+      "n": 85,
+      "ms_per_image": 493.0,
+      "fit_seconds": 78.5,
+      "n_init_normal": 100,
+      "n_init_defect": 30
+    },
+    "pill": {
+      "auroc": 0.9744,
+      "ap": 0.9941,
+      "f1": 0.96,
+      "n": 137,
+      "ms_per_image": 487.0,
+      "fit_seconds": 79.1,
+      "n_init_normal": 100,
+      "n_init_defect": 30
+    },
+    "screw": {
+      "auroc": 0.8715,
+      "ap": 0.9397,
+      "f1": 0.8876,
+      "n": 130,
+      "ms_per_image": 467.0,
+      "fit_seconds": 77.6,
+      "n_init_normal": 100,
+      "n_init_defect": 30
+    },
+    "tile": {
+      "auroc": 0.9989,
+      "ap": 0.9993,
+      "f1": 0.9907,
+      "n": 87,
+      "ms_per_image": 506.0,
+      "fit_seconds": 82.4,
+      "n_init_normal": 100,
+      "n_init_defect": 30
+    },
+    "transistor": {
+      "auroc": 0.9633,
+      "ap": 0.8837,
+      "f1": 0.8696,
+      "n": 80,
+      "ms_per_image": 482.0,
+      "fit_seconds": 75.4,
+      "n_init_normal": 100,
+      "n_init_defect": 20
+    },
+    "toothbrush": {
+      "auroc": 0.9667,
+      "ap": 0.9768,
+      "f1": 0.9333,
+      "n": 27,
+      "ms_per_image": 513.0,
+      "fit_seconds": 49.5,
+      "n_init_normal": 60,
+      "n_init_defect": 15
+    },
+    "wood": {
+      "auroc": 0.9561,
+      "ap": 0.9681,
+      "f1": 0.9492,
+      "n": 49,
+      "ms_per_image": 527.0,
+      "fit_seconds": 86.1,
+      "n_init_normal": 100,
+      "n_init_defect": 30
+    },
+    "zipper": {
+      "auroc": 0.9849,
+      "ap": 0.995,
+      "f1": 0.9718,
+      "n": 121,
+      "ms_per_image": 580.0,
+      "fit_seconds": 91.1,
+      "n_init_normal": 100,
+      "n_init_defect": 30
+    }
+  },
+  "btad": {
+    "01": {
+      "auroc": 0.9657,
+      "ap": 0.9833,
+      "f1": 0.9796,
+      "n": 46,
+      "ms_per_image": 629.0,
+      "fit_seconds": 94.8,
+      "n_init_normal": 100,
+      "n_init_defect": 24
+    },
+    "02": {
+      "auroc": 0.9169,
+      "ap": 0.9847,
+      "f1": 0.9492,
+      "n": 200,
+      "ms_per_image": 473.0,
+      "fit_seconds": 78.0,
+      "n_init_normal": 100,
+      "n_init_defect": 30
+    },
+    "03": {
+      "auroc": 1.0,
+      "ap": 1.0,
+      "f1": 1.0,
+      "n": 421,
+      "ms_per_image": 475.0,
+      "fit_seconds": 72.2,
+      "n_init_normal": 100,
+      "n_init_defect": 20
+    }
+  },
+  "mpdd": {
+    "bracket_black": {
+      "auroc": 0.9661,
+      "ap": 0.9625,
+      "f1": 0.913,
+      "n": 56,
+      "ms_per_image": 479.0,
+      "fit_seconds": 77.5,
+      "n_init_normal": 100,
+      "n_init_defect": 23
+    },
+    "bracket_brown": {
+      "auroc": 0.997,
+      "ap": 0.9973,
+      "f1": 0.9804,
+      "n": 52,
+      "ms_per_image": 481.0,
+      "fit_seconds": 77.5,
+      "n_init_normal": 100,
+      "n_init_defect": 25
+    },
+    "bracket_white": {
+      "auroc": 0.9733,
+      "ap": 0.965,
+      "f1": 0.9286,
+      "n": 45,
+      "ms_per_image": 509.0,
+      "fit_seconds": 73.5,
+      "n_init_normal": 100,
+      "n_init_defect": 15
+    },
+    "connector": {
+      "auroc": 1.0,
+      "ap": 1.0,
+      "f1": 1.0,
+      "n": 37,
+      "ms_per_image": 506.0,
+      "fit_seconds": 70.3,
+      "n_init_normal": 100,
+      "n_init_defect": 7
+    },
+    "metal_plate": {
+      "auroc": 1.0,
+      "ap": 1.0,
+      "f1": 1.0,
+      "n": 67,
+      "ms_per_image": 507.0,
+      "fit_seconds": 51.2,
+      "n_init_normal": 54,
+      "n_init_defect": 30
+    },
+    "tubes": {
+      "auroc": 0.9415,
+      "ap": 0.9482,
+      "f1": 0.9024,
+      "n": 71,
+      "ms_per_image": 544.0,
+      "fit_seconds": 87.7,
+      "n_init_normal": 100,
+      "n_init_defect": 30
+    }
+  },
+  "data_local": {
+    "component": {
+      "auroc": 0.7143,
+      "ap": 0.9094,
+      "f1": 0.9333,
+      "n": 9,
+      "ms_per_image": 392.0,
+      "fit_seconds": 8.6,
+      "n_init_normal": 8,
+      "n_init_defect": 7
+    },
+    "extra_part": {
+      "auroc": 0.575,
+      "ap": 0.7797,
+      "f1": 0.8333,
+      "n": 28,
+      "ms_per_image": 902.0,
+      "fit_seconds": 47.4,
+      "n_init_normal": 31,
+      "n_init_defect": 19
+    },
+    "gold_finger": {
+      "auroc": 0.1016,
+      "ap": 0.5995,
+      "f1": 0.8661,
+      "n": 72,
+      "ms_per_image": 1006.0,
+      "fit_seconds": 91.7,
+      "n_init_normal": 68,
+      "n_init_defect": 30
+    },
+    "solder_smt": {
+      "auroc": 0.223,
+      "ap": 0.8093,
+      "f1": 0.9419,
+      "n": 82,
+      "ms_per_image": 427.0,
+      "fit_seconds": 34.2,
+      "n_init_normal": 35,
+      "n_init_defect": 30
+    }
+  },
+  "gyudet": {
+    "auroc": 0.5594,
+    "ap": 0.7415,
+    "f1": 0.8692,
+    "n": 150,
+    "ms_per_image": 990.0,
+    "fit_seconds": 130.9,
+    "n_init_normal": 100,
+    "n_init_defect": 30
+  }
+}

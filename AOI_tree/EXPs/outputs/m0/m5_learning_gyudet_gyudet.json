@@ -1,0 +1,40 @@
+{
+  "selflearn_off": {
+    "initial_auroc": 0.5717,
+    "final_auroc": 0.5717,
+    "auroc_gain": 0.0,
+    "efficiency": 0.0,
+    "steps": [],
+    "auroc": [],
+    "f1": [],
+    "n_feedback": 0
+  },
+  "selflearn_on_0.5": {
+    "steps": [
+      10,
+      20,
+      30,
+      40,
+      50
+    ],
+    "auroc": [
+      0.6526,
+      0.7463,
+      0.761,
+      0.7574,
+      0.75
+    ],
+    "f1": [
+      0.2439,
+      0.5385,
+      0.6296,
+      0.5769,
+      0.5769
+    ],
+    "initial_auroc": 0.7426,
+    "final_auroc": 0.7629,
+    "auroc_gain": 0.0202,
+    "efficiency": 0.0004,
+    "n_feedback": 53
+  }
+}

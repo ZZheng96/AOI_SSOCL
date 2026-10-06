@@ -1,0 +1,6 @@
+{
+  "outputs_dir": "D:\\CGAIC\\PCB_Ins_v2\\storage\\outputs",
+  "gate_enabled": true,
+  "size_gate_max_diff_px": 10,
+  "stop_on_error": false
+}

@@ -1,0 +1,12 @@
+{
+  "enabled": false,
+  "base_auc": 1.0,
+  "router_auc": 1.0,
+  "gate_margin": 0.005,
+  "train_info": {
+    "loss": 0.09195265918970108,
+    "pos_mean": 1.8029428720474243,
+    "neg_mean": 0.5451363921165466,
+    "weight_std": 0.10041876882314682
+  }
+}

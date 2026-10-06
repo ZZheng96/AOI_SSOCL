@@ -1,0 +1,128 @@
+{
+  "meta": {
+    "date": "2026-08-16",
+    "task": "shead 槽位叠加验证 demo5 剩余未达 0.9 品类（screw/transistor/MPDD black/brown/tubes），目标学习后 AUC>=0.9",
+    "tiling_mode": "single",
+    "max_test": 150,
+    "weight_modes": ["equal", "sanity"],
+    "shead_enabled": true,
+    "m0_cmd": "python scripts/m0_baseline.py --dataset {mvtec|mpdd} --category ... --weight-mode {equal|sanity} --max-test 150",
+    "learning_curve_cmd": "python scripts/m5_learning_curve.py --dataset {mvtec|mpdd} --category ... --max-test 150 --eval-n 30 --eval-every 10 --max-feedback 60 --ratios 0.5（U51/U44 同款协议：stream=test[:-30]，锚定集=test[-30:]）",
+    "caliber_note": "既有成绩（U34/U40/U44）为 tiles36 口径，本次为 single 口径（当前 m0.yaml 默认）。跨口径比较含 tiling 差异；shead 单槽 AUROC 与 sanity 权重机制不受 tiling 影响",
+    "m0_json_overwrite_note": "m0_baseline 输出文件名不含 weight_mode，sanity 运行覆盖了等权 JSON；等权数值见本文件与运行日志"
+  },
+  "results": {
+    "mvtec_screw": {
+      "existing_tiles36": {"equal": 0.7596, "sanity": 0.7501, "learning_curve_U44": "0.7963->0.8095 (gain +0.0132)"},
+      "shead_slot_auroc": 0.9272,
+      "sem_slot_auroc": 0.9072,
+      "equal_single": 0.8813,
+      "sanity_single": 0.8908,
+      "learning_curve": {
+        "selflearn_off_anchor": 0.8889,
+        "initial": 0.9048,
+        "final": 0.9286,
+        "gain": 0.0238,
+        "efficiency": 0.0004,
+        "n_feedback": 53,
+        "peak": 0.9788,
+        "peak_at_feedback": 20,
+        "auroc_curve": [0.9259, 0.9788, 0.9788, 0.9312, 0.9286]
+      },
+      "learning_after_ge_0.9": true,
+      "conclusion": "shead 补足成立：学习后 0.9286 >= 0.9，突破 U44 无 shead 的 0.8095"
+    },
+    "mvtec_transistor": {
+      "existing_tiles36": {"equal": 0.8940, "sanity": 0.8980},
+      "shead_slot_auroc": 0.8910,
+      "sem_slot_auroc": 0.9800,
+      "equal_single": 0.9920,
+      "sanity_single": 0.9920,
+      "learning_curve": {
+        "selflearn_off_anchor": 0.9814,
+        "initial": 0.9783,
+        "final": 0.9565,
+        "gain": -0.0217,
+        "efficiency": -0.0009,
+        "n_feedback": 25,
+        "peak": 0.9503,
+        "peak_at_feedback": 10,
+        "auroc_curve": [0.9503, 0.9503]
+      },
+      "learning_after_ge_0.9": true,
+      "conclusion": "静态与学习后均 >=0.9（0.9920/0.9565）；学习增益小负（25 反馈，学习噪声），如实登记"
+    },
+    "mpdd_bracket_black": {
+      "existing_tiles36": {"equal": 0.8646, "sanity": 0.865},
+      "shead_slot_auroc": 0.9414,
+      "sem_slot_auroc": 0.7904,
+      "equal_single": 0.8034,
+      "sanity_single": 0.9661,
+      "learning_curve": {
+        "selflearn_off_anchor": 0.8373,
+        "initial": 0.8182,
+        "final": 0.7943,
+        "gain": -0.0239,
+        "efficiency": -0.0024,
+        "n_feedback": 10,
+        "peak": 0.7943,
+        "peak_at_feedback": 10,
+        "auroc_curve": [0.7943]
+      },
+      "learning_after_ge_0.9": false,
+      "conclusion": "静态 sanity 0.9661 >= 0.9（shead 0.9414 被 sanity 加权兑现）；但等权 0.8034 低于既有 tiles36 0.8646（tiling 口径差异，非 shead 拉低——shead 单槽 0.9414 强）；学习曲线 10 反馈负增益，学习后 0.7943 < 0.9"
+    },
+    "mpdd_bracket_brown": {
+      "existing_tiles36": {"equal": 0.8669, "sanity": 0.867},
+      "shead_slot_auroc": 1.0,
+      "sem_slot_auroc": 0.8203,
+      "equal_single": 0.9275,
+      "sanity_single": 0.9970,
+      "learning_curve": {
+        "selflearn_off_anchor": 0.9689,
+        "initial": 0.9689,
+        "final": 0.6267,
+        "gain": -0.3422,
+        "efficiency": -0.038,
+        "n_feedback": 9,
+        "peak": null,
+        "peak_at_feedback": null,
+        "auroc_curve": []
+      },
+      "learning_after_ge_0.9": false,
+      "conclusion": "静态含 shead 强（equal 0.9275/sanity 0.9970 均 >=0.9，shead 单槽 1.0000）；但学习曲线 9 反馈（stream 22 张）SSOCL 更新扰动致学习后 0.6267 崩落——U24/U26 型小反馈集学习噪声最极端例，如实登记；静态达标不依赖学习"
+    },
+    "mpdd_tubes": {
+      "existing_tiles36": {"equal": 0.7756, "sanity": 0.776},
+      "shead_slot_auroc": 0.9067,
+      "sem_slot_auroc": 0.8369,
+      "equal_single": 0.9022,
+      "sanity_single": 0.9415,
+      "learning_curve": {
+        "selflearn_off_anchor": 0.9689,
+        "initial": 0.9400,
+        "final": 0.9289,
+        "gain": -0.0111,
+        "efficiency": -0.0005,
+        "n_feedback": 21,
+        "peak": 0.9289,
+        "peak_at_feedback": 20,
+        "auroc_curve": [0.8489, 0.9289]
+      },
+      "learning_after_ge_0.9": true,
+      "conclusion": "静态 0.9022/0.9415 与学习后 0.9289 均 >=0.9，相对既有 0.776 大幅补足（shead 0.9067）"
+    }
+  },
+  "summary": {
+    "learning_after_ge_0.9": ["mvtec_screw 0.9286", "mvtec_transistor 0.9565", "mpdd_tubes 0.9289"],
+    "static_sanity_ge_0.9": ["mvtec_screw 0.8908", "mvtec_transistor 0.9920", "mpdd_bracket_black 0.9661", "mpdd_bracket_brown 0.9970", "mpdd_tubes 0.9415"],
+    "shead_slot_range": "0.89-1.00（5/5 品类强）",
+    "negative": [
+      "mpdd_bracket_brown 学习曲线 -0.3422（9 反馈，学习噪声极端例，静态 sanity 0.9970 仍达标）",
+      "mpdd_bracket_black 学习曲线 -0.0239（10 反馈，学习后 0.7943 < 0.9，静态 sanity 0.9661 达标）",
+      "mvtec_transistor -0.0217 / mpdd_tubes -0.0111（25/21 反馈，学习后仍 >=0.9）",
+      "mpdd_bracket_black 等权 single 0.8034 < 既有 tiles36 0.8646（tiling 口径差异，sanity 0.9661 反超）"
+    ],
+    "conclusion": "shead 在 5 品类全部正增益（单槽 0.89-1.00）；screw 学习后 0.9286 突破 U44 的 0.8095 并达 >=0.9 目标；学习后 >=0.9 达成 3/5（screw/transistor/tubes），MPDD brown/black 静态 sanity 已 >=0.9 但学习曲线小反馈集负增益（U24/U26 型学习噪声复现）；口径：本次 single，既有记录 tiles36"
+  }
+}

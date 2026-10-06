@@ -1,0 +1,26 @@
+{
+  "scope": "template_algorithm",
+  "template_name": "PixPin_2026-07-01_11-21-15_OK",
+  "category": null,
+  "algorithm": "solder_共用参数",
+  "params": {
+    "template_mode": "diff_grow_ROI",
+    "mask_h_low": 57,
+    "mask_h_high": 93,
+    "mask_s_min": 61,
+    "mask_v_min": 15,
+    "silk_h_low": 81,
+    "silk_h_high": 106,
+    "silk_s_low": 61,
+    "silk_s_high": 121,
+    "silk_v_low": 90,
+    "silk_v_high": 131,
+    "RB_thresh_exc": 10,
+    "diff_thresh_exc": 5,
+    "solder_blue_h_low": 85,
+    "solder_blue_h_high": 179,
+    "solder_blue_s_min": 78,
+    "solder_blue_v_min": 70
+  },
+  "version": 1
+}

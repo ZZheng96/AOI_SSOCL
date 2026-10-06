@@ -1,0 +1,21 @@
+{
+  "algorithmId": 8001,
+  "algorithmCode": "surface_wrinkle",
+  "version": 1,
+  "remark": "PCB 表皮起皱检测",
+  "releaseUser": "administrator",
+  "releaseTime": "2026-07-19T00:00:00",
+  "defaultParam": {
+    "resize_width": 1400,
+    "pre_blur_sigma": 1.2,
+    "lap_thresh": 5.0,
+    "min_blob_area": 30,
+    "min_blob_diag": 40.0,
+    "curvature_ratio_min": 0.05,
+    "wrinkle_score_thresh": 0.25,
+    "dilate_px": 40,
+    "merge_gap_px": 50,
+    "max_defect_boxes": 4,
+    "box_display_mode": "region"
+  }
+}
