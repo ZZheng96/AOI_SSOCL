@@ -935,6 +935,12 @@ class FeedbackHandler:
                                          "status": "skipped_low_auc"})
             return None
         old = self.p.decider
+        # 诊断（2026-10-06）：反馈缺陷的去加分分与加分量分布——>1.0（拦截加分区）
+        # 候选的召回由缺陷库加分支撑，holdout 未覆盖缺陷类型未必享有（screw R3
+        # 上调 0.85→1.09 后 holdout 召回 0.9→0.7 的根因）。用于判定保守召回口径。
+        pos_nb = [float(fuse(ss, self.p.weights)) for f, ss, lab in scores if lab == 1]
+        pos_boost = [max(0.0, f - nb) for (f, _, lab), nb in
+                     zip([s for s in scores if s[2] == 1], pos_nb)]
 
         tr = self.target_recall
 
@@ -974,21 +980,6 @@ class FeedbackHandler:
         n_c = len(cands)
         cands = [c for c in cands if afp(c) <= self.pair_anchor_fp_max + 1e-9]
         n_budget_cut = n_c - len(cands)
-        # I5：区间内小幅下调的锚定误检增量护栏（结构性大幅下调豁免）
-        base_afp = afp(old.tau_gray)
-        n_c2 = len(cands)
-        cands = [c for c in cands
-                 if c >= old.tau_gray
-                 or old.tau_gray - c >= self.pair_struct_down_move
-                 or afp(c) <= base_afp + self.pair_anchor_fp_delta + 1e-9]
-        n_delta_cut = n_c2 - len(cands)
-        if not cands:
-            self.pair_thresh_log.append({"t": time.time(), "n_pos": len(pos),
-                                         "n_neg": len(neg), "n_delta_cut": n_delta_cut,
-                                         "status": "skipped_anchor_fp_delta",
-                                         "tau_gray": round(float(old.tau_gray), 4),
-                                         "anchor_fp": round(float(base_afp), 4)})
-            return None
         allf = pos + neg
 
         def margin(tg):
@@ -1011,13 +1002,6 @@ class FeedbackHandler:
             # 最近反馈分数间隔最大者；间隔需 ≥2× 当前且每侧 ≥pair_margin_min_each 才动。
             tied = [c for c in cands if abs(bacc(c) - cur) <= 1e-9]
             if min(len(pos), len(neg)) < self.pair_margin_min_each or not tied:
-                if n_delta_cut:
-                    self.pair_thresh_log.append(
-                        {"t": time.time(), "n_pos": len(pos), "n_neg": len(neg),
-                         "n_delta_cut": n_delta_cut,
-                         "status": "skipped_anchor_fp_delta",
-                         "tau_gray": round(float(old.tau_gray), 4),
-                         "anchor_fp": round(float(base_afp), 4)})
                 return None
             m_tg = max(tied, key=margin)
             if margin(m_tg) < 2.0 * margin(old.tau_gray) + 1e-9:
@@ -1050,12 +1034,14 @@ class FeedbackHandler:
         log = {"t": time.time(), "n_pos": len(pos), "n_neg": len(neg),
                "objective": "recall@%.2f" % tr if tr > 0 else "bacc",
                "tpr_before": tpr0, "tnr_before": tnr0, "tpr_after": tpr1, "tnr_after": tnr1,
-               "n_budget_cut": n_budget_cut, "n_delta_cut": n_delta_cut, "reason": reason,
+               "n_budget_cut": n_budget_cut, "reason": reason,
                "bacc_before": round(float(cur), 4), "bacc_after": round(float(best), 4),
                "tau_gray_old": round(old.tau_gray, 4), "tau_gray_new": round(best_tg, 4),
                "tau_high_new": round(best_tg + gap, 4),
                "margin": round(float(margin(best_tg)), 4),
-               "anchor_fp_old": round(float(base_afp), 4),
+               "pos_nb_min": round(min(pos_nb), 4),
+               "pos_boost_min": round(min(pos_boost), 4) if pos_boost else None,
+               "pos_boost_med": round(float(np.median(pos_boost)), 4) if pos_boost else None,
                "anchor_fp": None if anchor_fp is None else round(anchor_fp, 4)}
         if anchor_fp is not None and anchor_fp > self.pair_anchor_fp_max:
             log["status"] = "rejected_anchor_fp"
@@ -1193,6 +1179,17 @@ class FeedbackHandler:
         # （pill shead holdout AUC 0.31）长期保留 1/3 权重。改为在 LOO 诚实分上
         # 直接搜索单纯形权重（缺陷反馈 vs 正常反馈+锚定正常），严格改善才写回。
         if self.pair_thresh_on and self.score_mode == "loo":
+            # I6（2026-10-06）：LOO 搜索路径补上 U108 同等冻结——原实现直接进搜索，
+            # 绕过"fit 权重已优"判据。train 域近乎完美（≥weight_learn_max_train_auroc）
+            # 且已反馈样本 AUC ≥0.9（无域偏移证据）时，小样本单纯形搜索的"改善"
+            # 不迁移（screw s1 实测：n_fb=14 写回 {sem.3/shead.7}，holdout AUROC
+            # 0.94→0.895）。反馈 AUC <0.9（域偏移/反向品类）放行搜索——
+            # gold_finger/GYU-DET 的自救通道不变。
+            train_au = getattr(self.p, "train_auroc", None)
+            if train_au is not None and train_au >= self.weight_learn_max_train_auroc:
+                fb_auc = self._labeled_auc()
+                if fb_auc is None or fb_auc >= 0.9:
+                    return
             return self._search_weights_loo()
         # U108：初始权重已优（train 域 fused AUROC ≥ 门槛，协议内）→ 冻结权重学习
         train_au = getattr(self.p, "train_auroc", None)

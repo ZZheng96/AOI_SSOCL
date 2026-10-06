@@ -194,8 +194,11 @@ class HistoryPage(QWidget):
                 self.combo_template.setCurrentIndex(idx)
         self.combo_template.blockSignals(False)
 
+    HISTORY_LIMIT = 1000  # 单次最多加载的归档条数，防止 outputs 积压后全量扫描卡死页面
+
     def refresh(self) -> None:
-        all_records = self.result_store.list_records(include_debug=self.chk_debug.isChecked())
+        all_records = self.result_store.list_records(
+            include_debug=self.chk_debug.isChecked(), limit=self.HISTORY_LIMIT)
         self._rebuild_template_filter(all_records)
         filt = self.combo_filter.currentText()
         tpl_filter = self.combo_template.currentData() or ""
@@ -246,7 +249,9 @@ class HistoryPage(QWidget):
             for item in r.get("ng_list") or []:
                 types[str(item.get("defect_type") or item.get("display_name") or item.get("algorithm") or "")] += 1
         top = "、".join(f"{k}×{v}" for k, v in types.most_common(3) if k) or "—"
-        self.lbl_stats.setText(f"当班直通率 {yield_txt}  ·  Top 缺陷 {top}  ·  本页 {len(self.records)} 条")
+        cap = f"（仅加载最近 {self.HISTORY_LIMIT} 条）" if len(all_records) >= self.HISTORY_LIMIT else ""
+        self.lbl_stats.setText(
+            f"当班直通率 {yield_txt}  ·  Top 缺陷 {top}  ·  本页 {len(self.records)} 条{cap}")
 
     def _fill_table(self) -> None:
         self.table.setRowCount(len(self.records))

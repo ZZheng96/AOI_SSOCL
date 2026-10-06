@@ -13,9 +13,9 @@ from pathlib import Path
 
 from PySide6.QtCore import Qt, QThread, Signal
 from PySide6.QtWidgets import (
-    QComboBox, QFileDialog, QFormLayout, QHBoxLayout, QLabel, QLineEdit,
-    QMessageBox, QPushButton, QSplitter, QTableWidget, QTableWidgetItem,
-    QVBoxLayout, QWidget,
+    QComboBox, QFileDialog, QFormLayout, QHBoxLayout, QInputDialog, QLabel,
+    QLineEdit, QMessageBox, QPushButton, QSplitter, QTableWidget,
+    QTableWidgetItem, QVBoxLayout, QWidget,
 )
 
 
@@ -162,14 +162,6 @@ class ModelPage(QWidget):
         if path:
             edit.setText(path)
 
-    def _collect_images(self, folder: str) -> list[str]:
-        exts = {".png", ".jpg", ".jpeg", ".bmp", ".tif", ".tiff", ".webp"}
-        root = Path(folder)
-        if not root.is_dir():
-            return []
-        return [str(p) for p in sorted(root.rglob("*"))
-                if p.is_file() and p.suffix.lower() in exts]
-
     def _prepare(self) -> None:
         category = self.edit_category.text().strip()
         normal_dir = self.edit_normal.text().strip()
@@ -207,7 +199,9 @@ class ModelPage(QWidget):
         from app.engines.feature import get_engine
         try:
             engine = get_engine()
-        except Exception:
+        except Exception as exc:  # noqa: BLE001 引擎不可用时须清掉旧表并明示，避免残留数据误导
+            self.table.setRowCount(0)
+            self.lbl_learning.setText(f"特征引擎不可用：{exc}")
             return
         from app.config import get_settings
         snap_root = get_settings().snapshots_dir
@@ -271,12 +265,20 @@ class ModelPage(QWidget):
         engine = get_engine()
         versions = engine.list_snapshots(category)
         cur = engine.current_version(category)
-        # 简单循环：当前版本 → 下一个（版本选择用表格双击未来增强）
         if not versions:
+            QMessageBox.information(self, "提示", f"品类 {category} 暂无版本快照")
             return
-        vs = [v["version"] for v in versions]
-        idx = vs.index(cur) if cur in vs else -1
-        target = vs[(idx + 1) % len(vs)]
+        # 让用户直接选目标版本（原循环切换无法跳到指定版本，多版本时不可用）
+        vs = sorted(v["version"] for v in versions)
+        items = [f"v{v}" + ("（当前）" if v == cur else "") for v in vs]
+        preselect = vs.index(cur) if cur in vs else len(vs) - 1
+        choice, ok = QInputDialog.getItem(
+            self, "激活版本", f"品类 {category} 选择要激活的版本：", items, preselect, False)
+        if not ok:
+            return
+        target = vs[items.index(choice)]
+        if target == cur:
+            return
         engine.activate(category, target)
         self.refresh()
         QMessageBox.information(self, "已激活", f"{category} → v{target}")

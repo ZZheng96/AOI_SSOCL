@@ -60,7 +60,7 @@ class ResultStore:
     ) -> Path:
         now = datetime.now()
         day = now.strftime("%Y-%m-%d")
-        stamp = now.strftime("%H%M%S")
+        stamp = now.strftime("%H%M%S_%f")[:-3]  # 毫秒级：同一秒同图重检会撞目录互相覆盖
         stem = Path(test_image).stem if test_image else "test"
         folder = self.root / day / f"{stamp}_{stem}"
         folder.mkdir(parents=True, exist_ok=True)
@@ -109,7 +109,9 @@ class ResultStore:
         )
         return folder
 
-    def list_records(self, *, include_debug: bool = False) -> list[dict]:
+    def list_records(self, *, include_debug: bool = False,
+                     limit: int | None = None) -> list[dict]:
+        """列出历史归档（按时间倒序）。limit 限制返回条数，避免全量扫描卡死历史页。"""
         records = []
         if not self.root.exists():
             return records
@@ -124,6 +126,8 @@ class ResultStore:
             data["_dir"] = str(json_path.parent)
             data["_json"] = str(json_path)
             records.append(data)
+            if limit is not None and len(records) >= limit:
+                break
         return records
 
     def delete_record(self, folder: str | Path) -> None:
