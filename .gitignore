@@ -12,6 +12,9 @@ __pycache__/
 *.egg-info/
 .pytest_cache/
 
+# Node（依赖可由 npm install 重新生成）
+node_modules/
+
 # 竞赛打包产物（超过远程单文件大小限制）
 /commit/*.rar
 /commit/**/*.zip
