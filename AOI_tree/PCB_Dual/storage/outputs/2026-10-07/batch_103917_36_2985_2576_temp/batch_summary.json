@@ -1,0 +1,67 @@
+{
+  "time": "2026-10-07T10:39:17",
+  "template_id": "36_2985_2576_temp",
+  "template_version": 1,
+  "display_name": "UI测试_extra_part",
+  "ok_count": 5,
+  "ng_count": 1,
+  "error_count": 0,
+  "total": 6,
+  "cancelled": false,
+  "items": [
+    {
+      "test_image": "e:\\CPIPC\\CGAIC\\data_local\\extra_part\\test\\extra\\36_2985_2576_img.jpg",
+      "overall": "NG",
+      "elapsed_ms": 1108,
+      "ng_count": 4,
+      "gate_message": "",
+      "result_folder": "E:\\CPIPC\\CGAIC\\AOI_tree\\PCB_Dual\\storage\\outputs\\2026-10-07\\103908_243_36_2985_2576_img",
+      "ng_algorithms": "body_错件,body_缺件,body_移位,body_破损"
+    },
+    {
+      "test_image": "e:\\CPIPC\\CGAIC\\data_local\\extra_part\\train\\good\\36_2985_2576_temp.jpg",
+      "overall": "OK",
+      "elapsed_ms": 979,
+      "ng_count": 0,
+      "gate_message": "",
+      "result_folder": "E:\\CPIPC\\CGAIC\\AOI_tree\\PCB_Dual\\storage\\outputs\\2026-10-07\\103909_871_36_2985_2576_temp",
+      "ng_algorithms": ""
+    },
+    {
+      "test_image": "C:\\Users\\wch\\AppData\\Local\\Temp\\ui_test_cdrt1q2h\\36_2985_2576_temp__jpeg95.jpg",
+      "overall": "OK",
+      "elapsed_ms": 1008,
+      "ng_count": 0,
+      "gate_message": "",
+      "result_folder": "E:\\CPIPC\\CGAIC\\AOI_tree\\PCB_Dual\\storage\\outputs\\2026-10-07\\103911_506_36_2985_2576_temp__jpeg95",
+      "ng_algorithms": ""
+    },
+    {
+      "test_image": "C:\\Users\\wch\\AppData\\Local\\Temp\\ui_test_cdrt1q2h\\36_2985_2576_temp__noise2.jpg",
+      "overall": "OK",
+      "elapsed_ms": 1032,
+      "ng_count": 0,
+      "gate_message": "",
+      "result_folder": "E:\\CPIPC\\CGAIC\\AOI_tree\\PCB_Dual\\storage\\outputs\\2026-10-07\\103913_232_36_2985_2576_temp__noise2",
+      "ng_algorithms": ""
+    },
+    {
+      "test_image": "C:\\Users\\wch\\AppData\\Local\\Temp\\ui_test_cdrt1q2h\\36_2985_2576_temp__shift2_noise2.jpg",
+      "overall": "OK",
+      "elapsed_ms": 972,
+      "ng_count": 0,
+      "gate_message": "",
+      "result_folder": "E:\\CPIPC\\CGAIC\\AOI_tree\\PCB_Dual\\storage\\outputs\\2026-10-07\\103914_947_36_2985_2576_temp__shift2_noise2",
+      "ng_algorithms": ""
+    },
+    {
+      "test_image": "C:\\Users\\wch\\AppData\\Local\\Temp\\ui_test_cdrt1q2h\\36_2985_2576_temp__bright5.jpg",
+      "overall": "OK",
+      "elapsed_ms": 961,
+      "ng_count": 0,
+      "gate_message": "",
+      "result_folder": "E:\\CPIPC\\CGAIC\\AOI_tree\\PCB_Dual\\storage\\outputs\\2026-10-07\\103916_586_36_2985_2576_temp__bright5",
+      "ng_algorithms": ""
+    }
+  ]
+}

@@ -27,7 +27,6 @@ from app.ui import theme
 from app.ui.detect_page import DetectPage
 from app.ui.history_page import HistoryPage
 from app.ui.inspect_page import InspectPage
-from app.ui.model_page import ModelPage
 from app.ui.preprocess_page import PreprocessPage
 from app.ui.settings_dialog import SettingsDialog
 from app.ui.template_studio_page import TemplateStudioPage
@@ -85,12 +84,15 @@ class MainWindow(QMainWindow):
             self.result_store,
             template_store=self.template_store,
         )
-        self.model_page = ModelPage()
+        # 树枝/树干：特征学习侧（数据/模型/评估/复核/学习/统计）直接用树干 AOI_Core 的页面
+        from app.ui.core_pages import CoreHubPage
+        self.model_page = CoreHubPage()
+        self._model_tab_name = "特征学习（AOI_Core）"
 
         self._tab_inspect = self.tabs.addTab(self.inspect_page, "自动检测")
         self._tab_history = self.tabs.addTab(self.history_page, "历史")
         self._tab_studio = self.tabs.addTab(self.studio_page, "模板建模")
-        self._tab_models = self.tabs.addTab(self.model_page, "品类模型")
+        self._tab_models = self.tabs.addTab(self.model_page, self._model_tab_name)
         self._tab_detect = self.tabs.addTab(self.detect_page, "算法调试")
         self._tab_preprocess = self.tabs.addTab(self.preprocess_page, "预处理")
         body_lay.addWidget(self.tabs, 1)
@@ -151,10 +153,15 @@ class MainWindow(QMainWindow):
             self.tabs.indexOf(self.inspect_page): "自动检测",
             self.tabs.indexOf(self.history_page): "历史",
             self.tabs.indexOf(self.studio_page): "模板建模",
-            self.tabs.indexOf(self.model_page): "品类模型",
+            self.tabs.indexOf(self.model_page): self._model_tab_name,
             self.tabs.indexOf(self.detect_page): "算法调试",
             self.tabs.indexOf(self.preprocess_page): "预处理",
         }
+        if index == self.tabs.indexOf(self.model_page) and hasattr(self.model_page, "ensure_built"):
+            try:
+                self.model_page.ensure_built()
+            except Exception as exc:  # noqa: BLE001
+                self.statusBar().showMessage(f"AOI_Core 页面加载失败：{exc}", 8000)
         self.lbl_header_tab.setText(names.get(index, ""))
         self._refresh_header_runtime()
         self.statusBar().showMessage(names.get(index, "就绪"))

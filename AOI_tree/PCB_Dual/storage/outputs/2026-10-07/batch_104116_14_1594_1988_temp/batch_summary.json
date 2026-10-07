@@ -1,0 +1,67 @@
+{
+  "time": "2026-10-07T10:41:16",
+  "template_id": "14_1594_1988_temp",
+  "template_version": 1,
+  "display_name": "UI测试_extra_part",
+  "ok_count": 2,
+  "ng_count": 4,
+  "error_count": 0,
+  "total": 6,
+  "cancelled": false,
+  "items": [
+    {
+      "test_image": "e:\\CPIPC\\CGAIC\\data_local\\extra_part\\test\\extra\\14_1594_1988_img.jpg",
+      "overall": "NG",
+      "elapsed_ms": 1252,
+      "ng_count": 4,
+      "gate_message": "",
+      "result_folder": "E:\\CPIPC\\CGAIC\\AOI_tree\\PCB_Dual\\storage\\outputs\\2026-10-07\\104107_322_14_1594_1988_img",
+      "ng_algorithms": "body_错件,body_缺件,body_移位,body_破损"
+    },
+    {
+      "test_image": "e:\\CPIPC\\CGAIC\\data_local\\extra_part\\train\\good\\14_1594_1988_temp.jpg",
+      "overall": "OK",
+      "elapsed_ms": 943,
+      "ng_count": 0,
+      "gate_message": "",
+      "result_folder": "E:\\CPIPC\\CGAIC\\AOI_tree\\PCB_Dual\\storage\\outputs\\2026-10-07\\104108_985_14_1594_1988_temp",
+      "ng_algorithms": ""
+    },
+    {
+      "test_image": "C:\\Users\\wch\\AppData\\Local\\Temp\\ui_test_k3hzbzsb\\14_1594_1988_temp__jpeg95.jpg",
+      "overall": "OK",
+      "elapsed_ms": 975,
+      "ng_count": 0,
+      "gate_message": "",
+      "result_folder": "E:\\CPIPC\\CGAIC\\AOI_tree\\PCB_Dual\\storage\\outputs\\2026-10-07\\104110_615_14_1594_1988_temp__jpeg95",
+      "ng_algorithms": ""
+    },
+    {
+      "test_image": "C:\\Users\\wch\\AppData\\Local\\Temp\\ui_test_k3hzbzsb\\14_1594_1988_temp__noise2.jpg",
+      "overall": "NG",
+      "elapsed_ms": 1079,
+      "ng_count": 2,
+      "gate_message": "",
+      "result_folder": "E:\\CPIPC\\CGAIC\\AOI_tree\\PCB_Dual\\storage\\outputs\\2026-10-07\\104112_409_14_1594_1988_temp__noise2",
+      "ng_algorithms": "body_移位,body_破损"
+    },
+    {
+      "test_image": "C:\\Users\\wch\\AppData\\Local\\Temp\\ui_test_k3hzbzsb\\14_1594_1988_temp__shift2_noise2.jpg",
+      "overall": "NG",
+      "elapsed_ms": 1091,
+      "ng_count": 1,
+      "gate_message": "",
+      "result_folder": "E:\\CPIPC\\CGAIC\\AOI_tree\\PCB_Dual\\storage\\outputs\\2026-10-07\\104114_270_14_1594_1988_temp__shift2_noise2",
+      "ng_algorithms": "body_破损"
+    },
+    {
+      "test_image": "C:\\Users\\wch\\AppData\\Local\\Temp\\ui_test_k3hzbzsb\\14_1594_1988_temp__bright5.jpg",
+      "overall": "NG",
+      "elapsed_ms": 1144,
+      "ng_count": 3,
+      "gate_message": "",
+      "result_folder": "E:\\CPIPC\\CGAIC\\AOI_tree\\PCB_Dual\\storage\\outputs\\2026-10-07\\104116_134_14_1594_1988_temp__bright5",
+      "ng_algorithms": "body_错件,body_移位,body_破损"
+    }
+  ]
+}

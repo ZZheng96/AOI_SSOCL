@@ -5,7 +5,6 @@
     python tools/cleanup_data.py --report                # 只出报告（默认，不改任何东西）
     python tools/cleanup_data.py --reset-train           # 清空 storage/train（prepare 时自动重建）
     python tools/cleanup_data.py --purge-outputs --days 30  # 清 30 天前的检测结果归档
-    python tools/cleanup_data.py --snapshots-keep 5      # 每品类保留 激活版+最新5版，其余移入 _archive/
     python tools/cleanup_data.py --db-trim --days 30     # 清 30 天前的操作日志/后台任务记录
     所有动作支持 --dry-run（只打印将删除的内容，不实际删除）
 
@@ -14,7 +13,6 @@
 from __future__ import annotations
 
 import argparse
-import json
 import shutil
 import sys
 import time
@@ -101,38 +99,6 @@ def purge_outputs(settings, days: int, dry: bool) -> None:
     print(f"{'[dry] ' if dry else ''}outputs 清理（>{days}天）：{n} 个日期目录，{_fmt(size)}")
 
 
-def snapshots_keep(settings, keep: int, dry: bool) -> None:
-    root = settings.snapshots_dir
-    if not root.is_dir():
-        print("snapshots 不存在，跳过")
-        return
-    for cat_dir in sorted(root.iterdir()):
-        if not cat_dir.is_dir() or cat_dir.name == "_archive":
-            continue
-        active = None
-        cur = cat_dir / "current.json"
-        if cur.is_file():
-            try:
-                active = int(json.loads(cur.read_text(encoding="utf-8"))["version"])
-            except Exception:  # noqa: BLE001
-                pass
-        versions = sorted(
-            (int(p.name[1:]) for p in cat_dir.iterdir()
-             if p.is_dir() and p.name.startswith("v") and p.name[1:].isdigit()),
-            reverse=True)
-        keep_set = set(versions[:keep]) | ({active} if active else set())
-        for v in versions:
-            if v in keep_set:
-                continue
-            src = cat_dir / f"v{v}"
-            dst = root / "_archive" / f"{cat_dir.name}_v{v}_{time.strftime('%Y%m%d_%H%M%S')}"
-            size = _dir_size(src)
-            print(f"{'[dry] ' if dry else ''}  归档 {cat_dir.name}/v{v} -> {dst.name} ({_fmt(size)})")
-            if not dry:
-                dst.parent.mkdir(parents=True, exist_ok=True)
-                shutil.move(str(src), str(dst))
-
-
 def db_trim(settings, days: int, dry: bool) -> None:
     from datetime import datetime, timedelta
     from app.db.database import session_scope
@@ -153,15 +119,13 @@ def main() -> None:
     ap.add_argument("--report", action="store_true", help="只出占用/行数报告")
     ap.add_argument("--reset-train", action="store_true")
     ap.add_argument("--purge-outputs", action="store_true")
-    ap.add_argument("--snapshots-keep", type=int, default=None, metavar="N")
     ap.add_argument("--db-trim", action="store_true")
     ap.add_argument("--days", type=int, default=30)
     ap.add_argument("--dry-run", action="store_true")
     args = ap.parse_args()
 
     settings = get_settings()
-    acted = any([args.reset_train, args.purge_outputs,
-                 args.snapshots_keep is not None, args.db_trim])
+    acted = any([args.reset_train, args.purge_outputs, args.db_trim])
     if args.report or not acted:
         report(settings)
         if not acted:
@@ -171,8 +135,6 @@ def main() -> None:
         reset_train(settings, args.dry_run)
     if args.purge_outputs:
         purge_outputs(settings, args.days, args.dry_run)
-    if args.snapshots_keep is not None:
-        snapshots_keep(settings, args.snapshots_keep, args.dry_run)
     if args.db_trim:
         db_trim(settings, args.days, args.dry_run)
 

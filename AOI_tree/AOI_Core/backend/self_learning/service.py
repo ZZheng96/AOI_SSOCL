@@ -27,7 +27,7 @@ from ..core.ingest import register_image
 from ..core.notify import notify_event
 from ..db.database import log_action, session_scope
 from ..db.models import (ConsolidationBatch, ConsolidationFeedback, Detection,
-                         Feedback, Model, StatsDaily)
+                         Feedback, Image, Model, StatsDaily)
 from ..engine import get_engine
 
 logger = logging.getLogger(__name__)

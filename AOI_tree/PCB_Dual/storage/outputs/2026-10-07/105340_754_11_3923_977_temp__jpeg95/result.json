@@ -1,0 +1,268 @@
+{
+  "time": "2026-10-07T10:53:40",
+  "template_name": "11_3923_977_temp",
+  "template_id": "11_3923_977_temp",
+  "template_version": 1,
+  "standard_image": "E:\\CPIPC\\CGAIC\\AOI_tree\\PCB_Dual\\templates\\11_3923_977_temp\\standard.jpg",
+  "test_image": "C:\\Users\\wch\\AppData\\Local\\Temp\\ui_test_9ormhurx\\11_3923_977_temp__jpeg95.jpg",
+  "category": null,
+  "overall": "NG",
+  "elapsed_ms": 213,
+  "ng_count": 1,
+  "source": "inspect",
+  "algorithms_selected": [
+    "body_错件",
+    "body_缺件",
+    "body_移位",
+    "body_破损"
+  ],
+  "rule_snapshot": {
+    "template_id": "11_3923_977_temp",
+    "template_version": 1,
+    "display_name": "UI测试_extra_part",
+    "category": "",
+    "calib_key": "11_3923_977_temp",
+    "detection_items": [
+      {
+        "algorithm_id": "body_错件",
+        "enabled": true,
+        "params": {
+          "vote_fail_min": 2,
+          "size_tol_ratio": 0.2,
+          "hist_corr_min": 0.8,
+          "shape_match_max": 0.25
+        },
+        "preprocess_recipe": null,
+        "region_kind": "body"
+      },
+      {
+        "algorithm_id": "body_缺件",
+        "enabled": true,
+        "params": {
+          "body_ratio_min": 0.3,
+          "presence_ok_min": 0.6,
+          "diff_score_max": 0.5
+        },
+        "preprocess_recipe": null,
+        "region_kind": "body"
+      },
+      {
+        "algorithm_id": "body_移位",
+        "enabled": true,
+        "params": {
+          "pos_tol_mm": 0.3,
+          "angle_tol_deg": 10.0
+        },
+        "preprocess_recipe": null,
+        "region_kind": "body"
+      },
+      {
+        "algorithm_id": "body_破损",
+        "enabled": true,
+        "params": {
+          "ssim_diff_thresh": 0.35,
+          "shape_match_max": 0.3,
+          "blob_area_min": 30
+        },
+        "preprocess_recipe": null,
+        "region_kind": "body"
+      }
+    ],
+    "algorithms": [
+      {
+        "algorithm_id": "body_错件",
+        "enabled": true,
+        "params": {
+          "vote_fail_min": 2,
+          "size_tol_ratio": 0.2,
+          "hist_corr_min": 0.8,
+          "shape_match_max": 0.25
+        },
+        "preprocess_recipe": null,
+        "region_kind": "body"
+      },
+      {
+        "algorithm_id": "body_缺件",
+        "enabled": true,
+        "params": {
+          "body_ratio_min": 0.3,
+          "presence_ok_min": 0.6,
+          "diff_score_max": 0.5
+        },
+        "preprocess_recipe": null,
+        "region_kind": "body"
+      },
+      {
+        "algorithm_id": "body_移位",
+        "enabled": true,
+        "params": {
+          "pos_tol_mm": 0.3,
+          "angle_tol_deg": 10.0
+        },
+        "preprocess_recipe": null,
+        "region_kind": "body"
+      },
+      {
+        "algorithm_id": "body_破损",
+        "enabled": true,
+        "params": {
+          "ssim_diff_thresh": 0.35,
+          "shape_match_max": 0.3,
+          "blob_area_min": 30
+        },
+        "preprocess_recipe": null,
+        "region_kind": "body"
+      }
+    ],
+    "region_sets": {
+      "body": [
+        {
+          "shape": "rect",
+          "x": 3623,
+          "y": 677,
+          "w": 472,
+          "h": 600
+        }
+      ]
+    },
+    "calibration": {
+      "body_rois": [
+        {
+          "shape": "rect",
+          "x": 3623,
+          "y": 677,
+          "w": 472,
+          "h": 600
+        }
+      ]
+    },
+    "gate": {
+      "size_gate_enabled": true,
+      "size_gate_max_diff_px": 10
+    },
+    "engine_mode": "traditional",
+    "model_category": "插件器件",
+    "px_calibration": {},
+    "cad_items": [],
+    "panels": {},
+    "fov_grid": []
+  },
+  "ng_list": [
+    {
+      "algorithm": "body_破损",
+      "item_id": "body_破损",
+      "display_name": "破损",
+      "defect_type": "破损",
+      "defect_count": 1,
+      "message": "破损 判定=NG，缺陷数=1，区域=1",
+      "boxes": [
+        {
+          "x": 3623,
+          "y": 1147,
+          "w": 18,
+          "h": 51,
+          "label": "破损·ROI1",
+          "color": "#0f766e",
+          "item_id": "body_破损"
+        }
+      ]
+    }
+  ],
+  "results": [
+    {
+      "algorithm": "body_错件",
+      "item_id": "body_错件",
+      "display_name": "错件",
+      "ok": true,
+      "status": "OK",
+      "message": "错件 判定=OK，缺陷数=0，区域=1",
+      "defect_type": "",
+      "defect_count": 0,
+      "elapsed_ms": 16,
+      "algorithm_version": "1.0.0",
+      "error_code": null,
+      "error_message": null,
+      "skipped": false,
+      "skip_reason": null,
+      "hit_layer": "全局默认 | 参数:模板冻结参数",
+      "param_schema_version": 1,
+      "boxes": [],
+      "manual_verdict": null
+    },
+    {
+      "algorithm": "body_缺件",
+      "item_id": "body_缺件",
+      "display_name": "缺件",
+      "ok": true,
+      "status": "OK",
+      "message": "缺件 判定=OK，缺陷数=0，区域=1",
+      "defect_type": "",
+      "defect_count": 0,
+      "elapsed_ms": 11,
+      "algorithm_version": "1.0.0",
+      "error_code": null,
+      "error_message": null,
+      "skipped": false,
+      "skip_reason": null,
+      "hit_layer": "全局默认 | 参数:模板冻结参数",
+      "param_schema_version": 1,
+      "boxes": [],
+      "manual_verdict": null
+    },
+    {
+      "algorithm": "body_移位",
+      "item_id": "body_移位",
+      "display_name": "移位",
+      "ok": true,
+      "status": "OK",
+      "message": "移位 判定=OK，缺陷数=0，区域=1",
+      "defect_type": "",
+      "defect_count": 0,
+      "elapsed_ms": 7,
+      "algorithm_version": "1.0.0",
+      "error_code": null,
+      "error_message": null,
+      "skipped": false,
+      "skip_reason": null,
+      "hit_layer": "全局默认 | 参数:模板冻结参数",
+      "param_schema_version": 1,
+      "boxes": [],
+      "manual_verdict": null
+    },
+    {
+      "algorithm": "body_破损",
+      "item_id": "body_破损",
+      "display_name": "破损",
+      "ok": false,
+      "status": "NG",
+      "message": "破损 判定=NG，缺陷数=1，区域=1",
+      "defect_type": "破损",
+      "defect_count": 1,
+      "elapsed_ms": 29,
+      "algorithm_version": "1.0.0",
+      "error_code": null,
+      "error_message": null,
+      "skipped": false,
+      "skip_reason": null,
+      "hit_layer": "全局默认 | 参数:模板冻结参数",
+      "param_schema_version": 1,
+      "boxes": [
+        {
+          "x": 3623,
+          "y": 1147,
+          "w": 18,
+          "h": 51,
+          "label": "破损·ROI1",
+          "color": "#0f766e",
+          "item_id": "body_破损"
+        }
+      ],
+      "manual_verdict": null
+    }
+  ],
+  "vis_file": "result_vis.png",
+  "gate_blocked": false,
+  "gate_message": "",
+  "gate_note": "",
+  "manual_overall_verdict": null
+}

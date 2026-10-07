@@ -92,6 +92,96 @@ def _apply_roi(template: np.ndarray, test: np.ndarray, roi: Mapping[str, Any] | 
     return tpl, tst, off_x, off_y
 
 
+# ── 差分前置门控 ──
+# 本体 7 类都是"测试图 vs 标准图"差分判定：若测试 ROI 经亚像素配准 + 亮度归一后
+# 与标准 ROI 在噪声水平内一致，则不可能存在本体缺陷，直接判 OK，不再送算法包。
+# 算法包内部的 body_mask/轮廓/估姿对 JPEG、噪声、亮度、1~2px 平移非常敏感（小元件尤甚），
+# 门控只拦截"无变化"，有实际变化时仍走原算法，召回不受影响。
+_GATE_MAX_SHIFT = 8.0     # 配准允许的最大平移（px），超出视为配准不可信，不门控
+_GATE_DIFF = 22           # 平滑后灰度差阈值
+_GATE_AREA = 15           # 差异连通域面积上限（px²），低于即视为无变化（算法包 blob_area_min=30）
+
+
+def _gray32(img: np.ndarray) -> np.ndarray:
+    import cv2
+
+    g = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY) if img.ndim == 3 else img
+    return g.astype(np.float32)
+
+
+def _unchanged_vs_template(std: np.ndarray, test: np.ndarray, norm_roi) -> tuple[bool, str]:
+    """测试图在 ROI 内是否与标准图一致（配准 + 亮度归一后）。返回 (一致, 说明)。"""
+    import cv2
+
+    if std.shape[:2] != test.shape[:2]:
+        return False, "尺寸不一致"
+    H, W = std.shape[:2]
+    if norm_roi is None:
+        xi, yi, cw, ch, mask = 0, 0, W, H, None
+    else:
+        xi, yi, cw, ch, mask = norm_roi
+    # 在外扩上下文上估计平移，避免元件自身移位被配准吃掉
+    pad = int(max(32, 0.5 * max(cw, ch)))
+    x0, y0 = max(0, xi - pad), max(0, yi - pad)
+    x1, y1 = min(W, xi + cw + pad), min(H, yi + ch + pad)
+    g_ctx, t_ctx = _gray32(std[y0:y1, x0:x1]), _gray32(test[y0:y1, x0:x1])
+    win = cv2.createHanningWindow((g_ctx.shape[1], g_ctx.shape[0]), cv2.CV_32F)
+    (sx, sy), _resp = cv2.phaseCorrelate(g_ctx, t_ctx, win)
+    if abs(sx) > _GATE_MAX_SHIFT or abs(sy) > _GATE_MAX_SHIFT:
+        return False, f"配准偏移过大({sx:.1f},{sy:.1f})"
+    g = cv2.GaussianBlur(g_ctx[yi - y0 : yi - y0 + ch, xi - x0 : xi - x0 + cw], (5, 5), 0)
+    gm, gs = float(g.mean()), float(g.std())
+
+    def _max_blob(dx: int, dy: int) -> int:
+        # 整数偏移取块：getRectSubPix 起点为整数时不插值，越界部分复制边缘
+        center = (xi - x0 + (cw - 1) / 2.0 + dx, yi - y0 + (ch - 1) / 2.0 + dy)
+        t = cv2.GaussianBlur(cv2.getRectSubPix(t_ctx, (cw, ch), center), (5, 5), 0)
+        ts = float(t.std())
+        gain = min(1.25, max(0.8, gs / ts)) if ts > 1e-3 else 1.0  # 亮度归一：均值对齐 + 受限增益
+        t = (t - float(t.mean())) * gain + gm
+        binm = (cv2.absdiff(g, t) > _GATE_DIFF).astype(np.uint8)
+        if mask is not None:
+            binm[mask == 0] = 0
+        n, _lab, stats, _ = cv2.connectedComponentsWithStats(binm, connectivity=8)
+        return int(stats[1:, cv2.CC_STAT_AREA].max()) if n > 1 else 0
+
+    # phaseCorrelate 的亚像素质心在无位移时也可能给出 ±0.5，插值会制造假差异；
+    # 只在零偏移与相邻整数偏移（floor/ceil 组合）处比较，取最小者（残余亚像素误差由 5x5 平滑吸收）
+    import math
+
+    cands = [(0, 0)] + [
+        (dx, dy)
+        for dx in sorted({math.floor(sx), math.ceil(sx)})
+        for dy in sorted({math.floor(sy), math.ceil(sy)})
+        if (dx, dy) != (0, 0)
+    ]
+    max_area = 1 << 30
+    for dx, dy in cands:
+        max_area = min(max_area, _max_blob(dx, dy))
+        if max_area < _GATE_AREA:
+            break
+    return max_area < _GATE_AREA, f"偏移=({sx:.1f},{sy:.1f}) 最大差异块={max_area}px"
+
+
+_gate_lock = threading.Lock()
+_gate_memo: dict[tuple, tuple[np.ndarray, np.ndarray, tuple[bool, str]]] = {}
+
+
+def _gate_cached(std: np.ndarray, test: np.ndarray, norm_roi) -> tuple[bool, str]:
+    """同一次检测里 7 类本体算法共用同一 ROI 门控结果（按数组身份 + ROI 记忆）。"""
+    key = (id(std), id(test)) + (tuple(norm_roi[:4]) if norm_roi is not None else ())
+    with _gate_lock:
+        hit = _gate_memo.get(key)
+        if hit is not None and hit[0] is std and hit[1] is test:
+            return hit[2]
+    res = _unchanged_vs_template(std, test, norm_roi)
+    with _gate_lock:
+        if len(_gate_memo) >= 8:  # 持有图像引用，保持很小
+            _gate_memo.clear()
+        _gate_memo[key] = (std, test, res)
+    return res
+
+
 def _load_metadata_module():
     import sys
 
@@ -307,7 +397,15 @@ class BodyAdapter(BaseAdapter):
         statuses: list[str] = []
         errors: list[str] = []
         last_vis = None
+        gated = 0
         for roi_name, roi in jobs:
+            norm = _normalize_roi(roi, test_bgr.shape[1], test_bgr.shape[0]) if roi else None
+            if norm is not None:
+                same, _why = _gate_cached(std_bgr, test_bgr, norm)
+                if same:
+                    statuses.append("OK")
+                    gated += 1
+                    continue
             tpl_in, tst_in, ox, oy = _apply_roi(std_bgr, test_bgr, roi)
             try:
                 result = body["detector"].detect(code, tpl_in, tst_in, config=cfg)
@@ -351,7 +449,8 @@ class BodyAdapter(BaseAdapter):
         status_text = "NG" if not ok else ("OK" if statuses else "ERROR")
         roi_note = f"，区域={len(rois)}" if rois else ""
         err_note = f"，部分区域失败={len(errors)}" if errors else ""
-        message = f"{label} 判定={status_text}，缺陷数={len(all_boxes)}{roi_note}{err_note}"
+        gate_note = f"，与标准图一致={gated}" if gated else ""
+        message = f"{label} 判定={status_text}，缺陷数={len(all_boxes)}{roi_note}{gate_note}{err_note}"
         return AlgorithmResult(
             algorithm=algorithm_id,
             ok=ok,

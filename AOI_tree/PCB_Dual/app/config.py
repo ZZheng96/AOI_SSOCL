@@ -40,17 +40,13 @@ class Settings:
 
     @property
     def port(self) -> int:
-        return int(os.environ.get("PCBINS_PORT") or self.get("system", "port", 8021))
+        return int(os.environ.get("PCBDUAL_PORT") or self.get("system", "port", 8022))
 
     def storage(self, sub: str) -> Path:
         root = Path(self.get("storage", "root", "storage"))
         p = ROOT_DIR / root / sub
         p.mkdir(parents=True, exist_ok=True)
         return p
-
-    @property
-    def snapshots_dir(self) -> Path:
-        return self.storage("snapshots")
 
     @property
     def logs_dir(self) -> Path:
@@ -72,24 +68,25 @@ class Settings:
         p.mkdir(parents=True, exist_ok=True)
         return p
 
+    # ── 树干 AOI_Core 衔接（特征学习唯一来源）──────
     @property
-    def feature_base_cfg(self) -> Path:
-        rel = Path(self.get("feature_engine", "base_cfg", "configs/demo5_fast.yaml"))
-        p = ROOT_DIR / rel
-        if not p.is_absolute():
-            p = ROOT_DIR / rel
-        return p
+    def aoi_core_url(self) -> str:
+        v = os.environ.get("AOI_CORE_URL") or self.get("feature_engine", "aoi_core_url",
+                                                       "http://127.0.0.1:8017")
+        return str(v).rstrip("/")
 
     @property
-    def device(self) -> str:
-        dev = str(self.get("feature_engine", "device", "auto"))
-        if dev == "auto":
-            try:
-                import torch
-                return "cuda" if torch.cuda.is_available() else "cpu"
-            except Exception:
-                return "cpu"
-        return dev
+    def aoi_core_dir(self) -> Path:
+        p = Path(self.get("feature_engine", "aoi_core_dir", "../AOI_Core"))
+        return (p if p.is_absolute() else (ROOT_DIR / p)).resolve()
+
+    @property
+    def aoi_core_autostart(self) -> bool:
+        return bool(self.get("feature_engine", "autostart", True))
+
+    @property
+    def aoi_core_timeout(self) -> float:
+        return float(self.get("feature_engine", "timeout_s", 30))
 
 
 @lru_cache(maxsize=1)

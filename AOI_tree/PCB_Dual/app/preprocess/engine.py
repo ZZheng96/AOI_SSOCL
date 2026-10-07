@@ -138,9 +138,10 @@ def _auto_contrast_single(channel: np.ndarray, clip_percent: float) -> np.ndarra
 
     if high <= low:
         return channel.copy()
+    # 查表实现，与逐像素 float 计算结果一致，避免整图 float32 中间量
     scale = 255.0 / (high - low)
-    out = (channel.astype(np.float32) - low) * scale
-    return np.clip(out, 0, 255).astype(np.uint8)
+    lut = np.clip((np.arange(256, dtype=np.float32) - low) * scale, 0, 255).astype(np.uint8)
+    return cv2.LUT(channel, lut)
 
 
 def _apply_filter(image: np.ndarray, mode: str) -> np.ndarray:

@@ -1,0 +1,585 @@
+2026-10-07 03:16:23,524 INFO __main__: AOI 服务启动: http://127.0.0.1:8017
+INFO:     Started server process [23376]
+INFO:     Waiting for application startup.
+2026-10-07 03:16:29,432 INFO backend.api.app: 引擎快照登记完成（新增 0 行）
+2026-10-07 03:16:29,445 INFO backend.pipeline.pipeline_service: [pipeline] 产线服务已启动
+INFO:     Application startup complete.
+INFO:     Uvicorn running on http://127.0.0.1:8017 (Press CTRL+C to quit)
+INFO:     127.0.0.1:55993 - "GET /api/health HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55995 - "GET /api/health HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55996 - "GET /api/health HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55997 - "GET /api/categories HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55997 - "GET /api/models HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55997 - "GET /api/models HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55997 - "GET /api/models HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55997 - "POST /api/images/import HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55997 - "GET /api/tasks/13 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55997 - "GET /api/tasks/13 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55997 - "GET /api/tasks/13 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55997 - "POST /api/models/prepare HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55997 - "GET /api/tasks/14 HTTP/1.1" 200 OK
+E:\CPIPC\CGAIC\AOI_tree\assets\dinov2\dinov2\layers\swiglu_ffn.py:51: UserWarning: xFormers is not available (SwiGLU)
+  warnings.warn("xFormers is not available (SwiGLU)")
+E:\CPIPC\CGAIC\AOI_tree\assets\dinov2\dinov2\layers\attention.py:33: UserWarning: xFormers is not available (Attention)
+  warnings.warn("xFormers is not available (Attention)")
+E:\CPIPC\CGAIC\AOI_tree\assets\dinov2\dinov2\layers\block.py:40: UserWarning: xFormers is not available (Block)
+  warnings.warn("xFormers is not available (Block)")
+2026-10-07 03:16:32,493 INFO dinov2: using MLP layer as FFN
+[dino] 使用随包 vendor 权重: E:\CPIPC\CGAIC\AOI_tree\assets\dinov2\dinov2_vits14_pretrain.pth
+INFO:     127.0.0.1:55997 - "GET /api/tasks/14 HTTP/1.1" 200 OK
+[disc] 加载预训练头 E:\CPIPC\CGAIC\AOI_tree\AOI_Core\assets\disc_pretrain.pt
+INFO:     127.0.0.1:55997 - "GET /api/tasks/14 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55997 - "GET /api/tasks/14 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55997 - "GET /api/tasks/14 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55997 - "GET /api/tasks/14 HTTP/1.1" 200 OK
+    [extract] 20/20 (2s)
+  [fit] init_normal 提取 20 张完成 (2s)
+INFO:     127.0.0.1:55997 - "GET /api/tasks/14 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55997 - "GET /api/tasks/14 HTTP/1.1" 200 OK
+  [fit] 槽位 sem 完成 (3s)
+INFO:     127.0.0.1:55997 - "GET /api/tasks/14 HTTP/1.1" 200 OK
+  [fit] 槽位 disc 完成 (3s)
+INFO:     127.0.0.1:55997 - "GET /api/tasks/14 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55997 - "GET /api/tasks/14 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55997 - "GET /api/tasks/14 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55997 - "GET /api/tasks/14 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55997 - "GET /api/tasks/14 HTTP/1.1" 200 OK
+[shead] epoch 10/50 loss_n=4.3540 loss_a=8.6821
+INFO:     127.0.0.1:55997 - "GET /api/tasks/14 HTTP/1.1" 200 OK
+[shead] epoch 20/50 loss_n=5.2388 loss_a=7.4788
+[shead] epoch 30/50 loss_n=6.6857 loss_a=5.9119
+[shead] epoch 40/50 loss_n=6.3316 loss_a=6.1368
+INFO:     127.0.0.1:55997 - "GET /api/tasks/14 HTTP/1.1" 200 OK
+[shead] epoch 50/50 loss_n=6.5481 loss_a=6.0762
+[shead] fit 完成: normal=20 pseudo=60 real_defect=0 pos_total=60 X=80 batch=32 lr=0.001
+  [fit] 槽位 shead 完成 (7s)
+INFO:     127.0.0.1:55997 - "GET /api/tasks/14 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55997 - "GET /api/tasks/14 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55997 - "GET /api/tasks/14 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55997 - "GET /api/tasks/14 HTTP/1.1" 200 OK
+    [extract] 20/20 (1s)
+INFO:     127.0.0.1:55997 - "GET /api/tasks/14 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55997 - "GET /api/tasks/14 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55997 - "GET /api/tasks/14 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55997 - "GET /api/tasks/14 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55997 - "GET /api/tasks/14 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55997 - "GET /api/tasks/14 HTTP/1.1" 200 OK
+2026-10-07 03:16:46,097 WARNING backend.pipeline.service: 对位偏移预警 detection_id=3 category=gold_finger offset=[108.24, -122.82]
+INFO:     127.0.0.1:55997 - "POST /api/detect/image HTTP/1.1" 200 OK
+2026-10-07 03:16:46,842 WARNING backend.pipeline.service: 对位偏移预警 detection_id=4 category=gold_finger offset=[-22.59, 21.84]
+INFO:     127.0.0.1:55997 - "POST /api/detect/image HTTP/1.1" 200 OK
+2026-10-07 03:16:47,033 WARNING backend.pipeline.service: 对位偏移预警 detection_id=5 category=gold_finger offset=[121.9, 118.61]
+INFO:     127.0.0.1:55997 - "POST /api/detect/image HTTP/1.1" 200 OK
+2026-10-07 03:16:47,149 WARNING backend.pipeline.service: 对位偏移预警 detection_id=6 category=gold_finger offset=[-66.97, -82.8]
+INFO:     127.0.0.1:55997 - "POST /api/detect/image HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55997 - "POST /api/feedback HTTP/1.1" 500 Internal Server Error
+ERROR:    Exception in ASGI application
+  + Exception Group Traceback (most recent call last):
+  |   File "E:\CPIPC\CGAIC\.env\lib\site-packages\starlette\_utils.py", line 107, in create_collapsing_task_group
+  |     async with anyio.create_task_group() as tg:
+  |   File "E:\CPIPC\CGAIC\.env\lib\site-packages\anyio\_backends\_asyncio.py", line 847, in __aexit__
+  |     raise BaseExceptionGroup(
+  | exceptiongroup.ExceptionGroup: unhandled errors in a TaskGroup (1 sub-exception)
+  +-+---------------- 1 ----------------
+    | Traceback (most recent call last):
+    |   File "E:\CPIPC\CGAIC\.env\lib\site-packages\uvicorn\protocols\http\httptools_impl.py", line 422, in run_asgi
+    |     result = await app(  # type: ignore[func-returns-value]
+    |   File "E:\CPIPC\CGAIC\.env\lib\site-packages\uvicorn\middleware\proxy_headers.py", line 63, in __call__
+    |     return await self.app(scope, receive, send)
+    |   File "E:\CPIPC\CGAIC\.env\lib\site-packages\fastapi\applications.py", line 1215, in __call__
+    |     await super().__call__(scope, receive, send)
+    |   File "E:\CPIPC\CGAIC\.env\lib\site-packages\starlette\applications.py", line 96, in __call__
+    |     await self.middleware_stack(scope, receive, send)
+    |   File "E:\CPIPC\CGAIC\.env\lib\site-packages\starlette\middleware\errors.py", line 186, in __call__
+    |     raise exc
+    |   File "E:\CPIPC\CGAIC\.env\lib\site-packages\starlette\middleware\errors.py", line 164, in __call__
+    |     await self.app(scope, receive, _send)
+    |   File "E:\CPIPC\CGAIC\.env\lib\site-packages\fastapi\telemetry\_asgi.py", line 151, in __call__
+    |     await self.app(scope, receive, send)
+    |   File "E:\CPIPC\CGAIC\.env\lib\site-packages\starlette\middleware\base.py", line 197, in __call__
+    |     response = await self.dispatch_func(request, call_next)
+    |   File "E:\CPIPC\CGAIC\AOI_tree\AOI_Core\backend\core\security.py", line 148, in dispatch
+    |     return await call_next(request)
+    |   File "E:\CPIPC\CGAIC\.env\lib\site-packages\starlette\middleware\base.py", line 173, in call_next
+    |     raise app_exc from app_exc.__cause__ or app_exc.__context__
+    |   File "E:\CPIPC\CGAIC\.env\lib\site-packages\starlette\middleware\base.py", line 149, in coro
+    |     await self.app(scope, receive_or_disconnect, send_no_error)
+    |   File "E:\CPIPC\CGAIC\.env\lib\site-packages\starlette\middleware\base.py", line 197, in __call__
+    |     response = await self.dispatch_func(request, call_next)
+    |   File "E:\CPIPC\CGAIC\AOI_tree\AOI_Core\backend\core\security.py", line 101, in dispatch
+    |     return await call_next(request)
+    |   File "E:\CPIPC\CGAIC\.env\lib\site-packages\starlette\middleware\base.py", line 173, in call_next
+    |     raise app_exc from app_exc.__cause__ or app_exc.__context__
+    |   File "E:\CPIPC\CGAIC\.env\lib\site-packages\starlette\middleware\base.py", line 149, in coro
+    |     await self.app(scope, receive_or_disconnect, send_no_error)
+    |   File "E:\CPIPC\CGAIC\.env\lib\site-packages\starlette\middleware\cors.py", line 91, in __call__
+    |     await self.simple_response(scope, receive, send, request_headers=headers)
+    |   File "E:\CPIPC\CGAIC\.env\lib\site-packages\starlette\middleware\cors.py", line 149, in simple_response
+    |     await self.app(scope, receive, send)
+    |   File "E:\CPIPC\CGAIC\.env\lib\site-packages\starlette\middleware\exceptions.py", line 63, in __call__
+    |     await wrap_app_handling_exceptions(self.app, conn)(scope, receive, send)
+    |   File "E:\CPIPC\CGAIC\.env\lib\site-packages\starlette\_exception_handler.py", line 53, in wrapped_app
+    |     raise exc
+    |   File "E:\CPIPC\CGAIC\.env\lib\site-packages\starlette\_exception_handler.py", line 42, in wrapped_app
+    |     await app(scope, receive, sender)
+    |   File "E:\CPIPC\CGAIC\.env\lib\site-packages\fastapi\middleware\asyncexitstack.py", line 18, in __call__
+    |     await self.app(scope, receive, send)
+    |   File "E:\CPIPC\CGAIC\.env\lib\site-packages\starlette\routing.py", line 676, in __call__
+    |     await self.middleware_stack(scope, receive, send)
+    |   File "E:\CPIPC\CGAIC\.env\lib\site-packages\fastapi\routing.py", line 2786, in app
+    |     await route.handle(scope, receive, send)
+    |   File "E:\CPIPC\CGAIC\.env\lib\site-packages\fastapi\routing.py", line 1817, in handle
+    |     await self.original_router.handle(scope, receive, send)
+    |   File "E:\CPIPC\CGAIC\.env\lib\site-packages\fastapi\routing.py", line 2869, in handle
+    |     await included_router._handle_selected(scope, receive, send)
+    |   File "E:\CPIPC\CGAIC\.env\lib\site-packages\fastapi\routing.py", line 1843, in _handle_selected
+    |     await original_route.handle(scope, receive, send)
+    |   File "E:\CPIPC\CGAIC\.env\lib\site-packages\fastapi\routing.py", line 1308, in handle
+    |     await effective_context.app(scope, receive, send)
+    |   File "E:\CPIPC\CGAIC\.env\lib\site-packages\fastapi\routing.py", line 165, in app
+    |     await wrap_app_handling_exceptions(app, request)(scope, receive, send)
+    |   File "E:\CPIPC\CGAIC\.env\lib\site-packages\starlette\_exception_handler.py", line 53, in wrapped_app
+    |     raise exc
+    |   File "E:\CPIPC\CGAIC\.env\lib\site-packages\starlette\_exception_handler.py", line 42, in wrapped_app
+    |     await app(scope, receive, sender)
+    |   File "E:\CPIPC\CGAIC\.env\lib\site-packages\fastapi\routing.py", line 151, in app
+    |     response = await f(request)
+    |   File "E:\CPIPC\CGAIC\.env\lib\site-packages\fastapi\routing.py", line 727, in app
+    |     raw_response = await run_endpoint_function(
+    |   File "E:\CPIPC\CGAIC\.env\lib\site-packages\fastapi\routing.py", line 362, in run_endpoint_function
+    |     return await run_in_threadpool(
+    |   File "E:\CPIPC\CGAIC\.env\lib\site-packages\starlette\concurrency.py", line 34, in run_in_threadpool
+    |     return await anyio.to_thread.run_sync(func)
+    |   File "E:\CPIPC\CGAIC\.env\lib\site-packages\anyio\to_thread.py", line 65, in run_sync
+    |     return await get_async_backend().run_sync_in_worker_thread(
+    |   File "E:\CPIPC\CGAIC\.env\lib\site-packages\anyio\_backends\_asyncio.py", line 2706, in run_sync_in_worker_thread
+    |     return await future
+    |   File "E:\CPIPC\CGAIC\.env\lib\site-packages\anyio\_backends\_asyncio.py", line 1100, in run
+    |     result = context.run(func, *args)
+    |   File "E:\CPIPC\CGAIC\.env\lib\site-packages\fastapi\telemetry\_api.py", line 240, in _run_sync_endpoint
+    |     return function(**arguments)
+    |   File "E:\CPIPC\CGAIC\AOI_tree\AOI_Core\backend\api\routes_feedback.py", line 35, in api_create_feedback
+    |     out = sl_service.submit_feedback_record(
+    |   File "E:\CPIPC\CGAIC\AOI_tree\AOI_Core\backend\self_learning\service.py", line 147, in submit_feedback_record
+    |     img_registered = (s.query(Image)
+    | NameError: name 'Image' is not defined
+    +------------------------------------
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "E:\CPIPC\CGAIC\.env\lib\site-packages\uvicorn\protocols\http\httptools_impl.py", line 422, in run_asgi
+    result = await app(  # type: ignore[func-returns-value]
+  File "E:\CPIPC\CGAIC\.env\lib\site-packages\uvicorn\middleware\proxy_headers.py", line 63, in __call__
+    return await self.app(scope, receive, send)
+  File "E:\CPIPC\CGAIC\.env\lib\site-packages\fastapi\applications.py", line 1215, in __call__
+    await super().__call__(scope, receive, send)
+  File "E:\CPIPC\CGAIC\.env\lib\site-packages\starlette\applications.py", line 96, in __call__
+    await self.middleware_stack(scope, receive, send)
+  File "E:\CPIPC\CGAIC\.env\lib\site-packages\starlette\middleware\errors.py", line 186, in __call__
+    raise exc
+  File "E:\CPIPC\CGAIC\.env\lib\site-packages\starlette\middleware\errors.py", line 164, in __call__
+    await self.app(scope, receive, _send)
+  File "E:\CPIPC\CGAIC\.env\lib\site-packages\fastapi\telemetry\_asgi.py", line 151, in __call__
+    await self.app(scope, receive, send)
+  File "E:\CPIPC\CGAIC\.env\lib\site-packages\starlette\middleware\base.py", line 197, in __call__
+    response = await self.dispatch_func(request, call_next)
+  File "E:\CPIPC\CGAIC\AOI_tree\AOI_Core\backend\core\security.py", line 148, in dispatch
+    return await call_next(request)
+  File "E:\CPIPC\CGAIC\.env\lib\site-packages\starlette\middleware\base.py", line 173, in call_next
+    raise app_exc from app_exc.__cause__ or app_exc.__context__
+  File "E:\CPIPC\CGAIC\.env\lib\site-packages\starlette\middleware\base.py", line 149, in coro
+    await self.app(scope, receive_or_disconnect, send_no_error)
+  File "E:\CPIPC\CGAIC\.env\lib\site-packages\starlette\middleware\base.py", line 197, in __call__
+    response = await self.dispatch_func(request, call_next)
+  File "E:\CPIPC\CGAIC\AOI_tree\AOI_Core\backend\core\security.py", line 101, in dispatch
+    return await call_next(request)
+  File "E:\CPIPC\CGAIC\.env\lib\site-packages\starlette\middleware\base.py", line 173, in call_next
+    raise app_exc from app_exc.__cause__ or app_exc.__context__
+  File "E:\CPIPC\CGAIC\.env\lib\site-packages\starlette\middleware\base.py", line 149, in coro
+    await self.app(scope, receive_or_disconnect, send_no_error)
+  File "E:\CPIPC\CGAIC\.env\lib\site-packages\starlette\middleware\cors.py", line 91, in __call__
+    await self.simple_response(scope, receive, send, request_headers=headers)
+  File "E:\CPIPC\CGAIC\.env\lib\site-packages\starlette\middleware\cors.py", line 149, in simple_response
+    await self.app(scope, receive, send)
+  File "E:\CPIPC\CGAIC\.env\lib\site-packages\starlette\middleware\exceptions.py", line 63, in __call__
+    await wrap_app_handling_exceptions(self.app, conn)(scope, receive, send)
+  File "E:\CPIPC\CGAIC\.env\lib\site-packages\starlette\_exception_handler.py", line 53, in wrapped_app
+    raise exc
+  File "E:\CPIPC\CGAIC\.env\lib\site-packages\starlette\_exception_handler.py", line 42, in wrapped_app
+    await app(scope, receive, sender)
+  File "E:\CPIPC\CGAIC\.env\lib\site-packages\fastapi\middleware\asyncexitstack.py", line 18, in __call__
+    await self.app(scope, receive, send)
+  File "E:\CPIPC\CGAIC\.env\lib\site-packages\starlette\routing.py", line 676, in __call__
+    await self.middleware_stack(scope, receive, send)
+  File "E:\CPIPC\CGAIC\.env\lib\site-packages\fastapi\routing.py", line 2786, in app
+    await route.handle(scope, receive, send)
+  File "E:\CPIPC\CGAIC\.env\lib\site-packages\fastapi\routing.py", line 1817, in handle
+    await self.original_router.handle(scope, receive, send)
+  File "E:\CPIPC\CGAIC\.env\lib\site-packages\fastapi\routing.py", line 2869, in handle
+    await included_router._handle_selected(scope, receive, send)
+  File "E:\CPIPC\CGAIC\.env\lib\site-packages\fastapi\routing.py", line 1843, in _handle_selected
+    await original_route.handle(scope, receive, send)
+  File "E:\CPIPC\CGAIC\.env\lib\site-packages\fastapi\routing.py", line 1308, in handle
+    await effective_context.app(scope, receive, send)
+  File "E:\CPIPC\CGAIC\.env\lib\site-packages\fastapi\routing.py", line 165, in app
+    await wrap_app_handling_exceptions(app, request)(scope, receive, send)
+  File "E:\CPIPC\CGAIC\.env\lib\site-packages\starlette\_exception_handler.py", line 53, in wrapped_app
+    raise exc
+  File "E:\CPIPC\CGAIC\.env\lib\site-packages\starlette\_exception_handler.py", line 42, in wrapped_app
+    await app(scope, receive, sender)
+  File "E:\CPIPC\CGAIC\.env\lib\site-packages\fastapi\routing.py", line 151, in app
+    response = await f(request)
+  File "E:\CPIPC\CGAIC\.env\lib\site-packages\fastapi\routing.py", line 727, in app
+    raw_response = await run_endpoint_function(
+  File "E:\CPIPC\CGAIC\.env\lib\site-packages\fastapi\routing.py", line 362, in run_endpoint_function
+    return await run_in_threadpool(
+  File "E:\CPIPC\CGAIC\.env\lib\site-packages\starlette\concurrency.py", line 34, in run_in_threadpool
+    return await anyio.to_thread.run_sync(func)
+  File "E:\CPIPC\CGAIC\.env\lib\site-packages\anyio\to_thread.py", line 65, in run_sync
+    return await get_async_backend().run_sync_in_worker_thread(
+  File "E:\CPIPC\CGAIC\.env\lib\site-packages\anyio\_backends\_asyncio.py", line 2706, in run_sync_in_worker_thread
+    return await future
+  File "E:\CPIPC\CGAIC\.env\lib\site-packages\anyio\_backends\_asyncio.py", line 1100, in run
+    result = context.run(func, *args)
+  File "E:\CPIPC\CGAIC\.env\lib\site-packages\fastapi\telemetry\_api.py", line 240, in _run_sync_endpoint
+    return function(**arguments)
+  File "E:\CPIPC\CGAIC\AOI_tree\AOI_Core\backend\api\routes_feedback.py", line 35, in api_create_feedback
+    out = sl_service.submit_feedback_record(
+  File "E:\CPIPC\CGAIC\AOI_tree\AOI_Core\backend\self_learning\service.py", line 147, in submit_feedback_record
+    img_registered = (s.query(Image)
+NameError: name 'Image' is not defined
+2026-10-07 03:17:57,230 INFO __main__: AOI 服务启动: http://127.0.0.1:8017
+INFO:     Started server process [24396]
+INFO:     Waiting for application startup.
+2026-10-07 03:18:02,222 INFO backend.api.app: 引擎快照登记完成（新增 0 行）
+2026-10-07 03:18:02,228 INFO backend.pipeline.pipeline_service: [pipeline] 产线服务已启动
+INFO:     Application startup complete.
+INFO:     Uvicorn running on http://127.0.0.1:8017 (Press CTRL+C to quit)
+INFO:     127.0.0.1:56025 - "GET /api/health HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56026 - "GET /api/health HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56027 - "GET /api/health HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56028 - "GET /api/categories HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56028 - "GET /api/models HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56028 - "GET /api/models HTTP/1.1" 200 OK
+E:\CPIPC\CGAIC\AOI_tree\assets\dinov2\dinov2\layers\swiglu_ffn.py:51: UserWarning: xFormers is not available (SwiGLU)
+  warnings.warn("xFormers is not available (SwiGLU)")
+E:\CPIPC\CGAIC\AOI_tree\assets\dinov2\dinov2\layers\attention.py:33: UserWarning: xFormers is not available (Attention)
+  warnings.warn("xFormers is not available (Attention)")
+E:\CPIPC\CGAIC\AOI_tree\assets\dinov2\dinov2\layers\block.py:40: UserWarning: xFormers is not available (Block)
+  warnings.warn("xFormers is not available (Block)")
+2026-10-07 03:18:03,643 INFO dinov2: using MLP layer as FFN
+2026-10-07 03:18:04,380 INFO algo.common.safe_pickle: [safe_pickle] 加载 pickle：E:\CPIPC\CGAIC\AOI_tree\AOI_Core\storage\engine\snapshots\gold_finger\v1\slot_state.pkl（4013331 字节）
+2026-10-07 03:18:04,397 INFO algo.common.safe_pickle: [safe_pickle] 加载 pickle：E:\CPIPC\CGAIC\AOI_tree\AOI_Core\algo\assets\defect_clf.pkl（3138540 字节）
+E:\CPIPC\CGAIC\.env\lib\site-packages\sklearn\base.py:442: InconsistentVersionWarning: Trying to unpickle estimator DecisionTreeClassifier from version 1.9.0 when using version 1.7.2. This might lead to breaking code or invalid results. Use at your own risk. For more info please refer to:
+https://scikit-learn.org/stable/model_persistence.html#security-maintainability-limitations
+  warnings.warn(
+E:\CPIPC\CGAIC\.env\lib\site-packages\sklearn\base.py:442: InconsistentVersionWarning: Trying to unpickle estimator RandomForestClassifier from version 1.9.0 when using version 1.7.2. This might lead to breaking code or invalid results. Use at your own risk. For more info please refer to:
+https://scikit-learn.org/stable/model_persistence.html#security-maintainability-limitations
+  warnings.warn(
+2026-10-07 03:18:04,560 INFO algo.common.safe_pickle: [safe_pickle] 加载 pickle：E:\CPIPC\CGAIC\AOI_tree\AOI_Core\storage\engine\snapshots\gold_finger\v1\ssocl\normal_bank.pkl（3146455 字节）
+2026-10-07 03:18:04,563 INFO algo.common.safe_pickle: [safe_pickle] 加载 pickle：E:\CPIPC\CGAIC\AOI_tree\AOI_Core\storage\engine\snapshots\gold_finger\v1\ssocl\defect_bank.pkl（197 字节）
+[dino] 使用随包 vendor 权重: E:\CPIPC\CGAIC\AOI_tree\assets\dinov2\dinov2_vits14_pretrain.pth
+[disc] 加载预训练头 E:\CPIPC\CGAIC\AOI_tree\AOI_Core\assets\disc_pretrain.pt
+    [extract] 20/20 (1s)
+2026-10-07 03:18:06,136 WARNING backend.pipeline.service: 对位偏移预警 detection_id=7 category=gold_finger offset=[108.24, -122.82]
+INFO:     127.0.0.1:56028 - "POST /api/detect/image HTTP/1.1" 200 OK
+2026-10-07 03:18:06,881 WARNING backend.pipeline.service: 对位偏移预警 detection_id=8 category=gold_finger offset=[-22.59, 21.84]
+INFO:     127.0.0.1:56028 - "POST /api/detect/image HTTP/1.1" 200 OK
+2026-10-07 03:18:07,058 WARNING backend.pipeline.service: 对位偏移预警 detection_id=9 category=gold_finger offset=[121.9, 118.61]
+INFO:     127.0.0.1:56028 - "POST /api/detect/image HTTP/1.1" 200 OK
+2026-10-07 03:18:07,136 WARNING backend.pipeline.service: 对位偏移预警 detection_id=10 category=gold_finger offset=[-66.97, -82.8]
+INFO:     127.0.0.1:56028 - "POST /api/detect/image HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56028 - "POST /api/feedback HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56028 - "POST /api/feedback HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56028 - "GET /api/self_learning/insight?category=gold_finger HTTP/1.1" 200 OK
+2026-10-07 03:19:27,633 INFO __main__: AOI 服务启动: http://127.0.0.1:8017
+INFO:     Started server process [20540]
+INFO:     Waiting for application startup.
+2026-10-07 03:19:32,601 INFO backend.api.app: 引擎快照登记完成（新增 0 行）
+2026-10-07 03:19:32,607 INFO backend.pipeline.pipeline_service: [pipeline] 产线服务已启动
+INFO:     Application startup complete.
+INFO:     Uvicorn running on http://127.0.0.1:8017 (Press CTRL+C to quit)
+INFO:     127.0.0.1:56070 - "GET /api/health HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56071 - "GET /api/health HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56072 - "GET /api/health HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56073 - "GET /api/categories HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56073 - "GET /api/models HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56073 - "GET /api/models HTTP/1.1" 200 OK
+E:\CPIPC\CGAIC\AOI_tree\assets\dinov2\dinov2\layers\swiglu_ffn.py:51: UserWarning: xFormers is not available (SwiGLU)
+  warnings.warn("xFormers is not available (SwiGLU)")
+E:\CPIPC\CGAIC\AOI_tree\assets\dinov2\dinov2\layers\attention.py:33: UserWarning: xFormers is not available (Attention)
+  warnings.warn("xFormers is not available (Attention)")
+E:\CPIPC\CGAIC\AOI_tree\assets\dinov2\dinov2\layers\block.py:40: UserWarning: xFormers is not available (Block)
+  warnings.warn("xFormers is not available (Block)")
+2026-10-07 03:19:34,058 INFO dinov2: using MLP layer as FFN
+2026-10-07 03:19:34,765 INFO algo.common.safe_pickle: [safe_pickle] 加载 pickle：E:\CPIPC\CGAIC\AOI_tree\AOI_Core\storage\engine\snapshots\gold_finger\v1\slot_state.pkl（4013331 字节）
+2026-10-07 03:19:34,784 INFO algo.common.safe_pickle: [safe_pickle] 加载 pickle：E:\CPIPC\CGAIC\AOI_tree\AOI_Core\algo\assets\defect_clf.pkl（3138540 字节）
+E:\CPIPC\CGAIC\.env\lib\site-packages\sklearn\base.py:442: InconsistentVersionWarning: Trying to unpickle estimator DecisionTreeClassifier from version 1.9.0 when using version 1.7.2. This might lead to breaking code or invalid results. Use at your own risk. For more info please refer to:
+https://scikit-learn.org/stable/model_persistence.html#security-maintainability-limitations
+  warnings.warn(
+E:\CPIPC\CGAIC\.env\lib\site-packages\sklearn\base.py:442: InconsistentVersionWarning: Trying to unpickle estimator RandomForestClassifier from version 1.9.0 when using version 1.7.2. This might lead to breaking code or invalid results. Use at your own risk. For more info please refer to:
+https://scikit-learn.org/stable/model_persistence.html#security-maintainability-limitations
+  warnings.warn(
+2026-10-07 03:19:34,942 INFO algo.common.safe_pickle: [safe_pickle] 加载 pickle：E:\CPIPC\CGAIC\AOI_tree\AOI_Core\storage\engine\snapshots\gold_finger\v1\ssocl\normal_bank.pkl（3146455 字节）
+2026-10-07 03:19:34,945 INFO algo.common.safe_pickle: [safe_pickle] 加载 pickle：E:\CPIPC\CGAIC\AOI_tree\AOI_Core\storage\engine\snapshots\gold_finger\v1\ssocl\defect_bank.pkl（197 字节）
+[dino] 使用随包 vendor 权重: E:\CPIPC\CGAIC\AOI_tree\assets\dinov2\dinov2_vits14_pretrain.pth
+[disc] 加载预训练头 E:\CPIPC\CGAIC\AOI_tree\AOI_Core\assets\disc_pretrain.pt
+    [extract] 20/20 (1s)
+[engine] gold_finger: 重放未巩固学习 2 条
+2026-10-07 03:19:39,713 WARNING backend.pipeline.service: 对位偏移预警 detection_id=11 category=gold_finger offset=[108.24, -122.82]
+INFO:     127.0.0.1:56073 - "POST /api/detect/image HTTP/1.1" 200 OK
+2026-10-07 03:19:40,416 WARNING backend.pipeline.service: 对位偏移预警 detection_id=12 category=gold_finger offset=[-22.59, 21.84]
+INFO:     127.0.0.1:56073 - "POST /api/detect/image HTTP/1.1" 200 OK
+2026-10-07 03:19:40,580 WARNING backend.pipeline.service: 对位偏移预警 detection_id=13 category=gold_finger offset=[121.9, 118.61]
+INFO:     127.0.0.1:56073 - "POST /api/detect/image HTTP/1.1" 200 OK
+2026-10-07 03:19:40,658 WARNING backend.pipeline.service: 对位偏移预警 detection_id=14 category=gold_finger offset=[-66.97, -82.8]
+INFO:     127.0.0.1:56073 - "POST /api/detect/image HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56073 - "POST /api/feedback HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56073 - "POST /api/feedback HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56073 - "POST /api/feedback HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56073 - "GET /api/self_learning/insight?category=gold_finger HTTP/1.1" 200 OK
+2026-10-07 03:20:54,317 INFO __main__: AOI 服务启动: http://127.0.0.1:8017
+INFO:     Started server process [17084]
+INFO:     Waiting for application startup.
+2026-10-07 03:20:59,264 INFO backend.api.app: 引擎快照登记完成（新增 0 行）
+2026-10-07 03:20:59,270 INFO backend.pipeline.pipeline_service: [pipeline] 产线服务已启动
+INFO:     Application startup complete.
+INFO:     Uvicorn running on http://127.0.0.1:8017 (Press CTRL+C to quit)
+INFO:     127.0.0.1:56116 - "GET /api/health HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56119 - "GET /api/health HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56120 - "GET /api/categories HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56120 - "GET /api/models HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56120 - "GET /api/models HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56120 - "GET /api/models HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56120 - "GET /api/models HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56120 - "GET /api/models HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56120 - "GET /api/models HTTP/1.1" 200 OK
+E:\CPIPC\CGAIC\AOI_tree\assets\dinov2\dinov2\layers\swiglu_ffn.py:51: UserWarning: xFormers is not available (SwiGLU)
+  warnings.warn("xFormers is not available (SwiGLU)")
+E:\CPIPC\CGAIC\AOI_tree\assets\dinov2\dinov2\layers\attention.py:33: UserWarning: xFormers is not available (Attention)
+  warnings.warn("xFormers is not available (Attention)")
+E:\CPIPC\CGAIC\AOI_tree\assets\dinov2\dinov2\layers\block.py:40: UserWarning: xFormers is not available (Block)
+  warnings.warn("xFormers is not available (Block)")
+2026-10-07 03:21:00,612 INFO dinov2: using MLP layer as FFN
+2026-10-07 03:21:01,333 INFO algo.common.safe_pickle: [safe_pickle] 加载 pickle：E:\CPIPC\CGAIC\AOI_tree\AOI_Core\storage\engine\snapshots\gold_finger\v1\slot_state.pkl（4013331 字节）
+2026-10-07 03:21:01,349 INFO algo.common.safe_pickle: [safe_pickle] 加载 pickle：E:\CPIPC\CGAIC\AOI_tree\AOI_Core\algo\assets\defect_clf.pkl（3138540 字节）
+E:\CPIPC\CGAIC\.env\lib\site-packages\sklearn\base.py:442: InconsistentVersionWarning: Trying to unpickle estimator DecisionTreeClassifier from version 1.9.0 when using version 1.7.2. This might lead to breaking code or invalid results. Use at your own risk. For more info please refer to:
+https://scikit-learn.org/stable/model_persistence.html#security-maintainability-limitations
+  warnings.warn(
+E:\CPIPC\CGAIC\.env\lib\site-packages\sklearn\base.py:442: InconsistentVersionWarning: Trying to unpickle estimator RandomForestClassifier from version 1.9.0 when using version 1.7.2. This might lead to breaking code or invalid results. Use at your own risk. For more info please refer to:
+https://scikit-learn.org/stable/model_persistence.html#security-maintainability-limitations
+  warnings.warn(
+2026-10-07 03:21:01,505 INFO algo.common.safe_pickle: [safe_pickle] 加载 pickle：E:\CPIPC\CGAIC\AOI_tree\AOI_Core\storage\engine\snapshots\gold_finger\v1\ssocl\normal_bank.pkl（3146455 字节）
+2026-10-07 03:21:01,508 INFO algo.common.safe_pickle: [safe_pickle] 加载 pickle：E:\CPIPC\CGAIC\AOI_tree\AOI_Core\storage\engine\snapshots\gold_finger\v1\ssocl\defect_bank.pkl（197 字节）
+[dino] 使用随包 vendor 权重: E:\CPIPC\CGAIC\AOI_tree\assets\dinov2\dinov2_vits14_pretrain.pth
+[disc] 加载预训练头 E:\CPIPC\CGAIC\AOI_tree\AOI_Core\assets\disc_pretrain.pt
+    [extract] 20/20 (1s)
+[engine] gold_finger: 重放未巩固学习 3 条
+INFO:     127.0.0.1:56120 - "GET /api/self_learning/insight?category=gold_finger HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56120 - "GET /api/models HTTP/1.1" 200 OK
+2026-10-07 03:21:07,790 WARNING backend.pipeline.service: 对位偏移预警 detection_id=15 category=gold_finger offset=[71.1, -16.25]
+INFO:     127.0.0.1:56120 - "POST /api/detect/image HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56120 - "POST /api/feedback HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56120 - "POST /api/feedback HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56120 - "POST /api/feedback HTTP/1.1" 404 Not Found
+2026-10-07 03:27:41,330 INFO __main__: AOI 服务启动: http://127.0.0.1:8017
+INFO:     Started server process [21744]
+INFO:     Waiting for application startup.
+2026-10-07 03:27:46,322 INFO backend.api.app: 引擎快照登记完成（新增 0 行）
+2026-10-07 03:27:46,327 INFO backend.pipeline.pipeline_service: [pipeline] 产线服务已启动
+INFO:     Application startup complete.
+INFO:     Uvicorn running on http://127.0.0.1:8017 (Press CTRL+C to quit)
+INFO:     127.0.0.1:56264 - "GET /api/health HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56265 - "GET /api/health HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56266 - "WebSocket /ws/tasks" [accepted]
+INFO:     connection open
+INFO:     127.0.0.1:56267 - "GET /api/datasources HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56271 - "GET /api/augment/config HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56269 - "GET /api/images?page=1&page_size=50 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56270 - "GET /api/images?page=1&page_size=100&label=normal HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56268 - "GET /api/datasets HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56270 - "GET /api/eval/runs HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56270 - "GET /api/categories HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56268 - "GET /api/review/incomplete_report HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56271 - "GET /api/detections/misjudged?page=1&page_size=20 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56269 - "GET /api/review/queue?page=1&page_size=20 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56270 - "GET /api/feedback/summary HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56273 - "GET /api/feedback?page=1&page_size=200 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56267 - "GET /api/review/stats HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56274 - "GET /api/categories HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56273 - "GET /api/categories HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56273 - "GET /api/categories HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56270 - "GET /api/stats/health?range_name=7d HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56274 - "GET /api/stats/timeseries?days=30 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56271 - "GET /api/stats/defect_types?range_name=30d HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56273 - "GET /api/stats/quality_overview?range_name=30d HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56269 - "GET /api/stats/batch_summary?range_name=30d HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56268 - "GET /api/stats/mistake_trend?range_name=30d HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56267 - "GET /api/categories HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56267 - "GET /api/categories HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56269 - "GET /api/datasources/3/groups HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56268 - "GET /api/images?page=1&page_size=50 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56274 - "GET /api/datasources/1/groups HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56267 - "GET /api/datasources HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56271 - "GET /api/datasources/2/groups HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56273 - "GET /api/datasets HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56283 - "GET /api/file?path=E%3A%5CCPIPC%5CCGAIC%5CAOI_tree%5CPCB_Dual%5Cstorage%5Ccore_stage%5Cgold_finger%5Ctrain%5Cgood%5C3066f25adf34adac.png&thumb=128 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56275 - "GET /api/file?path=E%3A%5CCPIPC%5CCGAIC%5Cdata_local%5Cgold_finger%5Ctest%5Cgood%5CImage_20260116193850558_repaired.jpg&thumb=128 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56290 - "GET /api/file?path=E%3A%5CCPIPC%5CCGAIC%5CAOI_tree%5CPCB_Dual%5Cstorage%5Ccore_stage%5Cgold_finger%5Ctrain%5Cgood%5C91940b19fa3ba96d.png&thumb=128 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56287 - "GET /api/file?path=E%3A%5CCPIPC%5CCGAIC%5CAOI_tree%5CPCB_Dual%5Cstorage%5Ccore_stage%5Cgold_finger%5Ctrain%5Cgood%5C5c8e1391478b6cae.jpg&thumb=128 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56289 - "GET /api/file?path=E%3A%5CCPIPC%5CCGAIC%5CAOI_tree%5CPCB_Dual%5Cstorage%5Ccore_stage%5Cgold_finger%5Ctrain%5Cgood%5C655f61171f721f4c.png&thumb=128 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56286 - "GET /api/file?path=E%3A%5CCPIPC%5CCGAIC%5CAOI_tree%5CPCB_Dual%5Cstorage%5Ccore_stage%5Cgold_finger%5Ctrain%5Cgood%5Cf38146f330ae3371.png&thumb=128 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56276 - "GET /api/file?path=E%3A%5CCPIPC%5CCGAIC%5CAOI_tree%5CPCB_Dual%5Cstorage%5Ccore_stage%5Cgold_finger%5Ctrain%5Cgood%5C3a769d47bfcbde5a.png&thumb=128 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56277 - "GET /api/file?path=E%3A%5CCPIPC%5CCGAIC%5CAOI_tree%5CPCB_Dual%5Cstorage%5Ccore_stage%5Cgold_finger%5Ctrain%5Cgood%5C3257e4cbffc1a902.jpg&thumb=128 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56280 - "GET /api/file?path=E%3A%5CCPIPC%5CCGAIC%5CAOI_tree%5CPCB_Dual%5Cstorage%5Ccore_stage%5Cgold_finger%5Ctrain%5Cgood%5C3eb044b7dd60ed0f.png&thumb=128 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56279 - "GET /api/file?path=E%3A%5CCPIPC%5CCGAIC%5CAOI_tree%5CPCB_Dual%5Cstorage%5Ccore_stage%5Cgold_finger%5Ctrain%5Cgood%5Cfede589a58fc5dc9.jpg&thumb=128 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56284 - "GET /api/file?path=E%3A%5CCPIPC%5CCGAIC%5CAOI_tree%5CPCB_Dual%5Cstorage%5Ccore_stage%5Cgold_finger%5Ctrain%5Cgood%5Ccd917648b3af1ede.jpg&thumb=128 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56278 - "GET /api/file?path=E%3A%5CCPIPC%5CCGAIC%5CAOI_tree%5CPCB_Dual%5Cstorage%5Ccore_stage%5Cgold_finger%5Ctrain%5Cgood%5C8616fac228d532d6.png&thumb=128 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56294 - "GET /api/file?path=E%3A%5CCPIPC%5CCGAIC%5CAOI_tree%5CPCB_Dual%5Cstorage%5Ccore_stage%5Cgold_finger%5Ctrain%5Cgood%5C3aabeb166e34dd80.png&thumb=128 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56281 - "GET /api/file?path=E%3A%5CCPIPC%5CCGAIC%5CAOI_tree%5CPCB_Dual%5Cstorage%5Ccore_stage%5Cgold_finger%5Ctrain%5Cgood%5C578de177120d6ced.png&thumb=128 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56282 - "GET /api/file?path=E%3A%5CCPIPC%5CCGAIC%5CAOI_tree%5CPCB_Dual%5Cstorage%5Ccore_stage%5Cgold_finger%5Ctrain%5Cgood%5Caa5b131c4a0e1c18.png&thumb=128 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56285 - "GET /api/file?path=E%3A%5CCPIPC%5CCGAIC%5CAOI_tree%5CPCB_Dual%5Cstorage%5Ccore_stage%5Cgold_finger%5Ctrain%5Cgood%5C67a6fddcf541f160.png&thumb=128 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56291 - "GET /api/file?path=E%3A%5CCPIPC%5CCGAIC%5CAOI_tree%5CPCB_Dual%5Cstorage%5Ccore_stage%5Cgold_finger%5Ctrain%5Cgood%5C2ba89bb11f7297f7.png&thumb=128 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56288 - "GET /api/file?path=E%3A%5CCPIPC%5CCGAIC%5CAOI_tree%5CPCB_Dual%5Cstorage%5Ccore_stage%5Cgold_finger%5Ctrain%5Cgood%5C5aadae895b4f3035.png&thumb=128 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56293 - "GET /api/file?path=E%3A%5CCPIPC%5CCGAIC%5CAOI_tree%5CPCB_Dual%5Cstorage%5Ccore_stage%5Cgold_finger%5Ctrain%5Cgood%5C3c9a98307321a106.jpg&thumb=128 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56296 - "GET /api/file?path=E%3A%5CCPIPC%5CCGAIC%5CAOI_tree%5CPCB_Dual%5Cstorage%5Ccore_stage%5Cgold_finger%5Ctrain%5Cgood%5C225b94a33fb65fa0.jpg&thumb=128 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56298 - "GET /api/file?path=e%3A%5CCPIPC%5CCGAIC%5Cdata_origin%5Cmvtec%5Cgrid%5Ctrain%5Cgood%5C262.png&thumb=128 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56295 - "GET /api/file?path=e%3A%5CCPIPC%5CCGAIC%5Cdata_origin%5Cmvtec%5Cgrid%5Ctrain%5Cgood%5C263.png&thumb=128 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56292 - "GET /api/file?path=E%3A%5CCPIPC%5CCGAIC%5CAOI_tree%5CPCB_Dual%5Cstorage%5Ccore_stage%5Cgold_finger%5Ctrain%5Cgood%5Cb82200d925c9cbbd.png&thumb=128 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56301 - "GET /api/file?path=e%3A%5CCPIPC%5CCGAIC%5Cdata_origin%5Cmvtec%5Cgrid%5Ctrain%5Cgood%5C259.png&thumb=128 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56299 - "GET /api/file?path=e%3A%5CCPIPC%5CCGAIC%5Cdata_origin%5Cmvtec%5Cgrid%5Ctrain%5Cgood%5C258.png&thumb=128 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56302 - "GET /api/file?path=e%3A%5CCPIPC%5CCGAIC%5Cdata_origin%5Cmvtec%5Cgrid%5Ctrain%5Cgood%5C257.png&thumb=128 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56308 - "GET /api/file?path=e%3A%5CCPIPC%5CCGAIC%5Cdata_origin%5Cmvtec%5Cgrid%5Ctrain%5Cgood%5C252.png&thumb=128 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56305 - "GET /api/file?path=e%3A%5CCPIPC%5CCGAIC%5Cdata_origin%5Cmvtec%5Cgrid%5Ctrain%5Cgood%5C255.png&thumb=128 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56314 - "GET /api/file?path=e%3A%5CCPIPC%5CCGAIC%5Cdata_origin%5Cmvtec%5Cgrid%5Ctrain%5Cgood%5C247.png&thumb=128 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56309 - "GET /api/file?path=e%3A%5CCPIPC%5CCGAIC%5Cdata_origin%5Cmvtec%5Cgrid%5Ctrain%5Cgood%5C251.png&thumb=128 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56304 - "GET /api/file?path=e%3A%5CCPIPC%5CCGAIC%5Cdata_origin%5Cmvtec%5Cgrid%5Ctrain%5Cgood%5C256.png&thumb=128 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56323 - "GET /api/file?path=e%3A%5CCPIPC%5CCGAIC%5Cdata_origin%5Cmvtec%5Cgrid%5Ctrain%5Cgood%5C238.png&thumb=128 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56317 - "GET /api/file?path=e%3A%5CCPIPC%5CCGAIC%5Cdata_origin%5Cmvtec%5Cgrid%5Ctrain%5Cgood%5C244.png&thumb=128 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56297 - "GET /api/file?path=E%3A%5CCPIPC%5CCGAIC%5CAOI_tree%5CAOI_Core%5Cstorage%5Cuploads%5Cup_1791160887787.png&thumb=128 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56321 - "GET /api/file?path=e%3A%5CCPIPC%5CCGAIC%5Cdata_origin%5Cmvtec%5Cgrid%5Ctrain%5Cgood%5C237.png&thumb=128 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56328 - "GET /api/file?path=e%3A%5CCPIPC%5CCGAIC%5Cdata_origin%5Cmvtec%5Cgrid%5Ctrain%5Cgood%5C232.png&thumb=128 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56312 - "GET /api/file?path=e%3A%5CCPIPC%5CCGAIC%5Cdata_origin%5Cmvtec%5Cgrid%5Ctrain%5Cgood%5C248.png&thumb=128 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56316 - "GET /api/file?path=e%3A%5CCPIPC%5CCGAIC%5Cdata_origin%5Cmvtec%5Cgrid%5Ctrain%5Cgood%5C243.png&thumb=128 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56332 - "GET /api/file?path=e%3A%5CCPIPC%5CCGAIC%5Cdata_origin%5Cmvtec%5Cgrid%5Ctrain%5Cgood%5C227.png&thumb=128 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56322 - "GET /api/file?path=e%3A%5CCPIPC%5CCGAIC%5Cdata_origin%5Cmvtec%5Cgrid%5Ctrain%5Cgood%5C239.png&thumb=128 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56338 - "GET /api/file?path=e%3A%5CCPIPC%5CCGAIC%5Cdata_origin%5Cmvtec%5Cgrid%5Ctrain%5Cgood%5C221.png&thumb=128 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56329 - "GET /api/file?path=e%3A%5CCPIPC%5CCGAIC%5Cdata_origin%5Cmvtec%5Cgrid%5Ctrain%5Cgood%5C231.png&thumb=128 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56307 - "GET /api/file?path=e%3A%5CCPIPC%5CCGAIC%5Cdata_origin%5Cmvtec%5Cgrid%5Ctrain%5Cgood%5C253.png&thumb=128 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56326 - "GET /api/file?path=e%3A%5CCPIPC%5CCGAIC%5Cdata_origin%5Cmvtec%5Cgrid%5Ctrain%5Cgood%5C234.png&thumb=128 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56337 - "GET /api/file?path=e%3A%5CCPIPC%5CCGAIC%5Cdata_origin%5Cmvtec%5Cgrid%5Ctrain%5Cgood%5C223.png&thumb=128 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56333 - "GET /api/file?path=e%3A%5CCPIPC%5CCGAIC%5Cdata_origin%5Cmvtec%5Cgrid%5Ctrain%5Cgood%5C226.png&thumb=128 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56330 - "GET /api/file?path=e%3A%5CCPIPC%5CCGAIC%5Cdata_origin%5Cmvtec%5Cgrid%5Ctrain%5Cgood%5C230.png&thumb=128 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56336 - "GET /api/file?path=e%3A%5CCPIPC%5CCGAIC%5Cdata_origin%5Cmvtec%5Cgrid%5Ctrain%5Cgood%5C224.png&thumb=128 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56331 - "GET /api/file?path=e%3A%5CCPIPC%5CCGAIC%5Cdata_origin%5Cmvtec%5Cgrid%5Ctrain%5Cgood%5C229.png&thumb=128 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56339 - "GET /api/file?path=e%3A%5CCPIPC%5CCGAIC%5Cdata_origin%5Cmvtec%5Cgrid%5Ctrain%5Cgood%5C222.png&thumb=128 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56310 - "GET /api/file?path=e%3A%5CCPIPC%5CCGAIC%5Cdata_origin%5Cmvtec%5Cgrid%5Ctrain%5Cgood%5C250.png&thumb=128 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56340 - "GET /api/file?path=e%3A%5CCPIPC%5CCGAIC%5Cdata_origin%5Cmvtec%5Cgrid%5Ctrain%5Cgood%5C219.png&thumb=128 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56324 - "GET /api/file?path=e%3A%5CCPIPC%5CCGAIC%5Cdata_origin%5Cmvtec%5Cgrid%5Ctrain%5Cgood%5C236.png&thumb=128 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56318 - "GET /api/file?path=e%3A%5CCPIPC%5CCGAIC%5Cdata_origin%5Cmvtec%5Cgrid%5Ctrain%5Cgood%5C242.png&thumb=128 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56300 - "GET /api/file?path=e%3A%5CCPIPC%5CCGAIC%5Cdata_origin%5Cmvtec%5Cgrid%5Ctrain%5Cgood%5C260.png&thumb=128 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56320 - "GET /api/file?path=e%3A%5CCPIPC%5CCGAIC%5Cdata_origin%5Cmvtec%5Cgrid%5Ctrain%5Cgood%5C240.png&thumb=128 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56311 - "GET /api/file?path=e%3A%5CCPIPC%5CCGAIC%5Cdata_origin%5Cmvtec%5Cgrid%5Ctrain%5Cgood%5C249.png&thumb=128 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56335 - "GET /api/file?path=e%3A%5CCPIPC%5CCGAIC%5Cdata_origin%5Cmvtec%5Cgrid%5Ctrain%5Cgood%5C225.png&thumb=128 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56334 - "GET /api/file?path=e%3A%5CCPIPC%5CCGAIC%5Cdata_origin%5Cmvtec%5Cgrid%5Ctrain%5Cgood%5C228.png&thumb=128 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56342 - "GET /api/file?path=e%3A%5CCPIPC%5CCGAIC%5Cdata_origin%5Cmvtec%5Cgrid%5Ctrain%5Cgood%5C217.png&thumb=128 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56303 - "GET /api/file?path=e%3A%5CCPIPC%5CCGAIC%5Cdata_origin%5Cmvtec%5Cgrid%5Ctrain%5Cgood%5C261.png&thumb=128 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56306 - "GET /api/file?path=e%3A%5CCPIPC%5CCGAIC%5Cdata_origin%5Cmvtec%5Cgrid%5Ctrain%5Cgood%5C254.png&thumb=128 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56341 - "GET /api/file?path=e%3A%5CCPIPC%5CCGAIC%5Cdata_origin%5Cmvtec%5Cgrid%5Ctrain%5Cgood%5C220.png&thumb=128 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56346 - "GET /api/file?path=e%3A%5CCPIPC%5CCGAIC%5Cdata_origin%5Cmvtec%5Cgrid%5Ctrain%5Cgood%5C215.png&thumb=128 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56377 - "GET /api/file?path=E%3A%5CCPIPC%5CCGAIC%5Cdata_local%5Cgold_finger%5Ctest%5Cdefect%5C0599.png&thumb=128 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56378 - "GET /api/file?path=E%3A%5CCPIPC%5CCGAIC%5Cdata_local%5Cgold_finger%5Ctest%5Cdefect%5C0599.png&thumb=128 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56376 - "GET /api/file?path=E%3A%5CCPIPC%5CCGAIC%5Cdata_local%5Cgold_finger%5Ctest%5Cdefect%5C0599.png&thumb=128 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56366 - "GET /api/file?path=e%3A%5CCPIPC%5CCGAIC%5Cdata_origin%5Cmvtec%5Cgrid%5Ctrain%5Cgood%5C193.png&thumb=128 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56382 - "GET /api/file?path=E%3A%5CCPIPC%5CCGAIC%5Cdata_local%5Cgold_finger%5Ctest%5Cdefect%5C0599.png&thumb=128 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56375 - "GET /api/file?path=E%3A%5CCPIPC%5CCGAIC%5Cdata_local%5Cgold_finger%5Ctest%5Cgood%5CImage_20260116193850558_repaired.jpg&thumb=128 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56353 - "GET /api/file?path=e%3A%5CCPIPC%5CCGAIC%5Cdata_origin%5Cmvtec%5Cgrid%5Ctrain%5Cgood%5C210.png&thumb=128 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56351 - "GET /api/file?path=e%3A%5CCPIPC%5CCGAIC%5Cdata_origin%5Cmvtec%5Cgrid%5Ctrain%5Cgood%5C206.png&thumb=128 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56380 - "GET /api/file?path=E%3A%5CCPIPC%5CCGAIC%5CAOI_tree%5CAOI_Core%5Cstorage%5Carchive%5Cgold_finger%5C20261007%5Cdet11_Image_20260116193703828_repaired.jpg&thumb=128 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56381 - "GET /api/file?path=E%3A%5CCPIPC%5CCGAIC%5CAOI_tree%5CAOI_Core%5Cstorage%5Carchive%5Cgold_finger%5C20261007%5Cdet12_Image_20260116193843246_repaired.jpg&thumb=128 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56348 - "GET /api/file?path=e%3A%5CCPIPC%5CCGAIC%5Cdata_origin%5Cmvtec%5Cgrid%5Ctrain%5Cgood%5C212.png&thumb=128 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56285 - "GET /api/file?path=E%3A%5CCPIPC%5CCGAIC%5CAOI_tree%5CAOI_Core%5Cstorage%5Carchive%5Cgold_finger%5C20261007%5Cdet8_Image_20260116193843246_repaired.jpg&thumb=128 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56352 - "GET /api/file?path=e%3A%5CCPIPC%5CCGAIC%5Cdata_origin%5Cmvtec%5Cgrid%5Ctrain%5Cgood%5C204.png&thumb=128 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56344 - "GET /api/file?path=e%3A%5CCPIPC%5CCGAIC%5Cdata_origin%5Cmvtec%5Cgrid%5Ctrain%5Cgood%5C216.png&thumb=128 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56315 - "GET /api/file?path=e%3A%5CCPIPC%5CCGAIC%5Cdata_origin%5Cmvtec%5Cgrid%5Ctrain%5Cgood%5C245.png&thumb=128 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56345 - "GET /api/file?path=e%3A%5CCPIPC%5CCGAIC%5Cdata_origin%5Cmvtec%5Cgrid%5Ctrain%5Cgood%5C214.png&thumb=128 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56319 - "GET /api/file?path=e%3A%5CCPIPC%5CCGAIC%5Cdata_origin%5Cmvtec%5Cgrid%5Ctrain%5Cgood%5C241.png&thumb=128 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56355 - "GET /api/file?path=e%3A%5CCPIPC%5CCGAIC%5Cdata_origin%5Cmvtec%5Cgrid%5Ctrain%5Cgood%5C203.png&thumb=128 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56349 - "GET /api/file?path=e%3A%5CCPIPC%5CCGAIC%5Cdata_origin%5Cmvtec%5Cgrid%5Ctrain%5Cgood%5C211.png&thumb=128 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56359 - "GET /api/file?path=e%3A%5CCPIPC%5CCGAIC%5Cdata_origin%5Cmvtec%5Cgrid%5Ctrain%5Cgood%5C201.png&thumb=128 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56347 - "GET /api/file?path=e%3A%5CCPIPC%5CCGAIC%5Cdata_origin%5Cmvtec%5Cgrid%5Ctrain%5Cgood%5C213.png&thumb=128 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56356 - "GET /api/file?path=e%3A%5CCPIPC%5CCGAIC%5Cdata_origin%5Cmvtec%5Cgrid%5Ctrain%5Cgood%5C207.png&thumb=128 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56364 - "GET /api/file?path=e%3A%5CCPIPC%5CCGAIC%5Cdata_origin%5Cmvtec%5Cgrid%5Ctrain%5Cgood%5C195.png&thumb=128 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56361 - "GET /api/file?path=e%3A%5CCPIPC%5CCGAIC%5Cdata_origin%5Cmvtec%5Cgrid%5Ctrain%5Cgood%5C199.png&thumb=128 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56378 - "GET /api/file?path=E%3A%5CCPIPC%5CCGAIC%5CAOI_tree%5CAOI_Core%5Cstorage%5Carchive%5Cgold_finger%5C20261007%5Cdet7_Image_20260116193703828_repaired.jpg&thumb=128 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56285 - "GET /api/file?path=e%3A%5CCPIPC%5CCGAIC%5Cdata_origin%5Cmvtec%5Cgrid%5Ctrain%5Cgood%5C245.png&thumb=128 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56376 - "GET /api/file?path=E%3A%5CCPIPC%5CCGAIC%5CAOI_tree%5CAOI_Core%5Cstorage%5Carchive%5Cgold_finger%5C20261007%5Cdet4_Image_20260116193843246_repaired.jpg&thumb=128 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56365 - "GET /api/file?path=e%3A%5CCPIPC%5CCGAIC%5Cdata_origin%5Cmvtec%5Cgrid%5Ctrain%5Cgood%5C196.png&thumb=128 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56366 - "GET /api/file?path=E%3A%5CCPIPC%5CCGAIC%5CAOI_tree%5CAOI_Core%5Cstorage%5Carchive%5Cgold_finger%5C20261007%5Cdet3_Image_20260116193703828_repaired.jpg&thumb=128 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56358 - "GET /api/file?path=e%3A%5CCPIPC%5CCGAIC%5Cdata_origin%5Cmvtec%5Cgrid%5Ctrain%5Cgood%5C202.png&thumb=128 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56381 - "GET /api/file?path=e%3A%5CCPIPC%5CCGAIC%5Cdata_origin%5Cmvtec%5Cgrid%5Ctrain%5Cgood%5C246.png&thumb=128 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56313 - "GET /api/file?path=e%3A%5CCPIPC%5CCGAIC%5Cdata_origin%5Cmvtec%5Cgrid%5Ctrain%5Cgood%5C246.png&thumb=128 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56368 - "GET /api/file?path=e%3A%5CCPIPC%5CCGAIC%5Cdata_origin%5Cmvtec%5Cgrid%5Ctrain%5Cgood%5C192.png&thumb=128 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56354 - "GET /api/file?path=e%3A%5CCPIPC%5CCGAIC%5Cdata_origin%5Cmvtec%5Cgrid%5Ctrain%5Cgood%5C208.png&thumb=128 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56327 - "GET /api/file?path=e%3A%5CCPIPC%5CCGAIC%5Cdata_origin%5Cmvtec%5Cgrid%5Ctrain%5Cgood%5C233.png&thumb=128 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56367 - "GET /api/file?path=e%3A%5CCPIPC%5CCGAIC%5Cdata_origin%5Cmvtec%5Cgrid%5Ctrain%5Cgood%5C194.png&thumb=128 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56374 - "GET /api/file?path=e%3A%5CCPIPC%5CCGAIC%5Cdata_origin%5Cmvtec%5Cgrid%5Ctrain%5Cgood%5C186.png&thumb=128 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56357 - "GET /api/file?path=e%3A%5CCPIPC%5CCGAIC%5Cdata_origin%5Cmvtec%5Cgrid%5Ctrain%5Cgood%5C205.png&thumb=128 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56370 - "GET /api/file?path=e%3A%5CCPIPC%5CCGAIC%5Cdata_origin%5Cmvtec%5Cgrid%5Ctrain%5Cgood%5C189.png&thumb=128 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56363 - "GET /api/file?path=e%3A%5CCPIPC%5CCGAIC%5Cdata_origin%5Cmvtec%5Cgrid%5Ctrain%5Cgood%5C197.png&thumb=128 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56325 - "GET /api/file?path=e%3A%5CCPIPC%5CCGAIC%5Cdata_origin%5Cmvtec%5Cgrid%5Ctrain%5Cgood%5C235.png&thumb=128 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56372 - "GET /api/file?path=e%3A%5CCPIPC%5CCGAIC%5Cdata_origin%5Cmvtec%5Cgrid%5Ctrain%5Cgood%5C191.png&thumb=128 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56371 - "GET /api/file?path=e%3A%5CCPIPC%5CCGAIC%5Cdata_origin%5Cmvtec%5Cgrid%5Ctrain%5Cgood%5C190.png&thumb=128 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56343 - "GET /api/file?path=e%3A%5CCPIPC%5CCGAIC%5Cdata_origin%5Cmvtec%5Cgrid%5Ctrain%5Cgood%5C218.png&thumb=128 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56373 - "GET /api/file?path=e%3A%5CCPIPC%5CCGAIC%5Cdata_origin%5Cmvtec%5Cgrid%5Ctrain%5Cgood%5C188.png&thumb=128 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56369 - "GET /api/file?path=e%3A%5CCPIPC%5CCGAIC%5Cdata_origin%5Cmvtec%5Cgrid%5Ctrain%5Cgood%5C187.png&thumb=128 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56362 - "GET /api/file?path=e%3A%5CCPIPC%5CCGAIC%5Cdata_origin%5Cmvtec%5Cgrid%5Ctrain%5Cgood%5C198.png&thumb=128 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56379 - "GET /api/file?path=e%3A%5CCPIPC%5CCGAIC%5Cdata_origin%5Cmvtec%5Cpill%5Ctest%5Cscratch%5C023.png&thumb=128 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56350 - "GET /api/file?path=e%3A%5CCPIPC%5CCGAIC%5Cdata_origin%5Cmvtec%5Cgrid%5Ctrain%5Cgood%5C209.png&thumb=128 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56360 - "GET /api/file?path=e%3A%5CCPIPC%5CCGAIC%5Cdata_origin%5Cmvtec%5Cgrid%5Ctrain%5Cgood%5C200.png&thumb=128 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56353 - "GET /api/file?path=E%3A%5CCPIPC%5CCGAIC%5CAOI_tree%5CAOI_Core%5Cstorage%5Carchive%5Cpill%5C20261005%5Cdet1_023.png&thumb=128 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56375 - "GET /api/file?path=E%3A%5CCPIPC%5CCGAIC%5CAOI_tree%5CAOI_Core%5Cstorage%5Carchive%5Cpill%5C20261005%5Cdet2_022.png&thumb=128 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56271 - "GET /api/datasources/1/groups HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56273 - "GET /api/datasources/3/groups HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56267 - "GET /api/datasources/2/groups HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56267 - "GET /api/images?page=1&page_size=100&label=normal HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56389 - "GET /api/self_learning/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56267 - "GET /api/datasources HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56387 - "GET /api/models HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56388 - "GET /api/models/readiness HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56267 - "GET /api/datasources/1/groups HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56388 - "GET /api/datasources/3/groups HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56387 - "GET /api/datasources/2/groups HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56387 - "GET /api/eval/runs HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56389 - "GET /api/review/incomplete_report HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56388 - "GET /api/feedback?page=1&page_size=200 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56387 - "GET /api/review/queue?page=1&page_size=20 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56391 - "GET /api/detections/misjudged?page=1&page_size=20 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56393 - "GET /api/review/stats HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56267 - "GET /api/feedback/summary HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56392 - "GET /api/categories HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56393 - "GET /api/stats/defect_types?range_name=30d HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56392 - "GET /api/stats/mistake_trend?range_name=30d HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56391 - "GET /api/stats/quality_overview?range_name=30d HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56267 - "GET /api/stats/batch_summary?range_name=30d HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56389 - "GET /api/stats/timeseries?days=30 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56387 - "GET /api/stats/health?range_name=7d HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56267 - "GET /api/stats/mistake_trend?range_name=30d HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56387 - "GET /api/stats/timeseries?days=30 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56389 - "GET /api/stats/defect_types?range_name=30d HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56391 - "GET /api/stats/batch_summary?range_name=30d HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56392 - "GET /api/stats/health?range_name=7d HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56393 - "GET /api/stats/quality_overview?range_name=30d HTTP/1.1" 200 OK
+2026-10-07 08:13:54,535 INFO __main__: AOI 服务启动: http://127.0.0.1:8017
+INFO:     Started server process [9088]
+INFO:     Waiting for application startup.
+2026-10-07 08:14:00,032 INFO backend.api.app: 引擎快照登记完成（新增 0 行）
+2026-10-07 08:14:00,036 INFO backend.pipeline.pipeline_service: [pipeline] 产线服务已启动
+INFO:     Application startup complete.
+INFO:     Uvicorn running on http://127.0.0.1:8017 (Press CTRL+C to quit)
+INFO:     127.0.0.1:62762 - "GET /api/health HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62763 - "GET /api/models HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62763 - "GET /api/categories HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62763 - "GET /api/models HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62763 - "GET /api/models HTTP/1.1" 200 OK

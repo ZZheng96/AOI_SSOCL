@@ -652,7 +652,7 @@ class TemplateStudioPage(QWidget):
         wh = ""
         if tpl.standard_image.width and tpl.standard_image.height:
             wh = f"  ({tpl.standard_image.width}×{tpl.standard_image.height})"
-        self.lbl_std_path.setText(f"{Path(std_path).name}{wh}" if std_path != "—" else "—")
+        self.lbl_std_path.setText(f"{tpl.standard_image.display_name}{wh}" if std_path != "—" else "—")
         self.lbl_std_path.setToolTip(std_path)
 
         enabled = set(tpl.enabled_algorithm_ids())
@@ -710,16 +710,14 @@ class TemplateStudioPage(QWidget):
             self.combo_major.blockSignals(False)
 
     def _refresh_model_categories(self, keep: str = "") -> None:
-        """刷新品类模型下拉候选（来自特征快照目录），保留当前绑定值。"""
+        """刷新品类模型下拉候选（来自树干 AOI_Core 品类列表），保留当前绑定值。"""
         current = keep if keep else self.combo_model_category.currentText().strip()
         cats: list[str] = []
         try:
-            from app.config import get_settings
+            from app.engines.feature import get_engine
 
-            snap_root = Path(get_settings().snapshots_dir)
-            if snap_root.is_dir():
-                cats = sorted(p.name for p in snap_root.iterdir() if p.is_dir())
-        except Exception:  # noqa: BLE001 快照目录不可读时仅提供手输
+            cats = sorted(str(c["category"]) for c in get_engine().list_categories())
+        except Exception:  # noqa: BLE001 Core 不可达时仅提供手输
             cats = []
         self.combo_model_category.blockSignals(True)
         self.combo_model_category.clear()

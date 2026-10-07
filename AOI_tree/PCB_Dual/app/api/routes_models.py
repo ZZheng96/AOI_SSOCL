@@ -10,22 +10,19 @@ router = APIRouter()
 
 @router.get("/models")
 def list_models() -> dict:
-    """已准备的品类模型列表（含版本/激活态）。"""
-    from app.config import get_settings
+    """已准备的品类模型列表（含版本/激活态）；树干 AOI_Core 是模型版本的唯一真源。"""
     from app.engines.feature import get_engine
-    settings = get_settings()
     engine = get_engine()
-    snap_root = settings.snapshots_dir
-    cats = []
-    if snap_root.is_dir():
-        for cat_dir in sorted(snap_root.iterdir()):
-            if not cat_dir.is_dir():
-                continue
-            versions = engine.list_snapshots(cat_dir.name)
-            cats.append({"category": cat_dir.name,
-                         "versions": versions,
-                         "current": engine.current_version(cat_dir.name)})
-    return {"categories": cats}
+    try:
+        core_cats = engine.list_categories()
+        cats = [{"category": c["category"],
+                 "versions": engine.list_snapshots(c["category"]),
+                 "current": engine.current_version(c["category"]),
+                 "n_images": c.get("n_images"), "engine": c.get("engine")}
+                for c in core_cats]
+    except Exception as exc:  # noqa: BLE001
+        raise HTTPException(status_code=502, detail=f"AOI_Core 不可用: {exc}")
+    return {"categories": cats, "backend": "aoi_core"}
 
 
 @router.post("/models/prepare")

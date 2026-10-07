@@ -40,6 +40,21 @@ def _start_backend_if_port_free() -> None:
     start_server_background()
 
 
+def _start_aoi_core_async() -> None:
+    """后台线程启动/复用树干 AOI_Core，不阻塞 UI；首次特征检测时 FeatureClient 会等待就绪。"""
+    import threading
+
+    def _run():
+        try:
+            from app.core.aoi_core_launcher import ensure_core_running
+            ok, msg = ensure_core_running()
+            print(f"[main] AOI_Core {'就绪' if ok else '不可用'}：{msg}")
+        except Exception as exc:  # noqa: BLE001
+            print(f"[main] AOI_Core 启动异常：{exc}")
+
+    threading.Thread(target=_run, name="aoi-core-launcher", daemon=True).start()
+
+
 def main() -> int:
     from app.core.single_instance import acquire_lock, lock_path_for
     if not acquire_lock("pcbins_ui"):
@@ -51,10 +66,15 @@ def main() -> int:
 
     ensure_dirs()
     _start_backend_if_port_free()
+    _start_aoi_core_async()
 
     app = QApplication(sys.argv)
     app.setApplicationName("PCB 缺陷检测系统 v2")
+    from app.core.aoi_core_launcher import stop_core
+    app.aboutToQuit.connect(stop_core)
     window = MainWindow()
+    if hasattr(window.model_page, "shutdown"):
+        app.aboutToQuit.connect(window.model_page.shutdown)
     window.show()
     return app.exec()
 

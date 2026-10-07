@@ -1,0 +1,7 @@
+﻿test_image,overall,elapsed_ms,ng_count,gate_message,result_folder,ng_algorithms
+e:\CPIPC\CGAIC\data_local\extra_part\test\extra\11_3923_977_img.jpg,NG,344,4,,E:\CPIPC\CGAIC\AOI_tree\PCB_Dual\storage\outputs\2026-10-07\114107_981_11_3923_977_img,"body_错件,body_缺件,body_移位,body_破损"
+e:\CPIPC\CGAIC\data_local\extra_part\train\good\11_3923_977_temp.jpg,OK,134,0,,E:\CPIPC\CGAIC\AOI_tree\PCB_Dual\storage\outputs\2026-10-07\114108_744_11_3923_977_temp,
+C:\Users\wch\AppData\Local\Temp\ui_test_429lgs3u\11_3923_977_temp__jpeg95.jpg,OK,141,0,,E:\CPIPC\CGAIC\AOI_tree\PCB_Dual\storage\outputs\2026-10-07\114109_434_11_3923_977_temp__jpeg95,
+C:\Users\wch\AppData\Local\Temp\ui_test_429lgs3u\11_3923_977_temp__noise2.jpg,OK,151,0,,E:\CPIPC\CGAIC\AOI_tree\PCB_Dual\storage\outputs\2026-10-07\114110_213_11_3923_977_temp__noise2,
+C:\Users\wch\AppData\Local\Temp\ui_test_429lgs3u\11_3923_977_temp__shift2_noise2.jpg,OK,171,0,,E:\CPIPC\CGAIC\AOI_tree\PCB_Dual\storage\outputs\2026-10-07\114111_102_11_3923_977_temp__shift2_noise2,
+C:\Users\wch\AppData\Local\Temp\ui_test_429lgs3u\11_3923_977_temp__bright5.jpg,OK,172,0,,E:\CPIPC\CGAIC\AOI_tree\PCB_Dual\storage\outputs\2026-10-07\114111_913_11_3923_977_temp__bright5,

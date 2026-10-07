@@ -816,6 +816,7 @@ def _prepare_engine(req: ModelPrepareRequest, progress_cb) -> dict:
             "profile": req.profile, "n_normal": len(normals),
             "n_defect": len(defects), "n_val": len(val),
             "n_templates": len(templates),
+            "activated": not req.allow_experimental,
             "message": "模型准备完成"}
 
 

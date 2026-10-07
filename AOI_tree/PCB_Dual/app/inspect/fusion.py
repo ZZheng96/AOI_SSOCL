@@ -45,6 +45,9 @@ def feature_to_dict(r: DetectionResult) -> dict[str, Any]:
         "n_tiles": int(r.n_tiles),
         "boxes": r.defect_boxes,
         "types": r.types,
+        "heatmap_paths": dict(r.heatmap_paths or {}),
+        "detection_id": (r.extra or {}).get("detection_id"),
+        "backend": (r.extra or {}).get("backend", "local"),
     }
 
 

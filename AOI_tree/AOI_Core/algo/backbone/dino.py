@@ -36,14 +36,19 @@ def _load_dinov2_from_cache(model_name="vits14"):
     vend = _vendored_dir()
     if vend:
         weights = os.path.join(vend, f"dinov2_{model_name}_pretrain.pth")
+        # 2026-10-06 修复：vendor 目录存在但缺权重文件时原实现直接抛错，把可用
+        # 的本地 hub 缓存/在线下载一并堵死（实测缓存里已有 dinov2_vits14_
+        # pretrain.pth 88MB，却因 assets/dinov2 仅有源码无权重而无法 fit）。
+        # 缺权重改为回退到缓存/在线路径；vendor 仅在权重齐备时才作为优先源。
         if not os.path.exists(weights):
-            raise FileNotFoundError(f"随包 dinov2 目录缺权重文件: {weights}")
-        if vend not in sys.path:
-            sys.path.insert(0, vend)
-        import importlib
-        backbones = importlib.import_module("dinov2.hub.backbones")
-        print(f"[dino] 使用随包 vendor 权重: {weights}")
-        return getattr(backbones, f"dinov2_{model_name}")(pretrained=True, weights=weights)
+            print(f"[dino] 随包 vendor 目录缺权重，回退 hub 缓存/在线: {weights}")
+        else:
+            if vend not in sys.path:
+                sys.path.insert(0, vend)
+            import importlib
+            backbones = importlib.import_module("dinov2.hub.backbones")
+            print(f"[dino] 使用随包 vendor 权重: {weights}")
+            return getattr(backbones, f"dinov2_{model_name}")(pretrained=True, weights=weights)
     hubconf_path = os.path.join(DINOV2_CACHE_DIR, "hubconf.py")
     if not os.path.exists(hubconf_path):
         return torch.hub.load("facebookresearch/dinov2", f"dinov2_{model_name}")

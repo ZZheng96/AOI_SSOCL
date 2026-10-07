@@ -13,7 +13,7 @@ import requests
 
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 
-BASE = "http://127.0.0.1:8021/api"
+BASE = "http://127.0.0.1:8022/api"
 ROOT = Path(__file__).resolve().parent.parent
 NG = ROOT / "alg_repo" / "smt" / "test_images" / "excess_pair" / "pair4" / "PixPin_2026-07-01_11-21-15.png"
 

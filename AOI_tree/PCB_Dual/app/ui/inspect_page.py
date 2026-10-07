@@ -258,7 +258,7 @@ class InspectPage(QWidget):
             return
         catalog = get_catalog()
         labels = catalog.labels()
-        std = Path(tpl.standard_image.path).name if tpl.standard_image.path else "—"
+        std = tpl.standard_image.display_name
         items = [labels.get(i.algorithm_id, i.algorithm_id) for i in tpl.enabled_detection_items() if catalog.is_job_item(i.algorithm_id)]
         self.lbl_rules.setText(
             f"{tpl.display_name}  v{tpl.version}\n标准图 {std}\n检测项：{'、'.join(items) or '—'}"
@@ -649,7 +649,15 @@ class InspectPage(QWidget):
         )
         if overall == "ERROR" or run.error:
             return ""  # 机器未给出有效判定，不作为学习样本
-        machine_ng = overall in ("NG", "GRAY")
+        # 学习样本以 AOI 引擎自身判定为准（双检时融合结论可能来自传统 CV，
+        # 不能把传统 CV 的 NG 记成 AOI 的误报）；无 AOI 行时回退融合结论
+        aoi_meta = next((r.metadata for r in summary.results
+                         if r.item_id == "aoi_feature"), None) or {}
+        aoi_decision = aoi_meta.get("decision")
+        if aoi_decision in ("anomaly", "gray", "normal"):
+            machine_ng = aoi_decision in ("anomaly", "gray")
+        else:
+            machine_ng = overall in ("NG", "GRAY")
         human_ng = verdict == "confirmed_ng"
         if human_ng:
             fb_verdict, label = ("correct", 1) if machine_ng else ("wrong", 1)
@@ -658,7 +666,10 @@ class InspectPage(QWidget):
         try:
             from app.engines.feature import get_engine
 
-            get_engine().submit_feedback(category, run.test_path, fb_verdict, label=label)
-        except Exception:  # noqa: BLE001 学习失败不影响已落盘的复判结论
-            return "学习反馈未生效（品类模型未就绪）"
-        return "已反馈学习"
+            info = get_engine().submit_feedback(category, run.test_path, fb_verdict, label=label,
+                                                detection_id=aoi_meta.get("detection_id"))
+        except Exception as exc:  # noqa: BLE001 学习失败不影响已落盘的复判结论
+            return f"学习反馈未生效（{str(exc)[:60]}）"
+        if isinstance(info, dict) and info.get("duplicate"):
+            return "该次检测已反馈过（未重复学习）"
+        return "已反馈学习（AOI_Core）" if aoi_meta.get("backend") == "aoi_core" else "已反馈学习"

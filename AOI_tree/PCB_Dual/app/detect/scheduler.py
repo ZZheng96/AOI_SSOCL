@@ -170,15 +170,19 @@ class DetectScheduler:
             image_std = image_test
 
         results: list[AlgorithmResult] = []
+        # 同一次检测中配方相同的算法共用预处理结果（整图预处理是主要耗时）
+        pre_cache: dict[tuple, tuple[np.ndarray, np.ndarray]] = {}
 
         for alg_id in job_ids:
             manifest = catalog.get(alg_id)
             label = algorithm_labels.get(alg_id, manifest.display_name if manifest else alg_id)
             record, hit = self.recipe_store.resolve(category, alg_id)
             params = PreprocessParams.from_dict(record.preprocess)
-            std_src = image_std if image_std is not None else image_test
-            std_p = run_preprocess(std_src, params)
-            test_p = run_preprocess(image_test, params)
+            pkey = tuple(sorted(params.to_dict().items()))
+            if pkey not in pre_cache:
+                std_src = image_std if image_std is not None else image_test
+                pre_cache[pkey] = (run_preprocess(std_src, params), run_preprocess(image_test, params))
+            std_p, test_p = pre_cache[pkey]
 
             kind = catalog.region_kind(alg_id)
             item_rois = rois_from_region_sets(region_sets, kind if kind != "none" else None)

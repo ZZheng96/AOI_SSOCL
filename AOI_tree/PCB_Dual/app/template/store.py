@@ -5,6 +5,7 @@ import hashlib
 import json
 import re
 import shutil
+from glob import escape as glob_escape
 from pathlib import Path
 from typing import Iterable
 
@@ -139,7 +140,25 @@ class TemplateStore:
         if not folder.exists():
             return False
         shutil.rmtree(folder)
+        self._purge_side_files(safe_id(template_id))
         return True
+
+    @staticmethod
+    def _purge_side_files(tid: str) -> None:
+        """级联清理以模板 id 为键的外部文件：模板专属检测参数 + 旧版标定。"""
+        from app.calibration.store import _path_for as calib_path
+        from app.recipe.param_store import ParamStore
+
+        ta_dir = ParamStore().root / "template_algorithm"
+        if ta_dir.is_dir():
+            for p in ta_dir.glob(f"{glob_escape(tid)}__*.json"):
+                try:
+                    owner = json.loads(p.read_text(encoding="utf-8")).get("template_name")
+                except (json.JSONDecodeError, OSError, AttributeError):
+                    continue
+                if owner == tid:  # 防止 "A" 误删 "A__x" 模板的参数
+                    p.unlink(missing_ok=True)
+        calib_path(tid).unlink(missing_ok=True)
 
     def create_from_standard_image(
         self,
@@ -193,6 +212,7 @@ class TemplateStore:
             dest = folder / f"standard{src.suffix.lower() or '.png'}"
             shutil.copy2(src, dest)
             tpl.standard_image = self._make_image_ref(dest)
+            tpl.standard_image.source_name = src.name
         else:
             tpl.standard_image = self._make_image_ref(src)
 
@@ -325,7 +345,7 @@ class TemplateStore:
                 )
             elif not self._category_model_ready(bound):
                 issues.append(
-                    f"[阻断] 品类模型「{bound}」尚未准备，请先在「品类模型」页完成准备"
+                    f"[阻断] 品类模型「{bound}」尚未准备，请先在「特征学习（AOI_Core）」页完成准备"
                 )
         if not template.display_name.strip():
             issues.append("[警告] 显示名称为空")
@@ -333,17 +353,12 @@ class TemplateStore:
 
     @staticmethod
     def _category_model_ready(category: str) -> bool:
-        """品类模型是否已准备并激活（轻量文件系统判定，不加载特征引擎）。"""
+        """品类模型是否已在树干 AOI_Core 准备并激活。"""
         try:
-            from app.config import get_settings
+            from app.engines.feature import get_engine
 
-            cat_dir = Path(get_settings().snapshots_dir) / category
-            cur = cat_dir / "current.json"
-            if not cur.exists():
-                return False
-            data = json.loads(cur.read_text(encoding="utf-8"))
-            return (cat_dir / f"v{int(data['version'])}").is_dir()
-        except Exception:  # noqa: BLE001 判定失败时按未准备处理，避免带病发布
+            return get_engine().current_version(category) is not None
+        except Exception:  # noqa: BLE001 Core 不可达/判定失败时按未准备处理，避免带病发布
             return False
 
     def sync_calibration_to_legacy(self, template: InspectionTemplate) -> None:

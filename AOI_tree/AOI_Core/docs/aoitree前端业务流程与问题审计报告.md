@@ -794,9 +794,54 @@ PCB_Dual UI
 2. 同步失败只记录 pending 和错误原因，当前未确认是否存在自动重试或人工补发。
 3. 回传字段包含 `image_path`，尚未确认 AOI_Core 是否一定能访问 PCB_Dual 的本地路径。
 
+#### 9.2.1 PCB_Dual 与 AOI_Core 衔接问题（2026-10-06 实测）
+
+现状：PCB_Dual 的特征引擎 `app/engines/feature.py` 直接 `import algo.*`，而 `PCB_Dual/algo/` 是 AOI_Core/algo 的 vendored 拷贝。PCB_Dual 启动时不启动、也不调用 AOI_Core 后端（8017），只复用了算法代码。它的模型快照、反馈库、学习日志和 AOI_Core 是两份。
+
+DataLocal 实测（gold_finger，L1a/fast，init 40 正常 + 10 缺陷，测 16 张）：prepare v1 用时 18.8s；单图推理平均 219ms、最大 610ms；反馈 20ms，返回 `difficult_queued`；consolidate v2 和 activate 正常；检出 2/13，误报 3/3。小样本、fast 模式加上 gold_finger 的域差，精度不能作为结论。
+
+| # | 级别 | 问题 | 证据 / 影响 | 状态 |
+|---|---|---|---|---|
+| C1 | 高 | `PCB_Dual/algo` 与 `AOI_Core/algo` 有 25 个文件哈希漂移，包括 persist.py、eval/offline.py、fusion/*、ssocl/* | PCB_Dual 用的是改进前的算法（见 12.17：没有 LOO、I6 冻结、ssocl_cfg 落盘）。AOI_Core 的修复不会自动同步过来 | 已修（阶段三删除 `PCB_Dual/algo`，只保留 Core 一份） |
+| C2 | 高 | 首次 fit 时报 `FileNotFoundError`：找不到 DINOv2 权重 | 已把 `dinov2_vits14_pretrain.pth` 从 torch hub 缓存复制到 `AOI_tree/assets/dinov2/` | 已修（只修了本机，部署包里也要带上这份权重） |
+| C3 | 中 | fit 时全局缺陷判别器跨仓引用 `AOI_Core/algo/assets/defect_clf.pkl`；这个 pkl 用 sklearn 1.9 序列化，当前环境是 1.7.2，会报兼容告警 | PCB_Dual 单独部署时会缺文件；版本不一致可能导致判别结果偏差 | 部分已修：pkl 已迁到 `AOI_tree/assets/defect_clf.pkl`（`safe_pickle.asset_roots()` 按 Core/assets → AOI_tree/assets → algo/assets 查找），跨仓引用已消除；sklearn 版本告警仍未解决，需要用 1.7.2 重新训练或锁定版本 |
+| C4 | 中 | 快照里没有 `ssocl_cfg.json`，activate 时打印 `[persist][警告] 按硬编码模板恢复` | 回滚或激活历史版本后，SSOCL 配置可能和训练时不一致 | 已修（快照只由 Core 产出，Core 新版会写入 ssocl_cfg） |
+
+根因：树枝通过"拷贝代码"接入树干，而不是通过"服务"接入。整改方向是：PCB_Dual 启动或复用 AOI_Core 后端，特征引擎改为 HTTP 调用 AOI_Core，再删除 vendored `algo`。这样 C1、C3、C4 会一起消失，见 10 节 P1。
+
+#### 9.2.2 整改落地：树枝以服务方式接入树干（2026-10-07）
+
+结构：PCB_Dual 是入口，负责启动或复用 AOI_Core 后端子进程，传统 CV 与特征学习并行检测，`fuse_dual` 融合判定留在树枝。torch/DINO 只由 Core 加载。
+
+| 阶段 | 改动 | 位置 |
+|---|---|---|
+| 一 | 启动/复用 Core：`/api/health` 正常就复用；否则在 cwd=AOI_Core 下执行 `python server.py`，日志写到 `storage/logs/aoi_core_child.log`；退出时只关闭自己拉起的进程 | `app/core/aoi_core_launcher.py`、`main.py` |
+| 一 | `FeatureClient` 走 HTTP 调用 Core，接口与原 `FeatureEngine` 一致（阶段三已删除 local 回退） | `app/engines/feature_client.py`、`feature.py`、`configs/default.yaml` |
+| 二 | 反馈带 Core 的 `detection_id` 走 Core `/feedback`。幂等靠 `source_event_id=pcb_dual:det{本地id}`，Core 对重复提交返回原 feedback_id，前端提示"已反馈过" | `feature_client.py`、`inspect_page.py`、`routes_feedback.py` |
+| 二 | remote 模式下"品类模型"Tab 换成"特征学习（AOI_Core）"，直接嵌入 Core 的 7 个页面：数据管理/数据增强/模型管理/评估看板/标注复核/学习效果/统计报表（原 ModelPage 已删除） | `app/ui/core_pages.py`、`main_window.py` |
+
+保留的 PCB_Dual 特色页：自动检测（检测操作台，传统 CV 与特征学习并行、融合判定、MES）、历史、模板建模（模板/标定/ROI/对位）、算法调试（传统 CV adapters）、预处理。
+
+嵌入方式：Core 的 `ui` 包只通过 `ApiClient`/`TaskMonitor` 访问 HTTP/WS，不 import backend/algo。把 AOI_Core 根目录追加到 `sys.path` 末尾后在树枝进程内加载。`ui` 命中 Core 的；树枝进程不加载 `algo`。Core 的 `LIGHT_QSS` 只作用于该 Tab 的子树。页面在首次切到该 Tab 且 Core 健康时才构建，未就绪时显示占位提示并自动重试。工单回调注入 None，即按全局口径。
+
+实测（DataLocal gold_finger，fast）：
+- Core 冷启动约 8s；prepare 20 张生成 v1，用时 15s。
+- 单图检测首张 0.9–6s（懒加载），之后 80–670ms，返回 detection_id 和热力图。
+- 反馈 `learning_status=applied`，用时 1.3–2s；重复反馈 `duplicate=True`；不存在的 ID 返回 404。
+- PCB_Dual 路由（TestClient，remote）：`/api/models` 返回 `backend=aoi_core`。
+- 无头 MainWindow：7 个 Core 页面全部构建成功，品类 [gold_finger, grid, pill]。
+
+实测中发现并修复的 Core bug：`backend/self_learning/service.py` 缺少 `Image` 的 import，导致 `/feedback` 报 `NameError` 并返回 500。
+
+阶段三（2026-10-07 已完成）：
+- 删除 `PCB_Dual/algo`、`storage/snapshots`、本地 `ModelPage`、`feedback_sync.py`、`engine_fast.yaml`，以及 `assets/disc_pretrain.pt` 副本（与 Core 的这份 hash 相同）。移除 local 回退，特征引擎只走 `FeatureClient` 调用 Core。
+- assets 统一放到 `AOI_tree/assets`：DINOv2 权重与 `defect_clf.pkl`（checksums 已同步）。`disc_pretrain.pt` 是 Core 专属，保留在 `AOI_Core/assets`。
+- 端口：PCB_Dual 改为 8022，环境变量为 `PCBDUAL_PORT`，不再与 PCB_Ins_v2 共用 8021 和 `PCBINS_PORT`；Core 仍用 8017。
+- 验证：`compileall app` 通过；无头 MainWindow 共 6 个 Tab，含"特征学习（AOI_Core）"；`app.api.app` 可以导入，port=8022；进程内 `sys.modules` 里没有 `algo`。`tests/_verify_feature.py` 会在 Core 中写入训练数据和模型版本，本次没有运行。
+
 ### 8.3 PCB_Ins_v2
 
-PCB_Ins_v2 有本地检测、结果和反馈学习闭环，但当前未发现与 PCB_Dual 同等明确的 AOI_Core 反馈同步逻辑。两个项目默认都使用 8021，若同时启动会存在端口竞争风险，实际生产配置需确认。
+PCB_Ins_v2 有本地检测、结果和反馈学习闭环，但当前未发现与 PCB_Dual 同等明确的 AOI_Core 反馈同步逻辑。端口冲突已解决：PCB_Dual 已改为 8022（`PCBDUAL_PORT`），PCB_Ins_v2 保持 8021（`PCBINS_PORT`）。
 
 ## 10. 问题分级与整改建议
 
@@ -813,6 +858,7 @@ PCB_Ins_v2 有本地检测、结果和反馈学习闭环，但当前未发现与
 - 将长任务按类型隔离线程池，或至少在 UI 展示排队状态和预计阻塞原因。
 - 对 PCB_Dual 的 pending 同步增加重试/补偿/人工重发，并记录每次尝试。
 - 对跨项目图片路径做统一文件服务或资源登记，避免直接依赖本地绝对路径。
+- PCB_Dual 的特征引擎从 vendored `algo` 改为调用 AOI_Core 服务，消除 9.2.1 的 C1/C3/C4。（2026-10-07 已完成：只通过服务接入，vendored `algo` 已删除，见 9.2.2；剩下 sklearn 版本告警）
 
 ### P2：影响可维护性与使用体验
 
@@ -833,7 +879,7 @@ PCB_Ins_v2 有本地检测、结果和反馈学习闭环，但当前未发现与
 8. 多操作员同时复核同一检测时的 409 交互。
 9. PCB_Dual 同步失败后的 pending 是否可补偿。
 10. AOI_Core 与 PCB_Dual 在真实部署中的图片路径、数据库和模型目录是否共享。
-11. PCB_Dual 与 PCB_Ins_v2 是否会同时启动并争用 8021。
+11. ~~PCB_Dual 与 PCB_Ins_v2 争用 8021~~（已分开：8022 / 8021）。
 12. 真实数据量下各页面的分页、刷新、图像加载和 UI 响应时间。
 
 ## 12. 用最简单的话解释 AOI_Core 的工作原理和实际效果
@@ -1448,6 +1494,50 @@ full 终态权重（sem/disc/shead）：BTAD s42 为 0.5/0/0.5，s1 为 0.8/0.2/
 2. 下调方向不加对称护栏：tubes s42 R5 从 1.17 下调到 0.71，margin 只有 0.011，但 acc +0.15。下调用来纠正过高阈值时是有益的。
 3. 剩余 acc 损失来自 R6 小样本下调（screw s1 0.8377→0.6586，acc 0.9→0.7；s42 0.80→0.66，acc 0.9→0.8）。这只影响阈值，不影响 AUROC 和召回。
 4. gold_finger / solder_smt 与文档值的差距来自口径：文档 1.0 来自 L3 模板含 test/good 的闭集实验，只用 train/good 时为 0.27；静态基线反向（0.10）已列入不足清单。
+
+### 12.16 I6：LOO 权重搜索补 U108 冻结 + DINO 权重加载回退（2026-10-06）
+
+承接 12.15 第 7 项遗留根因「LOO 分支绕过冻结」。`_maybe_apply_weights` 中 U108/U110 冻结只对命中率学习器路径生效，`score_mode="loo"` 的单纯形搜索路径（`_search_weights_loo`）此前直接进入搜索，绕过「fit 权重已优」判据。实测伤害：screw s1 n_fb=14 写回 `{sem .3 / shead .7}`，holdout AUROC 0.94→0.895。
+
+**修复**（[feedback.py](file:///E:/CPIPC/CGAIC/AOI_tree/AOI_Core/algo/ssocl/feedback.py) `_maybe_apply_weights`）：LOO 路径补同等冻结——`train_auroc ≥ weight_learn_max_train_auroc(0.99)` 且已反馈样本 AUC ≥0.9（无域偏移证据）时冻结；反馈 AUC <0.9（域偏移/反向品类）放行搜索，gold_finger / GYU-DET 的自救通道不变。
+
+**同批附带修复**（[dino.py](file:///E:/CPIPC/CGAIC/AOI_tree/AOI_Core/algo/backbone/dino.py) `_load_dinov2_from_cache`）：vendor 目录（`assets/dinov2`，仅源码）存在但缺 `dinov2_vits14_pretrain.pth` 时原实现直接抛 `FileNotFoundError`，把可用的本地 hub 缓存（已有 88MB 权重）一并堵死。改为缺权重时回退 hub 缓存/在线，vendor 仅在权重齐备时作优先源。
+
+**回归结果**（full 复核，holdout 每类 10 张，种子 42/1，init-defect-source=pool）：
+
+| 品类 | 种子 | I6 前 | I6 后 | 说明 |
+|---|---|---|---|---|
+| screw | 42 | 0.96 / acc 0.8 / rec 0.7 | 0.96 / acc 0.8 / rec 0.7 | 持平 |
+| screw | 1 | **0.90**（回撤）/ rec 0.9 | **0.94** / rec **1.0** | 修复，权重写回 1→0 |
+| tubes | 42 | 0.98 | 0.98 | 持平（本就无写回） |
+| tubes | 1 | 0.99 | 0.99 | 持平 |
+| bottle | 42/1 | 1.0 | 1.0 | 持平 |
+| capsule | 42/1 | 1.0 / 1.0 | 1.0 / 1.0 | 持平（train_auroc 0.9887<0.99 不冻结，权重学习保留，无回撤） |
+
+四品类回归门禁全部 PASS、零失败。I6 消除了 screw s1 的 AUROC 回撤，易品类（tubes/bottle/capsule）零回撤。
+
+### 12.17 与改进前备份（AOI_tree/PCB_Dual/algo）同口径对照
+
+做法：用临时包装脚本预加载 PCB_Dual 的旧 `algo` 包，复用当前 backend 与 learning_protocol。为保证可比，只做了两处与算法无关的接口兼容：一是注入新增的 `safe_pickle`；二是丢弃 `fit(progress_cb)`。holdout、种子、参数与 12.16 完全一致（full、pool、4×6、种子 42/1、每类 10 张）。代码差异共 27 个文件、+1586/−226 行。旧版 feedback.py 没有双侧阈值重估 `_maybe_pair_thresh`、LOO 诚实打分、`_search_weights_loo` 和 I6 冻结；旧快照也不落盘 ssocl_cfg，`train_auroc` 为 None，因此 U108 冻结永远不会生效。
+
+| 品类 | 种子 | 旧版 AUROC | 旧版 acc / rec / FP | 当前 AUROC | 当前 acc / rec / FP |
+|---|---|---|---|---|---|
+| screw | 42 | 0.93 | 0.85 / 1.0 / 3 | 0.96 | 0.80 / 0.7 / 1 |
+| screw | 1 | 0.87（回撤 FAIL） | 0.75 / 0.9 / 4 | 0.94 | 0.90 / 1.0 / 2 |
+| tubes | 42 | 0.88 | 0.70 / 1.0 / 6 | 0.98 | 0.85 / 0.9 / 2 |
+| tubes | 1 | 0.92 | 0.75 / 1.0 / 5 | 0.99 | 0.90 / 0.9 / 1 |
+| bottle | 42 / 1 | 1.0 / 1.0 | 0.85 / 1.0 / 3（两种子相同） | 1.0 / 1.0 | 1.00 / 0.95，rec 1.0，FP 0 / 1 |
+| capsule | 42 / 1 | 1.0 / 1.0 | 0.95 / 0.95，rec 0.9 / 1.0 | 1.0 / 1.0 | 1.00 / 0.95，rec 1.0 |
+
+结论：
+
+- 8 组中，当前版本 AUROC 全部持平或更高（均值 0.984 对 0.950），准确率 7 组持平或更高。
+- 旧版门禁 FAIL 一项（screw s1，0.93→0.87，权重连续 apply 6 次后漂移），当前版本零 FAIL。
+- 旧版召回偏高，主要靠阈值偏松换来，误检多 2–5 张，tubes 最明显。
+- 当前版本唯一的弱项是 screw s42：召回 0.7，对旧版 1.0，原因见 12.16 中上调阈值的样本噪声分析。
+- 单图最大耗时：旧版 0.20–0.37s，当前版本 0.15–0.25s，两者都满足 ≤1s。
+
+报告：`storage/logs/learning_protocol_{screw_20261006_214528, tubes_20261006_214639, bottle_20261006_215759, capsule_20261006_215805}_*.json`（旧版）。
 
 ## 13. 阶段结论
 

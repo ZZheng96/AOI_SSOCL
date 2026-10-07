@@ -24,13 +24,18 @@ from .metrics import image_metrics
 
 def _global_clf_path(cfg):
     """U96 全局类型判别器路径：cfg.attribution.global_clf 覆盖（不存在则回落），
-    默认随包 algo/assets/defect_clf.pkl（算法工程 scripts/train_defect_classifier.py
-    生成的跨品类 508 张 init_defect 随机森林，已内化随系统打包）。"""
+    默认按 DINO 同款优先级查找：<包根>/assets → <包根>/../assets（AOI_tree 三组件
+    共享一份）→ algo/assets（旧位置兼容）。pkl 为算法工程 scripts/train_defect_classifier.py
+    生成的跨品类 508 张 init_defect 随机森林。"""
     p = (cfg.get("attribution") or {}).get("global_clf")
     if p and os.path.exists(p):
         return p
-    return os.path.normpath(os.path.join(
-        os.path.dirname(__file__), "..", "assets", "defect_clf.pkl"))
+    from ..common.safe_pickle import asset_roots
+    cands = [os.path.join(r, "defect_clf.pkl") for r in asset_roots()]
+    for c in cands:
+        if os.path.exists(c):
+            return c
+    return cands[-1]
 
 
 def _load_or_train_defect_clf(cfg, defect_paths, def_items, seed=42):

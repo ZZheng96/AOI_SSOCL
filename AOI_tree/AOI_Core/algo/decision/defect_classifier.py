@@ -16,7 +16,7 @@ import sys as _sys
 import numpy as np
 import cv2
 
-# 随包预训练 pkl（algo/assets/defect_clf.pkl）的 pickle 模块路径是
+# 随包预训练 pkl（AOI_tree/assets/defect_clf.pkl）的 pickle 模块路径是
 # src.decision.defect_classifier（原算法工程包名）；注册别名使旧 pkl 在 AOI_sys
 # 内可直接反序列化（M11a 内化时类路径变为 algo.decision.defect_classifier）。
 # 注意：仅注册全路径不够——pickle find_class 的 __import__ 会先解析父包，

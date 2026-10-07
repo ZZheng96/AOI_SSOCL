@@ -7,6 +7,7 @@ from __future__ import annotations
 from copy import deepcopy
 from dataclasses import asdict, dataclass, field
 from datetime import datetime, timezone
+from pathlib import Path
 from typing import Any
 
 from app.template.regions import (
@@ -27,6 +28,13 @@ class StandardImageRef:
     sha1: str = ""
     width: int = 0
     height: int = 0
+    source_name: str = ""  # 复制进模板目录前的原始文件名
+
+    @property
+    def display_name(self) -> str:
+        if self.source_name:
+            return self.source_name
+        return Path(self.path).name if self.path else "—"
 
     def to_dict(self) -> dict[str, Any]:
         return asdict(self)
@@ -39,6 +47,7 @@ class StandardImageRef:
             sha1=str(data.get("sha1") or ""),
             width=int(data.get("width") or 0),
             height=int(data.get("height") or 0),
+            source_name=str(data.get("source_name") or ""),
         )
 
 

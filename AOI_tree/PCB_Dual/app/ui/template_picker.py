@@ -95,7 +95,7 @@ class TemplatePicker(QWidget):
             self.template_changed.emit(None)
             return
         algs = [a for a in tpl.enabled_algorithm_ids() if get_catalog().is_job_item(a)]
-        std_name = Path(tpl.standard_image.path).name if tpl.standard_image.path else "—"
+        std_name = tpl.standard_image.display_name
         sets = tpl.region_sets or region_sets_from_calibration(tpl.calibration)
         self.lbl_meta.setText(f"检测项 {len(algs)} · 区域 {count_regions(sets)} · {std_name}")
         self.template_changed.emit(tpl)
@@ -138,7 +138,7 @@ class TemplateListPanel(QWidget):
             mark = "●" if tpl.status == "published" else "○"
             color_hint = "已发布" if tpl.status == "published" else "草稿"
             item = QListWidgetItem(f"{mark} {tpl.display_name}  [{color_hint}]  v{tpl.version}")
-            std = Path(tpl.standard_image.path).name if tpl.standard_image.path else "-"
+            std = tpl.standard_image.display_name
             n_items = len([a for a in tpl.enabled_algorithm_ids() if get_catalog().is_job_item(a)])
             sets = tpl.region_sets or region_sets_from_calibration(tpl.calibration)
             tip = (

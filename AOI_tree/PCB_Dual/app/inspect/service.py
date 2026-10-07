@@ -3,6 +3,7 @@ from __future__ import annotations
 
 import csv
 import json
+import threading
 import time
 from dataclasses import dataclass, field
 from datetime import datetime
@@ -30,6 +31,32 @@ def job_item_ids(algorithm_ids: list[str]) -> list[str]:
 
 
 IMAGE_SUFFIXES = {".png", ".jpg", ".jpeg", ".bmp", ".tif", ".tiff", ".webp"}
+
+# 标准图解码缓存：同一模板逐张检测时避免每张都重新解码大图（~0.13s/次）。
+# 以 (路径, mtime, size) 为键，文件被替换即失效；返回副本防止下游原地修改污染缓存。
+_STD_CACHE: dict[str, tuple[tuple[float, int], np.ndarray]] = {}
+_STD_CACHE_MAX = 4
+_STD_LOCK = threading.Lock()
+
+
+def _read_std_cached(path: str) -> np.ndarray | None:
+    try:
+        st = Path(path).stat()
+    except OSError:
+        return None
+    sig = (st.st_mtime, st.st_size)
+    with _STD_LOCK:
+        hit = _STD_CACHE.get(path)
+    if hit is not None and hit[0] == sig:
+        return hit[1].copy()
+    img = imread_unicode(path)
+    if img is None:
+        return None
+    with _STD_LOCK:
+        if path not in _STD_CACHE and len(_STD_CACHE) >= _STD_CACHE_MAX:
+            _STD_CACHE.pop(next(iter(_STD_CACHE)))
+        _STD_CACHE[path] = (sig, img)
+    return img.copy()
 
 
 @dataclass
@@ -75,7 +102,7 @@ class InspectService:
         ok, msg = self.template_store.validate_standard_image(template)
         if not ok:
             return None, msg
-        std = imread_unicode(template.standard_image.path)
+        std = _read_std_cached(template.standard_image.path)
         if std is None:
             return None, f"标准图无法读取：{template.standard_image.path}"
         return std, ""
@@ -347,6 +374,10 @@ class InspectService:
                 defect_count=len(aoi_box),
                 elapsed_ms=int(feat.get("latency_ms", 0)),
                 hit_layer="特征引擎",
+                metadata={"detection_id": feat.get("detection_id"),
+                          "backend": feat.get("backend"),
+                          "decision": feat.get("decision"),
+                          "heatmap_paths": feat.get("heatmap_paths") or {}},
             )
             results.append(aoi)
         summary = DetectSummary(

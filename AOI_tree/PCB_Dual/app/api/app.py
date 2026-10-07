@@ -49,18 +49,10 @@ def health() -> dict:
 
 @app.on_event("startup")
 def _startup() -> None:
-    """启动产线服务、检测任务队列与反馈补偿 worker。"""
+    """启动产线服务与检测任务队列（反馈直达树干 AOI_Core，无需本地补偿 worker）。"""
     from app.config import get_settings
-    from app.core.feedback_sync import get_feedback_sync_worker
     from app.core.task_queue import get_task_queue
     get_task_queue().start()
-    get_feedback_sync_worker().start()
     if get_settings().get("system", "pipeline_enabled", False):
         from app.core.pipeline_service import PipelineService
         PipelineService.get().start()
-
-
-@app.on_event("shutdown")
-def _shutdown() -> None:
-    from app.core.feedback_sync import get_feedback_sync_worker
-    get_feedback_sync_worker().stop()

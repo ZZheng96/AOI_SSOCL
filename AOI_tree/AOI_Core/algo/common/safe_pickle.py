@@ -38,8 +38,17 @@ def register_pickle_root(root: str) -> None:
         _REGISTERED_ROOTS.append(r)
 
 
+def asset_roots() -> List[str]:
+    """随包资源根（查找优先级）：<包根>/assets → <包根>/../assets（AOI_tree 共享）→ algo/assets。"""
+    algo_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+    pkg_root = os.path.dirname(algo_dir)
+    return [os.path.join(pkg_root, "assets"),
+            os.path.join(os.path.dirname(pkg_root), "assets"),
+            os.path.join(algo_dir, "assets")]
+
+
 def _allowed_roots() -> List[str]:
-    roots = [_norm(os.path.join(os.path.dirname(__file__), "..", "assets"))]
+    roots = [_norm(r) for r in asset_roots()]
     roots.extend(_REGISTERED_ROOTS)
     extra = os.environ.get("AOI_PICKLE_EXTRA_ROOTS", "")
     for item in extra.split(os.pathsep):

@@ -1097,7 +1097,10 @@ class PrepareModelDialog(QDialog):
             f"异常 {a if a is not None else '?'} 张\n"
             f"数据条件：{self._scenario_cn()}\n"
             f"运行模式：{self.cmb_profile.currentText()}\n"
-            "下一步：到「评估看板」验收该版本，确认无误后再激活")
+            + ("该版本已自动激活为当前版本；建议到「评估看板」验收，"
+               "如不满意可在版本历史中回滚"
+               if r.get("activated", True) else
+               "实验版本未激活：到「评估看板」验收，确认无误后再手动激活"))
         self.btn_ok.setText("完成")
         self.btn_ok.setEnabled(True)
         try:

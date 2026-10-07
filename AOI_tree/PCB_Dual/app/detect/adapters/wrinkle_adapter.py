@@ -101,11 +101,18 @@ class WrinkleAdapter(BaseAdapter):
         extra = dict(result.metadata or {})
         extra.pop("output_image", None)
         score = extra.get("wrinkle_score", "")
+        thr = cfg.get("wrinkle_score_thresh", "")
+        score_s = f"{score:.4f}" if isinstance(score, float) else str(score)
+        if result.code != 0:
+            message = f"[错误] 起皱: {msg}"
+        else:
+            # 库在正常完成时 message 恒为 "ok"，NG 时须展示判定依据而非该字样
+            message = (f"起皱判定={'OK' if ok else 'NG'} 占比={score_s} 阈值={thr}"
+                       f"，缺陷数={len(boxes)}")
         return AlgorithmResult(
             algorithm=algorithm_id,
             ok=ok,
-            message=f"起皱判定={result.metadata.get('status')} score={score}"
-                    if ok else f"起皱: {msg}",
+            message=message,
             boxes=boxes,
             defect_count=len(boxes),
             elapsed_ms=int(result.cost_time * 1000) if result.cost_time else 0,

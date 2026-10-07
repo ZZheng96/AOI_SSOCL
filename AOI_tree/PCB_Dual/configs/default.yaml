@@ -1,14 +1,13 @@
-# PCB_Ins v2 主配置（融合 PCB_Ins 传统检测 + AOI_sys 特征学习）
+# PCB_Dual 主配置（树枝：传统 CV 检测 + 树干 AOI_Core 特征学习）
 
 system:
   host: "127.0.0.1"
-  port: 8021
-  name: "PCB_Ins v2"
+  port: 8022                 # 8021 归 PCB_Ins_v2，8017 归 AOI_Core；env PCBDUAL_PORT 覆盖
+  name: "PCB_Dual"
   pipeline_enabled: false    # 启动时是否自动跑产线消费服务
 
 storage:
   root: "storage"
-  snapshots: "storage/snapshots"      # 品类模型快照（特征引擎）
   logs: "storage/logs"
   outputs: "storage/outputs"
 
@@ -19,22 +18,17 @@ logging:
 database:
   url: "sqlite:///storage/aoi.db"     # 检测记录/模板/工单统一入库
 
-# 主干反馈回流；留空则仅保留本地反馈
-feedback_sync:
-  url: ""
-  timeout_s: 5
-  max_attempts: 5
-  base_backoff_s: 10
-
 # 传统算法仓库位置（系统内预留，未来算法放入 alg_repo/<name>）
 # SMT 仓库已从 D:\AOI\PCBA_detection\test_code\Dev_solder_smt_Alg 复制
 alg_repo:
   root: "alg_repo"
 
-# 特征引擎（自学习算法引擎，主干系统迁入）
+# 特征学习：树枝只经 HTTP 调用树干 AOI_Core（torch/DINO/模型/反馈库均在 Core）
 feature_engine:
-  base_cfg: "configs/engine_fast.yaml" # 槽位配置（DINO + 9 槽）
-  device: "auto"                      # auto / cuda / cpu
+  aoi_core_url: "http://127.0.0.1:8017"  # env AOI_CORE_URL 覆盖
+  aoi_core_dir: "../AOI_Core"         # 相对 PCB_Dual 根目录
+  autostart: true                     # 桌面端启动时若 Core 未运行则拉起子进程
+  timeout_s: 30                       # 单次检测请求超时
 
 # 模板库
 templates:

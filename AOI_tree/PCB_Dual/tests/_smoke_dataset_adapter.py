@@ -21,7 +21,7 @@ from server import start_server_background  # noqa: E402
 
 start_server_background()
 
-BASE = "http://127.0.0.1:8021/api"
+BASE = "http://127.0.0.1:8022/api"
 for _ in range(100):
     try:
         if requests.get(f"{BASE}/health", timeout=1).json().get("status") == "ok":

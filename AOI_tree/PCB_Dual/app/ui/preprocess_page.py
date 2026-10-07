@@ -106,6 +106,7 @@ class PreprocessPage(QWidget):
         self.btn_save_algo = QPushButton("保存为该算法专属")
         self.btn_clear_algo = QPushButton("清除该算法专属覆盖")
         self.btn_reset = QPushButton("控件重置为 NONE")
+        self.btn_save_global.setToolTip("影响所有模板：未设算法专属配方的算法都会使用此配方")
         btn_row.addWidget(self.btn_save_global)
         btn_row.addWidget(self.btn_save_algo)
         btn_row.addWidget(self.btn_clear_algo)
@@ -211,8 +212,30 @@ class PreprocessPage(QWidget):
 
     # ---- 保存 ----
     def _save_global(self) -> None:
-        self.recipe_store.save("global_default", self._current_params())
-        QMessageBox.information(self, "已保存", "已保存为全局默认预处理配方。")
+        new = self._current_params()
+        old_rec = self.recipe_store.get_saved("global_default")
+        old = PreprocessParams.from_dict(old_rec.preprocess) if old_rec else PreprocessParams()
+        fields = (("颜色通道", "color"), ("增强", "enhance"), ("滤波", "filter"), ("形态学", "morphology"))
+        diff = "\n".join(
+            f"  {label}：{getattr(old, key)} → {getattr(new, key)}"
+            + ("" if getattr(old, key) != getattr(new, key) else "（不变）")
+            for label, key in fields
+        )
+        reply = QMessageBox.question(
+            self,
+            "确认修改全局默认",
+            "全局默认配方会作用于所有模板的检测：\n"
+            "凡未设置“算法专属配方”的算法都会立即改用新配方，可能影响现有检测结果。\n\n"
+            f"{diff}\n\n确定保存吗？",
+            QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No,
+            QMessageBox.StandardButton.No,
+        )
+        if reply != QMessageBox.StandardButton.Yes:
+            return
+        self.recipe_store.save("global_default", new)
+        QMessageBox.information(
+            self, "已保存", "已保存为全局默认预处理配方，对所有未设专属配方的算法生效。"
+        )
         self._reload_for_algorithm()
 
     def _save_algorithm(self) -> None:

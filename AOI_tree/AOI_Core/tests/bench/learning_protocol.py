@@ -240,7 +240,7 @@ def _run_rounds(pipe, pool, eval_items, round_size, n_rounds, flip_paths,
         h = getattr(pipe, "handler", None)
         rb_start = len(h.rollback_log) if h is not None else 0
         wh_start = len(h.weight_history) if h is not None else 0
-        pt_start = len(h.pair_thresh_log) if h is not None else 0
+        pt_start = len(getattr(h, "pair_thresh_log", [])) if h is not None else 0
         n_reviewed = n_unreviewed = n_missed_unseen = 0
         for path, y in chunk:
             rr = pipe.predict(path)
@@ -301,7 +301,7 @@ def _run_rounds(pipe, pool, eval_items, round_size, n_rounds, flip_paths,
                                for e in h.weight_history[wh_start:]] if h is not None else []),
             "handler_stats": dict(h.stats) if h is not None else {},
             "pair_thresh_events": ([{k: v for k, v in e.items() if k != "t"}
-                                    for e in h.pair_thresh_log[pt_start:]]
+                                    for e in getattr(h, "pair_thresh_log", [])[pt_start:]]
                                    if h is not None else []),
             "tau": [round(float(x), 4) for x in _decider_taus(pipe)],
         })

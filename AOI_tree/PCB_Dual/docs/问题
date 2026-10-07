@@ -1,0 +1,6 @@
+链路全通，但暴露 4 个衔接问题 ：
+
+1. algo 库双份漂移（高） ：PCB_Dual/algo 与 AOI_Core/algo 有 25 个文件哈希不一致 （含`persist.py` 、`eval/offline.py` 、`fusion/*` 、`ssocl/*` 等核心）。主干修的 bug 不会自动同步到树枝，反之亦然。
+2. DINOv2 权重运行时缺失（已修） ：首次 fit 直接`FileNotFoundError` ——`AOI_tree/assets/dinov2/` 只有代码没有`.pth` 。已从 torch hub 缓存补入`dinov2_vits14_pretrain.pth` （88MB）。
+3. 跨仓隐式依赖（中） ：fit 时加载全局类型判别器指向`AOI_Core\algo\assets\defect_clf.pkl` ，树枝移植/单独部署即断；且该 pkl 是 sklearn 1.9 序列化、当前环境 1.7.2，反序列化有兼容告警。
+4. 快照缺 ssocl_cfg.json（中） ：activate 重载 v2 时出现`[persist][警告] 快照缺 ssocl_cfg.json，按硬编码模板恢复` —— 学习配置不随版本快照，回滚到旧版本时 SSOCL 配置可能与该版本训练时不一致。
