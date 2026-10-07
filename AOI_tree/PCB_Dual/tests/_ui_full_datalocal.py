@@ -1124,6 +1124,43 @@ def s06e_feature_detect(window) -> None:
     print("\n== S06e 特征/双检模板检测 ==", flush=True)
     from app.inspect.service import InspectService
     svc = InspectService()
+    import threading as _th
+    _ort, _orf = svc.run_with_template, svc._run_feature
+    def _tw(name, fn):
+        def w(*a, **k):
+            t = time.perf_counter(); r = fn(*a, **k)
+            note(f"    [diag] {name} {time.perf_counter()-t:.2f}s threads={_th.active_count()}")
+            return r
+        return w
+    svc.run_with_template, svc._run_feature = _tw("trad", _ort), _tw("feat", _orf)
+    try:
+        import torch, cv2 as _cv
+        note(f"    [diag] torch_threads={torch.get_num_threads()} cv_threads={_cv.getNumThreads()} cuda={torch.cuda.is_available()}")
+    except Exception as e:
+        note(f"    [diag] {e}")
+    try:
+        from concurrent.futures import ThreadPoolExecutor as _TPE
+        _temp = PAIRS[0][0]
+        for _m in ("traditional", "dual"):
+            _st, _tp = make_tpl(_temp, f"PROBE_diag_{_m}", PAIRS[0][3], PAIRS[0][4], _m, model_category=CATEGORY)
+            _tp = _st.publish(_tp)
+            for _i in range(2):
+                t = time.perf_counter(); _ort(_tp, _temp, test_path=_temp, archive=False)
+                a = time.perf_counter() - t
+                with _TPE(1) as ex:
+                    t = time.perf_counter(); ex.submit(_ort, _tp, _temp, test_path=_temp, archive=False).result()
+                b = time.perf_counter() - t
+                note(f"    [diag] tpl={_m} main={a:.2f}s worker={b:.2f}s")
+            if _m == "traditional":
+                import cProfile, pstats, io as _io
+                pr = cProfile.Profile(); pr.enable()
+                _ort(_tp, _temp, test_path=_temp, archive=False)
+                pr.disable(); s = _io.StringIO()
+                pstats.Stats(pr, stream=s).sort_stats("cumulative").print_stats(25)
+                note("    [diag-prof]\n" + s.getvalue()[-6000:])
+            _st.delete(_tp.id)
+    except Exception as e:
+        note(f"    [diag] err {e}")
     res = {}
     for mode in ("feature", "dual"):
         store, tpl = make_tpl(_T0, f"PROBE_feat_{mode}", _X0, _Y0, mode, model_category=CATEGORY)

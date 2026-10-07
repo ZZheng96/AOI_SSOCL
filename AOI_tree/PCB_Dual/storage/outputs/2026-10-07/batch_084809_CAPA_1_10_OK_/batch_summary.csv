@@ -1,7 +1,0 @@
-﻿test_image,overall,elapsed_ms,ng_count,gate_message,result_folder,ng_algorithms
-e:\CPIPC\CGAIC\data_local\component\test\good\shift6_template.png,ERROR,29,0,标准图尺寸 83x47 与测试图尺寸 217x200 差异过大（高差153px/宽差134px，超过门禁阈值 10px），已拦截，未执行检测,,
-e:\CPIPC\CGAIC\data_local\component\test\good\tombstone1_template.png,ERROR,0,0,标准图尺寸 83x47 与测试图尺寸 331x154 差异过大（高差107px/宽差248px，超过门禁阈值 10px），已拦截，未执行检测,,
-e:\CPIPC\CGAIC\data_local\component\test\damage\微信图片_20260611204957_85_18_damage.png,ERROR,0,0,标准图尺寸 83x47 与测试图尺寸 147x315 差异过大（高差268px/宽差64px，超过门禁阈值 10px），已拦截，未执行检测,,
-e:\CPIPC\CGAIC\data_local\component\test\missing\CAPA_1_10_C2_20260606180428_MissPart_.png,NG,544,2,,E:\CPIPC\CGAIC\AOI_tree\PCB_Dual\storage\outputs\2026-10-07\084809_428_CAPA_1_10_C2_20260606180428_MissPart_,"body_缺件,body_破损"
-e:\CPIPC\CGAIC\data_local\component\test\shift\shift1.png,ERROR,0,0,标准图尺寸 83x47 与测试图尺寸 578x760 差异过大（高差713px/宽差495px，超过门禁阈值 10px），已拦截，未执行检测,,
-e:\CPIPC\CGAIC\data_local\component\test\tombstone\tombstone1.png,ERROR,0,0,标准图尺寸 83x47 与测试图尺寸 330x153 差异过大（高差106px/宽差247px，超过门禁阈值 10px），已拦截，未执行检测,,

@@ -1,5 +1,6 @@
 # 虚拟环境
 /.env/
+/.env310_bak/
 
 # 数据集（原始数据集与本地数据集）
 /data_origin/
@@ -14,6 +15,9 @@ __pycache__/
 # 竞赛打包产物（超过远程单文件大小限制）
 /commit/*.rar
 /commit/**/*.zip
+
+# 演示录像（超过远程单文件大小限制）
+AOI_tree/PCB_Dual/docs/演示视频/
 
 # 第三方基线复现产物（EfficientAD 异常图与训练权重，可重新生成）
 /demo5/scripts/sota_compare/outputs/

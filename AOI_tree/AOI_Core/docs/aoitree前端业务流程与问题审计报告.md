@@ -804,7 +804,7 @@ DataLocal 实测（gold_finger，L1a/fast，init 40 正常 + 10 缺陷，测 16 
 |---|---|---|---|---|
 | C1 | 高 | `PCB_Dual/algo` 与 `AOI_Core/algo` 有 25 个文件哈希漂移，包括 persist.py、eval/offline.py、fusion/*、ssocl/* | PCB_Dual 用的是改进前的算法（见 12.17：没有 LOO、I6 冻结、ssocl_cfg 落盘）。AOI_Core 的修复不会自动同步过来 | 已修（阶段三删除 `PCB_Dual/algo`，只保留 Core 一份） |
 | C2 | 高 | 首次 fit 时报 `FileNotFoundError`：找不到 DINOv2 权重 | 已把 `dinov2_vits14_pretrain.pth` 从 torch hub 缓存复制到 `AOI_tree/assets/dinov2/` | 已修（只修了本机，部署包里也要带上这份权重） |
-| C3 | 中 | fit 时全局缺陷判别器跨仓引用 `AOI_Core/algo/assets/defect_clf.pkl`；这个 pkl 用 sklearn 1.9 序列化，当前环境是 1.7.2，会报兼容告警 | PCB_Dual 单独部署时会缺文件；版本不一致可能导致判别结果偏差 | 部分已修：pkl 已迁到 `AOI_tree/assets/defect_clf.pkl`（`safe_pickle.asset_roots()` 按 Core/assets → AOI_tree/assets → algo/assets 查找），跨仓引用已消除；sklearn 版本告警仍未解决，需要用 1.7.2 重新训练或锁定版本 |
+| C3 | 中 | fit 时全局缺陷判别器跨仓引用 `AOI_Core/algo/assets/defect_clf.pkl`；这个 pkl 用 sklearn 1.9 序列化，当前环境是 1.7.2，会报兼容告警 | PCB_Dual 单独部署时会缺文件；版本不一致可能导致判别结果偏差 | 已修：pkl 已迁到 `AOI_tree/assets/defect_clf.pkl`（`safe_pickle.asset_roots()` 按 Core/assets → AOI_tree/assets → algo/assets 查找），跨仓引用已消除；2026-10-07 环境已升级到 Python 3.12 + sklearn 1.9.1（新 `.env`，旧 3.10 环境备份为 `.env310_bak`），pkl 用 1.9.1 重训（508 样本，脚本 `EXPs/scripts/train_defect_classifier.py`），版本告警消除，checksums 已同步 |
 | C4 | 中 | 快照里没有 `ssocl_cfg.json`，activate 时打印 `[persist][警告] 按硬编码模板恢复` | 回滚或激活历史版本后，SSOCL 配置可能和训练时不一致 | 已修（快照只由 Core 产出，Core 新版会写入 ssocl_cfg） |
 
 根因：树枝通过"拷贝代码"接入树干，而不是通过"服务"接入。整改方向是：PCB_Dual 启动或复用 AOI_Core 后端，特征引擎改为 HTTP 调用 AOI_Core，再删除 vendored `algo`。这样 C1、C3、C4 会一起消失，见 10 节 P1。
@@ -858,7 +858,7 @@ PCB_Ins_v2 有本地检测、结果和反馈学习闭环，但当前未发现与
 - 将长任务按类型隔离线程池，或至少在 UI 展示排队状态和预计阻塞原因。
 - 对 PCB_Dual 的 pending 同步增加重试/补偿/人工重发，并记录每次尝试。
 - 对跨项目图片路径做统一文件服务或资源登记，避免直接依赖本地绝对路径。
-- PCB_Dual 的特征引擎从 vendored `algo` 改为调用 AOI_Core 服务，消除 9.2.1 的 C1/C3/C4。（2026-10-07 已完成：只通过服务接入，vendored `algo` 已删除，见 9.2.2；剩下 sklearn 版本告警）
+- PCB_Dual 的特征引擎从 vendored `algo` 改为调用 AOI_Core 服务，消除 9.2.1 的 C1/C3/C4。（2026-10-07 已完成：只通过服务接入，vendored `algo` 已删除，见 9.2.2；环境升级 Python 3.12 + sklearn 1.9.1 并重训 defect_clf.pkl，C1/C3/C4 全部关闭）
 
 ### P2：影响可维护性与使用体验
 

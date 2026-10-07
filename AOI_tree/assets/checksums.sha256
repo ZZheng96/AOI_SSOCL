@@ -2,4 +2,4 @@
 # 在 AOI_tree 根目录执行 `sha256sum -c assets/checksums.sha256` 校验（Windows 可用 Git Bash）。
 b938bf1bc15cd2ec0feacfe3a1bb553fe8ea9ca46a7e1d8d00217f29aef60cd9  assets/dinov2/dinov2_vits14_pretrain.pth
 20870e6e3fce47872721f897e9d92e965ba308b4a025a3073ff2b3e8dc2f92c6  AOI_Core/assets/disc_pretrain.pt
-21ad2439bff13af8f2c846a0643cf60209943c6e95dfde596398cfd9eb8f0d85  assets/defect_clf.pkl
+f676c1844e210c95bf4a54433ee36738b2eedcd2b2888e9191f2ad479e3df986  assets/defect_clf.pkl
