@@ -1,0 +1,40 @@
+{
+  "time": "2026-10-07T17:34:34",
+  "template_id": "26_352_1010_temp__UI测试_dual",
+  "template_version": 1,
+  "display_name": "UI测试_dual",
+  "ok_count": 1,
+  "ng_count": 1,
+  "error_count": 1,
+  "total": 3,
+  "cancelled": false,
+  "items": [
+    {
+      "test_image": "e:\\CPIPC\\CGAIC\\data_local\\extra_part\\test\\extra\\26_352_1010_img.jpg",
+      "overall": "NG",
+      "elapsed_ms": 474,
+      "ng_count": 4,
+      "gate_message": "",
+      "result_folder": "E:\\CPIPC\\CGAIC\\AOI_tree\\PCB_Dual\\storage\\outputs\\2026-10-07\\173432_611_26_352_1010_img",
+      "ng_algorithms": "body_错件,body_缺件,body_移位,body_破损"
+    },
+    {
+      "test_image": "e:\\CPIPC\\CGAIC\\data_local\\extra_part\\train\\good\\26_352_1010_temp.jpg",
+      "overall": "OK",
+      "elapsed_ms": 314,
+      "ng_count": 0,
+      "gate_message": "",
+      "result_folder": "E:\\CPIPC\\CGAIC\\AOI_tree\\PCB_Dual\\storage\\outputs\\2026-10-07\\173433_504_26_352_1010_temp",
+      "ng_algorithms": ""
+    },
+    {
+      "test_image": "C:\\Users\\wch\\AppData\\Local\\Temp\\ui_test_ad5zvkbz\\size_mismatch.jpg",
+      "overall": "ERROR",
+      "elapsed_ms": 201,
+      "ng_count": 0,
+      "gate_message": "标准图尺寸 4096x3000 与测试图尺寸 3000x2200 差异过大（高差800px/宽差1096px，超过门禁阈值 10px），已拦截，未执行检测",
+      "result_folder": "",
+      "ng_algorithms": ""
+    }
+  ]
+}

@@ -1,0 +1,4 @@
+﻿test_image,overall,elapsed_ms,ng_count,gate_message,result_folder,ng_algorithms
+e:\CPIPC\CGAIC\data_local\extra_part\test\extra\26_352_1010_img.jpg,NG,474,4,,E:\CPIPC\CGAIC\AOI_tree\PCB_Dual\storage\outputs\2026-10-07\173432_611_26_352_1010_img,"body_错件,body_缺件,body_移位,body_破损"
+e:\CPIPC\CGAIC\data_local\extra_part\train\good\26_352_1010_temp.jpg,OK,314,0,,E:\CPIPC\CGAIC\AOI_tree\PCB_Dual\storage\outputs\2026-10-07\173433_504_26_352_1010_temp,
+C:\Users\wch\AppData\Local\Temp\ui_test_ad5zvkbz\size_mismatch.jpg,ERROR,201,0,标准图尺寸 4096x3000 与测试图尺寸 3000x2200 差异过大（高差800px/宽差1096px，超过门禁阈值 10px），已拦截，未执行检测,,
