@@ -21,11 +21,11 @@ from PySide6.QtWidgets import (
     QDoubleSpinBox,
     QHBoxLayout,
     QLabel,
-    QListWidget,
-    QListWidgetItem,
     QPushButton,
     QSpinBox,
     QSplitter,
+    QTreeWidget,
+    QTreeWidgetItem,
     QVBoxLayout,
     QWidget,
 )
@@ -51,16 +51,19 @@ METHODS = {
     "color_blot": "色斑（椭圆区域颜色偏移）",
 }
 
+# 批次节点展开时懒加载缩略图的每批上限（防大批次卡顿）
+_TREE_ICON_CAP = 200
 
-class _IconLoader(QThread):
-    """后台加载列表图标。"""
 
-    loaded = Signal(int, bytes)
+class _TreeIconLoader(QThread):
+    """后台加载树节点图标（携带 QTreeWidgetItem 指针回主线程）。"""
 
-    def __init__(self, client: ApiClient, row: int, url: str, parent=None):
+    loaded = Signal(object, bytes)
+
+    def __init__(self, client: ApiClient, item, url: str, parent=None):
         super().__init__(parent)
         self._client = client
-        self._row = row
+        self._item = item
         self._url = url
 
     def run(self) -> None:
@@ -72,7 +75,7 @@ class _IconLoader(QThread):
                     _THUMB_CACHE.pop(next(iter(_THUMB_CACHE)))
                 _THUMB_CACHE[self._url] = data
         if data:
-            self.loaded.emit(self._row, data)
+            self.loaded.emit(self._item, data)
 
 
 class AugmentPage(QWidget):
@@ -86,10 +89,6 @@ class AugmentPage(QWidget):
         self._monitor = task_monitor
         self._images: list[dict] = []
         self._icon_loaders: list[QThread] = []
-        self._page = 1
-        self._page_size = 100
-        self._total = 0
-        self._total_pages = 1
         self._img_req = 0
         # 当前配置（pseudo/preprocess/enhance，来自 GET /api/augment/config）
         self._cfg: dict = {}
@@ -124,77 +123,113 @@ class AugmentPage(QWidget):
         self.reload_images()
         self._load_config()
 
-    # ══════════════════ 左：基底图选择 ══════════════════
+    # ══════════════════ 左：基底图选择（树状：数据源→品类→批次）══════════════════
     def _build_base_panel(self) -> QWidget:
         card = make_card()
         lay = QVBoxLayout(card)
-        head = QLabel("基底图（normal 图，预览合成效果）")
+        head = QLabel("基底图（normal 图，预览合成效果；按 数据源→品类→批次 分组）")
         head.setProperty("heading", True)
         lay.addWidget(head)
-        self.list_images = QListWidget()
-        self.list_images.setViewMode(QListWidget.IconMode)
-        self.list_images.setIconSize(self.list_images.iconSize().scaled(
-            96, 96, Qt.KeepAspectRatio))
-        self.list_images.setResizeMode(QListWidget.Adjust)
-        self.list_images.setSelectionMode(QListWidget.ExtendedSelection)
-        self.list_images.setSpacing(6)
-        lay.addWidget(self.list_images, 1)
-        pg = QHBoxLayout()
+        # 树状管理（2026-10-09）：平铺缩略图墙过于杂乱，改为树；
+        # 缩略图在批次节点展开时懒加载
+        self.tree_base = QTreeWidget()
+        self.tree_base.setHeaderLabel("基底图")
+        self.tree_base.setIconSize(self.tree_base.iconSize().scaled(
+            48, 48, Qt.KeepAspectRatio))
+        self.tree_base.setSelectionMode(QTreeWidget.ExtendedSelection)
+        self.tree_base.itemExpanded.connect(self._on_node_expanded)
+        lay.addWidget(self.tree_base, 1)
         self.lbl_base_count = QLabel("共 0 条")
         self.lbl_base_count.setProperty("subtext", True)
-        pg.addWidget(self.lbl_base_count)
-        pg.addStretch(1)
-        self.btn_base_prev = QPushButton("上一页")
-        self.btn_base_prev.setProperty("flat", True)
-        self.btn_base_prev.clicked.connect(lambda: self._base_page(-1))
-        self.lbl_base_page = QLabel("第 1 / 1 页")
-        self.lbl_base_page.setProperty("subtext", True)
-        self.btn_base_next = QPushButton("下一页")
-        self.btn_base_next.setProperty("flat", True)
-        self.btn_base_next.clicked.connect(lambda: self._base_page(1))
-        pg.addWidget(self.btn_base_prev)
-        pg.addWidget(self.lbl_base_page)
-        pg.addWidget(self.btn_base_next)
-        lay.addLayout(pg)
+        lay.addWidget(self.lbl_base_count)
         return card
 
-    def _base_page(self, d: int) -> None:
-        self._page = max(1, min(self._page + d, self._total_pages))
-        self.reload_images()
-
     def reload_images(self) -> None:
+        """加载树骨架：数据源 + 批次 + 正常图一次性拉取后客户端分组。"""
         cat = self._get_category() if self._get_category else ""
         self._img_req += 1
         rid = self._img_req
-        run_async(self, lambda: self._client.list_images(
-            category=cat, label="normal", page=self._page,
-            page_size=self._page_size),
-            lambda data, _rid=rid: self._fill_images(data, _rid))
 
-    def _fill_images(self, data, rid: int | None = None) -> None:
+        def _fetch() -> dict:
+            images: list[dict] = []
+            page = 1
+            while True:   # 分页拉全（cap 5000 防失控）
+                data = self._client.list_images(
+                    category=cat, label="normal", page=page, page_size=500)
+                items = (data or {}).get("items") or []
+                images.extend(items)
+                total = int((data or {}).get("total") or 0)
+                if len(images) >= total or not items or len(images) >= 5000:
+                    break
+                page += 1
+            return {"images": images,
+                    "datasets": (self._client.list_datasets() or {}).get("items") or [],
+                    "sources": self._client.list_datasources() or []}
+
+        run_async(self, _fetch,
+                  lambda data, _rid=rid: self._fill_tree(data, _rid))
+
+    def _fill_tree(self, data, rid: int | None = None) -> None:
         if rid is not None and rid != self._img_req:
             return
-        items = (data or {}).get("items", [])
-        self._total = int((data or {}).get("total") or 0)
-        self._total_pages = max(
-            1, (self._total + self._page_size - 1) // self._page_size)
-        self._page = min(max(1, self._page), self._total_pages)
-        self.lbl_base_count.setText(f"共 {self._total} 条")
-        self.lbl_base_page.setText(f"第 {self._page} / {self._total_pages} 页")
-        self.btn_base_prev.setEnabled(self._page > 1)
-        self.btn_base_next.setEnabled(self._page < self._total_pages)
-        self._images = items
-        self.list_images.clear()
-        if not items:
-            QListWidgetItem("暂无正常样本\n请先在数据页导入", self.list_images)
+        images = data.get("images") or []
+        datasets = {int(d.get("id")): d for d in (data.get("datasets") or [])
+                    if d.get("id") is not None}
+        sources = {int(s.get("id")): s for s in (data.get("sources") or [])
+                   if s.get("id") is not None}
+        self._images = images
+        self.lbl_base_count.setText(f"共 {len(images)} 条")
+        self.tree_base.clear()
+        if not images:
+            QTreeWidgetItem(self.tree_base, ["暂无正常样本：请先在数据页导入"])
             return
-        for i, img in enumerate(items):
-            name = str(img.get("path", "")).replace("\\", "/").split("/")[-1]
-            item = QListWidgetItem(f"#{img.get('id')} {name[:18]}")
-            item.setData(Qt.UserRole, img)
-            self.list_images.addItem(item)
-            loader = _IconLoader(
-                self._client, i,
+        # 分组：数据源 → 品类 → 批次 → 图片
+        tree: dict = {}
+        for img in images:
+            ds = datasets.get(img.get("dataset_id") or -1) or {}
+            src = sources.get(ds.get("datasource_id") or -1) or {}
+            src_name = str(src.get("name") or "未挂数据源")
+            cat = str(img.get("category") or "通用")
+            batch = str(ds.get("dataset_name") or ds.get("name")
+                        or (f"批次{ds.get('id')}" if ds else "未分组"))
+            tree.setdefault(src_name, {}).setdefault(cat, {}).setdefault(
+                batch, []).append(img)
+        for src_name in sorted(tree):
+            src_node = QTreeWidgetItem(self.tree_base, [f"📁 {src_name}"])
+            src_node.setFlags(src_node.flags() & ~Qt.ItemIsSelectable)
+            for cat in sorted(tree[src_name]):
+                cat_node = QTreeWidgetItem(src_node, [cat])
+                cat_node.setFlags(cat_node.flags() & ~Qt.ItemIsSelectable)
+                for batch in sorted(tree[src_name][cat]):
+                    imgs = tree[src_name][cat][batch]
+                    b_node = QTreeWidgetItem(
+                        cat_node, [f"{batch}（{len(imgs)} 张）"])
+                    b_node.setFlags(b_node.flags() & ~Qt.ItemIsSelectable)
+                    b_node.setData(0, Qt.UserRole + 1, False)  # 未加载图标
+                    for img in imgs:
+                        name = str(img.get("path", "")).replace(
+                            "\\", "/").split("/")[-1]
+                        leaf = QTreeWidgetItem(
+                            b_node, [f"#{img.get('id')} {name[:18]}"])
+                        leaf.setData(0, Qt.UserRole, img)
+        self.tree_base.expandToDepth(0)   # 默认只展开数据源层
+
+    def _on_node_expanded(self, node: QTreeWidgetItem) -> None:
+        """批次节点展开时懒加载其下图片缩略图（每批上限 _TREE_ICON_CAP）。"""
+        if node.data(0, Qt.UserRole + 1):
+            return
+        node.setData(0, Qt.UserRole + 1, True)
+        n = 0
+        for i in range(node.childCount()):
+            leaf = node.child(i)
+            img = leaf.data(0, Qt.UserRole)
+            if not img:
+                continue
+            if n >= _TREE_ICON_CAP:
+                break
+            n += 1
+            loader = _TreeIconLoader(
+                self._client, leaf,
                 thumb_url(self._client.file_url(img.get("path", ""))), self)
             loader.loaded.connect(self._set_icon)
             loader.finished.connect(
@@ -202,14 +237,11 @@ class AugmentPage(QWidget):
             self._icon_loaders.append(loader)
             loader.start()
 
-    def _set_icon(self, row: int, data: bytes) -> None:
-        item = self.list_images.item(row)
-        if item is None:
-            return
+    def _set_icon(self, item: QTreeWidgetItem, data: bytes) -> None:
         pm = QPixmap()
         pm.loadFromData(data)
         if not pm.isNull():
-            item.setIcon(QIcon(pm))
+            item.setIcon(0, QIcon(pm))
 
     def _forget_loader(self, w: QThread) -> None:
         if w in self._icon_loaders:
@@ -217,8 +249,8 @@ class AugmentPage(QWidget):
 
     def _selected_images(self) -> list[dict]:
         out = []
-        for item in self.list_images.selectedItems():
-            img = item.data(Qt.UserRole)
+        for item in self.tree_base.selectedItems():
+            img = item.data(0, Qt.UserRole)
             if img:
                 out.append(img)
         return out

@@ -51,7 +51,7 @@ NAV_ITEMS = [
     ("实时监控", QStyle.SP_MediaPlay),
     ("标注反馈", QStyle.SP_MessageBoxInformation),
     ("学习效果", QStyle.SP_FileDialogInfoView),
-    ("统计报表", QStyle.SP_FileDialogDetailedView),
+    ("存档统计", QStyle.SP_FileDialogDetailedView),
     ("系统设置", QStyle.SP_FileDialogListView),
 ]
 
@@ -67,7 +67,7 @@ NAV_GROUP_HEADERS = {
 # M15c 角色→可见导航（用户操作流 §1 角色分工）：
 # operator（产线操作员）只保留日常总览/送检/反馈/报表；engineer/admin 全量。
 ROLE_NAV_VISIBLE = {
-    "operator": {"工作台", "实时监控", "标注反馈", "统计报表"},
+    "operator": {"工作台", "实时监控", "标注反馈", "存档统计"},
 }
 ROLE_NAMES = {"operator": "操作员", "engineer": "工程师", "admin": "管理员"}
 

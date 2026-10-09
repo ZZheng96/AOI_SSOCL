@@ -81,7 +81,7 @@ class DashboardPage(QWidget):
                                    sub_text="系统判定口径（异常 + 灰区判异常）")
         self.kpi_rate = KpiCard("不良率", "-", accent=WARNING,
                                 sub_text="系统判定口径，含未复核/重复检测；"
-                                         "复核后真实口径见统计报表")
+                                         "复核后真实口径见存档统计")
         self.kpi_pending = KpiCard("待复核", "-", accent=WARNING,
                                    sub_text="当前工单灰区待人工裁定")
         for k in (self.kpi_inspected, self.kpi_anomaly,
@@ -129,17 +129,23 @@ class DashboardPage(QWidget):
         self.table.cellDoubleClicked.connect(self._on_cell_double_clicked)
         st_lay.addWidget(self.table, 1)
         # 工单增删改查（前端反馈 2026-09-13 #1）：增=右上「新建工单」；
-        # 改=双击「数据条件」或此处按钮；删=删除所选（检测记录保留）
+        # 改=双击「数据条件」或此处按钮；存档=转入历史管理（数据保留，
+        # 见「存档统计」页）；删=级联删除该工单全部检测/反馈记录，不可恢复
         op_row = QHBoxLayout()
         op_row.addStretch(1)
         btn_edit = QPushButton("编辑所选工单")
         btn_edit.setToolTip("修改所选工单的名称/备注/复判开关/挂接数据源")
         btn_edit.clicked.connect(self._on_edit_selected)
         op_row.addWidget(btn_edit)
+        btn_arch = QPushButton("存档所选工单")
+        btn_arch.setToolTip("存档后数据保留，转入「存档统计」页历史管理；"
+                            "不再参与全局统计/复核队列，可在该页还原")
+        btn_arch.clicked.connect(self._on_archive_selected)
+        op_row.addWidget(btn_arch)
         btn_del = QPushButton("删除所选工单")
         btn_del.setProperty("danger", True)
-        btn_del.setToolTip("删除所选工单（仅删工单与挂接关系，"
-                           "数据源/图片/检测记录保留）")
+        btn_del.setToolTip("级联删除该工单的全部检测记录与反馈记录，"
+                           "不可恢复；想保留数据请用「存档」")
         btn_del.clicked.connect(self._on_delete_selected)
         op_row.addWidget(btn_del)
         st_lay.addLayout(op_row)
@@ -376,8 +382,33 @@ class DashboardPage(QWidget):
         dlg.levels_changed.connect(self.levels_changed.emit)
         dlg.exec()
 
+    def _on_archive_selected(self) -> None:
+        """存档所选工单（2026-10-09）：数据保留，转入「存档统计」历史管理。"""
+        wo = self._selected_wo()
+        if wo is None:
+            warn(self, "请先单击选中要存档的工单行")
+            return
+        wid = int(wo.get("id"))
+        if QMessageBox.question(
+                self, "存档工单",
+                f"确定存档工单「{wo.get('name')}」？\n"
+                "存档后：检测/反馈数据全部保留，转入「存档统计」页查看；\n"
+                "不再参与全局统计与复核队列；产线将停止。\n"
+                "可随时在「存档统计」页还原。") != QMessageBox.Yes:
+            return
+
+        def _done(res) -> None:
+            if isinstance(res, dict) and res.get("archived"):
+                notify(self, f"工单已存档：{wo.get('name')}（见「存档统计」页）")
+                self.reload()
+                self.levels_changed.emit()
+            else:
+                warn(self, "存档失败，请重试")
+
+        run_async(self, lambda: self._client.archive_workorder(wid), _done)
+
     def _on_delete_selected(self) -> None:
-        """删除所选工单（后端仅删工单与挂接关系，检测/数据保留）。"""
+        """删除所选工单（2026-10-09 起级联删除：检测/反馈记录一并清除）。"""
         wo = self._selected_wo()
         if wo is None:
             warn(self, "请先单击选中要删除的工单行")
@@ -386,8 +417,9 @@ class DashboardPage(QWidget):
         if QMessageBox.question(
                 self, "删除工单",
                 f"确定删除工单「{wo.get('name')}」？\n"
-                "仅删除工单及其数据源挂接关系；数据源、图片、"
-                "检测记录与模型均保留。") != QMessageBox.Yes:
+                "将级联删除该工单名下的全部检测记录与反馈记录，"
+                "不可恢复！\n数据源、图片与模型保留；想保留检测数据"
+                "请改用「存档」。") != QMessageBox.Yes:
             return
 
         def _done(res) -> None:

@@ -1500,3 +1500,27 @@
 2026-10-07 17:31:39,546 WARNING urllib3.connectionpool: Connection pool is full, discarding connection: 127.0.0.1. Connection pool size: 16
 2026-10-07 17:31:39,755 WARNING urllib3.connectionpool: Connection pool is full, discarding connection: 127.0.0.1. Connection pool size: 16
 2026-10-07 17:31:39,758 WARNING urllib3.connectionpool: Connection pool is full, discarding connection: 127.0.0.1. Connection pool size: 16
+2026-10-09 10:03:53,858 INFO server: PCB_Ins v2 后台服务启动: http://127.0.0.1:8022
+2026-10-09 10:03:55,811 INFO app.core.task_queue: [taskq] 检测任务队列已启动（2 worker）
+2026-10-09 10:03:55,996 INFO app.core.aoi_core_launcher: 已拉起 AOI_Core 子进程 pid=19348
+2026-10-09 10:04:12,895 WARNING urllib3.connectionpool: Connection pool is full, discarding connection: 127.0.0.1. Connection pool size: 16
+2026-10-09 10:04:12,905 WARNING urllib3.connectionpool: Connection pool is full, discarding connection: 127.0.0.1. Connection pool size: 16
+2026-10-09 10:04:12,910 WARNING urllib3.connectionpool: Connection pool is full, discarding connection: 127.0.0.1. Connection pool size: 16
+2026-10-09 10:04:12,911 WARNING urllib3.connectionpool: Connection pool is full, discarding connection: 127.0.0.1. Connection pool size: 16
+2026-10-09 10:04:12,918 WARNING urllib3.connectionpool: Connection pool is full, discarding connection: 127.0.0.1. Connection pool size: 16
+2026-10-09 10:04:12,920 WARNING urllib3.connectionpool: Connection pool is full, discarding connection: 127.0.0.1. Connection pool size: 16
+2026-10-09 10:04:12,933 WARNING urllib3.connectionpool: Connection pool is full, discarding connection: 127.0.0.1. Connection pool size: 16
+2026-10-09 10:04:12,935 WARNING urllib3.connectionpool: Connection pool is full, discarding connection: 127.0.0.1. Connection pool size: 16
+2026-10-09 10:04:12,939 WARNING urllib3.connectionpool: Connection pool is full, discarding connection: 127.0.0.1. Connection pool size: 16
+2026-10-09 10:04:12,940 WARNING urllib3.connectionpool: Connection pool is full, discarding connection: 127.0.0.1. Connection pool size: 16
+2026-10-09 10:04:12,964 WARNING urllib3.connectionpool: Connection pool is full, discarding connection: 127.0.0.1. Connection pool size: 16
+2026-10-09 10:04:12,968 WARNING urllib3.connectionpool: Connection pool is full, discarding connection: 127.0.0.1. Connection pool size: 16
+2026-10-09 10:04:12,976 WARNING urllib3.connectionpool: Connection pool is full, discarding connection: 127.0.0.1. Connection pool size: 16
+2026-10-09 10:04:12,976 WARNING urllib3.connectionpool: Connection pool is full, discarding connection: 127.0.0.1. Connection pool size: 16
+2026-10-09 10:04:13,176 WARNING urllib3.connectionpool: Connection pool is full, discarding connection: 127.0.0.1. Connection pool size: 16
+2026-10-09 10:04:13,365 WARNING urllib3.connectionpool: Connection pool is full, discarding connection: 127.0.0.1. Connection pool size: 16
+2026-10-09 10:04:13,374 WARNING urllib3.connectionpool: Connection pool is full, discarding connection: 127.0.0.1. Connection pool size: 16
+2026-10-09 10:04:13,384 WARNING urllib3.connectionpool: Connection pool is full, discarding connection: 127.0.0.1. Connection pool size: 16
+2026-10-09 10:04:13,388 WARNING urllib3.connectionpool: Connection pool is full, discarding connection: 127.0.0.1. Connection pool size: 16
+2026-10-09 10:04:13,393 WARNING urllib3.connectionpool: Connection pool is full, discarding connection: 127.0.0.1. Connection pool size: 16
+2026-10-09 10:04:13,400 WARNING urllib3.connectionpool: Connection pool is full, discarding connection: 127.0.0.1. Connection pool size: 16

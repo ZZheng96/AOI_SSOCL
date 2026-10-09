@@ -3,8 +3,9 @@ from fastapi import APIRouter, Depends, HTTPException
 
 from ..core.security import require_role
 from ..db.database import log_action, session_scope
-from ..db.models import (DataSource, Dataset, Detection, WorkOrder,
-                         WorkOrderSource, WorkOrderTemplate)
+from ..db.models import (ConsolidationFeedback, DataSource, Dataset, Detection,
+                         Feedback, Image, WorkOrder, WorkOrderSource,
+                         WorkOrderTemplate)
 from ._wo_shared import (_attach_source, _n_pending_review, _pipeline_summary,
                          _workorder_item, _workorder_sources, check_datasource,
                          check_workorder)
@@ -16,12 +17,16 @@ router = APIRouter()
 
 # ══════════════════ 工单 ══════════════════
 @router.get("/workorders")
-def api_list_workorders(range: str = "all"):
+def api_list_workorders(range: str = "all", archived: bool = False):
     """工单列表：每工单附数据条件、挂接数据源、品类集、
-    统计（时间范围聚合，工单为统计基础；range=all/today/7d）与体检状态。"""
+    统计（时间范围聚合，工单为统计基础；range=all/today/7d）与体检状态。
+    archived=false 只列进行中工单（默认）；archived=true 只列已存档工单
+    （存档统计页历史管理用）。"""
     days = {"today": 0, "7d": 7, "all": None}.get(range, None)
     with session_scope() as s:
-        rows = s.query(WorkOrder).order_by(WorkOrder.id.desc()).all()
+        rows = (s.query(WorkOrder)
+                .filter(WorkOrder.archived.is_(archived))
+                .order_by(WorkOrder.id.desc()).all())
         items = []
         for r in rows:
             items.append(_workorder_item(s, r, range_days=days))
@@ -166,23 +171,89 @@ def api_set_workorder_sources(workorder_id: int, req: WorkOrderSourceRequest):
 @router.delete("/workorders/{workorder_id}",
                dependencies=[Depends(require_role("engineer"))])
 def api_delete_workorder(workorder_id: int):
+    """删除工单（2026-10-09 起为级联彻底删除）：
+
+    用户裁决——「只要是删除，就不保留相关记录和数据」：级联删除该工单
+    名下的检测记录及其反馈（含 SSOCL 巩固血缘），并释放产线认领的图片
+    认领状态。想保留数据请改用 /archive 存档。
+    """
     with session_scope() as s:
         wo = s.get(WorkOrder, workorder_id)
         if wo is None:
             raise HTTPException(status_code=404, detail="工单不存在")
         name = wo.name
+        # ① 该工单名下检测 → 反馈 → 巩固血缘（旧库 FK 为 NO ACTION，
+        #    须手工先清子行）
+        det_ids = [r[0] for r in s.query(Detection.id).filter(
+            Detection.workorder_id == workorder_id).all()]
+        if det_ids:
+            fb_ids = [r[0] for r in s.query(Feedback.id).filter(
+                Feedback.detection_id.in_(det_ids)).all()]
+            if fb_ids:
+                s.query(ConsolidationFeedback).filter(
+                    ConsolidationFeedback.feedback_id.in_(fb_ids)).delete(
+                    synchronize_session=False)
+                s.query(Feedback).filter(
+                    Feedback.id.in_(fb_ids)).delete(
+                    synchronize_session=False)
+            s.query(Detection).filter(
+                Detection.id.in_(det_ids)).delete(
+                synchronize_session=False)
+        # ② 释放产线认领中的图片（未完成的回 pending，可重新认领）
+        s.query(Image).filter(
+            Image.claim_workorder_id == workorder_id,
+            Image.processing_status != "done").update(
+            {"claim_workorder_id": None, "claim_token": None,
+             "claimed_at": None, "processing_status": "pending"},
+            synchronize_session=False)
+        s.query(Image).filter(
+            Image.claim_workorder_id == workorder_id).update(
+            {"claim_workorder_id": None}, synchronize_session=False)
+        # ③ 挂接关系 + 工单本体
         s.query(WorkOrderSource).filter(
             WorkOrderSource.workorder_id == workorder_id).delete(
             synchronize_session=False)
-        # A11（2026-10-03）：检测记录保留、断开工单归属（FK 强制下
-        # 删父行前先清子行引用；语义同 models.py ondelete="SET NULL"）
-        s.query(Detection).filter(
-            Detection.workorder_id == workorder_id).update(
-            {"workorder_id": None}, synchronize_session=False)
         s.delete(wo)
-    log_action("delete_workorder", f"id={workorder_id} name={name}",
+    log_action("delete_workorder",
+               f"id={workorder_id} name={name} cascade_detections={len(det_ids)}",
                extra={"workorder_id": workorder_id})
     return {"deleted": True, "name": name}
+
+
+@router.post("/workorders/{workorder_id}/archive",
+             dependencies=[Depends(require_role("engineer"))])
+def api_archive_workorder(workorder_id: int):
+    """存档工单：数据全部保留，转入历史管理（存档统计页）。
+
+    存档工单不参与全局统计/复核队列/反馈列表；产线运行中/暂停的
+    工单存档时一并停线（pipeline_status=stopped）。
+    """
+    with session_scope() as s:
+        wo = s.get(WorkOrder, workorder_id)
+        if wo is None:
+            raise HTTPException(status_code=404, detail="工单不存在")
+        wo.archived = True
+        if wo.pipeline_status in ("running", "paused"):
+            wo.pipeline_status = "stopped"
+        name = wo.name
+    log_action("archive_workorder", f"id={workorder_id} name={name}",
+               extra={"workorder_id": workorder_id})
+    return {"archived": True, "id": workorder_id, "name": name}
+
+
+@router.post("/workorders/{workorder_id}/unarchive",
+             dependencies=[Depends(require_role("engineer"))])
+def api_unarchive_workorder(workorder_id: int):
+    """还原存档工单：回到进行中列表（产线保持 stopped，需手动启动）。"""
+    with session_scope() as s:
+        wo = s.get(WorkOrder, workorder_id)
+        if wo is None:
+            raise HTTPException(status_code=404, detail="工单不存在")
+        wo.archived = False
+        name = wo.name
+    log_action("unarchive_workorder", f"id={workorder_id} name={name}",
+               extra={"workorder_id": workorder_id})
+    return {"archived": False, "id": workorder_id, "name": name}
 
 
 # ══════════════════ 工单体检（条件 vs 数据支撑）══════════════════

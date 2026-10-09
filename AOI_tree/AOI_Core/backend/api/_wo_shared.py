@@ -159,6 +159,17 @@ def _attach_source(s, workorder_id: int, datasource_id: int) -> None:
                               datasource_id=datasource_id))
 
 
+def archived_workorder_ids(s) -> list[int]:
+    """已存档工单 id 列表（2026-10-09 存档功能）。
+
+    全局统计/复核/反馈口径用它排除存档工单数据。注意 SQL 侧排除条件
+    须写 `workorder_id.is_(None) | ~workorder_id.in_(ids)`——
+    单用 `~in_` 会把 workorder_id 为 NULL 的孤儿记录一并排除。
+    """
+    return [r[0] for r in s.query(WorkOrder.id)
+            .filter(WorkOrder.archived.is_(True)).all()]
+
+
 def _n_undetected_by_ids(s, image_ids: list) -> int:
     """图片 id 列表内尚无任何检测记录的图数（普通检测批次的积压口径）。"""
     if not image_ids:
@@ -331,6 +342,7 @@ def _workorder_item(s, wo: WorkOrder, range_days: Optional[int] = None) -> dict:
     check = check_workorder(s, wo)
     return {
         "id": wo.id, "name": wo.name, "note": wo.note, "status": wo.status,
+        "archived": bool(getattr(wo, "archived", False)),
         "review_enabled": bool(wo.review_enabled),
         "pipeline_status": wo.pipeline_status,
         "auto_resume": bool(wo.auto_resume),

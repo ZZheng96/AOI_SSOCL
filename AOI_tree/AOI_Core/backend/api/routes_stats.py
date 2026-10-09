@@ -12,6 +12,7 @@ from sqlalchemy import func
 from ..core.tasks import task_manager
 from ..db.database import log_action, session_scope
 from ..db.models import Detection, Feedback, Image, OperationLog, StatsDaily, Video
+from ._wo_shared import archived_workorder_ids
 from .schemas import task_interpretation, to_dict
 
 router = APIRouter()
@@ -75,9 +76,12 @@ def _range_start(range_name: str):
 # 设计依据（docs/重构设计_学习与统计页.md）：系统判定口径含误报，反馈闭环
 # 产生的复核真值（Feedback.operator_label × Detection.is_anomaly 四象限）
 # 才是质检报表口径；StatsDaily 已累积的 FP/FN 此前零展示。
-def _scope_fb_rows(s, cats, start):
+def _scope_fb_rows(s, cats, start, arch=None):
     """口径内有效反馈四象限原料 [(operator_label, is_anomaly, defect_type,
-    created_at, dataset_id), ...]（剔除作废反馈）。"""
+    created_at, dataset_id), ...]（剔除作废反馈）。
+
+    arch=存档工单 id 列表（全局口径传入）：排除存档工单检测，
+    保留 workorder_id 为 NULL 的孤儿记录（存档排除，2026-10-09）。"""
     q = (s.query(Feedback.operator_label, Detection.is_anomaly,
                  Feedback.defect_type, Feedback.created_at,
                  Image.dataset_id)
@@ -89,6 +93,11 @@ def _scope_fb_rows(s, cats, start):
         q = q.filter(Detection.category.in_(cats))
     if start is not None:
         q = q.filter(Feedback.created_at >= start)
+    if arch:
+        # 存档排除（2026-10-09）：NULL IN 子句结果为 NULL，
+        # 故须显式保留 workorder_id 为 NULL 的孤儿记录
+        q = q.filter(Detection.workorder_id.is_(None)
+                     | ~Detection.workorder_id.in_(arch))
     return q.all()
 
 
@@ -114,17 +123,22 @@ def api_stats_quality_overview(category: Optional[str] = None,
     with session_scope() as s:
         cats = _scope_categories(s, workorder_id, category)
         start = _range_start(range_name)
+        # 存档排除（2026-10-09）：全局口径排除存档工单的检测
+        arch = archived_workorder_ids(s) if workorder_id is None else None
         det_q = s.query(Detection.is_anomaly, Detection.latency_ms)
         if cats is not None:
             det_q = det_q.filter(Detection.category.in_(cats))
         if start is not None:
             det_q = det_q.filter(Detection.created_at >= start)
+        if arch:
+            det_q = det_q.filter(Detection.workorder_id.is_(None)
+                                 | ~Detection.workorder_id.in_(arch))
         dets = det_q.all()
         n_det = len(dets)
         n_anom = sum(1 for a, _ in dets if a)
         avg_lat = (sum(l for _, l in dets) / n_det) if n_det else 0.0
 
-        rows = _scope_fb_rows(s, cats, start)
+        rows = _scope_fb_rows(s, cats, start, arch)
         tp, fp, fn, tn = _quadrants(rows)
         n_rev = tp + fp + fn + tn
         return {
@@ -155,7 +169,9 @@ def api_stats_mistake_trend(category: Optional[str] = None,
     days = 1 if range_name == "today" else (7 if range_name == "7d" else 30)
     with session_scope() as s:
         cats = _scope_categories(s, workorder_id, category)
-        rows = _scope_fb_rows(s, cats, None)
+        # 存档排除（2026-10-09）：全局口径排除存档工单的检测
+        arch = archived_workorder_ids(s) if workorder_id is None else None
+        rows = _scope_fb_rows(s, cats, None, arch)
         per_day: dict = {}
         for label, anom, _dt, created, _ds in rows:
             if created is None:
@@ -195,7 +211,9 @@ def api_stats_defect_types(category: Optional[str] = None,
     with session_scope() as s:
         cats = _scope_categories(s, workorder_id, category)
         start = _range_start(range_name)
-        rows = [r for r in _scope_fb_rows(s, cats, start) if r[0] == 1]
+        # 存档排除（2026-10-09）：全局口径排除存档工单的检测
+        arch = archived_workorder_ids(s) if workorder_id is None else None
+        rows = [r for r in _scope_fb_rows(s, cats, start, arch) if r[0] == 1]
         counts: dict = {}
         for _l, _a, dt, _c, _ds in rows:
             key = str(dt).strip() if dt else "未标注"
@@ -214,6 +232,8 @@ def api_stats_batch_summary(category: Optional[str] = None,
     with session_scope() as s:
         cats = _scope_categories(s, workorder_id, category)
         start = _range_start(range_name)
+        # 存档排除（2026-10-09）：全局口径排除存档工单的检测
+        arch = archived_workorder_ids(s) if workorder_id is None else None
         det_q = (s.query(Image.dataset_id,
                          func.count(Detection.id),
                          func.sum(Detection.is_anomaly),
@@ -224,10 +244,13 @@ def api_stats_batch_summary(category: Optional[str] = None,
             det_q = det_q.filter(Detection.category.in_(cats))
         if start is not None:
             det_q = det_q.filter(Detection.created_at >= start)
+        if arch:
+            det_q = det_q.filter(Detection.workorder_id.is_(None)
+                                 | ~Detection.workorder_id.in_(arch))
         det_rows = det_q.group_by(Image.dataset_id).all()
 
         fb_map: dict = {}
-        for label, anom, _dt, _c, ds_id in _scope_fb_rows(s, cats, start):
+        for label, anom, _dt, _c, ds_id in _scope_fb_rows(s, cats, start, arch):
             if ds_id is None:
                 continue
             b = fb_map.setdefault(ds_id, {"tp": 0, "fp": 0, "fn": 0, "tn": 0})
@@ -278,12 +301,17 @@ def api_stats_health(category: Optional[str] = None,
     with session_scope() as s:
         cats = _scope_categories(s, workorder_id, category)
         start = _range_start(range_name)
+        # 存档排除（2026-10-09）：全局口径排除存档工单的检测
+        arch = archived_workorder_ids(s) if workorder_id is None else None
         q = (s.query(Detection.n_tiles, Detection.latency_ms)
              .order_by(Detection.id.desc()))
         if cats is not None:
             q = q.filter(Detection.category.in_(cats))
         if start is not None:
             q = q.filter(Detection.created_at >= start)
+        if arch:
+            q = q.filter(Detection.workorder_id.is_(None)
+                         | ~Detection.workorder_id.in_(arch))
         rows = q.limit(min(max(int(limit), 1), 10000)).all()
         n = len(rows)
         gray = open_hits = align_warns = 0
@@ -316,12 +344,17 @@ def api_stats_overview(category: Optional[str] = None,
     """
     with session_scope() as s:
         cats = _scope_categories(s, workorder_id, category)
+        # 存档排除（2026-10-09）：全局口径排除存档工单的检测
+        arch = archived_workorder_ids(s) if workorder_id is None else None
         det_q = s.query(Detection)
         if cats is not None:
             det_q = det_q.filter(Detection.category.in_(cats))
         start = _range_start(range)
         if start is not None:
             det_q = det_q.filter(Detection.created_at >= start)
+        if arch:
+            det_q = det_q.filter(Detection.workorder_id.is_(None)
+                                 | ~Detection.workorder_id.in_(arch))
         rows = det_q.with_entities(Detection.is_anomaly,
                                    Detection.latency_ms,
                                    Detection.latency_e2e_ms).all()
@@ -344,6 +377,12 @@ def api_stats_overview(category: Optional[str] = None,
         if cats is not None:
             det_q2 = det_q2.filter(Detection.category.in_(cats))
             an_q = an_q.filter(Detection.category.in_(cats))
+        if arch:
+            # 存档排除（2026-10-09）：全局口径排除存档工单的检测
+            det_q2 = det_q2.filter(Detection.workorder_id.is_(None)
+                                   | ~Detection.workorder_id.in_(arch))
+            an_q = an_q.filter(Detection.workorder_id.is_(None)
+                               | ~Detection.workorder_id.in_(arch))
         n_detections = det_q2.scalar() or 0
         n_anomaly_total = an_q.scalar() or 0
         defect_rate = (n_anomaly_total / n_detections

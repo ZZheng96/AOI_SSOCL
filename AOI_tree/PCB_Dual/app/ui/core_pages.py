@@ -36,7 +36,7 @@ _PAGES = [
     ("评估看板", "ui.pages.eval_page", "EvalPage", "cat_budget_tm"),
     ("标注复核", "ui.pages.feedback_page", "FeedbackPage", "cat_tm"),
     ("学习效果", "ui.pages.learning_page", "LearningPage", "cat_tm"),
-    ("统计报表", "ui.pages.stats_page", "StatsPage", "cat_budget"),
+    ("存档统计", "ui.pages.stats_page", "StatsPage", "cat_budget"),
 ]
 
 

@@ -1804,6 +1804,16 @@ class DataPage(QWidget):
         def _done(res) -> None:
             if isinstance(res, dict) and res.get("deleted"):
                 notify(self, f"数据源已删除：{src_name}")
+                # 问题2 修复（2026-10-09）：删除后立即重置筛选/选择状态并
+                # 清空右侧表格——否则残留的批次/数据源过滤会让旧缩略图
+                # 在 reload 完成前继续显示
+                self._cur_ids = None
+                self._cur_dataset = ""
+                self._cur_group_label = ""
+                self._page = 1
+                self._images = []
+                self.table.clearSpans()
+                self.table.setRowCount(0)
                 run_async(self, self._client.list_datasources,
                           self._fill_datasources)
                 self.reload()

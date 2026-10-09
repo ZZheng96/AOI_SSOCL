@@ -369,13 +369,25 @@ class ApiClient(QObject):
         """DELETE /api/datasources/{id}/data：清空源下批次与图片（保留源登记）。"""
         return self.delete(f"/api/datasources/{int(datasource_id)}/data")
 
-    def list_workorders(self, range_name: str = "all") -> list:
-        """GET /api/workorders?range=today|7d|all -> [{id,name,...,stats,check}]"""
+    def list_workorders(self, range_name: str = "all",
+                        archived: bool = False) -> list:
+        """GET /api/workorders?range=today|7d|all&archived= -> [{id,name,...,stats,check}]
+        archived=true 只列已存档工单（存档统计页历史管理用）。"""
         data = self.get("/api/workorders",
-                        params={"range": range_name}, silent=True)
+                        params={"range": range_name,
+                                "archived": str(bool(archived)).lower()},
+                        silent=True)
         if isinstance(data, dict) and isinstance(data.get("items"), list):
             return data["items"]
         return data if isinstance(data, list) else []
+
+    def archive_workorder(self, workorder_id: int) -> dict | None:
+        """POST /api/workorders/{id}/archive：存档（数据保留，转入历史管理）。"""
+        return self.post(f"/api/workorders/{int(workorder_id)}/archive")
+
+    def unarchive_workorder(self, workorder_id: int) -> dict | None:
+        """POST /api/workorders/{id}/unarchive：还原存档工单。"""
+        return self.post(f"/api/workorders/{int(workorder_id)}/unarchive")
 
     def workorder_queue(self, workorder_id: int) -> dict | None:
         """GET /api/workorders/{id}/queue：数据流队列（批次+错检统计+回队）。"""

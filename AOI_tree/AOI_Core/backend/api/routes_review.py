@@ -20,6 +20,7 @@ from ..db.database import log_action, session_scope
 from ..db.models import (Dataset, Detection, Feedback, WorkOrder,
                          WorkOrderSource)
 from ..self_learning import service as sl_service
+from ._wo_shared import archived_workorder_ids
 
 router = APIRouter()
 
@@ -36,8 +37,10 @@ def _review_scope(s) -> tuple[list, set]:
     复核后才计入统计与持续学习。2026-08-29 起检测落库带 workorder_id，
     按工单精确归属；历史行（workorder_id 为空）回退品类近似匹配。
     """
+    # 存档排除（2026-10-09）：已存档工单不开启复判口径
     wo_ids = [r[0] for r in s.query(WorkOrder.id)
-              .filter(WorkOrder.review_enabled.is_(True)).all()]
+              .filter(WorkOrder.review_enabled.is_(True),
+                      WorkOrder.archived.is_(False)).all()]
     if not wo_ids:
         return [], set()
     ds_ids = [r[0] for r in s.query(WorkOrderSource.datasource_id)
@@ -148,8 +151,14 @@ def api_review_queue(category: Optional[str] = None, page: int = 1,
         rev_wo_ids, rev_cats = _review_scope(s)
         fb_ids = _feedback_det_ids(s)
         seen: dict = {}
+        # 存档排除（2026-10-09）：灰区队列排除存档工单检测，
+        # 保留 workorder_id 为 NULL 的孤儿记录
+        arch = archived_workorder_ids(s)
         q = (s.query(Detection)
              .filter(_gray_filter(), Detection.target_type.in_(_LIVE_TYPES)))
+        if arch:
+            q = q.filter(Detection.workorder_id.is_(None)
+                         | ~Detection.workorder_id.in_(arch))
         if category:
             q = q.filter(Detection.category == category)
         for d in q.order_by(Detection.id.desc()).all():
@@ -222,10 +231,16 @@ def api_review_stats():
     with session_scope() as s:
         rev_wo_ids, rev_cats = _review_scope(s)
         fb_ids = _feedback_det_ids(s)
-        rows = (s.query(Detection)
-                .filter(_gray_filter(),
-                        Detection.target_type.in_(_LIVE_TYPES))
-                .all())
+        # 存档排除（2026-10-09）：灰区统计排除存档工单检测，
+        # 保留 workorder_id 为 NULL 的孤儿记录
+        arch = archived_workorder_ids(s)
+        rows_q = (s.query(Detection)
+                  .filter(_gray_filter(),
+                          Detection.target_type.in_(_LIVE_TYPES)))
+        if arch:
+            rows_q = rows_q.filter(Detection.workorder_id.is_(None)
+                                   | ~Detection.workorder_id.in_(arch))
+        rows = rows_q.all()
         pending: dict = {}
         for d in rows:
             if _is_gray(d) and d.id not in fb_ids:

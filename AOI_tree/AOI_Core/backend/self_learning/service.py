@@ -22,6 +22,7 @@ from typing import Dict, List, Optional, Tuple
 
 from sqlalchemy import func
 
+from ..api._wo_shared import archived_workorder_ids
 from ..core import datasets as ds_helper
 from ..core.ingest import register_image
 from ..core.notify import notify_event
@@ -461,6 +462,12 @@ def feedback_summary(category: Optional[str] = None,
                         .join(Dataset, ImageRow.dataset_id == Dataset.id)
                         .filter(Dataset.datasource_id.in_(ds_ids)).all())
         else:
+            # 存档排除（2026-10-09）：全局口径排除存档工单检测的反馈，
+            # 保留 workorder_id 为 NULL 的孤儿记录
+            arch = archived_workorder_ids(s)
+            if arch:
+                q = q.filter(Detection.workorder_id.is_(None)
+                             | ~Detection.workorder_id.in_(arch))
             rows = q.all()
     total = len(rows)
     n_fp = sum(1 for fb, _ in rows if fb.feedback_type == "false_positive")

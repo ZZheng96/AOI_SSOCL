@@ -1,27 +1,28 @@
-"""统计报表页（W-report 2026-08-29 重构，docs/重构设计_学习与统计页.md）。
+"""存档统计页（2026-10-09 重构，原「统计报表」）。
 
-工单质检报表——复核后口径（用户明确："不要今日检测和今日不良，用今日来统计
-没有意义，要用工单来统计"）：
-- KPI：检测数 / 复核覆盖率 / 真实不良率（复核口径）/ 误报率 / 漏检率 / 平均延迟
-- 误判率趋势（按日 FP 率/FN 率，学习价值的运营侧证据）
-- 缺陷类型帕累托（复核确认缺陷按 defect_type 分布）
-- 批次对比表（按导入批次聚合检测/不良/误报/漏检）
-- 产线健康信号（灰区率 / open 未解释信号 / 对位预警，algo 每图产出落库聚合）
+以工单为基础的历史管理 + 统计：
+- 左侧工单档案列表：进行中 / 已存档 两组；选中工单驱动右侧全部统计
+- 存档管理：存档（数据保留转历史）/ 还原 / 删除（级联清检测与反馈）
+- 右侧统计（复核后口径）：KPI（检测数/复核覆盖率/真实不良率/误报率/
+  漏检率/平均延迟）+ 误判率趋势 + 缺陷帕累托 + 批次对比 + 产线健康 +
+  延迟趋势；固定「全部」时间范围（工单本身就是时间边界，不再用 7d/30d）
+- 未选工单时右侧为空态提示
 
-操作日志已移至「系统设置」页（审计功能不占报表版面）。
-全部数据为纯 DB 聚合，零模型前向。
+操作日志在「系统设置」页。全部数据为纯 DB 聚合，零模型前向。
 """
 from __future__ import annotations
 
 from PySide6.QtCore import Qt
 from PySide6.QtWidgets import (
-    QComboBox,
     QHBoxLayout,
     QLabel,
+    QMessageBox,
     QPushButton,
     QSplitter,
     QTableWidget,
     QTableWidgetItem,
+    QTreeWidget,
+    QTreeWidgetItem,
     QVBoxLayout,
     QWidget,
 )
@@ -33,9 +34,6 @@ from ui.theme import DANGER, PRIMARY, SUCCESS, WARNING
 from ui.widgets.charts import BarChart, LatencyChart, LineChart
 from ui.widgets.kpi_card import KpiCard
 
-# 时间范围选项：(名称, range 参数)
-RANGE_OPTIONS = [("全部", "all"), ("近 7 天", "7d"), ("近 30 天", "30d")]
-
 
 def _pct(v) -> str:
     try:
@@ -45,14 +43,15 @@ def _pct(v) -> str:
 
 
 class StatsPage(QWidget):
-    """工单质检报表页（复核后口径）。"""
+    """存档统计页：工单档案管理 + 按工单统计（复核后口径）。"""
 
     def __init__(self, client: ApiClient, get_category, get_budget=None,
                  parent: QWidget | None = None):
         super().__init__(parent)
         self._client = client
-        self._get_category = get_category
+        self._get_category = get_category   # 兼容旧注入（统计已按工单）
         self._get_budget = get_budget or (lambda: 200.0)
+        self._wo_items: list[dict] = []     # 进行中 + 已存档工单合并缓存
 
         root = QVBoxLayout(self)
         root.setContentsMargins(12, 10, 12, 10)
@@ -60,36 +59,61 @@ class StatsPage(QWidget):
 
         top = QHBoxLayout()
         top.addWidget(make_banner(
-            "工单质检报表：复核后口径（误报率/漏检率以操作员复核真值为准）"))
+            "存档统计：以工单为单位的历史管理与统计"
+            "（工单即时间边界，统计固定全量口径）"))
         attach_level_badge(self, top)
         top.addStretch(1)
-        self.lbl_scope = QLabel("统计口径：当前工单")
-        self.lbl_scope.setProperty("subtext", True)
-        top.addWidget(self.lbl_scope)
-        top.addWidget(QLabel("范围"))
-        self.combo_range = QComboBox()
-        for name, val in RANGE_OPTIONS:
-            self.combo_range.addItem(name, val)
-        self.combo_range.setCurrentIndex(2)   # 默认近 30 天
-        self.combo_range.currentIndexChanged.connect(lambda _i: self.reload())
-        top.addWidget(self.combo_range)
-        top.addWidget(QLabel("品类"))
-        self.combo_category = QComboBox()
-        self.combo_category.addItem("全部品类", "")
-        self.combo_category.currentIndexChanged.connect(lambda _i: self.reload())
-        top.addWidget(self.combo_category)
         btn_refresh = QPushButton("刷新")
         btn_refresh.setProperty("flat", True)
         btn_refresh.clicked.connect(self.reload)
         top.addWidget(btn_refresh)
-        btn_export = QPushButton("导出报表 CSV")
-        btn_export.setToolTip("导出当前口径的误判率趋势 + 批次对比（BOM 头，"
-                              "Excel 直接打开）")
-        btn_export.clicked.connect(self._export_report)
-        top.addWidget(btn_export)
         root.addLayout(top)
 
-        # ── KPI 卡片行（复核后口径）──
+        splitter = QSplitter(Qt.Horizontal)
+
+        # ══════════ 左：工单档案（进行中 / 已存档）══════════
+        left = make_card()
+        l_lay = QVBoxLayout(left)
+        l_head = QLabel("工单档案（单击查看统计）")
+        l_head.setProperty("heading", True)
+        l_lay.addWidget(l_head)
+        self.tree = QTreeWidget()
+        self.tree.setHeaderLabels(["工单", "检测", "不良率"])
+        self.tree.setColumnWidth(0, 180)
+        self.tree.itemSelectionChanged.connect(self._on_select)
+        l_lay.addWidget(self.tree, 1)
+        op = QHBoxLayout()
+        self.btn_archive = QPushButton("存档")
+        self.btn_archive.setToolTip("进行中工单转入历史管理（数据保留）")
+        self.btn_archive.clicked.connect(self._on_archive)
+        op.addWidget(self.btn_archive)
+        self.btn_unarchive = QPushButton("还原")
+        self.btn_unarchive.setToolTip("已存档工单还原回进行中列表")
+        self.btn_unarchive.clicked.connect(self._on_unarchive)
+        op.addWidget(self.btn_unarchive)
+        self.btn_delete = QPushButton("删除")
+        self.btn_delete.setProperty("danger", True)
+        self.btn_delete.setToolTip("级联删除该工单的全部检测/反馈记录，不可恢复")
+        self.btn_delete.clicked.connect(self._on_delete)
+        op.addWidget(self.btn_delete)
+        self.btn_export = QPushButton("导出 CSV")
+        self.btn_export.setToolTip("导出所选工单报表（误判率趋势 + 批次对比，"
+                                   "BOM 头，Excel 直接打开）")
+        self.btn_export.clicked.connect(self._export_report)
+        op.addWidget(self.btn_export)
+        l_lay.addLayout(op)
+        splitter.addWidget(left)
+
+        # ══════════ 右：所选工单统计（复核后口径）══════════
+        right = QWidget()
+        r_root = QVBoxLayout(right)
+        r_root.setContentsMargins(0, 0, 0, 0)
+        r_root.setSpacing(8)
+
+        self.lbl_scope = QLabel("未选工单：请在左侧选择要查看的工单")
+        self.lbl_scope.setProperty("subtext", True)
+        r_root.addWidget(self.lbl_scope)
+
         kpi_card = make_card()
         kpi_row = QHBoxLayout(kpi_card)
         self.kpi_det = KpiCard("检测数", "-")
@@ -105,9 +129,8 @@ class StatsPage(QWidget):
         for k in (self.kpi_det, self.kpi_coverage, self.kpi_true_rate,
                   self.kpi_fp, self.kpi_fn, self.kpi_latency):
             kpi_row.addWidget(k)
-        root.addWidget(kpi_card)
+        r_root.addWidget(kpi_card)
 
-        # ── 第一行图：误判率趋势 | 缺陷类型帕累托 ──
         row1 = QHBoxLayout()
         trend_card = make_card()
         t_lay = QVBoxLayout(trend_card)
@@ -126,10 +149,9 @@ class StatsPage(QWidget):
         self.pareto_chart = BarChart()
         p_lay.addWidget(self.pareto_chart, 1)
         row1.addWidget(pareto_card, 2)
-        root.addLayout(row1, 1)
+        r_root.addLayout(row1, 1)
 
-        # ── 第二行：批次对比表 | 产线健康 + 延迟趋势 ──
-        splitter = QSplitter(Qt.Horizontal)
+        split2 = QSplitter(Qt.Horizontal)
         batch_card = make_card()
         b_lay = QVBoxLayout(batch_card)
         b_head = QLabel("批次对比（哪个批次不良/误判集中）")
@@ -143,12 +165,12 @@ class StatsPage(QWidget):
         self.table_batch.setAlternatingRowColors(True)
         self.table_batch.horizontalHeader().setStretchLastSection(True)
         b_lay.addWidget(self.table_batch, 1)
-        splitter.addWidget(batch_card)
+        split2.addWidget(batch_card)
 
-        right = QWidget()
-        r_lay = QVBoxLayout(right)
-        r_lay.setContentsMargins(0, 0, 0, 0)
-        r_lay.setSpacing(8)
+        right2 = QWidget()
+        r2_lay = QVBoxLayout(right2)
+        r2_lay.setContentsMargins(0, 0, 0, 0)
+        r2_lay.setSpacing(8)
         health_card = make_card()
         h_lay = QVBoxLayout(health_card)
         h_head = QLabel("产线健康信号（近 7 天检测聚合）")
@@ -167,75 +189,195 @@ class StatsPage(QWidget):
         self.lbl_health_hint = QLabel("")
         self.lbl_health_hint.setProperty("subtext", True)
         h_lay.addWidget(self.lbl_health_hint)
-        r_lay.addWidget(health_card)
+        r2_lay.addWidget(health_card)
 
         lat_card = make_card()
-        l_lay = QVBoxLayout(lat_card)
+        l2_lay = QVBoxLayout(lat_card)
         l_head = QLabel("平均延迟趋势")
         l_head.setProperty("heading", True)
-        l_lay.addWidget(l_head)
+        l2_lay.addWidget(l_head)
         self.latency_chart = LatencyChart(budget_ms=float(self._get_budget()))
-        l_lay.addWidget(self.latency_chart, 1)
-        r_lay.addWidget(lat_card, 1)
+        l2_lay.addWidget(self.latency_chart, 1)
+        r2_lay.addWidget(lat_card, 1)
+        split2.addWidget(right2)
+        split2.setSizes([620, 420])
+        r_root.addWidget(split2, 1)
+
         splitter.addWidget(right)
-        splitter.setSizes([620, 420])
+        splitter.setSizes([300, 900])
         root.addWidget(splitter, 1)
 
         self._client.error_occurred.connect(lambda m: warn(self, m))
-        run_async(self, self._client.list_categories, self._fill_categories)
         self.reload()
 
-    # ══════════════════ 口径 ══════════════════
-    def _workorder_id(self) -> int | None:
-        fn = getattr(self, "_get_workorder_id", None)
-        return fn() if callable(fn) else None
-
-    def _range(self) -> str:
-        return str(self.combo_range.currentData() or "30d")
-
-    def _category(self) -> str:
-        return str(self.combo_category.currentData() or "")
-
-    def _fill_categories(self, cats) -> None:
-        cats = [c for c in (cats or []) if c]
-        cur = self._category()
-        self.combo_category.blockSignals(True)
-        self.combo_category.clear()
-        self.combo_category.addItem("全部品类", "")
-        for c in cats:
-            self.combo_category.addItem(str(c), str(c))
-        idx = self.combo_category.findData(cur)
-        if idx >= 0:
-            self.combo_category.setCurrentIndex(idx)
-        self.combo_category.blockSignals(False)
-
-    # ══════════════════ 数据加载 ══════════════════
+    # ══════════════════ 工单档案列表 ══════════════════
     def reload(self) -> None:
-        wid = self._workorder_id()
-        cat = self._category()
-        rng = self._range()
+        """刷新工单档案列表（进行中 + 已存档）。"""
+        run_async(self,
+                  lambda: (self._client.list_workorders("all"),
+                           self._client.list_workorders("all", archived=True)),
+                  self._fill_tree)
+
+    def _fill_tree(self, data) -> None:
+        active, archived = data if isinstance(data, tuple) else ([], [])
+        active = [w for w in (active or []) if isinstance(w, dict)]
+        archived = [w for w in (archived or []) if isinstance(w, dict)]
+        self._wo_items = active + archived
+        cur_wid = self._selected_wo_id()
+        self.tree.blockSignals(True)
+        self.tree.clear()
+        for title, items in (("进行中", active), ("已存档", archived)):
+            grp = QTreeWidgetItem([title, "", ""])
+            grp.setFlags(grp.flags() & ~Qt.ItemIsSelectable)
+            self.tree.addTopLevelItem(grp)
+            for wo in items:
+                stats = wo.get("stats") or {}
+                n_ins = int(stats.get("inspected", 0) or 0)
+                rate = float(stats.get("rate", 0.0) or 0.0)
+                it = QTreeWidgetItem([
+                    str(wo.get("name") or "-"), str(n_ins),
+                    f"{rate * 100:.1f}%" if n_ins else "-"])
+                it.setData(0, Qt.UserRole, wo.get("id"))
+                it.setToolTip(0, f"工单 #{wo.get('id')}｜"
+                                 f"数据源：{'、'.join(str(d.get('name')) for d in (wo.get('datasources') or [])) or '-'}")
+                grp.addChild(it)
+                if wo.get("id") == cur_wid:
+                    self.tree.setCurrentItem(it)
+        grp0 = self.tree.topLevelItem(0)
+        if grp0 is not None:
+            grp0.setExpanded(True)
+        grp1 = self.tree.topLevelItem(1)
+        if grp1 is not None:
+            grp1.setExpanded(bool(archived))
+        self.tree.blockSignals(False)
+        if not active and not archived:
+            self.tree.blockSignals(True)
+            grp0 = self.tree.topLevelItem(0)
+            if grp0 is not None:
+                grp0.addChild(QTreeWidgetItem(["（暂无工单）", "", ""]))
+            self.tree.blockSignals(False)
+        self._refresh_op_buttons()
+
+    def _selected_wo_id(self) -> int | None:
+        it = self.tree.currentItem()
+        if it is None:
+            return None
+        wid = it.data(0, Qt.UserRole)
+        return int(wid) if wid is not None else None
+
+    def _selected_wo(self) -> dict | None:
+        wid = self._selected_wo_id()
+        if wid is None:
+            return None
+        return next((w for w in self._wo_items if w.get("id") == wid), None)
+
+    def _on_select(self) -> None:
+        self._refresh_op_buttons()
+        wo = self._selected_wo()
+        if wo is None:
+            self.lbl_scope.setText("未选工单：请在左侧选择要查看的工单")
+            self._clear_stats()
+            return
         self.lbl_scope.setText(
-            "统计口径：当前工单" if wid is not None
-            else "统计口径：全部工单（未选工单）")
+            f"统计口径：工单「{wo.get('name')}」"
+            f"（{'已存档' if wo.get('archived') else '进行中'}，全量）")
+        self._load_stats(int(wo.get("id")), wo)
+
+    def _refresh_op_buttons(self) -> None:
+        wo = self._selected_wo()
+        self.btn_archive.setEnabled(bool(wo) and not wo.get("archived"))
+        self.btn_unarchive.setEnabled(bool(wo) and bool(wo.get("archived")))
+        self.btn_delete.setEnabled(bool(wo))
+        self.btn_export.setEnabled(bool(wo))
+
+    # ══════════════════ 存档管理操作 ══════════════════
+    def _on_archive(self) -> None:
+        wo = self._selected_wo()
+        if wo is None:
+            return
+        if QMessageBox.question(
+                self, "存档工单",
+                f"确定存档工单「{wo.get('name')}」？\n"
+                "数据全部保留并转入历史管理，不再参与全局统计；"
+                "可随时在此还原。") != QMessageBox.Yes:
+            return
+
+        def _done(res) -> None:
+            if isinstance(res, dict) and res.get("archived"):
+                notify(self, f"工单已存档：{wo.get('name')}")
+                self.reload()
+            else:
+                warn(self, "存档失败，请重试")
+
+        run_async(self, lambda: self._client.archive_workorder(
+            int(wo.get("id"))), _done)
+
+    def _on_unarchive(self) -> None:
+        wo = self._selected_wo()
+        if wo is None:
+            return
+
+        def _done(res) -> None:
+            if isinstance(res, dict) and res.get("archived") is False:
+                notify(self, f"工单已还原：{wo.get('name')}")
+                self.reload()
+            else:
+                warn(self, "还原失败，请重试")
+
+        run_async(self, lambda: self._client.unarchive_workorder(
+            int(wo.get("id"))), _done)
+
+    def _on_delete(self) -> None:
+        wo = self._selected_wo()
+        if wo is None:
+            return
+        if QMessageBox.question(
+                self, "删除工单",
+                f"确定删除工单「{wo.get('name')}」？\n"
+                "将级联删除该工单名下的全部检测记录与反馈记录，"
+                "不可恢复！\n数据源、图片与模型保留。") != QMessageBox.Yes:
+            return
+
+        def _done(res) -> None:
+            if isinstance(res, dict) and res.get("deleted"):
+                notify(self, f"工单已删除：{wo.get('name')}")
+                self.reload()
+            else:
+                warn(self, "删除失败，请重试")
+
+        run_async(self, lambda: self._client.delete_workorder(
+            int(wo.get("id"))), _done)
+
+    # ══════════════════ 数据加载（按工单，固定全量）══════════════════
+    def _clear_stats(self) -> None:
+        for k in (self.kpi_det, self.kpi_coverage, self.kpi_true_rate,
+                  self.kpi_fp, self.kpi_fn, self.kpi_latency,
+                  self.kpi_gray, self.kpi_open, self.kpi_align):
+            k.set_value("-")
+        self.trend_chart.clear()
+        self.trend_chart.set_labels([], "比率")
+        self.pareto_chart.set_data([], {})
+        self.table_batch.setRowCount(0)
+        self.latency_chart.set_series([], [])
+        self.lbl_health_hint.setText("")
+
+    def _load_stats(self, wid: int, wo: dict) -> None:
         run_async(self, lambda: self._client.stats_quality(
-            workorder_id=wid, category=cat, range_name=rng),
-            self._fill_quality)
+            workorder_id=wid, range_name="all"), self._fill_quality)
         run_async(self, lambda: self._client.stats_mistake_trend(
-            workorder_id=wid, category=cat, range_name=rng),
-            self._fill_trend)
+            workorder_id=wid, range_name="all"), self._fill_trend)
         run_async(self, lambda: self._client.stats_defect_types(
-            workorder_id=wid, category=cat, range_name=rng),
-            self._fill_pareto)
+            workorder_id=wid, range_name="all"), self._fill_pareto)
         run_async(self, lambda: self._client.stats_batch_summary(
-            workorder_id=wid, category=cat, range_name=rng),
-            self._fill_batch)
+            workorder_id=wid, range_name="all"), self._fill_batch)
         run_async(self, lambda: self._client.stats_health(
-            workorder_id=wid, category=cat, range_name="7d"),
-            self._fill_health)
-        # 延迟趋势沿用旧端点（按日聚合）
-        days = {"all": 30, "7d": 7, "30d": 30, "today": 1}.get(rng, 30)
+            workorder_id=wid, range_name="7d"), self._fill_health)
+        # 延迟趋势端点基于 StatsDaily 聚合表、无法按工单拆解——
+        # 用工单首个品类近似（无品类则全局近 30 天）
+        cats = [str(c) for c in (wo.get("categories") or []) if c]
+        cat = cats[0] if len(cats) == 1 else ""
         run_async(self, lambda: self._client.stats_timeseries(
-            days=days, category=cat), self._fill_latency)
+            days=30, category=cat), self._fill_latency)
 
     def _fill_quality(self, data) -> None:
         if not isinstance(data, dict):
@@ -329,29 +471,33 @@ class StatsPage(QWidget):
 
     # ══════════════════ 导出 ══════════════════
     def _export_report(self) -> None:
-        """导出当前口径报表：误判率趋势 + 批次对比合成一个 CSV。"""
+        """导出所选工单报表：误判率趋势 + 批次对比合成一个 CSV。"""
         import csv
         import io
 
         from PySide6.QtWidgets import QFileDialog
+        wo = self._selected_wo()
+        if wo is None:
+            warn(self, "请先在左侧选择要导出的工单")
+            return
         save_path, _ = QFileDialog.getSaveFileName(
-            self, "导出报表", "质检报表.csv", "CSV 文件 (*.csv)")
+            self, "导出报表", f"工单报表_{wo.get('name')}.csv",
+            "CSV 文件 (*.csv)")
         if not save_path:
             return
-        wid = self._workorder_id()
-        cat = self._category()
-        rng = self._range()
+        wid = int(wo.get("id"))
         trend = self._client.stats_mistake_trend(
-            workorder_id=wid, category=cat, range_name=rng)
+            workorder_id=wid, range_name="all")
         batch = self._client.stats_batch_summary(
-            workorder_id=wid, category=cat, range_name=rng)
+            workorder_id=wid, range_name="all")
         quality = self._client.stats_quality(
-            workorder_id=wid, category=cat, range_name=rng)
+            workorder_id=wid, range_name="all")
         buf = io.StringIO()
         w = csv.writer(buf)
         q = quality or {}
-        w.writerow(["# 质检报表（复核后口径）",
-                    f"范围={rng}", f"品类={cat or '全部'}"])
+        w.writerow(["# 工单质检报表（复核后口径）",
+                    f"工单={wo.get('name')}",
+                    f"状态={'已存档' if wo.get('archived') else '进行中'}"])
         w.writerow(["检测数", q.get("n_detections", 0),
                     "复核数", q.get("n_reviewed", 0),
                     "真实不良率", round(float(q.get("true_defect_rate") or 0), 4),

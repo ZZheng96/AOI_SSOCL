@@ -98,6 +98,9 @@ class WorkOrder(Base, TimestampMixin):
     per_category: Mapped[bool] = mapped_column(Boolean, default=True)
     has_template: Mapped[bool] = mapped_column(Boolean, default=False)
     status: Mapped[str] = mapped_column(String(16), default="active")    # active/closed
+    # 存档（2026-10-09）：存档工单转入历史管理（存档统计页），不参与全局
+    # 统计/复核队列/反馈列表；存档不删数据，彻底删除走 DELETE（级联清数据）
+    archived: Mapped[bool] = mapped_column(Boolean, default=False)
     note: Mapped[str] = mapped_column(String(256), default="")
     # 人工复判开关（前端反馈 v4）：开启后该工单全部检测进待复核队列，
     # 复核后才计入统计与持续学习（复核提交自动生成 feedback 回流学习）。

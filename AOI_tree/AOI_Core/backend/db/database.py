@@ -18,7 +18,7 @@ _SessionLocal: sessionmaker | None = None
 # A11（2026-10-03）：迁移版本管理——PRAGMA user_version 追踪已应用的迁移，
 # 已应用版本整段跳过；新增迁移递增 SCHEMA_VERSION 并按 `if version < N` 块追加。
 # 注意 SQLite 无法 ALTER 补外键，表结构变更（非加列）需重建表，另起版本块。
-SCHEMA_VERSION = 5
+SCHEMA_VERSION = 6
 
 
 def _migrate_sqlite(engine) -> None:
@@ -52,6 +52,8 @@ def _migrate_sqlite(engine) -> None:
         _migrate_v4(engine, _add_col)
     if version < 5:
         _migrate_v5(engine)
+    if version < 6:
+        _migrate_v6(engine, _add_col)
     with engine.begin() as conn:
         conn.execute(text(f"PRAGMA user_version={SCHEMA_VERSION}"))
 
@@ -185,6 +187,12 @@ def _migrate_v5(engine) -> None:
         conn.execute(text(
             "CREATE INDEX IF NOT EXISTS ix_consolidation_feedback_feedback_id "
             "ON consolidation_feedback (feedback_id)"))
+
+
+def _migrate_v6(engine, _add_col) -> None:
+    """v6：工单存档（2026-10-09）。存档工单转入历史管理，不参与全局
+    统计/复核队列/反馈列表；存档不删数据，彻底删除走 DELETE（级联清数据）。"""
+    _add_col("work_orders", "archived", "archived BOOLEAN DEFAULT 0")
 
 
 def get_engine():

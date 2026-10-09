@@ -18,6 +18,7 @@ from ..core.tasks import task_manager
 from ..db.database import log_action, session_scope
 from ..db.models import Detection, Feedback
 from ..self_learning import service as sl_service
+from ._wo_shared import archived_workorder_ids
 from .schemas import FeedbackCreateRequest, SelfUpdateRequest, to_dict
 
 router = APIRouter()
@@ -63,9 +64,16 @@ def api_list_feedback(consumed: Optional[bool] = None,
             q = q.filter(Feedback.consumed == consumed)
         if feedback_type:
             q = q.filter(Feedback.feedback_type == feedback_type)
+        # 存档排除（2026-10-09）：排除存档工单检测的反馈，
+        # 保留 workorder_id 为 NULL 的孤儿记录（NULL IN 子句结果为 NULL）
+        arch = archived_workorder_ids(s)
+        if category or arch:
+            q = q.join(Detection, Feedback.detection_id == Detection.id)
         if category:
-            q = q.join(Detection, Feedback.detection_id == Detection.id) \
-                 .filter(Detection.category == category)
+            q = q.filter(Detection.category == category)
+        if arch:
+            q = q.filter(Detection.workorder_id.is_(None)
+                         | ~Detection.workorder_id.in_(arch))
         total = q.count()
         rows = (q.order_by(Feedback.id.desc())
                  .offset((page - 1) * page_size).limit(page_size).all())

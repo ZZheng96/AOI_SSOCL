@@ -469,19 +469,24 @@ def d_hub(window) -> None:
     except Exception as exc:
         T.ck("评估看板 benchmark", False, str(exc)[:150])
 
-    title("分镜26  标注复核 / 学习效果 / 统计报表")
+    title("分镜26  标注复核 / 学习效果 / 存档统计")
     for t in ("标注复核", "学习效果"):
         T._hub_page(hub, t)
         sub(f"子页：{t}")
         hold(2500)
-    st = T._hub_page(hub, "统计报表")
+    st = T._hub_page(hub, "存档统计")
     try:
-        for i in range(min(3, st.combo_range.count())):
-            st.combo_range.setCurrentIndex(i)
-            sub(f"统计范围：{st.combo_range.itemText(i)}")
-            hold(2000)
+        # 存档统计：选首个工单查看统计（无工单则展示空态）
+        tree = st.tree
+        for gi in range(tree.topLevelItemCount()):
+            grp = tree.topLevelItem(gi)
+            if grp is not None and grp.childCount():
+                tree.setCurrentItem(grp.child(0))
+                sub(f"工单档案：{grp.child(0).text(0)}")
+                hold(2000)
+                break
     except Exception as exc:
-        T.warn("统计报表切换范围", str(exc)[:150])
+        T.warn("存档统计选择工单", str(exc)[:150])
     T.later(300, lambda: T.s07_menus(window))
 
 
