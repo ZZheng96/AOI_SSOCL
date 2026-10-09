@@ -1,7 +1,8 @@
-"""系统接口：健康检查 / 系统信息 / 本地文件读取（开发用）。"""
+"""系统接口：健康检查 / 系统信息 / 本地文件读取（开发用）/ 系统自检。"""
 from __future__ import annotations
 
 import os
+from datetime import date
 from pathlib import Path
 
 from fastapi import APIRouter, Depends, HTTPException, Request
@@ -11,7 +12,9 @@ from sqlalchemy import func
 from ..core.config import get_settings
 from ..core.security import require_role
 from ..db.database import log_action, session_scope
-from ..db.models import Detection, Feedback, Image, Video
+from ..db.models import (ConsolidationBatch, ConsolidationFeedback, DataSource,
+                         Dataset, Detection, Feedback, Image, StatsDaily,
+                         Video, WorkOrder, WorkOrderSource)
 from .schemas import device_info
 
 router = APIRouter()
@@ -227,3 +230,314 @@ def _make_thumb(p: Path, size: int):
     img.save(buf, format="JPEG", quality=80)
     buf.seek(0)
     return Response(content=buf.getvalue(), media_type="image/jpeg")
+
+
+# ── 系统自检（2026-10-09）：数据残留 / 引用悬空 / 页面一致性 ──
+#
+# 背景：历史版本删除工单时把 Detection.workorder_id 置 NULL 保留记录，
+# 导致工单删光后工作台 KPI、标注反馈页仍显示残留数字（用户反馈）。
+# 自检把这类问题逐条量化，fixable=true 的项可由 cleanup 一键修复。
+
+_FILE_CHECK_CAP = 5000  # 图片文件存在性抽查上限，避免全量 isfile 拖慢
+
+
+def _check_item(cid: str, name: str, count: int, detail: str,
+                fixable: bool = False, fail: bool = False) -> dict:
+    return {"id": cid, "name": name, "count": int(count),
+            "status": ("ok" if count == 0 else ("fail" if fail else "warn")),
+            "detail": detail, "fixable": bool(fixable and count > 0)}
+
+
+def _dangling_detection_ids(s, only_null_wo: bool) -> list[int]:
+    """无工单归属（NULL）或指向已删工单的检测 id。"""
+    q = s.query(Detection.id)
+    if only_null_wo:
+        q = q.filter(Detection.workorder_id.is_(None))
+    else:
+        q = (q.filter(Detection.workorder_id.isnot(None))
+             .filter(~Detection.workorder_id.in_(
+                 s.query(WorkOrder.id))))
+    return [r[0] for r in q.all()]
+
+
+def _dangling_feedback_ids(s) -> list[int]:
+    """指向已不存在检测的反馈 id。"""
+    return [r[0] for r in
+            s.query(Feedback.id)
+            .filter(~Feedback.detection_id.in_(s.query(Detection.id))).all()]
+
+
+def _dangling_cf_rows(s) -> int:
+    """合并反馈血缘中指向已删反馈/批次的行数。"""
+    n_fb = (s.query(func.count(ConsolidationFeedback.feedback_id))
+            .filter(~ConsolidationFeedback.feedback_id.in_(
+                s.query(Feedback.id))).scalar() or 0)
+    n_cb = (s.query(func.count(ConsolidationFeedback.consolidation_id))
+            .filter(~ConsolidationFeedback.consolidation_id.in_(
+                s.query(ConsolidationBatch.id))).scalar() or 0)
+    return int(n_fb + n_cb)
+
+
+def _missing_image_file_ids(s) -> list[int]:
+    """DB 已登记但磁盘文件不存在的图片 id（抽查封顶 _FILE_CHECK_CAP）。"""
+    rows = s.query(Image.id, Image.path).limit(_FILE_CHECK_CAP).all()
+    return [i for i, p in rows if not os.path.isfile(p)]
+
+
+def _stuck_claim_ids(s) -> list[int]:
+    """认领指向已删工单的图片（卡死，永不消费）。"""
+    return [r[0] for r in
+            s.query(Image.id)
+            .filter(Image.claim_workorder_id.isnot(None))
+            .filter(~Image.claim_workorder_id.in_(s.query(WorkOrder.id)))
+            .all()]
+
+
+def _dangling_wosource_ids(s) -> list[int]:
+    """工单-数据源关联中指向已删工单/数据源的行。"""
+    bad_wo = (s.query(WorkOrderSource.id)
+              .filter(~WorkOrderSource.workorder_id.in_(
+                  s.query(WorkOrder.id))))
+    bad_ds = (s.query(WorkOrderSource.id)
+              .filter(~WorkOrderSource.datasource_id.in_(
+                  s.query(DataSource.id))))
+    return [r[0] for r in bad_wo.union(bad_ds).all()]
+
+
+def _empty_datasource_names(s) -> list[str]:
+    """名下无批次或无图片的数据源（数据管理页空壳）。"""
+    names = []
+    for ds in s.query(DataSource).all():
+        n_ds = (s.query(func.count(Dataset.id))
+                .filter(Dataset.datasource_id == ds.id).scalar() or 0)
+        if n_ds == 0:
+            names.append(ds.name)
+    return names
+
+
+def _orphan_dataset_ids(s) -> list[int]:
+    """无数据源归属的批次 id：datasource_id 为空或指向已删数据源。
+    自动归档/反馈回流/审计/历史导入批次天然不挂数据源——数据源删光后
+    成为孤儿，其图片仍在数据管理/数据增强页显示（用户反馈 2026-10-09）。"""
+    ds_ids = {r[0] for r in s.query(DataSource.id).all()}
+    return [did for did, dsrc in s.query(Dataset.id, Dataset.datasource_id)
+            if dsrc is None or dsrc not in ds_ids]
+
+
+def _today_stats_mismatch(s) -> int:
+    """今日 StatsDaily 聚合行与 Detection 表实时计数的偏差。"""
+    today = date.today()
+    row = (s.query(StatsDaily).filter(StatsDaily.date == today).first())
+    n_det = (s.query(func.count(Detection.id))
+             .filter(func.date(Detection.created_at) == today)
+             .scalar() or 0)
+    n_db = row.n_inspected if row else 0
+    return abs(int(n_det) - int(n_db))
+
+
+def _cascade_delete_detections(s, det_ids: list[int]) -> int:
+    """级联删除检测及其反馈/合并反馈血缘（与删工单同口径）。"""
+    if not det_ids:
+        return 0
+    fb_ids = [r[0] for r in s.query(Feedback.id)
+              .filter(Feedback.detection_id.in_(det_ids)).all()]
+    if fb_ids:
+        s.query(ConsolidationFeedback).filter(
+            ConsolidationFeedback.feedback_id.in_(fb_ids)
+        ).delete(synchronize_session=False)
+        s.query(Feedback).filter(Feedback.id.in_(fb_ids)
+                                 ).delete(synchronize_session=False)
+    s.query(Detection).filter(Detection.id.in_(det_ids)
+                              ).delete(synchronize_session=False)
+    return len(det_ids)
+
+
+def _run_selfcheck(s) -> list[dict]:
+    """逐项体检（只读，不改数据）。session 由调用方持有。"""
+    items = []
+
+    n = len(_dangling_detection_ids(s, only_null_wo=True))
+    items.append(_check_item(
+        "orphan_detections", "无工单归属的检测记录", n,
+        "历史版本删工单时遗留的检测记录（工单归属为空）。会导致工作台 KPI、"
+        "标注反馈、学习效果页在工单删光后仍显示残留数字。",
+        fixable=True))
+
+    n = len(_dangling_detection_ids(s, only_null_wo=False))
+    items.append(_check_item(
+        "dangling_detections", "检测指向已删工单", n,
+        "检测记录的工单 id 在工单表中不存在（外键悬空）。",
+        fixable=True, fail=True))
+
+    n = len(_dangling_feedback_ids(s))
+    items.append(_check_item(
+        "dangling_feedback", "反馈指向已删检测", n,
+        "反馈记录挂在已不存在的检测上，标注反馈页可能显示空图。",
+        fixable=True, fail=True))
+
+    n = _dangling_cf_rows(s)
+    items.append(_check_item(
+        "dangling_consolidation", "合并反馈血缘悬空", n,
+        "巩固批次的反馈血缘指向已删除的反馈或批次。",
+        fixable=True, fail=True))
+
+    n = len(_missing_image_file_ids(s))
+    items.append(_check_item(
+        "missing_image_files", "图片文件缺失", n,
+        f"数据库已登记但磁盘文件不存在（抽查上限 {_FILE_CHECK_CAP} 张）。"
+        "数据管理/数据增强页会显示裂图。",
+        fixable=True))
+
+    ds_ids = _orphan_dataset_ids(s)
+    n_img = ((s.query(func.count(Image.id))
+              .filter(Image.dataset_id.in_(ds_ids)).scalar() or 0)
+             if ds_ids else 0)
+    items.append(_check_item(
+        "orphan_datasets", "无数据源归属的批次与图片", len(ds_ids),
+        f"批次未挂接任何数据源（自动归档/反馈回流/审计/历史导入遗留），"
+        f"名下共 {n_img} 张图片。数据源删光后，数据管理缩略图、数据增强"
+        f"基底图仍显示的就是它们。清理只删应用生成的文件（storage 目录内），"
+        f"外部原始数据只删登记行、不动文件。",
+        fixable=True))
+
+    n = len(_stuck_claim_ids(s))
+    items.append(_check_item(
+        "stuck_claims", "图片认领卡死", n,
+        "图片被已删除的工单认领未释放，永远不会被消费。",
+        fixable=True, fail=True))
+
+    n = len(_dangling_wosource_ids(s))
+    items.append(_check_item(
+        "dangling_workorder_sources", "工单-数据源关联悬空", n,
+        "关联行指向已删除的工单或数据源。", fixable=True, fail=True))
+
+    names = _empty_datasource_names(s)
+    items.append(_check_item(
+        "empty_datasources", "空数据源", len(names),
+        ("名下没有任何批次，数据管理页显示为空壳。"
+         + ("：" + "、".join(names[:5]) if names else "")),
+        fixable=False))
+
+    n = _today_stats_mismatch(s)
+    items.append(_check_item(
+        "stats_daily_mismatch", "今日统计聚合偏差", n,
+        "stats_daily 今日行与检测表实时计数不一致，存档统计页趋势图可能"
+        "与 KPI 对不上。", fixable=True))
+
+    return items
+
+
+@router.get("/system/selfcheck")
+def api_system_selfcheck():
+    """系统自检：数据残留 / 引用悬空 / 页面一致性（只读）。"""
+    with session_scope() as s:
+        items = _run_selfcheck(s)
+    n_bad = sum(1 for i in items if i["status"] != "ok")
+    return {"status": "ok" if n_bad == 0 else "issues",
+            "n_issues": n_bad, "items": items}
+
+
+@router.post("/system/selfcheck/cleanup",
+             dependencies=[Depends(require_role("admin"))])
+def api_system_selfcheck_cleanup():
+    """一键修复自检中 fixable 的项。返回各项清理数量。"""
+    fixed = {}
+    with session_scope() as s:
+        det_ids = (_dangling_detection_ids(s, only_null_wo=True)
+                   + _dangling_detection_ids(s, only_null_wo=False))
+        fixed["detections_removed"] = _cascade_delete_detections(s, det_ids)
+
+        fb_ids = _dangling_feedback_ids(s)
+        if fb_ids:
+            s.query(ConsolidationFeedback).filter(
+                ConsolidationFeedback.feedback_id.in_(fb_ids)
+            ).delete(synchronize_session=False)
+            s.query(Feedback).filter(Feedback.id.in_(fb_ids)
+                                     ).delete(synchronize_session=False)
+        fixed["feedback_removed"] = len(fb_ids)
+
+        # 合并反馈血缘悬空（指向上一步已删之外的孤儿行）
+        n_cf = (s.query(ConsolidationFeedback)
+                .filter(~ConsolidationFeedback.feedback_id.in_(
+                    s.query(Feedback.id))
+                    | ~ConsolidationFeedback.consolidation_id.in_(
+                        s.query(ConsolidationBatch.id)))
+                .delete(synchronize_session=False))
+        fixed["consolidation_rows_removed"] = int(n_cf or 0)
+
+        # 无数据源归属的批次：删批次 + 图片登记行；文件只删应用生成的
+        # （storage 目录内，如 uploads/archive），外部原始数据不动文件。
+        ds_ids = _orphan_dataset_ids(s)
+        fixed["orphan_datasets_removed"] = len(ds_ids)
+        n_img_removed = 0
+        n_files_removed = 0
+        if ds_ids:
+            img_rows = (s.query(Image.id, Image.path)
+                        .filter(Image.dataset_id.in_(ds_ids)).all())
+            img_ids = [i for i, _p in img_rows]
+            if img_ids:
+                # 检测记录的图片引用置空，避免悬空
+                s.query(Detection).filter(Detection.image_id.in_(img_ids)).update(
+                    {Detection.image_id: None}, synchronize_session=False)
+                s.query(Image).filter(Image.id.in_(img_ids)
+                                      ).delete(synchronize_session=False)
+            n_img_removed = len(img_ids)
+            try:
+                root = get_settings().storage_dir.resolve()
+            except Exception:  # noqa: BLE001
+                root = None
+            if root is not None:
+                for _i, p in img_rows:
+                    try:
+                        fp = Path(p).resolve()
+                        if fp.is_file() and root in fp.parents:
+                            fp.unlink()
+                            n_files_removed += 1
+                    except Exception:  # noqa: BLE001 单文件失败不阻断整体清理
+                        pass
+            s.query(Dataset).filter(Dataset.id.in_(ds_ids)
+                                    ).delete(synchronize_session=False)
+        fixed["orphan_images_removed"] = n_img_removed
+        fixed["orphan_files_removed"] = n_files_removed
+
+        img_ids = _missing_image_file_ids(s)
+        if img_ids:
+            s.query(Image).filter(Image.id.in_(img_ids)
+                                  ).delete(synchronize_session=False)
+        fixed["missing_images_removed"] = len(img_ids)
+
+        claim_ids = _stuck_claim_ids(s)
+        if claim_ids:
+            s.query(Image).filter(Image.id.in_(claim_ids)).update(
+                {Image.claim_workorder_id: None, Image.claim_token: None,
+                 Image.claimed_at: None, Image.processing_status: "pending"},
+                synchronize_session=False)
+        fixed["stuck_claims_released"] = len(claim_ids)
+
+        wos_ids = _dangling_wosource_ids(s)
+        if wos_ids:
+            s.query(WorkOrderSource).filter(
+                WorkOrderSource.id.in_(wos_ids)
+            ).delete(synchronize_session=False)
+        fixed["workorder_sources_removed"] = len(wos_ids)
+
+        # 重算今日聚合行
+        today = date.today()
+        row = s.query(StatsDaily).filter(StatsDaily.date == today).first()
+        if row is not None:
+            n_det = (s.query(func.count(Detection.id))
+                     .filter(func.date(Detection.created_at) == today)
+                     .scalar() or 0)
+            n_an = (s.query(func.count(Detection.id))
+                    .filter(func.date(Detection.created_at) == today,
+                            Detection.is_anomaly.is_(True)).scalar() or 0)
+            fixed["stats_daily_recomputed"] = (
+                0 if row.n_inspected == n_det and row.n_anomaly == n_an else 1)
+            row.n_inspected, row.n_anomaly = int(n_det), int(n_an)
+        else:
+            fixed["stats_daily_recomputed"] = 0
+
+    log_action("selfcheck_cleanup",
+               " ".join(f"{k}={v}" for k, v in fixed.items()))
+    return {"fixed": fixed}
+

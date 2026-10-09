@@ -1178,6 +1178,17 @@ class DataPage(QWidget):
         dsid = img.get("dataset_id")
         return str(dsid) if dsid is not None else "-"
 
+    def _clear_thumb_cells(self) -> None:
+        """移除并销毁缩略图列的全部单元格控件。
+        Qt 的 setRowCount/clearSpans 不会删除 setCellWidget 放进去的控件
+        ——它们仍是 viewport 的子控件，会以"幽灵缩略图"浮在空态文本上
+        （2026-10-09 用户反馈：清空后仍残留一张缩略图）。"""
+        for r in range(self.table.rowCount()):
+            w = self.table.cellWidget(r, 1)
+            if w is not None:
+                self.table.removeCellWidget(r, 1)
+                w.deleteLater()
+
     def _fill_images(self, data, rid: int | None = None) -> None:
         if rid is not None and rid != self._img_req:
             return   # 过期响应（快速翻页时旧页数据晚到），丢弃
@@ -1199,6 +1210,7 @@ class DataPage(QWidget):
                         (self.btn_img_first, self._page > 1),
                         (self.btn_img_last, self._page < self._total_pages)):
             b.setEnabled(cond)
+        self._clear_thumb_cells()
         self.table.clearSpans()
         if not items:
             self.table.setRowCount(1)
@@ -1812,6 +1824,7 @@ class DataPage(QWidget):
                 self._cur_group_label = ""
                 self._page = 1
                 self._images = []
+                self._clear_thumb_cells()
                 self.table.clearSpans()
                 self.table.setRowCount(0)
                 run_async(self, self._client.list_datasources,

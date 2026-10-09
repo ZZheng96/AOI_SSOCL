@@ -239,6 +239,16 @@ class ApiClient(QObject):
         （M16d 白名单写回；admin 角色）"""
         return self.post("/api/system/config", json=dict(updates))
 
+    def system_selfcheck(self) -> dict | None:
+        """GET /api/system/selfcheck → {status, n_issues, items:[{id,name,
+        count,status,detail,fixable}]}（2026-10-09 系统自检，只读）"""
+        return self.get("/api/system/selfcheck")
+
+    def system_selfcheck_cleanup(self) -> dict | None:
+        """POST /api/system/selfcheck/cleanup → {fixed:{...}}（一键修复可
+        修复项：孤儿检测/悬空反馈/裂图行/卡死认领等；admin 角色）"""
+        return self.post("/api/system/selfcheck/cleanup")
+
     def list_categories(self) -> list:
         """GET /api/categories -> [品类名...]（失败时回退 system_info）"""
         return [c["category"] for c in self.categories_full()]

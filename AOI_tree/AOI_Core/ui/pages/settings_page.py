@@ -223,6 +223,9 @@ class SettingsPage(QWidget):
         scroll.setWidget(self._form_host)
         outer.addWidget(scroll, 1)
 
+        # 系统自检（2026-10-09）：数据残留/引用悬空/页面一致性体检
+        outer.addWidget(self._build_selfcheck_section())
+
         # 操作日志（审计）：自统计报表页迁入——报表页面向生产口径，
         # 审计功能归入设置中心
         outer.addWidget(self._build_logs_section())
@@ -233,6 +236,8 @@ class SettingsPage(QWidget):
     def reload(self) -> None:
         run_async(self, self._client.get_config, self._fill)
         self.reload_logs()
+        if hasattr(self, "table_check"):
+            self.run_selfcheck()
 
     def _fill(self, data) -> None:
         if not data:
@@ -323,6 +328,108 @@ class SettingsPage(QWidget):
         notify(self, msg)
         if applied:
             self.config_saved.emit()
+
+    # ══════════════════ 系统自检 ══════════════════
+    _STATUS_CN = {"ok": "正常", "warn": "警告", "fail": "严重"}
+
+    def _build_selfcheck_section(self) -> QGroupBox:
+        box = QGroupBox("系统自检")
+        lay = QVBoxLayout(box)
+        bar = QHBoxLayout()
+        self.lbl_selfcheck = QLabel(
+            "检查数据残留、引用悬空与页面一致性；发现问题可一键清理")
+        self.lbl_selfcheck.setProperty("subtext", True)
+        bar.addWidget(self.lbl_selfcheck, 1)
+        self.btn_selfcheck = QPushButton("运行自检")
+        self.btn_selfcheck.setProperty("primary", True)
+        self.btn_selfcheck.setToolTip(
+            "只读体检：孤儿检测记录、悬空反馈、图片文件缺失、"
+            "认领卡死、空数据源、统计聚合偏差等")
+        self.btn_selfcheck.clicked.connect(self.run_selfcheck)
+        bar.addWidget(self.btn_selfcheck)
+        self.btn_cleanup = QPushButton("一键清理")
+        self.btn_cleanup.setProperty("success", True)
+        self.btn_cleanup.setEnabled(False)
+        self.btn_cleanup.setToolTip(
+            "修复所有「可修复」项：级联删除孤儿/悬空检测与反馈、"
+            "删除裂图登记行、释放卡死认领、重算今日统计")
+        self.btn_cleanup.clicked.connect(self._on_cleanup)
+        bar.addWidget(self.btn_cleanup)
+        lay.addLayout(bar)
+        self.table_check = QTableWidget(0, 4)
+        self.table_check.setHorizontalHeaderLabels(
+            ["检查项", "状态", "数量", "说明"])
+        self.table_check.horizontalHeader().setStretchLastSection(True)
+        self.table_check.verticalHeader().setVisible(False)
+        self.table_check.setEditTriggers(QTableWidget.NoEditTriggers)
+        self.table_check.setMinimumHeight(150)
+        self.table_check.setMaximumHeight(220)
+        lay.addWidget(self.table_check)
+        return box
+
+    def run_selfcheck(self) -> None:
+        self.btn_selfcheck.setEnabled(False)
+        self.lbl_selfcheck.setText("自检中……")
+
+        def _done(res) -> None:
+            self.btn_selfcheck.setEnabled(True)
+            if not res:
+                self.lbl_selfcheck.setText("自检失败，请重试")
+                return
+            self._fill_selfcheck(res)
+
+        def _fail(msg) -> None:
+            self.btn_selfcheck.setEnabled(True)
+            self.lbl_selfcheck.setText(f"自检失败：{msg}")
+
+        run_async(self, self._client.system_selfcheck, _done, _fail)
+
+    def _fill_selfcheck(self, res: dict) -> None:
+        items = res.get("items") or []
+        n_bad = int(res.get("n_issues") or 0)
+        n_fixable = sum(1 for i in items if i.get("fixable"))
+        self.lbl_selfcheck.setText(
+            "全部正常，未发现数据残留或不一致" if n_bad == 0 else
+            f"发现 {n_bad} 类问题（其中 {n_fixable} 类可一键清理）")
+        self.table_check.setRowCount(len(items))
+        for r, it in enumerate(items):
+            status = str(it.get("status", "ok"))
+            vals = [str(it.get("name", "")),
+                    self._STATUS_CN.get(status, status),
+                    str(it.get("count", 0)),
+                    str(it.get("detail", ""))]
+            for c, v in enumerate(vals):
+                cell = QTableWidgetItem(v)
+                if c == 1 and status != "ok":
+                    cell.setForeground(Qt.red if status == "fail"
+                                       else Qt.darkYellow)
+                if c == 3:
+                    cell.setToolTip(v)
+                self.table_check.setItem(r, c, cell)
+        self.btn_cleanup.setEnabled(n_fixable > 0)
+
+    def _on_cleanup(self) -> None:
+        ret = QMessageBox.question(
+            self, "一键清理",
+            "将级联删除孤儿/悬空的检测与反馈记录、删除无数据源归属的批次"
+            "及其图片（仅删应用生成的文件，外部原始数据只删登记行）、"
+            "删除文件已缺失的图片登记、释放卡死的图片认领，并重算今日统计。"
+            "\n该操作不可恢复，确定继续？")
+        if ret != QMessageBox.Yes:
+            return
+        self.btn_cleanup.setEnabled(False)
+
+        def _done(res) -> None:
+            if not res:
+                warn(self, "清理失败，请重试")
+                return
+            fixed = res.get("fixed") or {}
+            total = sum(int(v) for v in fixed.values())
+            notify(self, f"清理完成，共处理 {total} 条记录")
+            self.levels_changed.emit()
+            self.run_selfcheck()  # 清理后复检，结果落表
+
+        run_async(self, self._client.system_selfcheck_cleanup, _done)
 
     # ══════════════════ 操作日志（审计） ══════════════════
     _LOG_ACTIONS = [
