@@ -1,0 +1,18 @@
+{
+  "dataset": "mvtec",
+  "root": "E:\\CPIPC\\CGAIC\\data_origin\\mvtec",
+  "date": "2026-10-09",
+  "ui操作": "真实 UI（电脑控制）：数据管理→新建数据源→智能识别适配→确认导入",
+  "表单": {"名称": "mvtec 全线", "模态": "图片", "源类型": "本地目录", "标注档位": "缺陷位置标注(L1b)", "预训练正常图": 100, "预训练异常图": 30, "检测批次图数": 30, "数据已分品类": true, "提供模板图": false},
+  "识别确认窗": {"格式": "标准目录结构（MVTec/BTAD/MPDD/data_local）", "图片": 5354, "掩码": 1258, "其他文件": 30, "品类数": 15},
+  "导入结果": {"imported": 5354, "total": 5354, "n_masks": 1258, "categories": 15},
+  "数据源落库": {"label_tier": "L1b", "per_category": true, "has_template": false, "batch_size": 30, "声明回写": "无（声明与实际一致）"},
+  "precheck_bottle": {"train_normal": 209, "test_normal": 20, "test_anomaly": 63, "template": 0},
+  "截图": ["00_数据管理页.jpg", "01_新建数据源.jpg", "02_识别确认.jpg", "03_导入进度.jpg", "04_导入完成.jpg"],
+  "文档核验": {
+    "速查表mvtec行": "一致（5354图/1258掩码/L1b+分品类）",
+    "确认窗品类表数字": "与文档§2明细表一致（抽查bottle/cable/capsule/carpet/grid均相符）",
+    "备注": "本次实操顺带验证了一个已修复缺陷：probe 报告顶层 n_masks 此前漏加总恒为 0，修复后确认窗正确显示 1258"
+  },
+  "结论": "通过"
+}

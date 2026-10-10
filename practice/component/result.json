@@ -1,0 +1,15 @@
+{
+  "dataset": "component",
+  "root": "E:\\CPIPC\\CGAIC\\data_local\\component",
+  "date": "2026-10-09",
+  "ui操作": "真实 UI（电脑控制）：数据管理→新建数据源（勾「提供模板图」）→智能识别适配→确认导入",
+  "表单": {"名称": "component", "标注档位": "图像级标注(L1a)", "数据已分品类": false, "提供模板图": true, "配额": "100/30/30 默认"},
+  "识别确认窗": {"格式": "标准目录结构（根本身即单品类）", "图片": 24, "掩码": 0, "品类行": {"component": [2, 0, 14, 8, 0]}, "说明": "[训练正常, 检测正常, 检测缺陷, 模板图, 掩码]；train\\good 8 张中 6 张 *_template → 模板，test\\good 2 张也全是 *_template → 模板"},
+  "导入结果": {"imported": 24, "total": 24, "n_masks": 0, "dataset_ids": {"component": 28}},
+  "precheck": {"train_normal": 2, "test_normal": 0, "test_anomaly": 14, "template": 8},
+  "数据源落库": {"label_tier": "L1a", "has_template": true},
+  "界面细节": "数据源树显示「component（16 图）」= 24 - 8 模板；图像表划分列可见 template 行",
+  "截图": ["01_新建数据源.jpg", "02_识别确认.jpg", "03_导入完成.jpg"],
+  "文档核验": {"速查表component行": "一致（24图/0掩码/模板8/L1a+提供模板图）", "检测组无正常图": "一致（test_normal=0，文档§8已说明误检率指标为空属预期）"},
+  "结论": "通过"
+}

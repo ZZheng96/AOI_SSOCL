@@ -354,6 +354,7 @@ def probe_dataset(root: str | Path) -> dict:
                               "counts": counts, "n_masks": n_masks,
                               "n_images": sum(counts.values()),
                               "samples": samples})
+            report["n_masks"] += n_masks
             if not cat_items[-1]["n_images"]:
                 report["warnings"].append(
                     f"品类 {cat_dir.name} 无图片（空目录），默认不导入")
