@@ -1,6 +1,6 @@
 {
   "bench": "eval_traditional",
-  "ts": "2026-08-31 18:46:06",
+  "ts": "2026-10-11 15:35:23",
   "env": {
     "python": "3.11.9",
     "platform": "Windows-10-10.0.19045-SP0"
@@ -13,7 +13,7 @@
       "gt_ng": true,
       "pred_ng": true,
       "detail": "code=0 labels=['excess'] msg=ok",
-      "ms": 49.5190997608006
+      "ms": 26.141499998630024
     },
     {
       "group": "smt",
@@ -21,7 +21,7 @@
       "gt_ng": false,
       "pred_ng": false,
       "detail": "code=0 labels=- msg=ok",
-      "ms": 10.568700265139341
+      "ms": 13.589299996965565
     },
     {
       "group": "gold",
@@ -29,7 +29,7 @@
       "gt_ng": true,
       "pred_ng": true,
       "detail": "缺陷数=15 板面及金手指 判定=NG，缺陷数=15，配准方式=lowconf_phase",
-      "ms": 1153.244899585843
+      "ms": 905.9578000014881
     },
     {
       "group": "gold",
@@ -37,7 +37,7 @@
       "gt_ng": true,
       "pred_ng": true,
       "detail": "缺陷数=8 板面及金手指 判定=NG，缺陷数=8，配准方式=ncc_shift",
-      "ms": 534.8923001438379
+      "ms": 510.50830000895076
     },
     {
       "group": "gold",
@@ -45,7 +45,7 @@
       "gt_ng": true,
       "pred_ng": true,
       "detail": "缺陷数=23 板面及金手指 判定=NG，缺陷数=23，配准方式=anchor_shift",
-      "ms": 578.713099937886
+      "ms": 619.9407999956748
     }
   ],
   "summary": {
@@ -57,7 +57,7 @@
     "fp": 0,
     "tn": 1,
     "fpr": 0.0,
-    "ms_mean": 465.4,
-    "ms_max": 1153.2
+    "ms_mean": 415.2,
+    "ms_max": 906.0
   }
 }

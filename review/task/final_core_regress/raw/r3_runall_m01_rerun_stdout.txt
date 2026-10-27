@@ -1,0 +1,51 @@
+
+============================================================
+[run_all] 引擎层冒烟 m01
+============================================================
+[testdata] 未找到可用数据集，已生成合成数据（MVTec-like 结构）：C:\Users\imia\AppData\Local\Temp\aoi_synth__ux_ea9f\synth
+[data] n_good=10, n_defect=3, test_good=3
+[storage] C:\Users\imia\AppData\Local\Temp\aoi_m1_ky2joxcu
+[dino] 使用随包 vendor 权重: D:\CGAIC\AOI_SSOCL\AOI_tree\assets\dinov2\dinov2_vits14_pretrain.pth
+[disc] 加载预训练头 D:\CGAIC\AOI_SSOCL\AOI_tree\AOI_Core\assets\disc_pretrain.pt
+  [fit] init_normal 提取 10 张完成 (0s)
+  [fit] init_defect 提取 3 张完成 (1s)
+  [fit] 加载全局类型判别器（D:\CGAIC\AOI_SSOCL\AOI_tree\assets\defect_clf.pkl）
+  [fit] 槽位 sem 完成 (1s)
+  [fit] 槽位 disc 完成 (1s)
+[shead] epoch 10/50 loss_n=5.6976 loss_a=6.3713
+[shead] epoch 20/50 loss_n=7.2295 loss_a=5.4647
+[shead] epoch 30/50 loss_n=5.8385 loss_a=6.7526
+[shead] epoch 40/50 loss_n=5.9830 loss_a=6.4236
+[shead] epoch 50/50 loss_n=6.2552 loss_a=6.3022
+[shead] fit 完成: normal=10 pseudo=30 real_defect=3 pos_total=33 X=43 batch=32 lr=0.001
+  [fit] 槽位 shead 完成 (3s)
+[fusion] sanity 加权: sem=0.469 disc=0.469 shead=0.063
+[fusion] train 域 fused AUROC=1.0（初始权重质量，协议内）
+[route] base=1.0000 router=1.0000 enabled=False (margin=0.005)
+[route] 准入=trace_only（样本不足（每集正/负 <3），只做追溯）
+  [fit] 视图模式 profile_missing（min_defect_px 未提供，保持整图） 局部分支=关（auto_profile）
+[prepare] version=1
+[disc] 加载预训练头 D:\CGAIC\AOI_SSOCL\AOI_tree\AOI_Core\assets\disc_pretrain.pt
+[save-load sanity] A.fused=1.246684  B.fused=1.246684  diff=0.000e+00
+  A.slot_scores={'sem': 1.9747, 'disc': 0.5781, 'shead': 0.8008}
+  B.slot_scores={'sem': 1.9747, 'disc': 0.5781, 'shead': 0.8008}
+[assert] save/load 持久化一致性 ✅ (pre-feedback snapshot)
+[predict] score1=1.246684  latency=50.5ms  decision=anomaly  slots=['disc', 'sem', 'shead']  triggered=sem
+[feedback OK] {'path': 'C:\\Users\\imia\\AppData\\Local\\Temp\\aoi_synth__ux_ea9f\\synth\\train\\good\\syn_00.png', 'verdict': 'correct', 'label': 0, 'feedback_ms': 267.23, 'action': 'reflow_labeled_accepted', 'drift': 1.0621, 'fuse_blocked': False, 'lock': {'yield_ms': 312.0, 'prefetch_ms': 0.024, 'lock_wait_ms': 0.001, 'lock_hold_ms': 267.271, 'prefetched': False}}
+[consolidate] v1 -> v2
+[disc] 加载预训练头 D:\CGAIC\AOI_SSOCL\AOI_tree\AOI_Core\assets\disc_pretrain.pt
+[load-v1] score=1.246684  cf prepare=1.246684  diff=0.000e+00
+[assert] 纯净 v1 快照 save/load 一致 ✅
+[disc] 加载预训练头 D:\CGAIC\AOI_SSOCL\AOI_tree\AOI_Core\assets\disc_pretrain.pt
+[loaded v2] score=0.769045  latency=122.7ms  decision=gray  weights_len=3
+[note] v2 已含 SSCL 正常回流/拦截，与 prepare 时分数差异是预期行为（非持久化 bug）
+[learning-curve] stream=4 eval=4
+[disc] 加载预训练头 D:\CGAIC\AOI_SSOCL\AOI_tree\AOI_Core\assets\disc_pretrain.pt
+  [lc] 反馈=2 锚定集AUROC=1.0000 F1=0.8571
+  [lc] 反馈=4 锚定集AUROC=1.0000 F1=0.8571
+[learning-curve] init=1.0 final=1.0 gain=0.0 efficiency=0.0
+[contrib] ablation.full=1.0000  leave-one-out first 3: sem:1.0000, disc:1.0000, shead:1.0000
+✅ M1 冒烟通过
+
+============================================================
+✓ 全部冒烟通过

@@ -10,7 +10,7 @@ from typing import Any
 
 import numpy as np
 
-from app.detect.contract import Roi
+from app.detect.contract import Roi, job_status
 
 
 @dataclass
@@ -101,23 +101,26 @@ class DetectSummary:
     template_version: int | None = None
     source: str = "inspect"  # inspect | debug | trial
     stop_on_error: bool = False
+    metadata: dict[str, Any] = field(default_factory=dict)
 
     def __post_init__(self) -> None:
         if not self.overall:
-            if self.gate_blocked:
-                self.overall = "ERROR"
-            elif any(r.status == "ERROR" or r.error_code for r in self.results):
-                self.overall = "ERROR"
-            elif self.overall_ok:
-                self.overall = "OK"
-            else:
-                self.overall = "NG"
+            self.overall = job_status(gate_blocked=self.gate_blocked, items=self.results)
+        elif self.overall == "OK" and self.results:
+            self.overall = job_status(gate_blocked=self.gate_blocked, items=self.results)
+        self.overall_ok = self.overall == "OK"
         if self.ng_count == 0:
             self.ng_count = len(self.ng_list)
 
     @property
     def ng_list(self) -> list[AlgorithmResult]:
-        return [r for r in self.results if (not r.ok) and (not r.skipped) and r.status != "ERROR"]
+        return [r for r in self.results if r.status == "NG"]
+
+    @property
+    def requires_review(self) -> bool:
+        return self.overall in {"GRAY", "REVIEW", "SKIP"} or any(
+            r.status in {"REVIEW", "SKIP"} for r in self.results
+        )
 
     @property
     def error_list(self) -> list[AlgorithmResult]:

@@ -1,0 +1,64 @@
+{
+  "ac": "AC-078",
+  "simulation": "synthetic MJPG video + residual fake engine",
+  "not_production_evidence": true,
+  "dev_seed": 900,
+  "test_seeds": [
+    1,
+    2,
+    3
+  ],
+  "frozen_threshold_rule": "max(dev normal score)*1.05, per category",
+  "frozen_thresholds": {
+    "fabric": 0.030387,
+    "metal": 0.123383,
+    "pcb": 0.286056
+  },
+  "domains": {
+    "fabric": {
+      "recall_strong": 1.0,
+      "recall_weak": 1.0,
+      "fpr": 0.05263157894736842,
+      "n_normal": 57,
+      "n_strong": 9,
+      "n_weak": 6,
+      "lat_p50_ms": 0.8666500216349959,
+      "lat_p95_ms": 1.1552750074770306
+    },
+    "metal": {
+      "recall_strong": 1.0,
+      "recall_weak": 0.8333333333333334,
+      "fpr": 0.0,
+      "n_normal": 57,
+      "n_strong": 9,
+      "n_weak": 6,
+      "lat_p50_ms": 0.9359999967273325,
+      "lat_p95_ms": 1.5157650166656826
+    },
+    "pcb": {
+      "recall_strong": 0.8888888888888888,
+      "recall_weak": 0.3333333333333333,
+      "fpr": 0.0,
+      "n_normal": 57,
+      "n_strong": 9,
+      "n_weak": 6,
+      "lat_p50_ms": 0.9647499537095428,
+      "lat_p95_ms": 1.73152000643313
+    }
+  },
+  "worst_domain_fpr": [
+    "fabric",
+    0.05263157894736842
+  ],
+  "worst_domain_recall_strong": [
+    "pcb",
+    0.8888888888888888
+  ],
+  "frame_latency_ms": {
+    "p50": 0.9290000016335398,
+    "p95": 1.6023249918362126,
+    "max": 12.620699999388307,
+    "n": 216,
+    "note": "fake engine, 128x96, 非 G1 口径"
+  }
+}

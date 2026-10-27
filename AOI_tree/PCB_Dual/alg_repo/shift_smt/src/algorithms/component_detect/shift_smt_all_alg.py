@@ -426,6 +426,8 @@ def find_base_box(
     mask: np.ndarray,
     cfg: Dict[str, Any],
     template_box: Optional[Tuple[int, int, int, int]],
+    diagnostics: Optional[Dict[str, Any]] = None,
+    integral_cache: Optional[Dict[Any, np.ndarray]] = None,
 ) -> Optional[Tuple[int, int, int, int]]:
     """
     滑窗特征匹配，找底座峰值位置。
@@ -475,22 +477,28 @@ def find_base_box(
     thresh = float(cfg.get("feature_thresh", 0.05))
 
     # ===== 步骤1：轴对齐搜索（始终执行，为旋转搜索提供峰值参考）=====
-    mask_01 = mask // 255
+    integral_key = (win_w, win_h) if allow_oob else None
+    integral = integral_cache.get(integral_key) if integral_cache is not None else None
+    mask_01 = mask // 255 if integral is None else None
 
     if allow_oob:
         # 允许越界：掩码四周零填充 (win-1)，滑窗域扩展到 [-win+1, size-1]。
         # 窗口与图重叠的部分参与覆盖率计算，窗口外的填充区域贡献 0 覆盖率，
         # 因此返回框坐标可为负值或超出图像范围。
         pad_w, pad_h = win_w - 1, win_h - 1
-        integral = cv2.integral(cv2.copyMakeBorder(
-            mask_01, pad_h, pad_h, pad_w, pad_w,
-            cv2.BORDER_CONSTANT, value=0))
+        if integral is None:
+            integral = cv2.integral(cv2.copyMakeBorder(
+                mask_01, pad_h, pad_h, pad_w, pad_w,
+                cv2.BORDER_CONSTANT, value=0))
         ny = h + win_h - 1
         nx = w + win_w - 1
     else:
-        integral = cv2.integral(mask_01)
+        if integral is None:
+            integral = cv2.integral(mask_01)
         ny = h - win_h + 1
         nx = w - win_w + 1
+    if integral_cache is not None:
+        integral_cache[integral_key] = integral
     if ny <= 0 or nx <= 0:
         return None
 
@@ -532,6 +540,10 @@ def find_base_box(
     else:
         rot_final = 0.0
 
+    if diagnostics is not None:
+        diagnostics.update(feature_map=feature_map, peak_score=best_score,
+                           peak_xy=[px, py], feature_origin=[-(win_w - 1), -(win_h - 1)] if allow_oob else [0, 0],
+                           feature_coordinates="滑窗左上角原图坐标；feature_origin为图索引原点")
     # 峰值得分低于阈值 -> 缺件
     if best_score < thresh:
         return None
@@ -708,6 +720,10 @@ class ShiftSmtAllAlg(IDetectionAlgorithm):
             "autogamma_target": 0.35,                         # AutoGamma 目标亮度（0~1）
         }
 
+    def run_many(self, image: np.ndarray, config: Dict[str, Any], roi_boxes):
+        prepared = {}
+        return [self.run(image, config, roi_bbox=box, _prepared=prepared) for box in roi_boxes]
+
     def run(
         self,
         image: np.ndarray,
@@ -715,6 +731,8 @@ class ShiftSmtAllAlg(IDetectionAlgorithm):
         roi_bbox: Optional[Any] = None,
         original_template_image: Optional[np.ndarray] = None,
         multiple_roi_images: Optional[List[np.ndarray]] = None,
+        *,
+        _prepared: Optional[Dict[str, Any]] = None,
     ) -> AlgorithmResult:
         """
         执行移位检测。
@@ -769,11 +787,18 @@ class ShiftSmtAllAlg(IDetectionAlgorithm):
             template_box = rb
 
             # 4. HSV 抽色提取底座掩码
-            hsv = cv2.cvtColor(img, cv2.COLOR_BGR2HSV)
-            base_mask = extract_base_mask(img, cfg, hsv=hsv)
+            if _prepared is None or "base_mask" not in _prepared:
+                hsv = cv2.cvtColor(img, cv2.COLOR_BGR2HSV)
+                base_mask = extract_base_mask(img, cfg, hsv=hsv)
+                if _prepared is not None:
+                    _prepared.update(base_mask=base_mask, integrals={})
+            else:
+                base_mask = _prepared["base_mask"]
 
             # 5. 滑窗特征匹配，定位底座位置（返回 5-tuple: x, y, w, h, rot_angle）
-            result_box = find_base_box(base_mask, cfg, template_box)
+            diagnostics = {} if cfg.get("diagnostics") else None
+            result_box = find_base_box(base_mask, cfg, template_box, diagnostics,
+                                       _prepared["integrals"] if _prepared is not None else None)
 
             # 6. 缺件检测：结果为 None 表示峰值低于阈值
             if result_box is None:
@@ -789,7 +814,7 @@ class ShiftSmtAllAlg(IDetectionAlgorithm):
                     cost_time=time.perf_counter() - t0,
                     result_type=ResultType.PARTS,
                     parts=[part],
-                    metadata={"output_image": vis, "base_mask": base_mask},
+                    metadata={"output_image": vis, "base_mask": base_mask, **(diagnostics or {})},
                 )
 
             # 解包检测结果
@@ -829,6 +854,7 @@ class ShiftSmtAllAlg(IDetectionAlgorithm):
                 metadata={
                     "output_image": vis,
                     "base_mask": base_mask,
+                    **(diagnostics or {}),
                     "base_box": base_box,
                     "template_box": template_box,
                     "is_shifted": is_shifted,

@@ -1,0 +1,342 @@
+﻿{
+    "overall":  "NG",
+    "final_status":  "ANOMALY",
+    "is_defect":  true,
+    "requires_review":  true,
+    "is_system_error":  false,
+    "overall_ok":  false,
+    "ng_count":  1,
+    "elapsed_ms":  61,
+    "gate_blocked":  false,
+    "gate_message":  "",
+    "results":  [
+                    {
+                        "status":  "SKIP",
+                        "display_name":  "å­æ´",
+                        "message":  "[è·³è¿] å­æ´ï¼å½åæ å®äºå¤ä¸ªçç¹ï¼ç®æ³åªä¼è·è¿é¡ï¼çå\u0085ç¼ºé·è¯·æ¹ç¨åæ¡æèªå¨é¡é¢",
+                        "defect_count":  0,
+                        "elapsed_ms":  0,
+                        "item_id":  "tht_å­æ´",
+                        "algorithm_version":  "2.1.0",
+                        "error_code":  null,
+                        "error_message":  null,
+                        "skip_reason":  "å½åæ å®äºå¤ä¸ªçç¹ï¼ç®æ³åªä¼è·è¿é¡ï¼çå\u0085ç¼ºé·è¯·æ¹ç¨åæ¡æèªå¨é¡é¢",
+                        "execution_mode":  "not_executed",
+                        "request_snapshot":  {
+                                                 "params":  {
+
+                                                            },
+                                                 "rois":  [
+                                                              {
+                                                                  "id":  "th:0",
+                                                                  "kind":  "th",
+                                                                  "layer":  "th",
+                                                                  "shape":  {
+                                                                                "shape":  "rect",
+                                                                                "x":  2.4572098475967175,
+                                                                                "y":  10.245017584994137,
+                                                                                "w":  62.35169988276671,
+                                                                                "h":  117.33177022274324
+                                                                            }
+                                                              },
+                                                              {
+                                                                  "id":  "th:1",
+                                                                  "kind":  "th",
+                                                                  "layer":  "th",
+                                                                  "shape":  {
+                                                                                "shape":  "rect",
+                                                                                "x":  196.2696365767878,
+                                                                                "y":  10.245017584994137,
+                                                                                "w":  63.27315357561545,
+                                                                                "h":  117.33177022274324
+                                                                            }
+                                                              }
+                                                          ],
+                                                 "roi_coordinate_system":  "standard_image_pixels",
+                                                 "template_id":  "TH_templ3_dual",
+                                                 "template_version":  1,
+                                                 "preprocess":  {
+                                                                    "color":  "NONE",
+                                                                    "enhance":  "NONE",
+                                                                    "filter":  "NONE",
+                                                                    "morphology":  "NONE"
+                                                                },
+                                                 "image_size":  [
+                                                                    250,
+                                                                    122
+                                                                ],
+                                                 "source":  "inspect",
+                                                 "algorithm_version":  "2.1.0",
+                                                 "param_schema_version":  1,
+                                                 "version_id":  "a6f0fccf4542a888"
+                                             },
+                        "boxes":  [
+
+                                  ]
+                    },
+                    {
+                        "status":  "SKIP",
+                        "display_name":  "å°é¡",
+                        "message":  "[è·³è¿] å°é¡ï¼å½åæ å®äºå¤ä¸ªçç¹ï¼ç®æ³åªä¼è·è¿é¡ï¼çå\u0085ç¼ºé·è¯·æ¹ç¨åæ¡æèªå¨é¡é¢",
+                        "defect_count":  0,
+                        "elapsed_ms":  0,
+                        "item_id":  "tht_å°é¡",
+                        "algorithm_version":  "2.1.0",
+                        "error_code":  null,
+                        "error_message":  null,
+                        "skip_reason":  "å½åæ å®äºå¤ä¸ªçç¹ï¼ç®æ³åªä¼è·è¿é¡ï¼çå\u0085ç¼ºé·è¯·æ¹ç¨åæ¡æèªå¨é¡é¢",
+                        "execution_mode":  "not_executed",
+                        "request_snapshot":  {
+                                                 "params":  {
+
+                                                            },
+                                                 "rois":  [
+                                                              {
+                                                                  "id":  "th:0",
+                                                                  "kind":  "th",
+                                                                  "layer":  "th",
+                                                                  "shape":  {
+                                                                                "shape":  "rect",
+                                                                                "x":  2.4572098475967175,
+                                                                                "y":  10.245017584994137,
+                                                                                "w":  62.35169988276671,
+                                                                                "h":  117.33177022274324
+                                                                            }
+                                                              },
+                                                              {
+                                                                  "id":  "th:1",
+                                                                  "kind":  "th",
+                                                                  "layer":  "th",
+                                                                  "shape":  {
+                                                                                "shape":  "rect",
+                                                                                "x":  196.2696365767878,
+                                                                                "y":  10.245017584994137,
+                                                                                "w":  63.27315357561545,
+                                                                                "h":  117.33177022274324
+                                                                            }
+                                                              }
+                                                          ],
+                                                 "roi_coordinate_system":  "standard_image_pixels",
+                                                 "template_id":  "TH_templ3_dual",
+                                                 "template_version":  1,
+                                                 "preprocess":  {
+                                                                    "color":  "NONE",
+                                                                    "enhance":  "NONE",
+                                                                    "filter":  "NONE",
+                                                                    "morphology":  "NONE"
+                                                                },
+                                                 "image_size":  [
+                                                                    250,
+                                                                    122
+                                                                ],
+                                                 "source":  "inspect",
+                                                 "algorithm_version":  "2.1.0",
+                                                 "param_schema_version":  1,
+                                                 "version_id":  "a6f0fccf4542a888"
+                                             },
+                        "boxes":  [
+
+                                  ]
+                    },
+                    {
+                        "status":  "SKIP",
+                        "display_name":  "å¤é¡(å\u0085é¡)",
+                        "message":  "[è·³è¿] å¤é¡(å\u0085é¡)ï¼å½åæ å®äºå¤ä¸ªçç¹ï¼ç®æ³åªä¼è·è¿é¡ï¼çå\u0085ç¼ºé·è¯·æ¹ç¨åæ¡æèªå¨é¡é¢",
+                        "defect_count":  0,
+                        "elapsed_ms":  0,
+                        "item_id":  "tht_å¤é¡å\u0085é¡",
+                        "algorithm_version":  "2.1.0",
+                        "error_code":  null,
+                        "error_message":  null,
+                        "skip_reason":  "å½åæ å®äºå¤ä¸ªçç¹ï¼ç®æ³åªä¼è·è¿é¡ï¼çå\u0085ç¼ºé·è¯·æ¹ç¨åæ¡æèªå¨é¡é¢",
+                        "execution_mode":  "not_executed",
+                        "request_snapshot":  {
+                                                 "params":  {
+
+                                                            },
+                                                 "rois":  [
+                                                              {
+                                                                  "id":  "th:0",
+                                                                  "kind":  "th",
+                                                                  "layer":  "th",
+                                                                  "shape":  {
+                                                                                "shape":  "rect",
+                                                                                "x":  2.4572098475967175,
+                                                                                "y":  10.245017584994137,
+                                                                                "w":  62.35169988276671,
+                                                                                "h":  117.33177022274324
+                                                                            }
+                                                              },
+                                                              {
+                                                                  "id":  "th:1",
+                                                                  "kind":  "th",
+                                                                  "layer":  "th",
+                                                                  "shape":  {
+                                                                                "shape":  "rect",
+                                                                                "x":  196.2696365767878,
+                                                                                "y":  10.245017584994137,
+                                                                                "w":  63.27315357561545,
+                                                                                "h":  117.33177022274324
+                                                                            }
+                                                              }
+                                                          ],
+                                                 "roi_coordinate_system":  "standard_image_pixels",
+                                                 "template_id":  "TH_templ3_dual",
+                                                 "template_version":  1,
+                                                 "preprocess":  {
+                                                                    "color":  "NONE",
+                                                                    "enhance":  "NONE",
+                                                                    "filter":  "NONE",
+                                                                    "morphology":  "NONE"
+                                                                },
+                                                 "image_size":  [
+                                                                    250,
+                                                                    122
+                                                                ],
+                                                 "source":  "inspect",
+                                                 "algorithm_version":  "2.1.0",
+                                                 "param_schema_version":  1,
+                                                 "version_id":  "a6f0fccf4542a888"
+                                             },
+                        "boxes":  [
+
+                                  ]
+                    },
+                    {
+                        "status":  "NG",
+                        "display_name":  "è¿é¡",
+                        "message":  "è¿é¡ å¤å®=NGï¼ç¼ºé·æ°=1ï¼é\u0085åææåºåè¦çç=0.96",
+                        "defect_count":  1,
+                        "elapsed_ms":  58,
+                        "item_id":  "tht_è¿é¡",
+                        "algorithm_version":  "2.1.0",
+                        "error_code":  null,
+                        "error_message":  null,
+                        "skip_reason":  null,
+                        "execution_mode":  "production_adapter_batch",
+                        "request_snapshot":  {
+                                                 "params":  {
+                                                                "bridge_min_bridge_pixels":  6,
+                                                                "bridge_min_clearance_ratio":  0.35,
+                                                                "bridge_min_clearance_px":  2
+                                                            },
+                                                 "rois":  [
+                                                              {
+                                                                  "id":  "th:0",
+                                                                  "kind":  "th",
+                                                                  "layer":  "th",
+                                                                  "shape":  {
+                                                                                "shape":  "rect",
+                                                                                "x":  2.4572098475967175,
+                                                                                "y":  10.245017584994137,
+                                                                                "w":  62.35169988276671,
+                                                                                "h":  117.33177022274324
+                                                                            }
+                                                              },
+                                                              {
+                                                                  "id":  "th:1",
+                                                                  "kind":  "th",
+                                                                  "layer":  "th",
+                                                                  "shape":  {
+                                                                                "shape":  "rect",
+                                                                                "x":  196.2696365767878,
+                                                                                "y":  10.245017584994137,
+                                                                                "w":  63.27315357561545,
+                                                                                "h":  117.33177022274324
+                                                                            }
+                                                              }
+                                                          ],
+                                                 "roi_coordinate_system":  "standard_image_pixels",
+                                                 "template_id":  "TH_templ3_dual",
+                                                 "template_version":  1,
+                                                 "preprocess":  {
+                                                                    "color":  "NONE",
+                                                                    "enhance":  "NONE",
+                                                                    "filter":  "NONE",
+                                                                    "morphology":  "NONE"
+                                                                },
+                                                 "image_size":  [
+                                                                    250,
+                                                                    122
+                                                                ],
+                                                 "source":  "inspect",
+                                                 "algorithm_version":  "2.1.0",
+                                                 "param_schema_version":  1,
+                                                 "version_id":  "2988499a6d36c31a"
+                                             },
+                        "boxes":  [
+                                      {
+                                          "x":  3,
+                                          "y":  0,
+                                          "w":  247,
+                                          "h":  122,
+                                          "label":  "è¿é¡"
+                                      }
+                                  ]
+                    },
+                    {
+                        "status":  "SKIP",
+                        "display_name":  "ä¸åºè",
+                        "message":  "[è·³è¿] ä¸åºèï¼å½åæ å®äºå¤ä¸ªçç¹ï¼ç®æ³åªä¼è·è¿é¡ï¼çå\u0085ç¼ºé·è¯·æ¹ç¨åæ¡æèªå¨é¡é¢",
+                        "defect_count":  0,
+                        "elapsed_ms":  0,
+                        "item_id":  "tht_ä¸åºè",
+                        "algorithm_version":  "2.1.0",
+                        "error_code":  null,
+                        "error_message":  null,
+                        "skip_reason":  "å½åæ å®äºå¤ä¸ªçç¹ï¼ç®æ³åªä¼è·è¿é¡ï¼çå\u0085ç¼ºé·è¯·æ¹ç¨åæ¡æèªå¨é¡é¢",
+                        "execution_mode":  "not_executed",
+                        "request_snapshot":  {
+                                                 "params":  {
+
+                                                            },
+                                                 "rois":  [
+                                                              {
+                                                                  "id":  "th:0",
+                                                                  "kind":  "th",
+                                                                  "layer":  "th",
+                                                                  "shape":  {
+                                                                                "shape":  "rect",
+                                                                                "x":  2.4572098475967175,
+                                                                                "y":  10.245017584994137,
+                                                                                "w":  62.35169988276671,
+                                                                                "h":  117.33177022274324
+                                                                            }
+                                                              },
+                                                              {
+                                                                  "id":  "th:1",
+                                                                  "kind":  "th",
+                                                                  "layer":  "th",
+                                                                  "shape":  {
+                                                                                "shape":  "rect",
+                                                                                "x":  196.2696365767878,
+                                                                                "y":  10.245017584994137,
+                                                                                "w":  63.27315357561545,
+                                                                                "h":  117.33177022274324
+                                                                            }
+                                                              }
+                                                          ],
+                                                 "roi_coordinate_system":  "standard_image_pixels",
+                                                 "template_id":  "TH_templ3_dual",
+                                                 "template_version":  1,
+                                                 "preprocess":  {
+                                                                    "color":  "NONE",
+                                                                    "enhance":  "NONE",
+                                                                    "filter":  "NONE",
+                                                                    "morphology":  "NONE"
+                                                                },
+                                                 "image_size":  [
+                                                                    250,
+                                                                    122
+                                                                ],
+                                                 "source":  "inspect",
+                                                 "algorithm_version":  "2.1.0",
+                                                 "param_schema_version":  1,
+                                                 "version_id":  "a6f0fccf4542a888"
+                                             },
+                        "boxes":  [
+
+                                  ]
+                    }
+                ]
+}

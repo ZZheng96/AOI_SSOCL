@@ -150,22 +150,31 @@ def main():
             "region": [100, 100, 300, 200], "comment": "m2 冒烟"}).json()
         print(f"[feedback] engine_update={fb['engine_update']} note={fb['note']}",
               flush=True)
-        assert fb["engine_update"] is not None, f"即学未生效: {fb['note']}"
-        fb_list = client.get("/api/feedback").json()
-        assert fb_list["items"][0]["consumed"] is True, "反馈未标记消费"
-        print("[feedback] 即学即消费 consumed=True ✅", flush=True)
+        # 在线即学已候选化（legacy_online_guard）：反馈只排队候选，不直接改引擎
+        if fb["engine_update"] is None:
+            assert "候选" in (fb.get("note") or ""), f"反馈未排队候选: {fb['note']}"
+            print("[feedback] 已排队候选，未直接应用 ✅", flush=True)
+        else:
+            fb_list = client.get("/api/feedback").json()
+            assert fb_list["items"][0]["consumed"] is True, "反馈未标记消费"
+            print("[feedback] 即学即消费 consumed=True ✅", flush=True)
 
         # 5) self_learning/status
         st = client.get("/api/self_learning/status").json()
         cat_info = [c for c in st["categories"] if c["category"] == CAT]
         assert cat_info, "status 缺少目标品类"
         print(f"[status] {cat_info[0]}", flush=True)
-        assert cat_info[0]["feedback_log_len"] is not None \
-            and cat_info[0]["feedback_log_len"] >= 1
+        if fb["engine_update"] is None:
+            # 候选化：反馈未进引擎 feedback_log，只在 DB 中待消费
+            assert (cat_info[0].get("unconsumed_db") or 0) >= 1, cat_info[0]
+        else:
+            assert cat_info[0]["feedback_log_len"] is not None \
+                and cat_info[0]["feedback_log_len"] >= 1
 
         # 6) self_learning/update（巩固落盘 → v2）
         r = client.post("/api/self_learning/update",
-                        json={"category": CAT, "note": "m2 冒烟巩固"})
+                        json={"category": CAT, "note": "m2 冒烟巩固",
+                              "auto_activate": True})  # 默认按配置只生成候选
         tid2 = r.json()["task_id"]
         t2 = wait_task(task_manager, tid2)
         assert t2["status"] == "done", f"consolidate 失败: {t2['message']}"
@@ -296,10 +305,15 @@ def main():
                         json={"label": 1, "comment": "m5 冒烟复核"})
         assert r.status_code == 200, r.text
         rv = r.json()
-        assert rv["engine_update"] is not None, f"复核未触发即学: {rv}"
+        # 候选化：复核只排队候选（engine_update=None、consumed=False）
+        cand = rv["engine_update"] is None
+        if cand:
+            assert "候选" in (rv.get("note") or ""), f"复核未排队候选: {rv}"
+        else:
+            assert rv["engine_update"] is not None, f"复核未触发即学: {rv}"
         with session_scope() as s:
             fb = s.query(Feedback).filter(Feedback.detection_id == gray_id).one()
-            assert fb.feedback_type == "review" and fb.consumed is True
+            assert fb.feedback_type == "review" and fb.consumed is (not cand)
         q2 = client.get(f"/api/review/queue?category={CAT}").json()
         assert all(it["id"] != gray_id for it in q2["items"]), "复核后仍在队列"
         st = client.get("/api/review/stats").json()
@@ -373,7 +387,8 @@ def main():
         fb2 = client.post("/api/feedback", json={
             "detection_id": det_ok["detection_id"],
             "feedback_type": "confirmed", "operator_label": 0}).json()
-        assert fb2["engine_update"] is not None, fb2
+        assert fb2["engine_update"] is not None \
+            or "候选" in (fb2.get("note") or ""), fb2
         oc = client.get(f"/api/learning/online_curve/{CAT}").json()
         pts = oc["points"]
         assert [p["k"] for p in pts] == list(range(1, len(pts) + 1))
@@ -405,11 +420,13 @@ def main():
             "label": 1, "comment": "m6 框选复核", "region": [10, 10, 50, 50]})
         assert r.status_code == 200, r.text
         rv6 = r.json()
-        assert rv6["engine_update"] is not None, f"框选复核未触发即学: {rv6}"
+        cand6 = rv6["engine_update"] is None
+        if cand6:
+            assert "候选" in (rv6.get("note") or ""), f"框选复核未排队候选: {rv6}"
         with session_scope() as s:
             fb6 = s.query(Feedback).filter(
                 Feedback.detection_id == gray_m6_id).one()
-            assert fb6.consumed is True
+            assert fb6.consumed is (not cand6)
             # M7a 起 region 落库为 {"box":.., "pre":..}
             assert fb6.region["box"] == [10, 10, 50, 50], fb6.region
         print(f"[M6a review region] ✅ consumed=True region={fb6.region} "
@@ -740,7 +757,8 @@ def main():
         r = client.post("/api/feedback", json={
             "detection_id": det_fb["detection_id"],
             "feedback_type": "confirmed", "operator_label": 1}).json()
-        assert r["engine_update"] is not None, r
+        assert r["engine_update"] is not None \
+            or "候选" in (r.get("note") or ""), r
         with session_scope() as s:
             row = (s.query(ImageRow)
                    .filter(ImageRow.path == str(fb_img)).one())

@@ -205,12 +205,11 @@ class DetectPage(QWidget):
 
         images = QHBoxLayout()
         images.setSpacing(10)
-        self.card_std, self.canvas_std = self._build_image_card(
-            "标准图（来自模板）",
-            "请先在上方选择模板\n标准图将自动从模板加载",
-            accept_drops=False,
-            min_size=(160, 160),
-        )
+        self.card_std = InspectCanvas("标准图（来自模板）")
+        self.card_std.set_placeholder("请先在上方选择模板\n标准图将自动从模板加载")
+        self.canvas_std = self.card_std.canvas
+        self.canvas_std.setAcceptDrops(False)
+        self.canvas_std.setMinimumSize(160, 160)
         self.canvas_test = InspectCanvas("测试图 / 结果")
         self.canvas_test.set_placeholder("拖拽图片到此处，或点击上方「打开测试图」")
         self.canvas_test.canvas.setAcceptDrops(True)
@@ -222,8 +221,10 @@ class DetectPage(QWidget):
         card_result = Card("检测结果")
         self.result_hud = ResultHud()
         self.defect_table = DefectTable()
+        self.defect_table.setMinimumWidth(0)
+        self.defect_table.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Expanding)
         card_result.add(self.result_hud)
-        card_result.add(self.defect_table)
+        card_result.body.addWidget(self.defect_table, 1)
         layout.addWidget(card_result, 1)
 
         self.canvas_test.image_dropped.connect(self.load_test)
@@ -616,8 +617,15 @@ class DetectPage(QWidget):
         for alg_id, cb in self._all_checkboxes_map().items():
             cb.blockSignals(True)
             in_tpl = alg_id in enabled
-            cb.setEnabled(in_tpl)
-            cb.setChecked(in_tpl)
+            ready = True
+            reason = ""
+            if in_tpl and alg_id.startswith("tht_"):
+                adapter = get_adapter_for(alg_id)
+                if adapter is not None:
+                    ready, reason = adapter.is_ready(alg_id, tpl.id, rois=rois_from_region_sets(tpl.region_sets or {}, "th"))
+            cb.setEnabled(in_tpl and ready)
+            cb.setChecked(in_tpl and ready)
+            cb.setToolTip(reason)
             cb.blockSignals(False)
         for frame, ids in self._drawer_frames:
             frame.setVisible(bool(ids & enabled))

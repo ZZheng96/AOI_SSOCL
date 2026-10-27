@@ -11,13 +11,13 @@ import zipfile
 
 from typing import Optional
 
-from fastapi import (APIRouter, Depends, File, Form, HTTPException,
-                     UploadFile)
+from fastapi import (APIRouter, Body, Depends, File, Form, HTTPException,
+                     Request, UploadFile)
 from fastapi.responses import FileResponse
 from starlette.background import BackgroundTask
 
 from ..core.config import get_settings
-from ..core.security import require_role
+from ..core.security import ROLE_RANK, require_role
 from ..core.tasks import task_manager
 from ..db.database import log_action, session_scope
 from ..db.models import EvalRun, Image as ImageRow, Model
@@ -229,11 +229,13 @@ def register_engine_snapshots(protect: Optional[set] = None) -> int:
                         row is not None and row.origin == "uploaded"):
                     origin = "uploaded"
                 else:
-                    origin = ("engine_fit" if meta.get("trigger") == "fit"
+                    origin = ("engine_fit" if meta.get("trigger") in ("fit", "representation_rebuild")
                               else "self_learned_engine")
                 metrics = {"fit_seconds": meta.get("fit_seconds"),
                            "slot_names": meta.get("slot_names"),
-                           "note": meta.get("note")}
+                           "note": meta.get("note"),
+                           "feature_revision_binding": meta.get("feature_revision_binding") or
+                               {"status": "unknown", "revision_id": None}}
                 if not has_lineage and origin != "uploaded":
                     metrics["orphan"] = True
                     metrics["note"] = ("历史残留（当前库无该品类数据血缘，"
@@ -269,6 +271,330 @@ def register_engine_snapshots(protect: Optional[set] = None) -> int:
     return registered
 
 
+def _feature_revision_store():
+    from algo.feature_revision import FeatureSetRevision
+    return FeatureSetRevision(get_settings().storage("feature_revisions") / "registry.json")
+
+
+@router.get("/models/feature-revisions")
+def api_feature_revisions():
+    store = _feature_revision_store()
+    return {"items": store.list(),
+            "production_pointer": store.production_pointer(),
+            "changes_production_extractor": False}
+
+
+@router.post("/models/feature-revisions",
+             dependencies=[Depends(require_role("engineer"))])
+def api_register_feature_revision(manifest: dict = Body(...)):
+    try:
+        rid = _feature_revision_store().register(manifest)
+    except (ValueError, KeyError, TypeError) as e:
+        raise HTTPException(status_code=409, detail=str(e))
+    log_action("feature_revision_register", f"revision={rid}")
+    return {"revision_id": rid, "activated": False}
+
+
+@router.post("/models/feature-revisions/{rid}/transition",
+             dependencies=[Depends(require_role("admin"))])
+def api_transition_feature_revision(rid: str, request: dict = Body(...)):
+    root = get_settings().storage("feature_revisions").resolve()
+    paths = {}
+    for key in ("evidence_path", "parity_path"):
+        if request.get(key):
+            path = (root / request[key]).resolve()
+            if root not in path.parents:
+                raise HTTPException(status_code=400, detail="证据必须在 feature_revisions 目录内")
+            paths[key] = str(path)
+    try:
+        row = _feature_revision_store().transition(
+            rid, request.get("target"), actor=request.get("actor", ""), **paths)
+    except (ValueError, KeyError, TypeError, OSError) as e:
+        raise HTTPException(status_code=409, detail={"message": str(e), "force_allowed": False})
+    log_action("feature_revision_transition", f"revision={rid} state={row['state']}")
+    return {"revision": row, "production_model_activated": False,
+            "message": "仅更新特征门禁状态，不切换生产提取器或模型"}
+
+
+@router.get("/models/feature-revisions/production/pointer")
+def api_feature_revision_pointer():
+    return {"pointer": _feature_revision_store().production_pointer()}
+
+
+@router.post("/models/feature-revisions/production/bind",
+             dependencies=[Depends(require_role("admin"))])
+def api_bind_feature_revision(request: dict = Body(...)):
+    try:
+        ptr = _feature_revision_store().bind_production(
+            request.get("revision_id"), actor=request.get("actor", ""),
+            model_snapshot=request.get("model_snapshot"))
+    except (ValueError, KeyError, TypeError, OSError) as e:
+        raise HTTPException(status_code=409, detail={"message": str(e), "force_allowed": False})
+    log_action("feature_revision_bind",
+               f"revision={request.get('revision_id')}",
+               extra={"pointer": ptr})
+    return {"pointer": ptr}
+
+
+@router.post("/models/feature-revisions/production/rollback",
+             dependencies=[Depends(require_role("admin"))])
+def api_rollback_feature_revision(request: dict = Body(...)):
+    try:
+        ptr = _feature_revision_store().rollback_production(
+            actor=request.get("actor", ""),
+            model_snapshot=request.get("model_snapshot"))
+    except (ValueError, KeyError, TypeError, OSError) as e:
+        raise HTTPException(status_code=409, detail={"message": str(e), "force_allowed": False})
+    log_action("feature_revision_rollback",
+               f"to={ptr.get('current')}",
+               extra={"pointer": ptr})
+    return {"pointer": ptr}
+
+
+# ── AC-016 当前特征集 / 版本档案 / 候选提交 ───────────────────
+def _test_label_counts(category: str) -> dict:
+    with session_scope() as s:
+        rows = s.query(ImageRow.label).filter(
+            ImageRow.category == category, ImageRow.split == "test").all()
+    return {"normal": sum(1 for (lb,) in rows if lb == "normal"),
+            "anomaly": sum(1 for (lb,) in rows if lb == "anomaly")}
+
+
+def _contribution_running(category: str) -> Optional[int]:
+    from ..db.models import Task
+    with session_scope() as s:
+        rows = (s.query(Task).filter(Task.task_type == "contribution",
+                                     Task.status.in_(("pending", "running")))
+                .order_by(Task.id.desc()).limit(20).all())
+        for t in rows:
+            if (t.payload or {}).get("category") == category:
+                return int(t.id)
+    return None
+
+
+def _submit_feature_report(category: str, reason: str) -> int:
+    def fn(progress_cb):
+        return eval_service.evaluate_contribution(category, progress_cb=progress_cb)
+    tid = task_manager.submit("contribution",
+                              {"category": category, "reason": reason}, fn)
+    log_action("feature_report_submit", f"category={category} reason={reason} task={tid}")
+    return tid
+
+
+def _auto_feature_report(category: str, reason: str) -> dict:
+    """建模/激活后自动生成版本特征档案；数据不足只标记，不阻断主流程。"""
+    try:
+        if not get_settings().get("features", "auto_report", True):
+            return {"status": "disabled"}
+        cnt = _test_label_counts(category)
+        if cnt["normal"] < 1 or cnt["anomaly"] < 1:
+            return {"status": "insufficient", "test_counts": cnt}
+        running = _contribution_running(category)
+        if running is not None:
+            return {"status": "already_running", "task_id": running}
+        return {"status": "queued", "task_id": _submit_feature_report(category, reason)}
+    except Exception as e:  # noqa: BLE001 档案是附属产物，失败不影响建模/激活
+        return {"status": "error", "message": str(e)}
+
+
+def _feature_report_status(category: str, fs: dict, cnt: dict) -> dict:
+    with session_scope() as s:
+        row = (s.query(EvalRun).filter(EvalRun.category == category,
+                                       EvalRun.run_type == "contribution")
+               .order_by(EvalRun.id.desc()).first())
+        latest = None if row is None else {
+            "eval_run_id": row.id, "created_at": row.created_at.isoformat()
+            if row.created_at else None, "metrics": row.metrics or {}}
+    running = _contribution_running(category)
+    base = {"running_task_id": running, "test_counts": cnt}
+    if latest is None:
+        st = ("insufficient" if cnt["normal"] < 1 or cnt["anomaly"] < 1
+              else "not_generated")
+        return {**base, "status": st}
+    tg = latest["metrics"].get("trad_groups") or {}
+    meta = tg.get("meta") or {}
+    base.update(eval_run_id=latest["eval_run_id"], created_at=latest["created_at"],
+                profile_version=meta.get("model_version"), trad_groups=tg,
+                ablation=latest["metrics"].get("ablation") or {})
+    if tg.get("status") in ("insufficient", "unavailable"):
+        return {**base, "status": "insufficient", "reason": tg.get("status")}
+    if (meta.get("signature") != fs.get("signature")
+            or (meta.get("model_version") is not None
+                and int(meta["model_version"]) != int(fs.get("version", -1)))):
+        return {**base, "status": "stale",
+                "reason": "档案对应的特征签名或模型版本与当前生产不一致"}
+    return {**base, "status": "current"}
+
+
+@router.get("/models/feature-set/{category}")
+def api_feature_set(category: str, request: Request):
+    """当前生产特征集 + 版本档案状态（不足/未生成/过期/当前）。操作员只读。"""
+    from ..engine import get_engine
+    fs = get_engine().feature_set(category)
+    role = getattr(request.state, "role", "admin")
+    fs["can_edit"] = ROLE_RANK.get(role, 0) >= ROLE_RANK["engineer"]
+    fs["role"] = role
+    if fs.get("enabled") and fs.get("status") in ("available", "not_applicable"):
+        fs["report"] = _feature_report_status(category, fs, _test_label_counts(category))
+    if fs.get("enabled"):
+        fs["pending_rebuild_version"] = _pending_rebuild(category)
+    return fs
+
+
+@router.post("/models/feature-set/{category}/draft",
+             dependencies=[Depends(require_role("engineer"))])
+def api_feature_set_draft(category: str, request: dict = Body(...)):
+    """把组启停/评分口径变更登记为 draft 候选；绝不修改生产 trad。"""
+    from algo.feature_revision import production_hashes
+    from algo.features import registry as freg
+    from ..engine import get_engine
+    scoring = request.get("scoring", "legacy")
+    if scoring not in ("legacy", "grouped"):
+        raise HTTPException(status_code=400, detail=f"scoring 仅支持 legacy/grouped: {scoring}")
+    try:
+        groups = freg.resolve_groups(request.get("groups", "all"))
+    except (ValueError, TypeError) as e:
+        raise HTTPException(status_code=400, detail=str(e))
+    eng = get_engine()
+    fs = eng.feature_set(category)
+    if not fs.get("enabled") or fs.get("status") != "available":
+        raise HTTPException(status_code=409, detail=f"品类 {category} 无可用 trad 生产特征集")
+    version = int(fs["version"])
+    meta_path = os.path.join(eng._v_dir(category, version), "meta.json")
+    artifact_hashes = None
+    if os.path.isfile(meta_path):
+        with open(meta_path, encoding="utf-8") as f:
+            artifact_hashes = json.load(f).get("artifact_hashes")
+    cnt = _test_label_counts(category)
+    manifest = {
+        "schema_version": 1,
+        "groups": [{"key": g["key"], "dim": int(g["dim"]), "slice": list(g["slice"]),
+                    "params": dict(g["params"])} for g in freg.TRAD_GROUPS],
+        "dimension": int(freg.TRAD_DIM),
+        "enabled_groups": groups, "scoring": scoring, "category": category,
+        "implementation_hashes": production_hashes(),
+        "preprocess": dict(freg.PREPROCESS), "seed": 0,
+        "dataset_split": {"category": category, "split": "test", **cnt},
+        "model_snapshot": {"category": category, "version": version,
+                           "artifact_hashes": artifact_hashes or {"meta": "unknown"}},
+        "base_signature": fs.get("signature"),
+        "admission_required": True,
+        "note": str(request.get("note", ""))[:200],
+    }
+    try:
+        rid = _feature_revision_store().register(manifest)
+    except (ValueError, KeyError, TypeError) as e:
+        raise HTTPException(status_code=409, detail=str(e))
+    log_action("feature_set_draft",
+               f"category={category} revision={rid} groups={len(groups)} scoring={scoring}")
+    return {"revision_id": rid, "state": "draft", "activated": False,
+            "changes_production": False,
+            "message": "已提交为候选特征集（draft），需评估/审批后才可绑定新模型"}
+
+
+@router.get("/models/feature-set/{category}/hard-pool",
+            dependencies=[Depends(require_role("engineer"))])
+def api_feature_hard_pool(category: str, limit: int = 60):
+    """AC-017 难例池概览（来源计数/冲突/漂移/摘要），只读。"""
+    from ..evaluation.hard_admission import build_hard_pool
+    pool = build_hard_pool(category, limit=max(1, min(int(limit), 200)))
+    return {"category": category, "counts": pool["counts"], "sha256": pool["sha256"],
+            "conflicts": pool["conflicts"][:20], "n_items": len(pool["items"])}
+
+
+@router.get("/models/{category}/slot-health",
+            dependencies=[Depends(require_role("engineer"))])
+def api_slot_health(category: str):
+    """AC-025/026 槽位健康：能力/校准样本量/体检/权重/路由准入/域差/更新准入审计（只读）。"""
+    from ..engine import get_engine
+    return get_engine().slot_health(category)
+
+
+@router.post("/models/feature-revisions/{rid}/admission",
+             dependencies=[Depends(require_role("engineer"))])
+def api_feature_admission(rid: str, request: dict = Body(default={})):
+    """AC-017 候选难例准入试算（后台任务）：只产出证据，不注册/不激活/不触发学习。"""
+    row = _feature_revision_store().list().get(rid)
+    if row is None:
+        raise HTTPException(status_code=409, detail="revision 不存在")
+    category = row["manifest"].get("category") or row["manifest"]["model_snapshot"]["category"]
+    limit = max(4, min(int(request.get("limit", 60)), 200))
+
+    def fn(progress_cb):
+        from ..evaluation.hard_admission import evaluate_feature_admission
+        return evaluate_feature_admission(category, rid, limit=limit, progress_cb=progress_cb)
+    tid = task_manager.submit("feature_admission",
+                              {"category": category, "revision_id": rid, "limit": limit}, fn)
+    log_action("feature_admission_submit", f"category={category} revision={rid[:12]} task={tid}")
+    return {"task_id": tid, "status": "queued", "activated": False}
+
+
+@router.post("/models/feature-set/{category}/report",
+             dependencies=[Depends(require_role("engineer"))])
+def api_feature_set_report(category: str):
+    """手动生成当前版本特征档案（后台任务，与自动生成同口径）。"""
+    cnt = _test_label_counts(category)
+    if cnt["normal"] < 1 or cnt["anomaly"] < 1:
+        raise HTTPException(status_code=409, detail={
+            "message": "test 集需同时含正常/缺陷标注图才能生成档案", "test_counts": cnt})
+    running = _contribution_running(category)
+    if running is not None:
+        return {"task_id": running, "status": "already_running"}
+    return {"task_id": _submit_feature_report(category, "manual"), "status": "queued"}
+
+
+def _pending_rebuild(category: str) -> Optional[int]:
+    """当前激活版本之后、尚未激活的最新表示重建版本号（无则 None）。"""
+    from ..engine import get_engine
+    eng = get_engine()
+    cur = eng.current_version(category) or 0
+    for v in sorted(eng.list_versions(category), reverse=True):
+        if v <= cur:
+            break
+        meta_path = os.path.join(eng._v_dir(category, v), "meta.json")
+        if os.path.isfile(meta_path):
+            with open(meta_path, encoding="utf-8") as f:
+                if json.load(f).get("trigger") == "representation_rebuild":
+                    return v
+    return None
+
+
+@router.post("/models/feature-set/{category}/rebuild",
+             dependencies=[Depends(require_role("engineer"))])
+def api_feature_set_rebuild(category: str, request: dict = Body(default={})):
+    """AC-015 表示重建：按当前代码/注册表/预处理重提特征→重建库→重校准，生成
+    未激活新版本（trigger=representation_rebuild，parent=当前版本）。新版本须经
+    POST /models/{id}/activate 的门控（G2/锚定 AUROC）才上线，旧版本保留可回滚；
+    重建期间旧版本照常推理，但在线学习/巩固被拒（禁止新旧向量混用）。"""
+    import re
+    from ..engine import get_engine
+    eng = get_engine()
+    cur = eng.current_version(category)
+    if cur is None:
+        raise HTTPException(status_code=409, detail=f"品类 {category} 无激活版本，请直接准备模型")
+    scenario, profile = "L1a", "fast"
+    meta_path = os.path.join(eng._v_dir(category, cur), "meta.json")
+    if os.path.isfile(meta_path):
+        with open(meta_path, encoding="utf-8") as f:
+            note = str(json.load(f).get("note") or "")
+        m = re.search(r"scenario=(\w+), profile=(\w+)", note)
+        if m:
+            scenario, profile = m.group(1), m.group(2)
+    req = ModelPrepareRequest(
+        category=category, force=True,
+        scenario=str(request.get("scenario") or scenario),
+        profile=str(request.get("profile") or profile),
+        note=f"representation_rebuild from v{cur}. {str(request.get('note', ''))[:200]}",
+        datasource_id=request.get("datasource_id"),
+        rebuild_representation=True)
+    task_id = task_manager.submit("model_prepare", req.model_dump(),
+                                  lambda cb: _prepare_engine(req, cb))
+    log_action("feature_set_rebuild", f"category={category} parent=v{cur} task={task_id}")
+    return {"task_id": task_id, "parent_version": cur, "activated": False,
+            "scenario": req.scenario, "profile": req.profile,
+            "message": "表示重建已排队：完成后生成未激活新版本，须经激活门控后上线"}
+
+
 # ── 模型注册表 ───────────────────────────────────────────────
 @router.post("/models/scan",
              dependencies=[Depends(require_role("engineer"))])
@@ -298,9 +624,23 @@ def _production_sample_count(model_id: int, category: str) -> int:
             ImageRow.label == "normal").count()
 
 
+def _reject_stale_override(allow_stale: bool, action: str) -> None:
+    """AC-073/074/076：生产 HTTP 入口禁止 allow_stale 绕过表示过期检查。"""
+    if allow_stale:
+        raise HTTPException(status_code=409, detail={
+            "message": f"生产{action}禁止 allow_stale 绕过特征表示过期检查；"
+                       "须表示重建后激活新版本",
+            "reason_code": "STALE_OVERRIDE_FORBIDDEN",
+            "violations": [{"code": "STALE_OVERRIDE_FORBIDDEN",
+                            "message": "allow_stale=true 不允许用于生产入口"}],
+            "retryable": False,
+            "action": "POST /models/feature-set/{category}/rebuild"})
+
+
 @router.post("/models/{model_id}/activate",
              dependencies=[Depends(require_role("admin"))])
-def api_activate_model(model_id: int, gate: bool = True, force: bool = False):
+def api_activate_model(model_id: int, gate: bool = True, force: bool = False,
+                       allow_stale: bool = False):
     """激活指定模型（按 (category, version) 热切换 引擎快照）。
 
     生产激活要求训练集至少有 3 张正常图；该安全门槛不可由 force 绕过。
@@ -310,12 +650,33 @@ def api_activate_model(model_id: int, gate: bool = True, force: bool = False):
     gate_report 双方指标）；force=true 跳过阻断但仍附 gate_report。
     锚定有标注图 <4 张时门控自动跳过（skipped=True 放行）。
     """
+    _reject_stale_override(allow_stale, "激活")
     gate_report = None
     from ..engine import get_engine
     try:
         category, version = sl_service.resolve_model_version(model_id)
     except ValueError as e:
         raise HTTPException(status_code=400, detail=str(e))
+    # 仅显式绑定 revision 的模型受新门禁管理；旧生产 trad 不猜测绑定。
+    with session_scope() as s:
+        model = s.get(Model, model_id)
+        meta_path = os.path.join(model.path, "meta.json") if model else ""
+    if os.path.isfile(meta_path):
+        with open(meta_path, encoding="utf-8") as f:
+            snapshot_meta = json.load(f)
+            binding = snapshot_meta.get("feature_revision_binding") or {}
+        rid = binding.get("revision_id")
+        if rid:
+            try:
+                expected_snapshot = {"category": category, "version": version,
+                                     "artifact_hashes": snapshot_meta.get("artifact_hashes")}
+                if not expected_snapshot["artifact_hashes"]:
+                    raise ValueError("模型资产 hash 未知，拒绝 revision 绑定激活")
+                _feature_revision_store().check_activation(rid, expected_snapshot)
+                from algo.persist import _verify_snapshot
+                _verify_snapshot(os.path.dirname(meta_path))
+            except (ValueError, KeyError, OSError) as e:
+                raise HTTPException(status_code=409, detail={"message": str(e), "force_allowed": False})
     n_normal = _production_sample_count(model_id, category)
     if n_normal < _PRODUCTION_MIN_TRAIN_NORMAL:
         raise HTTPException(
@@ -355,13 +716,18 @@ def api_activate_model(model_id: int, gate: bool = True, force: bool = False):
                           "passed": bool(gate_report.get("passed", True)),
                           "forced": force, "gate_report": gate_report})
     try:
-        out = sl_service.activate_model(model_id)
+        out = sl_service.activate_model(model_id, allow_stale=False)
     except ValueError as e:
+        if "特征表示已过期" in str(e):
+            raise HTTPException(status_code=409, detail={
+                "message": str(e), "representation": "stale",
+                "action": "POST /models/feature-set/{category}/rebuild"})
         raise HTTPException(status_code=400, detail=str(e))
     except Exception as e:  # noqa: BLE001
         raise HTTPException(status_code=500, detail=f"激活失败: {e}")
     if gate_report is not None:
         out["gate_report"] = gate_report
+    out["auto_report"] = _auto_feature_report(category, "activate")
     return out
 
 
@@ -369,11 +735,12 @@ def api_activate_model(model_id: int, gate: bool = True, force: bool = False):
              dependencies=[Depends(require_role("admin"))])
 def api_rollback_model(req: RollbackRequest):
     """回滚到上一快照版本（engine.rollback → 次新版本）。"""
+    _reject_stale_override(req.allow_stale, "回滚")
     try:
         from ..engine import get_engine
         engine = get_engine()
         before = engine.current_version(req.category)
-        target = engine.rollback(req.category)
+        target = engine.rollback(req.category, allow_stale=False)
         register_engine_snapshots()  # 刷新 is_active 指针
         trace = {"category": req.category, "from_version": before,
                  "to_version": target, "reason": "manual_rollback"}
@@ -656,6 +1023,40 @@ def api_import_snapshot(file: UploadFile = File(...),
                        f"验收后手动激活"}
 
 
+def _approved_extra_fit_paths(s, category: str) -> list:
+    """登记批次（approved_extra_good_batches）test 正常图的 fit 子集（seed=0，50/50）。"""
+    from algo.eval.coverage import parse_batch_list, split_extra_good
+    approved = parse_batch_list(
+        get_settings().governance_decisions()["approved_extra_good_batches"])
+    if not approved:
+        return []
+    paths = [p for (p,) in (s.query(ImageRow.path)
+                            .filter(ImageRow.category == category,
+                                    ImageRow.split == "test",
+                                    ImageRow.label == "normal").all())]
+    return split_extra_good(paths, approved, seed=0)["fit"]
+
+
+def _stage_approved_extra(category: str, paths: list) -> list:
+    """登记批次 fit 子集复制到 storage/images/{cat}/approved_extra/train/good/。
+
+    guard_bundle 要求 init_normal 来自 train 域；登记是显式治理决策，
+    按 ingest 同口径落到 train/good 目录（幂等；文件名带原路径短哈希防同名冲突）。"""
+    import hashlib
+    from pathlib import Path
+    dst_dir = (get_settings().storage("images") / category
+               / "approved_extra" / "train" / "good")
+    dst_dir.mkdir(parents=True, exist_ok=True)
+    out = []
+    for p in paths:
+        h = hashlib.sha1(str(p).encode("utf-8")).hexdigest()[:8]
+        dst = dst_dir / f"{Path(p).stem}_x{h}{Path(p).suffix}"   # 保留原名前缀，批次推断不变
+        if not dst.exists():
+            shutil.copy2(p, dst)
+        out.append(str(dst))
+    return out
+
+
 def _prepare_engine(req: ModelPrepareRequest, progress_cb) -> dict:
     """从 DB 组装 bundle 并调 engine.prepare，完成后登记快照。
 
@@ -744,6 +1145,17 @@ def _prepare_engine(req: ModelPrepareRequest, progress_cb) -> dict:
                                 ImageRow.split == "test",
                                 ImageRow.label.in_(("normal", "anomaly")))
                         .order_by(ImageRow.id).limit(90).all())
+            # round4：governance_decisions.approved_extra_good_batches 登记批次的
+            # test 正常图按图像固定种子 50/50 划分，仅 fit 子集并入 init_normal；
+            # eval 子集留作评估。缺陷图不参与。默认空登记时不查询、行为不变。
+            extra_fit = _approved_extra_fit_paths(s, req.category)
+            if extra_fit:
+                known = set(normals)
+                normals = normals + [
+                    p for p in _stage_approved_extra(req.category, extra_fit)
+                    if p not in known]
+                fit_set = set(extra_fit)
+                val_rows = [r for r in val_rows if r.path not in fit_set]
             val = [(r.path, 1 if r.label == "anomaly" else 0)
                    for r in val_rows if r.path not in defect_paths][:30]
             # L3 模板图（M14a）：用户显式标记 split=template 的图（红线：显式提供，
@@ -788,11 +1200,17 @@ def _prepare_engine(req: ModelPrepareRequest, progress_cb) -> dict:
         # engine.prepare frac∈[0,1] → 任务进度 5~90
         progress_cb(min(90, 5 + round(85 * frac)), 100, msg)
 
-    version = get_engine().prepare(
+    rebuild = bool(req.rebuild_representation)
+    activate = not req.allow_experimental and not rebuild
+    engine = get_engine()
+    version = engine.prepare(
         req.category, bundle, scenario=req.scenario, profile=req.profile,
-        trigger="experiment" if req.allow_experimental else "fit",
-        note=req.note, force=req.force,
-        activate=not req.allow_experimental, progress_cb=_engine_prog)
+        trigger=("representation_rebuild" if rebuild
+                 else "experiment" if req.allow_experimental else "fit"),
+        note=req.note, force=True if rebuild else req.force,
+        activate=activate,
+        parent_version=engine.current_version(req.category) if rebuild else None,
+        progress_cb=_engine_prog)
     progress_cb(92, 100, "登记模型快照...")
     register_engine_snapshots(protect={req.category})
     # M16f：谱系与训练样本计数落库（register 合并写，重扫描不丢）
@@ -811,13 +1229,19 @@ def _prepare_engine(req: ModelPrepareRequest, progress_cb) -> dict:
     log_action("model_prepare",
                f"category={req.category} scenario={req.scenario} "
                f"profile={req.profile} version=v{version}")
+    # AC-016：新版本建模完成后自动生成特征档案（实验版本未激活则不生成）
+    auto_report = (_auto_feature_report(req.category, "prepare") if activate
+                   else {"status": "skipped_rebuild" if rebuild else "skipped_experimental"})
     return {"category": req.category, "version": f"v{version}",
+            "auto_report": auto_report,
             "version_num": version, "scenario": req.scenario,
             "profile": req.profile, "n_normal": len(normals),
             "n_defect": len(defects), "n_val": len(val),
             "n_templates": len(templates),
-            "activated": not req.allow_experimental,
-            "message": "模型准备完成"}
+            "activated": activate,
+            "representation_rebuild": rebuild,
+            "message": ("表示重建完成：新版本未激活，须经激活门控后上线" if rebuild
+                        else "模型准备完成")}
 
 
 @router.get("/models/precheck/{category}")

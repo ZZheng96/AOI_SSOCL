@@ -1,0 +1,53 @@
+{
+  "probe0_300x280": {
+    "glcm": 0.0,
+    "selfsim": 0.0,
+    "edge": 0.0,
+    "hog": 0.0,
+    "shape": 0.0,
+    "gray": 0.0,
+    "gloss": 0.0,
+    "color": 0.0,
+    "fft": 0.0,
+    "wavelet": 0.0,
+    "logic": 0.0,
+    "gabor": 0.0,
+    "log": 0.0,
+    "pc": 0.0,
+    "surf": 0.0
+  },
+  "probe1_20x40": {
+    "glcm": 0.0,
+    "selfsim": 0.0,
+    "edge": 0.0,
+    "hog": 0.0,
+    "shape": 0.0,
+    "gray": 0.0,
+    "gloss": 0.0,
+    "color": 0.0,
+    "fft": 0.0,
+    "wavelet": 0.0,
+    "logic": 0.0,
+    "gabor": 0.0,
+    "log": 0.0,
+    "pc": 0.0,
+    "surf": 0.0
+  },
+  "probe2_64x64": {
+    "glcm": 0.0,
+    "selfsim": 0.0,
+    "edge": 0.0,
+    "hog": 0.0,
+    "shape": 0.0,
+    "gray": 0.0,
+    "gloss": 0.0,
+    "color": 0.0,
+    "fft": 0.0,
+    "wavelet": 0.0,
+    "logic": 0.0,
+    "gabor": 0.0,
+    "log": 0.0,
+    "pc": 0.0,
+    "surf": 0.0
+  }
+}

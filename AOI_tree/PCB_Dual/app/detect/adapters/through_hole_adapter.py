@@ -13,6 +13,7 @@ from __future__ import annotations
 
 import importlib
 import threading
+import time
 from typing import Any
 
 from app.calibration.th_roi import get_th_pad_count, th_run_config, th_run_config_from_pads
@@ -159,7 +160,21 @@ class ThroughHoleAdapter(BaseAdapter):
             return False, "当前标定了多个焊点，算法只会跑连锡；盘内缺陷请改用单框或自动锡面"
         return True, ""
 
-    def run(self, algorithm_id: str, req: DetectRequest, params: dict[str, Any]) -> AlgorithmResult:
+    def run_many(self, requests: list[tuple[str, DetectRequest, dict[str, Any]]]) -> list[AlgorithmResult]:
+        """保持单项就绪/错误/REVIEW契约，复用同输入与有效配置的 inspect。"""
+        caches = {}
+        output = []
+        for alg_id, req, params in requests:
+            key = (id(req.image_test_raw if req.image_test_raw is not None else req.image_test),
+                   id(req.image_std_raw if req.image_std_raw is not None else req.image_std),
+                   req.template_name, repr([r.to_dict() for r in req.rois]))
+            started = time.perf_counter()
+            result = self.run(alg_id, req, params, _shared_cache=caches.setdefault(key, {}))
+            result.elapsed_ms = int((time.perf_counter() - started) * 1000)
+            output.append(result)
+        return output
+
+    def run(self, algorithm_id: str, req: DetectRequest, params: dict[str, Any], *, _shared_cache=None) -> AlgorithmResult:
         th = _load_th()
         defect_id = DEFECT_ID_BY_ALG.get(algorithm_id)
         meta = th["defect_by_id"].get(defect_id)
@@ -195,6 +210,7 @@ class ThroughHoleAdapter(BaseAdapter):
         if "insuf_preset" in params:
             cfg["insuf_preset"] = params["insuf_preset"]
 
+        cfg["diagnostics"] = bool(req.preprocess_meta.get("diagnostics"))
         try:
             with _th_runtime():
                 # 每次在隔离环境里新建实例，避免其它仓库顶掉 algorithms 后旧实例延迟 import 失败
@@ -202,9 +218,13 @@ class ThroughHoleAdapter(BaseAdapter):
                     "algorithms.pcb_through_hole.pcb_through_hole_solder_alg"
                 )
                 instance = alg_mod.PcbThroughHoleSolderAlg()
-                result = instance.run(test_bgr, cfg, original_template_image=std_bgr)
+                if _shared_cache is None:
+                    result = instance.run(test_bgr, cfg, original_template_image=std_bgr)
+                else:
+                    result = instance.run(test_bgr, cfg, original_template_image=std_bgr,
+                                          _shared_cache=_shared_cache)
         except Exception as exc:  # noqa: BLE001
-            return AlgorithmResult(algorithm=algorithm_id, ok=False, message=f"[适配器异常] {label}: {exc}")
+            return AlgorithmResult(algorithm=algorithm_id, ok=False, status="ERROR", error_code="RUN_EXCEPTION", message=f"[适配器异常] {label}: {exc}")
 
         if result.code != 0:
             return AlgorithmResult(
@@ -228,8 +248,10 @@ class ThroughHoleAdapter(BaseAdapter):
             reason = meta_out.get("review_reason") or "配准/覆盖率不可靠，需人工复检"
             return AlgorithmResult(
                 algorithm=algorithm_id,
-                ok=True,
-                skipped=True,
+                ok=False,
+                status="REVIEW",
+                skipped=False,
+                metadata=dict(meta_out) if cfg.get("diagnostics") else {"status": "REVIEW", "review_reason": reason},
                 skip_reason=reason,
                 message=f"[待复检] {label}：{reason}",
                 diff_image=vis,
@@ -238,5 +260,5 @@ class ThroughHoleAdapter(BaseAdapter):
         coverage = meta_out.get("coverage")
         coverage_txt = f"{coverage:.2f}" if isinstance(coverage, (int, float)) else "-"
         ok = status != "NG"
-        message = f"{label} 判定={status}，缺陷数={meta_out.get('num_defects', 0)}，锡面覆盖率={coverage_txt}"
-        return AlgorithmResult(algorithm=algorithm_id, ok=ok, message=message, boxes=boxes, diff_image=vis)
+        message = f"{label} 判定={status}，缺陷数={meta_out.get('num_defects', 0)}，配准有效区域覆盖率={coverage_txt}"
+        return AlgorithmResult(algorithm=algorithm_id, ok=ok, message=message, boxes=boxes, diff_image=vis, metadata=dict(meta_out) if cfg.get("diagnostics") else {})

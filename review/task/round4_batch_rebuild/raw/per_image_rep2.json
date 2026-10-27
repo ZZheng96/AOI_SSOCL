@@ -1,0 +1,1562 @@
+[
+  {
+    "path": "D:\\CGAIC\\data_local\\gold_finger\\test\\good\\Image_20260116193703828_repaired.jpg",
+    "label": 0,
+    "group": "eval_normal",
+    "batch": "Image_2026",
+    "B_before": {
+      "fused": 0.6730953026225495,
+      "decision": "normal",
+      "ms": 25.278699991758913
+    },
+    "B_after": {
+      "fused": 0.3802083333333333,
+      "decision": "normal",
+      "ms": 22.688299999572337
+    },
+    "A_before": {
+      "fused": 1.7188738347404384,
+      "decision": "anomaly",
+      "ms": 77.29399995878339
+    },
+    "A_after": {
+      "fused": -0.6715714829409177,
+      "decision": "normal",
+      "ms": 28.02480000536889
+    }
+  },
+  {
+    "path": "D:\\CGAIC\\data_local\\gold_finger\\test\\good\\Image_20260116193859871_repaired.jpg",
+    "label": 0,
+    "group": "eval_normal",
+    "batch": "Image_2026",
+    "B_after": {
+      "fused": 0.08316353764031192,
+      "decision": "normal",
+      "ms": 30.043599952477962
+    },
+    "A_before": {
+      "fused": 1.9872903852438684,
+      "decision": "anomaly",
+      "ms": 114.2157000140287
+    },
+    "A_after": {
+      "fused": -0.6401124087086411,
+      "decision": "normal",
+      "ms": 53.02400002256036
+    },
+    "B_before": {
+      "fused": 0.9903818583645333,
+      "decision": "anomaly",
+      "ms": 75.18659997731447
+    }
+  },
+  {
+    "path": "D:\\CGAIC\\data_local\\gold_finger\\test\\good\\Image_20260116194235228_repaired.jpg",
+    "label": 0,
+    "group": "eval_normal",
+    "batch": "Image_2026",
+    "A_before": {
+      "fused": 1.4834928637097438,
+      "decision": "anomaly",
+      "ms": 124.24610002199188
+    },
+    "A_after": {
+      "fused": -0.6629732218804794,
+      "decision": "normal",
+      "ms": 32.963400008156896
+    },
+    "B_before": {
+      "fused": 0.3916866471462393,
+      "decision": "normal",
+      "ms": 29.684900015126914
+    },
+    "B_after": {
+      "fused": -0.03772473030327289,
+      "decision": "normal",
+      "ms": 32.923299993854016
+    }
+  },
+  {
+    "path": "D:\\CGAIC\\data_local\\gold_finger\\test\\good\\Image_20260116194441909_repaired.jpg",
+    "label": 0,
+    "group": "eval_normal",
+    "batch": "Image_2026",
+    "A_after": {
+      "fused": -0.663693600744242,
+      "decision": "normal",
+      "ms": 266.09170000301674
+    },
+    "B_before": {
+      "fused": 0.49492112930200804,
+      "decision": "normal",
+      "ms": 197.53860001219437
+    },
+    "B_after": {
+      "fused": -0.5473181906204736,
+      "decision": "normal",
+      "ms": 209.0260999975726
+    },
+    "A_before": {
+      "fused": 1.5755126041121783,
+      "decision": "anomaly",
+      "ms": 289.0076999901794
+    }
+  },
+  {
+    "path": "D:\\CGAIC\\data_local\\gold_finger\\test\\good\\Image_20260116194259739_repaired.jpg",
+    "label": 0,
+    "group": "eval_normal",
+    "batch": "Image_2026",
+    "B_before": {
+      "fused": 0.3998998777057011,
+      "decision": "normal",
+      "ms": 260.7282999670133
+    },
+    "B_after": {
+      "fused": -0.5133911351486911,
+      "decision": "normal",
+      "ms": 254.8425000277348
+    },
+    "A_before": {
+      "fused": 1.4962224469391212,
+      "decision": "anomaly",
+      "ms": 292.23950003506616
+    },
+    "A_after": {
+      "fused": -0.6327955822336924,
+      "decision": "normal",
+      "ms": 264.24769998993725
+    }
+  },
+  {
+    "path": "D:\\CGAIC\\data_local\\gold_finger\\test\\good\\Image_20260116193843246_repaired.jpg",
+    "label": 0,
+    "group": "eval_normal",
+    "batch": "Image_2026",
+    "B_after": {
+      "fused": 0.9681169712898745,
+      "decision": "anomaly",
+      "ms": 295.8991000195965
+    },
+    "A_before": {
+      "fused": 1.7125638036385622,
+      "decision": "anomaly",
+      "ms": 277.0013999543153
+    },
+    "A_after": {
+      "fused": -0.6980723207803705,
+      "decision": "normal",
+      "ms": 273.89100001892075
+    },
+    "B_before": {
+      "fused": 0.9929231556571568,
+      "decision": "anomaly",
+      "ms": 269.47369996923953
+    }
+  },
+  {
+    "path": "D:\\CGAIC\\data_local\\gold_finger\\test\\good\\t_fov_3_repaired.jpg",
+    "label": 0,
+    "group": "eval_normal",
+    "batch": "t_fov",
+    "A_before": {
+      "fused": 1.994213737163609,
+      "decision": "anomaly",
+      "ms": 186.40539998887107
+    },
+    "A_after": {
+      "fused": 0.7684484535459991,
+      "decision": "anomaly",
+      "ms": 166.3064999738708
+    },
+    "B_before": {
+      "fused": 1.0000561179523197,
+      "decision": "anomaly",
+      "ms": 173.41540002962574
+    },
+    "B_after": {
+      "fused": 0.6632054820876886,
+      "decision": "gray",
+      "ms": 156.7901000380516
+    }
+  },
+  {
+    "path": "D:\\CGAIC\\data_local\\gold_finger\\test\\good\\t_fov_13_repaired.jpg",
+    "label": 0,
+    "group": "eval_normal",
+    "batch": "t_fov",
+    "A_after": {
+      "fused": 0.8941230311556221,
+      "decision": "anomaly",
+      "ms": 176.3436999754049
+    },
+    "B_before": {
+      "fused": 1.3359382605485866,
+      "decision": "anomaly",
+      "ms": 157.97260002000257
+    },
+    "B_after": {
+      "fused": 1.2299431941046508,
+      "decision": "anomaly",
+      "ms": 162.84790000645444
+    },
+    "A_before": {
+      "fused": 1.9939207473267717,
+      "decision": "anomaly",
+      "ms": 153.5946999792941
+    }
+  },
+  {
+    "path": "D:\\CGAIC\\data_local\\gold_finger\\test\\good\\t_fov_14_repaired.jpg",
+    "label": 0,
+    "group": "eval_normal",
+    "batch": "t_fov",
+    "B_before": {
+      "fused": 1.3278195049647823,
+      "decision": "anomaly",
+      "ms": 160.66669998690486
+    },
+    "B_after": {
+      "fused": 1.5112980465897745,
+      "decision": "anomaly",
+      "ms": 160.26229999260977
+    },
+    "A_before": {
+      "fused": 1.9948113406123154,
+      "decision": "anomaly",
+      "ms": 147.3382000112906
+    },
+    "A_after": {
+      "fused": 0.7761495704901467,
+      "decision": "anomaly",
+      "ms": 156.69959998922423
+    }
+  },
+  {
+    "path": "D:\\CGAIC\\data_local\\gold_finger\\test\\defect\\1308.jpg",
+    "label": 1,
+    "group": "E1_defect",
+    "batch": "numeric",
+    "B_after": {
+      "fused": 1.6541556056782745,
+      "decision": "anomaly",
+      "ms": 176.32790002971888
+    },
+    "A_before": {
+      "fused": 1.9937628868877284,
+      "decision": "anomaly",
+      "ms": 155.19129997119308
+    },
+    "A_after": {
+      "fused": 1.9952276326828935,
+      "decision": "anomaly",
+      "ms": 156.56759997364134
+    },
+    "B_before": {
+      "fused": 1.5662058489689021,
+      "decision": "anomaly",
+      "ms": 154.62839999236166
+    }
+  },
+  {
+    "path": "D:\\CGAIC\\data_local\\gold_finger\\test\\defect\\1310.jpg",
+    "label": 1,
+    "group": "E1_defect",
+    "batch": "numeric",
+    "A_before": {
+      "fused": 1.9926761168243465,
+      "decision": "anomaly",
+      "ms": 176.76080000819638
+    },
+    "A_after": {
+      "fused": 1.9954756611906426,
+      "decision": "anomaly",
+      "ms": 157.1109999786131
+    },
+    "B_before": {
+      "fused": 1.0054753164349721,
+      "decision": "anomaly",
+      "ms": 153.2036999706179
+    },
+    "B_after": {
+      "fused": 0.6409594430715374,
+      "decision": "normal",
+      "ms": 142.43579999310896
+    }
+  },
+  {
+    "path": "D:\\CGAIC\\data_local\\gold_finger\\test\\defect\\1312.jpg",
+    "label": 1,
+    "group": "E1_defect",
+    "batch": "numeric",
+    "A_after": {
+      "fused": 1.9979060845703658,
+      "decision": "anomaly",
+      "ms": 169.8587999562733
+    },
+    "B_before": {
+      "fused": 0.9956797892986259,
+      "decision": "anomaly",
+      "ms": 153.46450003562495
+    },
+    "B_after": {
+      "fused": 0.662587533651289,
+      "decision": "gray",
+      "ms": 148.01360003184527
+    },
+    "A_before": {
+      "fused": 1.9942600620077202,
+      "decision": "anomaly",
+      "ms": 147.6185000501573
+    }
+  },
+  {
+    "path": "D:\\CGAIC\\data_local\\gold_finger\\test\\defect\\1314.jpg",
+    "label": 1,
+    "group": "E1_defect",
+    "batch": "numeric",
+    "B_before": {
+      "fused": 1.0072362054268602,
+      "decision": "anomaly",
+      "ms": 156.2819000100717
+    },
+    "B_after": {
+      "fused": 0.5974278036357585,
+      "decision": "normal",
+      "ms": 138.17170000402257
+    },
+    "A_before": {
+      "fused": 1.9823940489961476,
+      "decision": "anomaly",
+      "ms": 145.13069996610284
+    },
+    "A_after": {
+      "fused": 1.9979436529121113,
+      "decision": "anomaly",
+      "ms": 152.6834000251256
+    }
+  },
+  {
+    "path": "D:\\CGAIC\\data_local\\gold_finger\\test\\defect\\1315.jpg",
+    "label": 1,
+    "group": "E1_defect",
+    "batch": "numeric",
+    "B_after": {
+      "fused": 0.6501897908527745,
+      "decision": "gray",
+      "ms": 164.7376000182703
+    },
+    "A_before": {
+      "fused": 1.9935867062374775,
+      "decision": "anomaly",
+      "ms": 157.3777999728918
+    },
+    "A_after": {
+      "fused": 1.9970472098829384,
+      "decision": "anomaly",
+      "ms": 156.91670001251623
+    },
+    "B_before": {
+      "fused": 1.0029756654329063,
+      "decision": "anomaly",
+      "ms": 160.13069998007268
+    }
+  },
+  {
+    "path": "D:\\CGAIC\\data_local\\gold_finger\\test\\defect\\1316.jpg",
+    "label": 1,
+    "group": "E1_defect",
+    "batch": "numeric",
+    "A_before": {
+      "fused": 1.7137060653676903,
+      "decision": "anomaly",
+      "ms": 164.1133000375703
+    },
+    "A_after": {
+      "fused": 1.9983675056214678,
+      "decision": "anomaly",
+      "ms": 162.4986000242643
+    },
+    "B_before": {
+      "fused": 0.6653057922931658,
+      "decision": "normal",
+      "ms": 148.12659996096045
+    },
+    "B_after": {
+      "fused": 0.5724957797855494,
+      "decision": "normal",
+      "ms": 148.1404000078328
+    }
+  },
+  {
+    "path": "D:\\CGAIC\\data_local\\gold_finger\\test\\defect\\1317.jpg",
+    "label": 1,
+    "group": "E1_defect",
+    "batch": "numeric",
+    "A_after": {
+      "fused": 1.9976654645177887,
+      "decision": "anomaly",
+      "ms": 151.6822000266984
+    },
+    "B_before": {
+      "fused": 1.3605531862253033,
+      "decision": "anomaly",
+      "ms": 159.3591999844648
+    },
+    "B_after": {
+      "fused": 0.9940541489296925,
+      "decision": "anomaly",
+      "ms": 154.19699996709824
+    },
+    "A_before": {
+      "fused": 1.9927707261533447,
+      "decision": "anomaly",
+      "ms": 150.63350001582876
+    }
+  },
+  {
+    "path": "D:\\CGAIC\\data_local\\gold_finger\\test\\defect\\1318.jpg",
+    "label": 1,
+    "group": "E1_defect",
+    "batch": "numeric",
+    "B_before": {
+      "fused": 1.1042489805631837,
+      "decision": "anomaly",
+      "ms": 163.5141999577172
+    },
+    "B_after": {
+      "fused": 0.61523599812112,
+      "decision": "normal",
+      "ms": 149.33360001305118
+    },
+    "A_before": {
+      "fused": 1.989935505975548,
+      "decision": "anomaly",
+      "ms": 148.83430005284026
+    },
+    "A_after": {
+      "fused": 1.9976590539502945,
+      "decision": "anomaly",
+      "ms": 155.1451000268571
+    }
+  },
+  {
+    "path": "D:\\CGAIC\\data_local\\gold_finger\\test\\defect\\1319.jpg",
+    "label": 1,
+    "group": "E1_defect",
+    "batch": "numeric",
+    "B_after": {
+      "fused": 0.6100462240069204,
+      "decision": "normal",
+      "ms": 151.2798999901861
+    },
+    "A_before": {
+      "fused": 1.9886854949104713,
+      "decision": "anomaly",
+      "ms": 151.96279995143414
+    },
+    "A_after": {
+      "fused": 1.9980242921168119,
+      "decision": "anomaly",
+      "ms": 153.63980003166944
+    },
+    "B_before": {
+      "fused": 1.004035622121469,
+      "decision": "anomaly",
+      "ms": 154.55480001401156
+    }
+  },
+  {
+    "path": "D:\\CGAIC\\data_local\\gold_finger\\test\\defect\\1320.jpg",
+    "label": 1,
+    "group": "E1_defect",
+    "batch": "numeric",
+    "A_before": {
+      "fused": 1.9935818253049353,
+      "decision": "anomaly",
+      "ms": 155.50320001784712
+    },
+    "A_after": {
+      "fused": 1.9978051049001182,
+      "decision": "anomaly",
+      "ms": 157.98049996374175
+    },
+    "B_before": {
+      "fused": 0.9958706370590735,
+      "decision": "anomaly",
+      "ms": 145.56390000507236
+    },
+    "B_after": {
+      "fused": 0.6497657722710433,
+      "decision": "normal",
+      "ms": 142.80749997124076
+    }
+  },
+  {
+    "path": "D:\\CGAIC\\data_local\\gold_finger\\test\\defect\\Image_20260116193703828.jpg",
+    "label": 1,
+    "group": "E2_pair_defect",
+    "batch": "Image_2026",
+    "A_after": {
+      "fused": -0.6732506593051546,
+      "decision": "normal",
+      "ms": 477.71010000724345
+    },
+    "B_before": {
+      "fused": 0.9976656420293037,
+      "decision": "anomaly",
+      "ms": 388.5626000119373
+    },
+    "B_after": {
+      "fused": 0.41406249999999994,
+      "decision": "normal",
+      "ms": 380.079900030978
+    },
+    "A_before": {
+      "fused": 1.9886598479436515,
+      "decision": "anomaly",
+      "ms": 418.4899000101723
+    }
+  },
+  {
+    "path": "D:\\CGAIC\\data_local\\gold_finger\\test\\defect\\Image_20260116193859871.jpg",
+    "label": 1,
+    "group": "E2_pair_defect",
+    "batch": "Image_2026",
+    "B_before": {
+      "fused": 0.9700212691670997,
+      "decision": "anomaly",
+      "ms": 549.2755000013858
+    },
+    "B_after": {
+      "fused": 0.08296884530916893,
+      "decision": "normal",
+      "ms": 399.6767000062391
+    },
+    "A_before": {
+      "fused": 1.9717452305356677,
+      "decision": "anomaly",
+      "ms": 421.86490003950894
+    },
+    "A_after": {
+      "fused": -0.6264481463003043,
+      "decision": "normal",
+      "ms": 405.9242000221275
+    }
+  },
+  {
+    "path": "D:\\CGAIC\\data_local\\gold_finger\\test\\defect\\Image_20260116194235228.jpg",
+    "label": 1,
+    "group": "E2_pair_defect",
+    "batch": "Image_2026",
+    "B_after": {
+      "fused": -0.16777563216371583,
+      "decision": "normal",
+      "ms": 483.45150001114234
+    },
+    "A_before": {
+      "fused": 1.4866628329168465,
+      "decision": "anomaly",
+      "ms": 399.8063000035472
+    },
+    "A_after": {
+      "fused": -0.6383688093184776,
+      "decision": "normal",
+      "ms": 395.06909996271133
+    },
+    "B_before": {
+      "fused": 0.3909845776634059,
+      "decision": "normal",
+      "ms": 412.44459996232763
+    }
+  },
+  {
+    "path": "D:\\CGAIC\\data_local\\gold_finger\\test\\defect\\Image_20260116194441909.jpg",
+    "label": 1,
+    "group": "E2_pair_defect",
+    "batch": "Image_2026",
+    "A_before": {
+      "fused": 1.6622914143854028,
+      "decision": "anomaly",
+      "ms": 599.5076999533921
+    },
+    "A_after": {
+      "fused": 0.4250430299393633,
+      "decision": "normal",
+      "ms": 848.7824000185356
+    },
+    "B_before": {
+      "fused": 0.610894394786512,
+      "decision": "normal",
+      "ms": 634.1572999954224
+    },
+    "B_after": {
+      "fused": 0.39192708333333326,
+      "decision": "normal",
+      "ms": 721.8545000068843
+    }
+  },
+  {
+    "path": "D:\\CGAIC\\data_local\\gold_finger\\test\\defect\\Image_20260116194259739.jpg",
+    "label": 1,
+    "group": "E2_pair_defect",
+    "batch": "Image_2026",
+    "A_after": {
+      "fused": -0.6376353986205929,
+      "decision": "normal",
+      "ms": 1255.0319000147283
+    },
+    "B_before": {
+      "fused": 0.4695669072474259,
+      "decision": "normal",
+      "ms": 1157.9640000127256
+    },
+    "B_after": {
+      "fused": -0.5156905821275232,
+      "decision": "normal",
+      "ms": 887.2269000275992
+    },
+    "A_before": {
+      "fused": 1.5537000855359842,
+      "decision": "anomaly",
+      "ms": 1468.6870000441559
+    }
+  },
+  {
+    "path": "D:\\CGAIC\\data_local\\gold_finger\\test\\defect\\Image_20260116193843246.jpg",
+    "label": 1,
+    "group": "E2_pair_defect",
+    "batch": "Image_2026",
+    "B_before": {
+      "fused": 1.0150151473376174,
+      "decision": "anomaly",
+      "ms": 2044.8539999779314
+    },
+    "B_after": {
+      "fused": 1.0100294959222293,
+      "decision": "anomaly",
+      "ms": 2463.280100026168
+    },
+    "A_before": {
+      "fused": 1.7136054336830415,
+      "decision": "anomaly",
+      "ms": 1542.8635000134818
+    },
+    "A_after": {
+      "fused": -0.6674463120893392,
+      "decision": "normal",
+      "ms": 1363.3834999636747
+    }
+  },
+  {
+    "path": "D:\\CGAIC\\data_local\\gold_finger\\test\\defect\\t_fov_3.jpg",
+    "label": 1,
+    "group": "E2_pair_defect",
+    "batch": "t_fov",
+    "B_after": {
+      "fused": 0.6608210028835029,
+      "decision": "gray",
+      "ms": 174.75730000296608
+    },
+    "A_before": {
+      "fused": 1.9942005163845171,
+      "decision": "anomaly",
+      "ms": 155.9630999690853
+    },
+    "A_after": {
+      "fused": 0.7608429850803942,
+      "decision": "anomaly",
+      "ms": 224.43329996895045
+    },
+    "B_before": {
+      "fused": 0.9993048513616474,
+      "decision": "anomaly",
+      "ms": 169.42089999793097
+    }
+  },
+  {
+    "path": "D:\\CGAIC\\data_local\\gold_finger\\test\\defect\\t_fov_13.jpg",
+    "label": 1,
+    "group": "E2_pair_defect",
+    "batch": "t_fov",
+    "A_before": {
+      "fused": 1.9940423091508568,
+      "decision": "anomaly",
+      "ms": 208.29360000789165
+    },
+    "A_after": {
+      "fused": 0.8646762694843146,
+      "decision": "anomaly",
+      "ms": 159.82609998900443
+    },
+    "B_before": {
+      "fused": 1.025203588603778,
+      "decision": "anomaly",
+      "ms": 133.9985000086017
+    },
+    "B_after": {
+      "fused": 1.118931641539639,
+      "decision": "anomaly",
+      "ms": 187.4186000204645
+    }
+  },
+  {
+    "path": "D:\\CGAIC\\data_local\\gold_finger\\test\\defect\\t_fov_14.jpg",
+    "label": 1,
+    "group": "E2_pair_defect",
+    "batch": "t_fov",
+    "A_after": {
+      "fused": 0.893129816195048,
+      "decision": "anomaly",
+      "ms": 218.35069998633116
+    },
+    "B_before": {
+      "fused": 1.3524213583709022,
+      "decision": "anomaly",
+      "ms": 163.06150000309572
+    },
+    "B_after": {
+      "fused": 1.5560696141497647,
+      "decision": "anomaly",
+      "ms": 165.3459999943152
+    },
+    "A_before": {
+      "fused": 1.9946859213961352,
+      "decision": "anomaly",
+      "ms": 198.86669999687
+    }
+  },
+  {
+    "path": "D:\\CGAIC\\data_local\\gold_finger\\train\\good\\1308_repaired.jpg",
+    "label": 0,
+    "group": "orig_normal",
+    "batch": "numeric",
+    "B_before": {
+      "fused": 1.5777600287008307,
+      "decision": "anomaly",
+      "ms": 260.9420000226237
+    },
+    "B_after": {
+      "fused": 1.651255151866148,
+      "decision": "anomaly",
+      "ms": 281.54240001458675
+    },
+    "A_before": {
+      "fused": 1.9936294207675909,
+      "decision": "anomaly",
+      "ms": 193.47959995502606
+    },
+    "A_after": {
+      "fused": 1.9949887083668951,
+      "decision": "anomaly",
+      "ms": 192.5638000248
+    }
+  },
+  {
+    "path": "D:\\CGAIC\\data_local\\gold_finger\\train\\good\\1310_repaired.jpg",
+    "label": 0,
+    "group": "orig_normal",
+    "batch": "numeric",
+    "B_after": {
+      "fused": 0.6341509846244525,
+      "decision": "normal",
+      "ms": 215.99799999967217
+    },
+    "A_before": {
+      "fused": 1.991996960981174,
+      "decision": "anomaly",
+      "ms": 196.29220000933856
+    },
+    "A_after": {
+      "fused": 1.9961003614509965,
+      "decision": "anomaly",
+      "ms": 210.2409999934025
+    },
+    "B_before": {
+      "fused": 1.0083043631081643,
+      "decision": "anomaly",
+      "ms": 195.8979000337422
+    }
+  },
+  {
+    "path": "D:\\CGAIC\\data_local\\gold_finger\\train\\good\\1312_repaired.jpg",
+    "label": 0,
+    "group": "orig_normal",
+    "batch": "numeric",
+    "A_before": {
+      "fused": 1.9936318801283797,
+      "decision": "anomaly",
+      "ms": 187.31230002595112
+    },
+    "A_after": {
+      "fused": 1.997779890424116,
+      "decision": "anomaly",
+      "ms": 179.8031999496743
+    },
+    "B_before": {
+      "fused": 0.9949765489856822,
+      "decision": "anomaly",
+      "ms": 166.20530001819134
+    },
+    "B_after": {
+      "fused": 0.6481412035833711,
+      "decision": "normal",
+      "ms": 147.84620003774762
+    }
+  },
+  {
+    "path": "D:\\CGAIC\\data_local\\gold_finger\\train\\good\\1314_repaired.jpg",
+    "label": 0,
+    "group": "orig_normal",
+    "batch": "numeric",
+    "A_after": {
+      "fused": 1.9979858139234243,
+      "decision": "anomaly",
+      "ms": 170.43990001548082
+    },
+    "B_before": {
+      "fused": 1.30969997828352,
+      "decision": "anomaly",
+      "ms": 160.47669999534264
+    },
+    "B_after": {
+      "fused": 0.5945558988725974,
+      "decision": "normal",
+      "ms": 146.53610001550987
+    },
+    "A_before": {
+      "fused": 1.978664968781327,
+      "decision": "anomaly",
+      "ms": 158.0481000128202
+    }
+  },
+  {
+    "path": "D:\\CGAIC\\data_local\\gold_finger\\train\\good\\1315_repaired.jpg",
+    "label": 0,
+    "group": "orig_normal",
+    "batch": "numeric",
+    "B_before": {
+      "fused": 1.34314169076549,
+      "decision": "anomaly",
+      "ms": 163.00920001231134
+    },
+    "B_after": {
+      "fused": 0.6494025838787423,
+      "decision": "normal",
+      "ms": 134.0275999973528
+    },
+    "A_before": {
+      "fused": 1.993462795652407,
+      "decision": "anomaly",
+      "ms": 136.69700000900775
+    },
+    "A_after": {
+      "fused": 1.996896597068503,
+      "decision": "anomaly",
+      "ms": 148.85350002441555
+    }
+  },
+  {
+    "path": "D:\\CGAIC\\data_local\\gold_finger\\train\\good\\1316_repaired.jpg",
+    "label": 0,
+    "group": "orig_normal",
+    "batch": "numeric",
+    "B_after": {
+      "fused": 0.5347306126463496,
+      "decision": "normal",
+      "ms": 143.42720003332943
+    },
+    "A_before": {
+      "fused": 1.6735633240543337,
+      "decision": "anomaly",
+      "ms": 148.42979999957606
+    },
+    "A_after": {
+      "fused": 1.99835101981224,
+      "decision": "anomaly",
+      "ms": 147.56540005328134
+    },
+    "B_before": {
+      "fused": 0.6172316953125725,
+      "decision": "normal",
+      "ms": 146.4957999996841
+    }
+  },
+  {
+    "path": "D:\\CGAIC\\data_local\\gold_finger\\train\\good\\1317_repaired.jpg",
+    "label": 0,
+    "group": "orig_normal",
+    "batch": "numeric",
+    "A_before": {
+      "fused": 1.9915044352722093,
+      "decision": "anomaly",
+      "ms": 151.13930002553388
+    },
+    "A_after": {
+      "fused": 1.997674446562448,
+      "decision": "anomaly",
+      "ms": 153.1436000368558
+    },
+    "B_before": {
+      "fused": 1.3564322278223064,
+      "decision": "anomaly",
+      "ms": 165.94070004066452
+    },
+    "B_after": {
+      "fused": 0.9628377359559774,
+      "decision": "anomaly",
+      "ms": 233.54609997477382
+    }
+  },
+  {
+    "path": "D:\\CGAIC\\data_local\\gold_finger\\train\\good\\1318_repaired.jpg",
+    "label": 0,
+    "group": "orig_normal",
+    "batch": "numeric",
+    "A_after": {
+      "fused": 1.9976067004405502,
+      "decision": "anomaly",
+      "ms": 232.73909999988973
+    },
+    "B_before": {
+      "fused": 1.0570858955445608,
+      "decision": "anomaly",
+      "ms": 255.91399997938424
+    },
+    "B_after": {
+      "fused": 0.6059571467176332,
+      "decision": "normal",
+      "ms": 245.70059997495264
+    },
+    "A_before": {
+      "fused": 1.987540014373749,
+      "decision": "anomaly",
+      "ms": 293.44969999510795
+    }
+  },
+  {
+    "path": "D:\\CGAIC\\data_local\\gold_finger\\train\\good\\1319_repaired.jpg",
+    "label": 0,
+    "group": "orig_normal",
+    "batch": "numeric",
+    "B_before": {
+      "fused": 1.0244859343988804,
+      "decision": "anomaly",
+      "ms": 321.3922000140883
+    },
+    "B_after": {
+      "fused": 0.6193182769511747,
+      "decision": "normal",
+      "ms": 254.5793000026606
+    },
+    "A_before": {
+      "fused": 1.9907539843671378,
+      "decision": "anomaly",
+      "ms": 187.07540002651513
+    },
+    "A_after": {
+      "fused": 1.9979978636321567,
+      "decision": "anomaly",
+      "ms": 199.70250001642853
+    }
+  },
+  {
+    "path": "D:\\CGAIC\\data_local\\gold_finger\\train\\good\\1320_repaired.jpg",
+    "label": 0,
+    "group": "orig_normal",
+    "batch": "numeric",
+    "B_after": {
+      "fused": 0.6497444957007532,
+      "decision": "normal",
+      "ms": 191.92509999265894
+    },
+    "A_before": {
+      "fused": 1.99359911059561,
+      "decision": "anomaly",
+      "ms": 174.00389997055754
+    },
+    "A_after": {
+      "fused": 1.997785200689127,
+      "decision": "anomaly",
+      "ms": 196.6518000117503
+    },
+    "B_before": {
+      "fused": 0.9957639810414671,
+      "decision": "anomaly",
+      "ms": 188.97519999882206
+    }
+  },
+  {
+    "path": "D:\\CGAIC\\data_local\\gold_finger\\train\\good\\1321_repaired.jpg",
+    "label": 0,
+    "group": "orig_normal",
+    "batch": "numeric",
+    "A_before": {
+      "fused": 1.9942437037475573,
+      "decision": "anomaly",
+      "ms": 187.8842000151053
+    },
+    "A_after": {
+      "fused": 1.9970699903112101,
+      "decision": "anomaly",
+      "ms": 187.1759999776259
+    },
+    "B_before": {
+      "fused": 1.3635706048054637,
+      "decision": "anomaly",
+      "ms": 174.72389998147264
+    },
+    "B_after": {
+      "fused": 1.1166531610100376,
+      "decision": "anomaly",
+      "ms": 171.97859997395426
+    }
+  },
+  {
+    "path": "D:\\CGAIC\\data_local\\gold_finger\\train\\good\\1322_repaired.jpg",
+    "label": 0,
+    "group": "orig_normal",
+    "batch": "numeric",
+    "A_after": {
+      "fused": 1.9948897396624061,
+      "decision": "anomaly",
+      "ms": 206.95889997296035
+    },
+    "B_before": {
+      "fused": 0.9966204803950065,
+      "decision": "anomaly",
+      "ms": 175.11980002745986
+    },
+    "B_after": {
+      "fused": 0.6287611368625184,
+      "decision": "normal",
+      "ms": 154.36480002244934
+    },
+    "A_before": {
+      "fused": 1.9917609196489647,
+      "decision": "anomaly",
+      "ms": 175.90209998888895
+    }
+  },
+  {
+    "path": "D:\\CGAIC\\data_local\\gold_finger\\train\\good\\1323_repaired.jpg",
+    "label": 0,
+    "group": "orig_normal",
+    "batch": "numeric",
+    "B_before": {
+      "fused": 1.3651920695558195,
+      "decision": "anomaly",
+      "ms": 175.37930002436042
+    },
+    "B_after": {
+      "fused": 1.048210532476144,
+      "decision": "anomaly",
+      "ms": 170.38279998814687
+    },
+    "A_before": {
+      "fused": 1.9922753167401255,
+      "decision": "anomaly",
+      "ms": 178.2235000282526
+    },
+    "A_after": {
+      "fused": 1.9964874394669951,
+      "decision": "anomaly",
+      "ms": 184.53369999770075
+    }
+  },
+  {
+    "path": "D:\\CGAIC\\data_local\\gold_finger\\train\\good\\1324_repaired.jpg",
+    "label": 0,
+    "group": "orig_normal",
+    "batch": "numeric",
+    "B_after": {
+      "fused": 0.5770276674955792,
+      "decision": "normal",
+      "ms": 157.03379997285083
+    },
+    "A_before": {
+      "fused": 1.719034855672289,
+      "decision": "anomaly",
+      "ms": 169.9384999810718
+    },
+    "A_after": {
+      "fused": 1.9979665343674244,
+      "decision": "anomaly",
+      "ms": 170.81709997728467
+    },
+    "B_before": {
+      "fused": 0.6695675789686968,
+      "decision": "normal",
+      "ms": 152.00639999238774
+    }
+  },
+  {
+    "path": "D:\\CGAIC\\data_local\\gold_finger\\train\\good\\1325_repaired.jpg",
+    "label": 0,
+    "group": "orig_normal",
+    "batch": "numeric",
+    "A_before": {
+      "fused": 1.993234036406361,
+      "decision": "anomaly",
+      "ms": 176.78719997638837
+    },
+    "A_after": {
+      "fused": 1.9978403768794262,
+      "decision": "anomaly",
+      "ms": 169.0316000021994
+    },
+    "B_before": {
+      "fused": 1.0131932254213905,
+      "decision": "anomaly",
+      "ms": 176.55629996443167
+    },
+    "B_after": {
+      "fused": 0.6438727411416234,
+      "decision": "normal",
+      "ms": 157.57480001775548
+    }
+  },
+  {
+    "path": "D:\\CGAIC\\data_local\\gold_finger\\train\\good\\1326_repaired.jpg",
+    "label": 0,
+    "group": "orig_normal",
+    "batch": "numeric",
+    "A_after": {
+      "fused": 1.998294518245189,
+      "decision": "anomaly",
+      "ms": 191.84039998799562
+    },
+    "B_before": {
+      "fused": 0.9901431139766678,
+      "decision": "anomaly",
+      "ms": 167.2213000128977
+    },
+    "B_after": {
+      "fused": 0.60096320011363,
+      "decision": "normal",
+      "ms": 168.80149999633431
+    },
+    "A_before": {
+      "fused": 1.9853592576397436,
+      "decision": "anomaly",
+      "ms": 170.80520000308752
+    }
+  },
+  {
+    "path": "D:\\CGAIC\\data_local\\gold_finger\\train\\good\\1327_repaired.jpg",
+    "label": 0,
+    "group": "orig_normal",
+    "batch": "numeric",
+    "B_before": {
+      "fused": 1.3717993919182998,
+      "decision": "anomaly",
+      "ms": 185.00860000494868
+    },
+    "B_after": {
+      "fused": 0.99003021597166,
+      "decision": "anomaly",
+      "ms": 170.61650002142414
+    },
+    "A_before": {
+      "fused": 1.9923811936415368,
+      "decision": "anomaly",
+      "ms": 164.9792999960482
+    },
+    "A_after": {
+      "fused": 1.9929238248502719,
+      "decision": "anomaly",
+      "ms": 177.87370004225522
+    }
+  },
+  {
+    "path": "D:\\CGAIC\\data_local\\gold_finger\\train\\good\\1330_repaired.jpg",
+    "label": 0,
+    "group": "orig_normal",
+    "batch": "numeric",
+    "B_after": {
+      "fused": 0.6385844259720928,
+      "decision": "normal",
+      "ms": 167.1199999982491
+    },
+    "A_before": {
+      "fused": 1.9930535959234281,
+      "decision": "anomaly",
+      "ms": 159.22689996659756
+    },
+    "A_after": {
+      "fused": 1.9959786827957924,
+      "decision": "anomaly",
+      "ms": 154.73770000971854
+    },
+    "B_before": {
+      "fused": 0.9985394063286381,
+      "decision": "anomaly",
+      "ms": 147.62190001783893
+    }
+  },
+  {
+    "path": "D:\\CGAIC\\data_local\\gold_finger\\train\\good\\1331_repaired.jpg",
+    "label": 0,
+    "group": "orig_normal",
+    "batch": "numeric",
+    "A_before": {
+      "fused": 1.983310681462735,
+      "decision": "anomaly",
+      "ms": 174.270500021521
+    },
+    "A_after": {
+      "fused": 1.9980535857459438,
+      "decision": "anomaly",
+      "ms": 177.40759998559952
+    },
+    "B_before": {
+      "fused": 0.9832926987736281,
+      "decision": "anomaly",
+      "ms": 141.61089999834076
+    },
+    "B_after": {
+      "fused": 0.5966587110061168,
+      "decision": "normal",
+      "ms": 135.046900017187
+    }
+  },
+  {
+    "path": "D:\\CGAIC\\data_local\\gold_finger\\train\\good\\1332_repaired.jpg",
+    "label": 0,
+    "group": "orig_normal",
+    "batch": "numeric",
+    "A_after": {
+      "fused": 1.997789430775982,
+      "decision": "anomaly",
+      "ms": 171.8383000115864
+    },
+    "B_before": {
+      "fused": 1.0025606440917527,
+      "decision": "anomaly",
+      "ms": 159.36210000654683
+    },
+    "B_after": {
+      "fused": 0.6330791924882736,
+      "decision": "normal",
+      "ms": 139.833000022918
+    },
+    "A_before": {
+      "fused": 1.9925563364269827,
+      "decision": "anomaly",
+      "ms": 145.28140000766143
+    }
+  },
+  {
+    "path": "D:\\CGAIC\\data_local\\gold_finger\\train\\good\\1334_repaired.jpg",
+    "label": 0,
+    "group": "orig_normal",
+    "batch": "numeric",
+    "B_before": {
+      "fused": 1.0125264897850863,
+      "decision": "anomaly",
+      "ms": 273.9696999778971
+    },
+    "B_after": {
+      "fused": 0.6399740306077536,
+      "decision": "normal",
+      "ms": 136.6915000253357
+    },
+    "A_before": {
+      "fused": 1.993270656773019,
+      "decision": "anomaly",
+      "ms": 156.00920002907515
+    },
+    "A_after": {
+      "fused": 1.9940599841642772,
+      "decision": "anomaly",
+      "ms": 168.5196000034921
+    }
+  },
+  {
+    "path": "D:\\CGAIC\\data_local\\gold_finger\\train\\good\\2444_repaired.jpg",
+    "label": 0,
+    "group": "orig_normal",
+    "batch": "numeric",
+    "B_after": {
+      "fused": 0.8977306784802415,
+      "decision": "anomaly",
+      "ms": 173.86849998729303
+    },
+    "A_before": {
+      "fused": 1.994151872786881,
+      "decision": "anomaly",
+      "ms": 164.5099999732338
+    },
+    "A_after": {
+      "fused": 1.9952688222018935,
+      "decision": "anomaly",
+      "ms": 168.51299995323643
+    },
+    "B_before": {
+      "fused": 0.9974390572035847,
+      "decision": "anomaly",
+      "ms": 159.667800005991
+    }
+  },
+  {
+    "path": "D:\\CGAIC\\data_local\\gold_finger\\train\\good\\2446_repaired.jpg",
+    "label": 0,
+    "group": "orig_normal",
+    "batch": "numeric",
+    "A_before": {
+      "fused": 1.9945679269605376,
+      "decision": "anomaly",
+      "ms": 160.8041999861598
+    },
+    "A_after": {
+      "fused": 1.9967064101408512,
+      "decision": "anomaly",
+      "ms": 164.0190999605693
+    },
+    "B_before": {
+      "fused": 1.3770785412634778,
+      "decision": "anomaly",
+      "ms": 148.32879998721182
+    },
+    "B_after": {
+      "fused": 0.9731552315314449,
+      "decision": "anomaly",
+      "ms": 154.43940000841394
+    }
+  },
+  {
+    "path": "D:\\CGAIC\\data_local\\gold_finger\\train\\good\\2447_repaired.jpg",
+    "label": 0,
+    "group": "orig_normal",
+    "batch": "numeric",
+    "A_after": {
+      "fused": 1.9973863661906242,
+      "decision": "anomaly",
+      "ms": 169.08590000821277
+    },
+    "B_before": {
+      "fused": 1.3980017619727725,
+      "decision": "anomaly",
+      "ms": 157.26969996467233
+    },
+    "B_after": {
+      "fused": 1.4559231052489974,
+      "decision": "anomaly",
+      "ms": 151.02789999218658
+    },
+    "A_before": {
+      "fused": 1.9946667485272247,
+      "decision": "anomaly",
+      "ms": 151.85919997747988
+    }
+  },
+  {
+    "path": "D:\\CGAIC\\data_local\\gold_finger\\train\\good\\2448_repaired.jpg",
+    "label": 0,
+    "group": "orig_normal",
+    "batch": "numeric",
+    "B_before": {
+      "fused": 1.3434922661906579,
+      "decision": "anomaly",
+      "ms": 169.71180000109598
+    },
+    "B_after": {
+      "fused": 0.9663689423697048,
+      "decision": "anomaly",
+      "ms": 152.53459999803454
+    },
+    "A_before": {
+      "fused": 1.9947922730546326,
+      "decision": "anomaly",
+      "ms": 147.23609999055043
+    },
+    "A_after": {
+      "fused": 1.9861501737096696,
+      "decision": "anomaly",
+      "ms": 155.05399997346103
+    }
+  },
+  {
+    "path": "D:\\CGAIC\\data_local\\gold_finger\\train\\good\\2449_repaired.jpg",
+    "label": 0,
+    "group": "orig_normal",
+    "batch": "numeric",
+    "B_after": {
+      "fused": 0.9752043492746088,
+      "decision": "anomaly",
+      "ms": 154.6669999952428
+    },
+    "A_before": {
+      "fused": 1.9946219894722523,
+      "decision": "anomaly",
+      "ms": 159.44580000359565
+    },
+    "A_after": {
+      "fused": 1.9939778331376476,
+      "decision": "anomaly",
+      "ms": 171.48190003354102
+    },
+    "B_before": {
+      "fused": 1.3406997987248466,
+      "decision": "anomaly",
+      "ms": 158.12219999497756
+    }
+  },
+  {
+    "path": "D:\\CGAIC\\data_local\\gold_finger\\train\\good\\2452_repaired.jpg",
+    "label": 0,
+    "group": "orig_normal",
+    "batch": "numeric",
+    "A_before": {
+      "fused": 1.9946860229927639,
+      "decision": "anomaly",
+      "ms": 246.73969997093081
+    },
+    "A_after": {
+      "fused": 1.9955592066442507,
+      "decision": "anomaly",
+      "ms": 231.76900000544265
+    },
+    "B_before": {
+      "fused": 1.4161804567347358,
+      "decision": "anomaly",
+      "ms": 175.74580002110451
+    },
+    "B_after": {
+      "fused": 1.2995838758812719,
+      "decision": "anomaly",
+      "ms": 156.54550003819168
+    }
+  },
+  {
+    "path": "D:\\CGAIC\\data_local\\gold_finger\\train\\good\\2453_repaired.jpg",
+    "label": 0,
+    "group": "orig_normal",
+    "batch": "numeric",
+    "A_after": {
+      "fused": 1.9961602855339522,
+      "decision": "anomaly",
+      "ms": 183.43789997743443
+    },
+    "B_before": {
+      "fused": 1.3507769072862172,
+      "decision": "anomaly",
+      "ms": 181.73180002486333
+    },
+    "B_after": {
+      "fused": 0.9436570753748375,
+      "decision": "anomaly",
+      "ms": 256.36180001311004
+    },
+    "A_before": {
+      "fused": 1.9943527812679496,
+      "decision": "anomaly",
+      "ms": 349.60529999807477
+    }
+  },
+  {
+    "path": "D:\\CGAIC\\data_local\\gold_finger\\train\\good\\2455_repaired.jpg",
+    "label": 0,
+    "group": "orig_normal",
+    "batch": "numeric",
+    "B_before": {
+      "fused": 1.4069663395241958,
+      "decision": "anomaly",
+      "ms": 175.753099960275
+    },
+    "B_after": {
+      "fused": 0.9764711263687148,
+      "decision": "anomaly",
+      "ms": 168.85580000234768
+    },
+    "A_before": {
+      "fused": 1.9944766499786009,
+      "decision": "anomaly",
+      "ms": 198.24249995872378
+    },
+    "A_after": {
+      "fused": 1.9949146883893238,
+      "decision": "anomaly",
+      "ms": 207.05600001383573
+    }
+  },
+  {
+    "path": "D:\\CGAIC\\data_local\\gold_finger\\train\\good\\2458_repaired.jpg",
+    "label": 0,
+    "group": "orig_normal",
+    "batch": "numeric",
+    "B_after": {
+      "fused": 0.9735444398525332,
+      "decision": "anomaly",
+      "ms": 212.44859998114407
+    },
+    "A_before": {
+      "fused": 1.9946523623602161,
+      "decision": "anomaly",
+      "ms": 211.3540999707766
+    },
+    "A_after": {
+      "fused": 1.9944630041570899,
+      "decision": "anomaly",
+      "ms": 202.83029996789992
+    },
+    "B_before": {
+      "fused": 0.9999089856257324,
+      "decision": "anomaly",
+      "ms": 194.51269996352494
+    }
+  },
+  {
+    "path": "D:\\CGAIC\\data_local\\gold_finger\\train\\good\\2464_repaired.jpg",
+    "label": 0,
+    "group": "orig_normal",
+    "batch": "numeric",
+    "A_before": {
+      "fused": 1.9936224207279714,
+      "decision": "anomaly",
+      "ms": 192.1796000096947
+    },
+    "A_after": {
+      "fused": 1.9966334325664565,
+      "decision": "anomaly",
+      "ms": 200.93679998535663
+    },
+    "B_before": {
+      "fused": 1.1670258036382974,
+      "decision": "anomaly",
+      "ms": 187.99740000395104
+    },
+    "B_after": {
+      "fused": 0.8025749720348291,
+      "decision": "anomaly",
+      "ms": 177.69849998876452
+    }
+  },
+  {
+    "path": "D:\\CGAIC\\data_local\\gold_finger\\train\\good\\2465_repaired.jpg",
+    "label": 0,
+    "group": "orig_normal",
+    "batch": "numeric",
+    "A_after": {
+      "fused": 1.9968911744033337,
+      "decision": "anomaly",
+      "ms": 203.22719996329397
+    },
+    "B_before": {
+      "fused": 1.0003125017775225,
+      "decision": "anomaly",
+      "ms": 175.2818999812007
+    },
+    "B_after": {
+      "fused": 0.9551941463563373,
+      "decision": "anomaly",
+      "ms": 176.8714999780059
+    },
+    "A_before": {
+      "fused": 1.9941920459100264,
+      "decision": "anomaly",
+      "ms": 187.79860000358894
+    }
+  }
+]

@@ -1,0 +1,60 @@
+{
+  "temp": "C:\\Users\\imia\\AppData\\Local\\Temp\\aoi_test03_5j91ktmy",
+  "card_peak_mib_by_scenario": {
+    "boot": {
+      "n": 24,
+      "peak_mib": 516.0,
+      "mean_mib": 481.0833333333333
+    },
+    "train_prepare_gold_finger": {
+      "n": 166,
+      "peak_mib": 913.0,
+      "mean_mib": 687.4156626506024
+    },
+    "idle_after_load": {
+      "n": 36,
+      "peak_mib": 691.0,
+      "mean_mib": 689.2222222222222
+    },
+    "infer_single": {
+      "n": 30,
+      "peak_mib": 691.0,
+      "mean_mib": 689.2666666666667
+    },
+    "train_prepare_second_slot": {
+      "n": 155,
+      "peak_mib": 919.0,
+      "mean_mib": 715.2451612903226
+    },
+    "idle_two_slots": {
+      "n": 21,
+      "peak_mib": 691.0,
+      "mean_mib": 691.0
+    },
+    "infer_dual_process": {
+      "n": 95,
+      "peak_mib": 926.0,
+      "mean_mib": 759.6
+    },
+    "replay_reload": {
+      "n": 33,
+      "peak_mib": 693.0,
+      "mean_mib": 691.9090909090909
+    },
+    "done": {
+      "n": 7,
+      "peak_mib": 693.0,
+      "mean_mib": 691.2857142857143
+    }
+  },
+  "torch_process_peak_mib": {
+    "train_prepare_gold_finger": 276,
+    "idle_after_load": 105,
+    "infer_single": 127,
+    "train_prepare_second_slot": 290,
+    "idle_two_slots": 110,
+    "infer_dual_process": 131,
+    "replay_reload": 114
+  },
+  "child_exit": 0
+}

@@ -1,0 +1,137 @@
+C:\Users\imia\AppData\Roaming\Python\Python311\site-packages\fastapi\testclient.py:1: StarletteDeprecationWarning: Using `httpx` with `starlette.testclient` is deprecated; install `httpx2` instead.
+  from starlette.testclient import TestClient as TestClient  # noqa
+................................QFontDatabase: Cannot find font directory C:/Program Files/Python311/Lib/site-packages/PySide6/lib/fonts.
+Note that Qt no longer ships fonts. Deploy some (from https://dejavu-fonts.github.io/ for example) or switch to fontconfig.
+....候选审计日志写入失败 action=candidate_activate
+Traceback (most recent call last):
+  File "D:\CGAIC\AOI_SSOCL\AOI_tree\AOI_Core\backend\api\routes_candidates.py", line 101, in _log
+    log_action(action, " ".join(f"{k}={extra[k]}" for k in ("category", "version") if k in extra),
+  File "C:\Program Files\Python311\Lib\unittest\mock.py", line 1124, in __call__
+    return self._mock_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Program Files\Python311\Lib\unittest\mock.py", line 1128, in _mock_call
+    return self._execute_mock_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Program Files\Python311\Lib\unittest\mock.py", line 1183, in _execute_mock_call
+    raise effect
+RuntimeError: db down
+.............C:\Users\imia\AppData\Roaming\Python\Python311\site-packages\sklearn\base.py:525: InconsistentVersionWarning: Trying to unpickle estimator DecisionTreeClassifier from version 1.9.1 when using version 1.9.0. This might lead to breaking code or invalid results. Use at your own risk. For more info please refer to:
+https://scikit-learn.org/stable/model_persistence.html#security-maintainability-limitations
+  warnings.warn(
+C:\Users\imia\AppData\Roaming\Python\Python311\site-packages\sklearn\base.py:525: InconsistentVersionWarning: Trying to unpickle estimator RandomForestClassifier from version 1.9.1 when using version 1.9.0. This might lead to breaking code or invalid results. Use at your own risk. For more info please refer to:
+https://scikit-learn.org/stable/model_persistence.html#security-maintainability-limitations
+  warnings.warn(
+C:\Users\imia\AppData\Roaming\Python\Python311\site-packages\sklearn\base.py:525: InconsistentVersionWarning: Trying to unpickle estimator DecisionTreeClassifier from version 1.9.1 when using version 1.9.0. This might lead to breaking code or invalid results. Use at your own risk. For more info please refer to:
+https://scikit-learn.org/stable/model_persistence.html#security-maintainability-limitations
+  warnings.warn(
+C:\Users\imia\AppData\Roaming\Python\Python311\site-packages\sklearn\base.py:525: InconsistentVersionWarning: Trying to unpickle estimator RandomForestClassifier from version 1.9.1 when using version 1.9.0. This might lead to breaking code or invalid results. Use at your own risk. For more info please refer to:
+https://scikit-learn.org/stable/model_persistence.html#security-maintainability-limitations
+  warnings.warn(
+........[safe_pickle] 拒绝加载白名单外 pickle：C:\Users\imia\AppData\Local\Temp\untrusted_learning_q7tg5vpv\state.pkl
+...............C:\Users\imia\AppData\Roaming\Python\Python311\site-packages\sklearn\base.py:525: InconsistentVersionWarning: Trying to unpickle estimator DecisionTreeClassifier from version 1.9.1 when using version 1.9.0. This might lead to breaking code or invalid results. Use at your own risk. For more info please refer to:
+https://scikit-learn.org/stable/model_persistence.html#security-maintainability-limitations
+  warnings.warn(
+C:\Users\imia\AppData\Roaming\Python\Python311\site-packages\sklearn\base.py:525: InconsistentVersionWarning: Trying to unpickle estimator RandomForestClassifier from version 1.9.1 when using version 1.9.0. This might lead to breaking code or invalid results. Use at your own risk. For more info please refer to:
+https://scikit-learn.org/stable/model_persistence.html#security-maintainability-limitations
+  warnings.warn(
+........C:\Users\imia\AppData\Roaming\Python\Python311\site-packages\sklearn\base.py:525: InconsistentVersionWarning: Trying to unpickle estimator DecisionTreeClassifier from version 1.9.1 when using version 1.9.0. This might lead to breaking code or invalid results. Use at your own risk. For more info please refer to:
+https://scikit-learn.org/stable/model_persistence.html#security-maintainability-limitations
+  warnings.warn(
+C:\Users\imia\AppData\Roaming\Python\Python311\site-packages\sklearn\base.py:525: InconsistentVersionWarning: Trying to unpickle estimator RandomForestClassifier from version 1.9.1 when using version 1.9.0. This might lead to breaking code or invalid results. Use at your own risk. For more info please refer to:
+https://scikit-learn.org/stable/model_persistence.html#security-maintainability-limitations
+  warnings.warn(
+................................C:\Users\imia\AppData\Roaming\Python\Python311\site-packages\sklearn\base.py:525: InconsistentVersionWarning: Trying to unpickle estimator DecisionTreeClassifier from version 1.9.1 when using version 1.9.0. This might lead to breaking code or invalid results. Use at your own risk. For more info please refer to:
+https://scikit-learn.org/stable/model_persistence.html#security-maintainability-limitations
+  warnings.warn(
+C:\Users\imia\AppData\Roaming\Python\Python311\site-packages\sklearn\base.py:525: InconsistentVersionWarning: Trying to unpickle estimator RandomForestClassifier from version 1.9.1 when using version 1.9.0. This might lead to breaking code or invalid results. Use at your own risk. For more info please refer to:
+https://scikit-learn.org/stable/model_persistence.html#security-maintainability-limitations
+  warnings.warn(
+.........D:\CGAIC\AOI_SSOCL\AOI_tree\AOI_Core\algo\eval\contribution.py:66: ConstantInputWarning: An input array is constant; the correlation coefficient is not defined.
+  c = spearmanr(M[i], M[j]).statistic
+...................................C:\Users\imia\AppData\Roaming\Python\Python311\site-packages\sklearn\base.py:525: InconsistentVersionWarning: Trying to unpickle estimator DecisionTreeClassifier from version 1.9.1 when using version 1.9.0. This might lead to breaking code or invalid results. Use at your own risk. For more info please refer to:
+https://scikit-learn.org/stable/model_persistence.html#security-maintainability-limitations
+  warnings.warn(
+C:\Users\imia\AppData\Roaming\Python\Python311\site-packages\sklearn\base.py:525: InconsistentVersionWarning: Trying to unpickle estimator RandomForestClassifier from version 1.9.1 when using version 1.9.0. This might lead to breaking code or invalid results. Use at your own risk. For more info please refer to:
+https://scikit-learn.org/stable/model_persistence.html#security-maintainability-limitations
+  warnings.warn(
+.C:\Users\imia\AppData\Roaming\Python\Python311\site-packages\sklearn\base.py:525: InconsistentVersionWarning: Trying to unpickle estimator DecisionTreeClassifier from version 1.9.1 when using version 1.9.0. This might lead to breaking code or invalid results. Use at your own risk. For more info please refer to:
+https://scikit-learn.org/stable/model_persistence.html#security-maintainability-limitations
+  warnings.warn(
+C:\Users\imia\AppData\Roaming\Python\Python311\site-packages\sklearn\base.py:525: InconsistentVersionWarning: Trying to unpickle estimator RandomForestClassifier from version 1.9.1 when using version 1.9.0. This might lead to breaking code or invalid results. Use at your own risk. For more info please refer to:
+https://scikit-learn.org/stable/model_persistence.html#security-maintainability-limitations
+  warnings.warn(
+..对位偏移预警 detection_id=1 category=test offset=[1.25, -2.0]
+对位偏移预警 detection_id=2 category=test offset=[1.25, -2.0]
+对位偏移预警 detection_id=3 category=test offset=[1.25, -2.0]
+对位偏移预警 detection_id=4 category=test offset=[1.25, -2.0]
+对位偏移预警 detection_id=5 category=test offset=[1.25, -2.0]
+对位偏移预警 detection_id=6 category=test offset=[1.25, -2.0]
+...............D:\CGAIC\AOI_SSOCL\AOI_tree\AOI_feature\feature_lib.py:209: FutureWarning: Parameter `min_size` is deprecated since version 0.26.0 and will be removed in 2.0.0 (or later). To avoid this warning, please use the parameter `max_size` instead. For more details, see the documentation of `remove_small_objects`. Note that the new threshold removes objects smaller than **or equal to** its value, while the previous parameter only removed smaller ones.
+  bw = morphology.remove_small_objects(bw.astype(bool), min_size=p["min_size"])
+D:\CGAIC\AOI_SSOCL\AOI_tree\AOI_Core\algo\vendor\traditional.py:264: FutureWarning: Parameter `min_size` is deprecated since version 0.26.0 and will be removed in 2.0.0 (or later). To avoid this warning, please use the parameter `max_size` instead. For more details, see the documentation of `remove_small_objects`. Note that the new threshold removes objects smaller than **or equal to** its value, while the previous parameter only removed smaller ones.
+  bw = morphology.remove_small_objects(bw.astype(bool), min_size=50)
+..C:\Program Files\Python311\Lib\site-packages\numpy\lib\_function_base_impl.py:3023: RuntimeWarning: invalid value encountered in divide
+  c /= stddev[:, None]
+D:\CGAIC\AOI_SSOCL\AOI_tree\AOI_feature\feature_lib.py:107: RuntimeWarning: Mean of empty slice
+  out.append(float(np.sqrt(dist2[dist2 > 0]).mean()))
+C:\Program Files\Python311\Lib\site-packages\numpy\_core\_methods.py:142: RuntimeWarning: invalid value encountered in divide
+  ret = ret.dtype.type(ret / rcount)
+....D:\CGAIC\AOI_SSOCL\AOI_tree\AOI_Core\algo\vendor\traditional.py:264: FutureWarning: Parameter `min_size` is deprecated since version 0.26.0 and will be removed in 2.0.0 (or later). To avoid this warning, please use the parameter `max_size` instead. For more details, see the documentation of `remove_small_objects`. Note that the new threshold removes objects smaller than **or equal to** its value, while the previous parameter only removed smaller ones.
+  bw = morphology.remove_small_objects(bw.astype(bool), min_size=50)
+D:\CGAIC\AOI_SSOCL\AOI_tree\AOI_Core\algo\vendor\traditional.py:264: FutureWarning: Parameter `min_size` is deprecated since version 0.26.0 and will be removed in 2.0.0 (or later). To avoid this warning, please use the parameter `max_size` instead. For more details, see the documentation of `remove_small_objects`. Note that the new threshold removes objects smaller than **or equal to** its value, while the previous parameter only removed smaller ones.
+  bw = morphology.remove_small_objects(bw.astype(bool), min_size=50)
+D:\CGAIC\AOI_SSOCL\AOI_tree\AOI_Core\algo\vendor\traditional.py:264: FutureWarning: Parameter `min_size` is deprecated since version 0.26.0 and will be removed in 2.0.0 (or later). To avoid this warning, please use the parameter `max_size` instead. For more details, see the documentation of `remove_small_objects`. Note that the new threshold removes objects smaller than **or equal to** its value, while the previous parameter only removed smaller ones.
+  bw = morphology.remove_small_objects(bw.astype(bool), min_size=50)
+.D:\CGAIC\AOI_SSOCL\AOI_tree\AOI_Core\algo\vendor\traditional.py:264: FutureWarning: Parameter `min_size` is deprecated since version 0.26.0 and will be removed in 2.0.0 (or later). To avoid this warning, please use the parameter `max_size` instead. For more details, see the documentation of `remove_small_objects`. Note that the new threshold removes objects smaller than **or equal to** its value, while the previous parameter only removed smaller ones.
+  bw = morphology.remove_small_objects(bw.astype(bool), min_size=50)
+.C:\Users\imia\AppData\Roaming\Python\Python311\site-packages\sklearn\base.py:525: InconsistentVersionWarning: Trying to unpickle estimator DecisionTreeClassifier from version 1.9.1 when using version 1.9.0. This might lead to breaking code or invalid results. Use at your own risk. For more info please refer to:
+https://scikit-learn.org/stable/model_persistence.html#security-maintainability-limitations
+  warnings.warn(
+C:\Users\imia\AppData\Roaming\Python\Python311\site-packages\sklearn\base.py:525: InconsistentVersionWarning: Trying to unpickle estimator RandomForestClassifier from version 1.9.1 when using version 1.9.0. This might lead to breaking code or invalid results. Use at your own risk. For more info please refer to:
+https://scikit-learn.org/stable/model_persistence.html#security-maintainability-limitations
+  warnings.warn(
+D:\CGAIC\AOI_SSOCL\AOI_tree\AOI_Core\algo\persist.py:864: UserWarning: trad 表示签名与快照不一致: registry_sha256
+  warnings.warn("trad 表示签名与快照不一致: " + ",".join(drift))
+..................................................................D:\CGAIC\AOI_SSOCL\AOI_tree\AOI_Core\algo\vendor\traditional.py:264: FutureWarning: Parameter `min_size` is deprecated since version 0.26.0 and will be removed in 2.0.0 (or later). To avoid this warning, please use the parameter `max_size` instead. For more details, see the documentation of `remove_small_objects`. Note that the new threshold removes objects smaller than **or equal to** its value, while the previous parameter only removed smaller ones.
+  bw = morphology.remove_small_objects(bw.astype(bool), min_size=50)
+..............C:\Users\imia\AppData\Roaming\Python\Python311\site-packages\sklearn\base.py:525: InconsistentVersionWarning: Trying to unpickle estimator DecisionTreeClassifier from version 1.9.1 when using version 1.9.0. This might lead to breaking code or invalid results. Use at your own risk. For more info please refer to:
+https://scikit-learn.org/stable/model_persistence.html#security-maintainability-limitations
+  warnings.warn(
+C:\Users\imia\AppData\Roaming\Python\Python311\site-packages\sklearn\base.py:525: InconsistentVersionWarning: Trying to unpickle estimator RandomForestClassifier from version 1.9.1 when using version 1.9.0. This might lead to breaking code or invalid results. Use at your own risk. For more info please refer to:
+https://scikit-learn.org/stable/model_persistence.html#security-maintainability-limitations
+  warnings.warn(
+.........C:\Users\imia\AppData\Roaming\Python\Python311\site-packages\sklearn\base.py:525: InconsistentVersionWarning: Trying to unpickle estimator DecisionTreeClassifier from version 1.9.1 when using version 1.9.0. This might lead to breaking code or invalid results. Use at your own risk. For more info please refer to:
+https://scikit-learn.org/stable/model_persistence.html#security-maintainability-limitations
+  warnings.warn(
+C:\Users\imia\AppData\Roaming\Python\Python311\site-packages\sklearn\base.py:525: InconsistentVersionWarning: Trying to unpickle estimator RandomForestClassifier from version 1.9.1 when using version 1.9.0. This might lead to breaking code or invalid results. Use at your own risk. For more info please refer to:
+https://scikit-learn.org/stable/model_persistence.html#security-maintainability-limitations
+  warnings.warn(
+.........................................
+[AC-078] dev 冻结阈值 {'fabric': 0.030387, 'metal': 0.123383, 'pcb': 0.286056}
+[AC-078] fabric seed=1 帧=24 p95=1.26ms
+[AC-078] fabric seed=2 帧=24 p95=1.21ms
+[AC-078] fabric seed=3 帧=24 p95=1.26ms
+[AC-078] metal seed=1 帧=24 p95=2.04ms
+[AC-078] metal seed=2 帧=24 p95=3.26ms
+[AC-078] metal seed=3 帧=24 p95=3.35ms
+[AC-078] pcb seed=1 帧=24 p95=4.09ms
+[AC-078] pcb seed=2 帧=24 p95=2.16ms
+[AC-078] pcb seed=3 帧=24 p95=2.42ms
+[AC-078] {"fabric": {"recall_strong": 1.0, "recall_weak": 1.0, "fpr": 0.05263157894736842, "n_normal": 57, "n_strong": 9, "n_weak": 6, "lat_p50_ms": 0.8333000005222857, "lat_p95_ms": 1.2766449799528345}, "metal": {"recall_strong": 1.0, "recall_weak": 0.8333333333333334, "fpr": 0.0, "n_normal": 57, "n_strong": 9, "n_weak": 6, "lat_p50_ms": 1.0167000000365078, "lat_p95_ms": 3.535180003382266}, "pcb": {"recall_strong": 0.8888888888888888, "recall_weak": 0.3333333333333333, "fpr": 0.0, "n_normal": 57, "n_strong": 9, "n_weak": 6, "lat_p50_ms": 1.231449976330623, "lat_p95_ms": 3.484589984873314}}
+............................C:\Users\imia\AppData\Roaming\Python\Python311\site-packages\sklearn\base.py:525: InconsistentVersionWarning: Trying to unpickle estimator DecisionTreeClassifier from version 1.9.1 when using version 1.9.0. This might lead to breaking code or invalid results. Use at your own risk. For more info please refer to:
+https://scikit-learn.org/stable/model_persistence.html#security-maintainability-limitations
+  warnings.warn(
+C:\Users\imia\AppData\Roaming\Python\Python311\site-packages\sklearn\base.py:525: InconsistentVersionWarning: Trying to unpickle estimator RandomForestClassifier from version 1.9.1 when using version 1.9.0. This might lead to breaking code or invalid results. Use at your own risk. For more info please refer to:
+https://scikit-learn.org/stable/model_persistence.html#security-maintainability-limitations
+  warnings.warn(
+...............................................................................................................................................................................D:\CGAIC\AOI_SSOCL\AOI_tree\assets\dinov2\dinov2\layers\swiglu_ffn.py:51: UserWarning: xFormers is not available (SwiGLU)
+  warnings.warn("xFormers is not available (SwiGLU)")
+D:\CGAIC\AOI_SSOCL\AOI_tree\assets\dinov2\dinov2\layers\attention.py:33: UserWarning: xFormers is not available (Attention)
+  warnings.warn("xFormers is not available (Attention)")
+D:\CGAIC\AOI_SSOCL\AOI_tree\assets\dinov2\dinov2\layers\block.py:40: UserWarning: xFormers is not available (Block)
+  warnings.warn("xFormers is not available (Block)")
+..................................
+----------------------------------------------------------------------
+Ran 549 tests in 154.231s
+
+OK

@@ -1,0 +1,128 @@
+﻿[isolate] C:\Users\imia\AppData\Local\Temp\aoi_ac069_bench_z54j0zzq
+[dino] 使用随包 vendor 权重: D:\CGAIC\AOI_SSOCL\AOI_tree\assets\dinov2\dinov2_vits14_pretrain.pth
+python.exe : D:\CGAIC\AOI_SSOCL\AOI_tree\assets\dinov2\dinov2\layers\swiglu_ffn.py:51: UserWarning: xFormers is not ava
+ilable (SwiGLU)
+At line:15 char:3363
++ ... | Out-Null; & "C:\Program Files\Python311\python.exe" -u -m tests.ben ...
++                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: (D:\CGAIC\AOI_SS...ilable (SwiGLU):String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+  warnings.warn("xFormers is not available (SwiGLU)")
+D:\CGAIC\AOI_SSOCL\AOI_tree\assets\dinov2\dinov2\layers\attention.py:33: UserWarning: xFormers is not available (Attent
+ion)
+  warnings.warn("xFormers is not available (Attention)")
+D:\CGAIC\AOI_SSOCL\AOI_tree\assets\dinov2\dinov2\layers\block.py:40: UserWarning: xFormers is not available (Block)
+  warnings.warn("xFormers is not available (Block)")
+[disc] 加载预训练头 D:\CGAIC\AOI_SSOCL\AOI_tree\AOI_Core\assets\disc_pretrain.pt
+C:\Users\imia\AppData\Roaming\Python\Python311\site-packages\sklearn\base.py:525: InconsistentVersionWarning: Trying to
+ unpickle estimator DecisionTreeClassifier from version 1.9.1 when using version 1.9.0. This might lead to breaking cod
+e or invalid results. Use at your own risk. For more info please refer to:
+https://scikit-learn.org/stable/model_persistence.html#security-maintainability-limitations
+  warnings.warn(
+C:\Users\imia\AppData\Roaming\Python\Python311\site-packages\sklearn\base.py:525: InconsistentVersionWarning: Trying to
+ unpickle estimator RandomForestClassifier from version 1.9.1 when using version 1.9.0. This might lead to breaking cod
+e or invalid results. Use at your own risk. For more info please refer to:
+https://scikit-learn.org/stable/model_persistence.html#security-maintainability-limitations
+  warnings.warn(
+[load] v1 2.6s device=cuda
+[warmup] done
+  [idle] 10/30 learned=0
+  [idle] 20/30 learned=0
+  [idle] 30/30 learned=0
+[idle] {"n": 30, "p50": 86.8, "p95": 183.0, "max": 298.9, "lock_wait_p50": 0.0, "lock_wait_p95": 0.0, "lock_wait_max": 0.0, "lock_wait_gt0": 0, "yield_p50": null, "yield_max": null, "learn_wall_p50": null, "learned": 0, "hold_p50": null, "hold_max": null, "prefetched": 0, "errors": []}
+  [learn_before] 10/30 learned=9
+  [learn_before] 20/30 learned=10
+  [learn_before] 30/30 learned=10
+[learn_before] {"n": 30, "p50": 101.0, "p95": 1359.3, "max": 1672.5, "lock_wait_p50": 0.0, "lock_wait_p95": 898.5, "lock_wait_max": 1401.1, "lock_wait_gt0": 10, "yield_p50": 0.0, "yield_max": 0.0, "learn_wall_p50": 875.9, "learned": 10, "hold_p50": 626.8, "hold_max": 1501.2, "prefetched": 0, "errors": []}
+  [learn_after] 10/30 learned=0
+  [learn_after] 20/30 learned=0
+  [learn_after] 30/30 learned=1
+[learn_after] {"n": 30, "p50": 93.6, "p95": 254.8, "max": 436.3, "lock_wait_p50": 0.0, "lock_wait_p95": 0.0, "lock_wait_max": 385.5, "lock_wait_gt0": 1, "yield_p50": 1281.5, "yield_max": 1500.0, "learn_wall_p50": 1990.7, "learned": 2, "hold_p50": 413.5, "hold_max": 441.6, "prefetched": 2, "errors": []}
+  [learn_after_cached] 10/30 learned=0
+  [learn_after_cached] 20/30 learned=0
+  [learn_after_cached] 30/30 learned=1
+[learn_after_cached] {"n": 30, "p50": 94.9, "p95": 127.2, "max": 819.3, "lock_wait_p50": 0.0, "lock_wait_p95": 0.0, "lock_wait_max": 538.9, "lock_wait_gt0": 1, "yield_p50": 1367.0, "yield_max": 1515.0, "learn_wall_p50": 1835.7, "learned": 2, "hold_p50": 461.5, "hold_max": 538.8, "prefetched": 0, "errors": []}
+{
+  "idle": {
+    "n": 30,
+    "p50": 86.8,
+    "p95": 183.0,
+    "max": 298.9,
+    "lock_wait_p50": 0.0,
+    "lock_wait_p95": 0.0,
+    "lock_wait_max": 0.0,
+    "lock_wait_gt0": 0,
+    "yield_p50": null,
+    "yield_max": null,
+    "learn_wall_p50": null,
+    "learned": 0,
+    "hold_p50": null,
+    "hold_max": null,
+    "prefetched": 0,
+    "errors": []
+  },
+  "learn_before": {
+    "n": 30,
+    "p50": 101.0,
+    "p95": 1359.3,
+    "max": 1672.5,
+    "lock_wait_p50": 0.0,
+    "lock_wait_p95": 898.5,
+    "lock_wait_max": 1401.1,
+    "lock_wait_gt0": 10,
+    "yield_p50": 0.0,
+    "yield_max": 0.0,
+    "learn_wall_p50": 875.9,
+    "learned": 10,
+    "hold_p50": 626.8,
+    "hold_max": 1501.2,
+    "prefetched": 0,
+    "errors": []
+  },
+  "learn_after": {
+    "n": 30,
+    "p50": 93.6,
+    "p95": 254.8,
+    "max": 436.3,
+    "lock_wait_p50": 0.0,
+    "lock_wait_p95": 0.0,
+    "lock_wait_max": 385.5,
+    "lock_wait_gt0": 1,
+    "yield_p50": 1281.5,
+    "yield_max": 1500.0,
+    "learn_wall_p50": 1990.7,
+    "learned": 2,
+    "hold_p50": 413.5,
+    "hold_max": 441.6,
+    "prefetched": 2,
+    "errors": []
+  },
+  "learn_after_cached": {
+    "n": 30,
+    "p50": 94.9,
+    "p95": 127.2,
+    "max": 819.3,
+    "lock_wait_p50": 0.0,
+    "lock_wait_p95": 0.0,
+    "lock_wait_max": 538.9,
+    "lock_wait_gt0": 1,
+    "yield_p50": 1367.0,
+    "yield_max": 1515.0,
+    "learn_wall_p50": 1835.7,
+    "learned": 2,
+    "hold_p50": 461.5,
+    "hold_max": 538.8,
+    "prefetched": 0,
+    "errors": []
+  },
+  "lock_stats": {
+    "feedback": {
+      "n": 14,
+      "max_wait_ms": 658.129,
+      "max_hold_ms": 1501.243,
+      "last_hold_ms": 384.118
+    }
+  }
+}
+[out] d:\CGAIC\AOI_SSOCL\review\task\test02_gpu_concurrency\dev_opt

@@ -1,0 +1,86 @@
+﻿{
+    "note":  "EfficientAD few-shot100 复测训练产物 SHA256 校验清单（2026-08-31）。训练工件体积大（~165MB）不入包；teacher_small.pth 为官方预训练 PDN（5 品类共用同一份），可用 run_efficientad_fewshot.py 重训（GTX 1660 SUPER 约 50 分钟）后按本清单校验一致性。",
+    "generated":  "2026-08-31",
+    "artifacts":  [
+                      {
+                          "path":  "teacher_small.pth",
+                          "sha256":  "b98a6a139087a0d743783ee59f367f0284af6003eb1a5fed0ce92bd9c0acd337",
+                          "bytes":  10779715
+                      },
+                      {
+                          "path":  "outputs\\sota\\efficientad\\trainings\\mvtec_ad\\bottle\\autoencoder_final.pth",
+                          "sha256":  "11f75d55fc50ce14631c11a76555b38c5b5ea144713da07d262d5b8c7bbab0aa",
+                          "bytes":  4405442
+                      },
+                      {
+                          "path":  "outputs\\sota\\efficientad\\trainings\\mvtec_ad\\bottle\\student_final.pth",
+                          "sha256":  "cea8c39efce1b75ac53769a2ab5e4102270045d99b10a73cfdcc53829b9156ea",
+                          "bytes":  17075720
+                      },
+                      {
+                          "path":  "outputs\\sota\\efficientad\\trainings\\mvtec_ad\\bottle\\teacher_final.pth",
+                          "sha256":  "5b198dd3407e02f3c413be530b3ec8e196d54b2081a8aeb07dafbf3cb2ba5335",
+                          "bytes":  10782728
+                      },
+                      {
+                          "path":  "outputs\\sota\\efficientad\\trainings\\mvtec_ad\\cable\\autoencoder_final.pth",
+                          "sha256":  "add70df3f26687dad48648a581d2d40b5aeb736530bebaa6df5bfa99b0401879",
+                          "bytes":  4405442
+                      },
+                      {
+                          "path":  "outputs\\sota\\efficientad\\trainings\\mvtec_ad\\cable\\student_final.pth",
+                          "sha256":  "f6f111c6b311800b6087a0e389e58976929835ece13ef132a5ff9e58bbff1eb2",
+                          "bytes":  17075720
+                      },
+                      {
+                          "path":  "outputs\\sota\\efficientad\\trainings\\mvtec_ad\\cable\\teacher_final.pth",
+                          "sha256":  "5b198dd3407e02f3c413be530b3ec8e196d54b2081a8aeb07dafbf3cb2ba5335",
+                          "bytes":  10782728
+                      },
+                      {
+                          "path":  "outputs\\sota\\efficientad\\trainings\\mvtec_ad\\capsule\\autoencoder_final.pth",
+                          "sha256":  "4fa09fed32b01c30838dda39d56fa122ddcae710de88cc0ec04df248ca171074",
+                          "bytes":  4405442
+                      },
+                      {
+                          "path":  "outputs\\sota\\efficientad\\trainings\\mvtec_ad\\capsule\\student_final.pth",
+                          "sha256":  "5f4e4583aa512441a6c63e65486310cba0ec368c6536d8ec38f00ad4001fbe27",
+                          "bytes":  17075720
+                      },
+                      {
+                          "path":  "outputs\\sota\\efficientad\\trainings\\mvtec_ad\\capsule\\teacher_final.pth",
+                          "sha256":  "5b198dd3407e02f3c413be530b3ec8e196d54b2081a8aeb07dafbf3cb2ba5335",
+                          "bytes":  10782728
+                      },
+                      {
+                          "path":  "outputs\\sota\\efficientad\\trainings\\mvtec_ad\\screw\\autoencoder_final.pth",
+                          "sha256":  "fca2bb4890f2a8bbd726a9fe3369dde32bbb25b8ba17024fdcf1e283cdc45fa7",
+                          "bytes":  4405442
+                      },
+                      {
+                          "path":  "outputs\\sota\\efficientad\\trainings\\mvtec_ad\\screw\\student_final.pth",
+                          "sha256":  "a80ac7d266416d432b86400856818bc7a1d09fbdf60bd19815069c8a5685bbb3",
+                          "bytes":  17075720
+                      },
+                      {
+                          "path":  "outputs\\sota\\efficientad\\trainings\\mvtec_ad\\screw\\teacher_final.pth",
+                          "sha256":  "5b198dd3407e02f3c413be530b3ec8e196d54b2081a8aeb07dafbf3cb2ba5335",
+                          "bytes":  10782728
+                      },
+                      {
+                          "path":  "outputs\\sota\\efficientad\\trainings\\mvtec_ad\\transistor\\autoencoder_final.pth",
+                          "sha256":  "661dd4661d4e8ceb1b85983d6427f5c21acd7b36803bd0a8ef69abdee32f4270",
+                          "bytes":  4405442
+                      },
+                      {
+                          "path":  "outputs\\sota\\efficientad\\trainings\\mvtec_ad\\transistor\\student_final.pth",
+                          "sha256":  "4998a47b5ebf329a0d3fd6c772e3ed02df53f0fcd0ebf108561bbe32efb4e136",
+                          "bytes":  17075720
+                      },
+                      {
+                          "path":  "outputs\\sota\\efficientad\\trainings\\mvtec_ad\\transistor\\teacher_final.pth",
+                          "sha256":  "5b198dd3407e02f3c413be530b3ec8e196d54b2081a8aeb07dafbf3cb2ba5335",
+                          "bytes":  10782728
+                      }
+                  ]
+}

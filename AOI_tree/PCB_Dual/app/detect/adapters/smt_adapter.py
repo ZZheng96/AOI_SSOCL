@@ -21,6 +21,7 @@ from __future__ import annotations
 import importlib
 import os
 import threading
+import time
 from typing import Any
 
 from app.calibration.smt_pads import get_smt_pads, get_smt_rim, get_smt_toe
@@ -179,7 +180,7 @@ def _smt_pads(template_name: str | None, rois: list[Roi] | None) -> list[tuple[i
     rects: list[tuple[int, int, int, int]] = []
     if rois:
         for roi in rois:
-            if roi.layer != "smt_pads" and roi.kind != "smt":
+            if roi.layer != "smt_pads" and not (roi.kind == "smt" and not roi.layer):
                 continue
             shape = roi.shape or {}
             if str(shape.get("shape") or "rect") != "rect":
@@ -266,7 +267,7 @@ class SmtAdapter(BaseAdapter):
             return False, "未标定焊盘框（pad_frames），请先在“标定”中框选贴片焊盘区域"
         return True, ""
 
-    def run(self, algorithm_id: str, req: DetectRequest, params: dict[str, Any]) -> AlgorithmResult:
+    def run(self, algorithm_id: str, req: DetectRequest, params: dict[str, Any], *, _shared_cache=None) -> AlgorithmResult:
         if algorithm_id == SMT_SHARED_ID:
             return self._run_shared_preview(req, params)
 
@@ -304,6 +305,7 @@ class SmtAdapter(BaseAdapter):
         )
         cfg[flag_key] = True
         cfg.update(params)
+        cfg["diagnostics"] = bool(req.preprocess_meta.get("diagnostics"))
         _coerce_bools(cfg)
 
         if algorithm_id == "solder_虚焊":
@@ -315,9 +317,13 @@ class SmtAdapter(BaseAdapter):
                 cfg["rim_frames"] = [list(r) for r in rim]
 
         try:
-            result = smt["instance"].run(test_bgr, cfg, original_template_image=std_bgr)
+            if _shared_cache is None:
+                result = smt["instance"].run(test_bgr, cfg, original_template_image=std_bgr)
+            else:
+                result = smt["instance"].run(test_bgr, cfg, original_template_image=std_bgr,
+                                             _shared_cache=_shared_cache)
         except Exception as exc:  # noqa: BLE001
-            return AlgorithmResult(algorithm=algorithm_id, ok=False, message=f"[适配器异常] {label_cn}: {exc}")
+            return AlgorithmResult(algorithm=algorithm_id, ok=False, status="ERROR", error_code="RUN_EXCEPTION", message=f"[适配器异常] {label_cn}: {exc}")
 
         if result.code != 0:
             return AlgorithmResult(
@@ -335,7 +341,21 @@ class SmtAdapter(BaseAdapter):
         vis = result.metadata.get("output_image")
         pad_count = result.metadata.get("pad_count", len(pads))
         message = f"{label_cn} 判定={'OK' if ok else 'NG'}，缺陷数={len(boxes)}，焊盘数={pad_count}"
-        return AlgorithmResult(algorithm=algorithm_id, ok=ok, message=message, boxes=boxes, diff_image=vis)
+        return AlgorithmResult(algorithm=algorithm_id, ok=ok, message=message, boxes=boxes, diff_image=vis, metadata=dict(result.metadata) if cfg.get("diagnostics") else {})
+
+    def run_many(self, requests: list[tuple[str, DetectRequest, dict[str, Any]]]) -> list[AlgorithmResult]:
+        """独立 flags/判定/渲染，仅复用完全相同输入的提取流水线。"""
+        caches = {}
+        output = []
+        for alg_id, req, params in requests:
+            key = (id(req.image_test_raw if req.image_test_raw is not None else req.image_test),
+                   id(req.image_std_raw if req.image_std_raw is not None else req.image_std),
+                   req.template_name, repr([r.to_dict() for r in req.rois]))
+            started = time.perf_counter()
+            result = self.run(alg_id, req, params, _shared_cache=caches.setdefault(key, {}))
+            result.elapsed_ms = int((time.perf_counter() - started) * 1000)
+            output.append(result)
+        return output
 
     def _run_shared_preview(self, req: DetectRequest, shared_params: dict[str, Any]) -> AlgorithmResult:
         """“共用参数”本身不是一类缺陷，调参时把四类缺陷一起跑一遍做预览，

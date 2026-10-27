@@ -7,6 +7,8 @@
 """
 from __future__ import annotations
 
+import math
+
 import pyqtgraph as pg
 from PySide6.QtCore import QRectF, Qt
 from PySide6.QtGui import QColor, QFont, QPainter, QPen
@@ -41,13 +43,46 @@ def _style_axis(plot: pg.PlotWidget, x_labels: list[str] | None = None) -> None:
         plot.getAxis("bottom").setTicks(ticks)
 
 
+def _pad_axes(plot: pg.PlotWidget, pad: float = 0.12) -> None:
+    """自动量程时给坐标轴留上下留白。
+
+    2026-10-14（前端反馈）：不留白时最大值正好压在图区顶边，纵轴最上方的
+    刻度标签会被图区上边缘切掉一半，实时监控/学习效果/存档统计三个页面都能看到。
+    """
+    vb = plot.getPlotItem().getViewBox()
+    vb.setDefaultPadding(pad)
+
+
+def _new_plot() -> pg.PlotWidget:
+    """统一创建 PlotWidget（含坐标轴留白 + 关闭鼠标缩放）。
+
+    2026-10-14（前端反馈）：图表是只读展示，先前滚轮落在图上会缩放坐标轴、
+    导致"想滚动页面却只动了坐标轴"。关掉鼠标拖拽/滚轮缩放后，ViewBox 会把
+    滚轮事件 `ignore()` 掉，事件冒泡给父级滚动区，滚轮即可正常翻页。
+    """
+    plot = pg.PlotWidget()
+    _pad_axes(plot)
+    plot.setMouseEnabled(x=False, y=False)
+    plot.setMenuEnabled(False)      # 关掉右键上下文菜单（展示型图表用不到）
+    return plot
+
+
 def _empty_hint(plot: pg.PlotWidget, text: str = "暂无数据") -> None:
     """空数据态：居中灰字提示，避免空白图表让人误以为没加载出来。"""
     plot.setXRange(0, 1, padding=0)
-    plot.setYRange(0, 1, padding=0)
+    # 上界留一点余量：钉在 0~1 时最上方刻度标签（1.0）会被图区上边缘切掉
+    plot.setYRange(0, 1.12, padding=0)
     t = pg.TextItem(text, color=TEXT_SUB, anchor=(0.5, 0.5))
     t.setPos(0.5, 0.5)
     plot.addItem(t)
+
+
+def num_or_nan(v) -> float:
+    """图表取值：缺失/非数值返回 NaN（图表不画），不伪造成 0。"""
+    try:
+        return float(v)
+    except (TypeError, ValueError):
+        return float("nan")
 
 
 def _reset_view(plot: pg.PlotWidget) -> None:
@@ -64,7 +99,7 @@ class LineChart(QWidget):
         from PySide6.QtWidgets import QVBoxLayout
         lay = QVBoxLayout(self)
         lay.setContentsMargins(0, 0, 0, 0)
-        self.plot = pg.PlotWidget()
+        self.plot = _new_plot()
         self.plot.addLegend(offset=(8, 8), pen=pg.mkPen(color="#E5E7EB"),
                             brush=pg.mkBrush(255, 255, 255, 220),
                             labelTextColor=TEXT)
@@ -84,7 +119,8 @@ class LineChart(QWidget):
         if symbol:
             kwargs = dict(symbol="o", symbolSize=6,
                           symbolBrush=pg.mkBrush(c), symbolPen=pg.mkPen(c))
-        self.plot.plot(x, y, pen=pen, name=name, **kwargs)
+        # 缺失值以 NaN 传入：断线不画点，避免把"无数据"画成 0
+        self.plot.plot(x, y, pen=pen, name=name, connect="finite", **kwargs)
 
     def set_labels(self, x_labels: list[str] | None = None,
                    y_title: str = "") -> None:
@@ -104,7 +140,7 @@ class BarChart(QWidget):
         from PySide6.QtWidgets import QVBoxLayout
         lay = QVBoxLayout(self)
         lay.setContentsMargins(0, 0, 0, 0)
-        self.plot = pg.PlotWidget()
+        self.plot = _new_plot()
         self.plot.addLegend(offset=(8, 8), pen=pg.mkPen(color="#E5E7EB"),
                             brush=pg.mkBrush(255, 255, 255, 220),
                             labelTextColor=TEXT)
@@ -126,8 +162,13 @@ class BarChart(QWidget):
         n_ser = max(1, len(names))
         width = 0.8 / n_ser
         for si, name in enumerate(names):
-            vals = series[name]
-            xs = [i - 0.4 + width * (si + 0.5) for i in range(n_cat)]
+            # 缺失值（None/NaN）不画柱，避免把"无数据"画成 0
+            pairs = [(i - 0.4 + width * (si + 0.5), float(v))
+                     for i, v in enumerate(series[name])
+                     if v is not None and math.isfinite(float(v))]
+            if not pairs:
+                continue
+            xs, vals = [p[0] for p in pairs], [p[1] for p in pairs]
             color = (colors or {}).get(
                 name, SERIES_COLORS[si % len(SERIES_COLORS)])
             bg = pg.BarGraphItem(x=xs, height=vals, width=width * 0.9,
@@ -147,7 +188,7 @@ class LatencyChart(QWidget):
         from PySide6.QtWidgets import QVBoxLayout
         lay = QVBoxLayout(self)
         lay.setContentsMargins(0, 0, 0, 0)
-        self.plot = pg.PlotWidget()
+        self.plot = _new_plot()
         lay.addWidget(self.plot)
         self._budget = budget_ms
         self._ref_line = pg.InfiniteLine(
@@ -190,7 +231,7 @@ class LatencyChart(QWidget):
         if values:
             pen = pg.mkPen(color=PRIMARY, width=2)
             self.plot.plot(list(range(len(values))), values, pen=pen,
-                           symbol="o", symbolSize=6,
+                           connect="finite", symbol="o", symbolSize=6,
                            symbolBrush=pg.mkBrush(PRIMARY))
         else:
             _empty_hint(self.plot, "暂无延迟数据")

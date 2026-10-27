@@ -7,7 +7,7 @@ from ..db.models import (ConsolidationFeedback, DataSource, Dataset, Detection,
                          Feedback, Image, WorkOrder, WorkOrderSource,
                          WorkOrderTemplate)
 from ._wo_shared import (_attach_source, _n_pending_review, _pipeline_summary,
-                         _workorder_item, _workorder_sources, check_datasource,
+                         _workorder_item, _workorder_sources, _release_pipeline_claims, check_datasource,
                          check_workorder)
 from .schemas import (WorkOrderCreateRequest, WorkOrderSourceRequest,
                       WorkOrderTemplateRequest, WorkOrderUpdateRequest, to_dict)
@@ -129,7 +129,12 @@ def api_update_workorder(workorder_id: int, req: WorkOrderUpdateRequest):
         if req.auto_resume is not None:
             wo.auto_resume = bool(req.auto_resume)
         if req.status:
+            if req.status not in ("active", "closed"):
+                raise HTTPException(status_code=422, detail="status 只能为 active/closed")
             wo.status = req.status
+            if req.status == "closed":
+                wo.pipeline_status = "stopped"
+                _release_pipeline_claims(s, workorder_id)
         if req.note is not None:
             wo.note = req.note
         s.flush()
@@ -202,7 +207,7 @@ def api_delete_workorder(workorder_id: int):
         # ② 释放产线认领中的图片（未完成的回 pending，可重新认领）
         s.query(Image).filter(
             Image.claim_workorder_id == workorder_id,
-            Image.processing_status != "done").update(
+            Image.processing_status.in_(("claiming", "failed"))).update(
             {"claim_workorder_id": None, "claim_token": None,
              "claimed_at": None, "processing_status": "pending"},
             synchronize_session=False)
@@ -233,8 +238,8 @@ def api_archive_workorder(workorder_id: int):
         if wo is None:
             raise HTTPException(status_code=404, detail="工单不存在")
         wo.archived = True
-        if wo.pipeline_status in ("running", "paused"):
-            wo.pipeline_status = "stopped"
+        wo.pipeline_status = "stopped"
+        _release_pipeline_claims(s, workorder_id)
         name = wo.name
     log_action("archive_workorder", f"id={workorder_id} name={name}",
                extra={"workorder_id": workorder_id})

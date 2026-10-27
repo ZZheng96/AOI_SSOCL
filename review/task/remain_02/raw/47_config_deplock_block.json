@@ -1,0 +1,18 @@
+{
+  "name": "config_deplock_block",
+  "method": "POST",
+  "path": "/api/system/config",
+  "role": "admin",
+  "request_body": {
+    "governance_decisions.dependency_lock_policy": "block"
+  },
+  "status_code": 200,
+  "response": {
+    "applied": [
+      "governance_decisions.dependency_lock_policy"
+    ],
+    "rejected": [],
+    "errors": {}
+  },
+  "note": ""
+}

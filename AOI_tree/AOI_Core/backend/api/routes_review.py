@@ -23,11 +23,28 @@ from ..self_learning import service as sl_service
 from ._wo_shared import archived_workorder_ids
 
 router = APIRouter()
+from .open_alerts import register as register_open_alerts
+register_open_alerts(router)
+from .region_review import register as register_region_review
+register_region_review(router)
 
 _GRAY_LIKE = '%"decision": "gray"%'
 # 2026-08-29 复核口径修正：复核队列只收产线路径（pipeline/stream/plc）的检测，
 # 排除试检旁路（upload/image）——试检是调试动作，不进人工复核工作流
 _LIVE_TYPES = ("pipeline", "stream", "plc")
+
+# AC-042：复核状态只复用 Detection.n_tiles JSON，不新增列/迁移。
+_REVIEW_STAGE_QUEUED = "queued"
+_REVIEW_STAGE_SUBMITTED = "submitted"
+_REVIEW_STAGES = {_REVIEW_STAGE_QUEUED, _REVIEW_STAGE_SUBMITTED}
+
+
+def _review_stage(det: Detection, has_feedback: bool) -> str | None:
+    """返回兼容旧数据的复核阶段；未知显式阶段一律拒绝继续流转。"""
+    stored = (det.n_tiles or {}).get("review_stage")
+    if stored is not None:
+        return stored if stored in _REVIEW_STAGES else None
+    return _REVIEW_STAGE_SUBMITTED if has_feedback else _REVIEW_STAGE_QUEUED
 
 
 def _review_scope(s) -> tuple[list, set]:
@@ -65,7 +82,8 @@ def _feedback_det_ids(s) -> set:
     """已有有效反馈的 detection_id 集合（一次查询，替代逐行 _has_feedback
     的 N+1）；已作废反馈不占用——对应检测会重新进入复核队列。"""
     return {r[0] for r in s.query(Feedback.detection_id)
-            .filter(Feedback.invalidated == False).all()}  # noqa: E712
+            .filter(Feedback.invalidated == False,
+                    Feedback.feedback_type != "open_alert").all()}  # noqa: E712
 
 
 @router.get("/review/active_suggestions")
@@ -96,18 +114,22 @@ def api_incomplete_report(window: int = 100, min_count: int = 3,
                 .order_by(Detection.id.desc()).limit(20000).all())
     per_cat: dict = {}
     for d in rows:
-        bucket = per_cat.setdefault(d.category, {"n": 0, "hits": 0})
+        bucket = per_cat.setdefault(d.category, {"n": 0, "hits": 0, "sample_ids": []})
         if bucket["n"] >= window:
             continue
         bucket["n"] += 1
         if (d.n_tiles or {}).get("open_alert"):
             bucket["hits"] += 1
+            bucket["sample_ids"].append(d.id)
     reports = []
     for cat, b in sorted(per_cat.items()):
         ratio = b["hits"] / b["n"] if b["n"] else 0.0
         reports.append({
             "category": cat, "window_n": b["n"], "open_hits": b["hits"],
             "ratio": round(ratio, 3),
+            "sample_detection_ids": b["sample_ids"],
+            "queue_url": "/api/review/open_alerts",
+            "note": "未知信号不等于缺陷；报告不使用当前模型补推", 
             "alert": bool(b["hits"] >= min_count and ratio >= ratio_thresh),
         })
     return {"window": window, "ratio_thresh": ratio_thresh,
@@ -123,6 +145,7 @@ class ReviewSubmitRequest(BaseModel):
     label: int                        # 0=正常 1=异常（操作员复核结论）
     comment: Optional[str] = None
     operator: str = "operator"
+    review_stage: Optional[str] = None  # AC-042：显式提交 queued→submitted；缺省兼容旧调用
     region: Optional[List[float]] = None  # M6a 框选缺陷区 [x,y,w,h]（像素），
     #   仅 label=1 时换算归一化 box 喂给缺陷拦截通道；label=0 忽略
 
@@ -134,7 +157,8 @@ def _is_gray(det: Detection) -> bool:
 def _has_feedback(s, detection_id: int) -> bool:
     return (s.query(Feedback.id)
             .filter(Feedback.detection_id == detection_id,
-                    Feedback.invalidated == False)  # noqa: E712
+                    Feedback.invalidated == False,
+                    Feedback.feedback_type != "open_alert")  # noqa: E712
             .first()) is not None
 
 
@@ -162,7 +186,8 @@ def api_review_queue(category: Optional[str] = None, page: int = 1,
         if category:
             q = q.filter(Detection.category == category)
         for d in q.order_by(Detection.id.desc()).all():
-            if d.id not in fb_ids and _is_gray(d):
+            if (d.id not in fb_ids and _is_gray(d)
+                    and _review_stage(d, False) == _REVIEW_STAGE_QUEUED):
                 seen[d.id] = d
         if rev_wo_ids:
             # 人工复判工单的全部检测（含非灰区）也进队列：
@@ -173,12 +198,14 @@ def api_review_queue(category: Optional[str] = None, page: int = 1,
             if category:
                 q2 = q2.filter(Detection.category == category)
             for d in q2.order_by(Detection.id.desc()).all():
-                if d.id not in fb_ids and not _is_gray(d):
+                if (d.id not in fb_ids and not _is_gray(d)
+                        and _review_stage(d, False) == _REVIEW_STAGE_QUEUED):
                     seen[d.id] = d
-        items = [{"id": d.id, "image_path": d.image_path,
+        items = [{"id": d.id, "workorder_id": d.workorder_id, "image_path": d.image_path,
                   "category": d.category, "final_score": d.final_score,
                   "decision": (d.n_tiles or {}).get("decision")
                   or ("anomaly" if d.is_anomaly else "normal"),
+                  "review_stage": _review_stage(d, d.id in fb_ids),
                   "slots": (d.n_tiles or {}).get("slots"),
                   "overlay_path": d.overlay_path,
                   "created_at": d.created_at.isoformat() if d.created_at else None}
@@ -192,7 +219,7 @@ def api_review_queue(category: Optional[str] = None, page: int = 1,
 
 @router.post("/review/{detection_id}")
 def api_review_submit(detection_id: int, req: ReviewSubmitRequest):
-    """提交复核结论：自动落 Feedback(feedback_type=review) + 引擎即学。
+    """提交复核结论：自动落 Feedback(feedback_type=review) + 候选排队。
 
     404=检测记录不存在；409=该记录已复核/已有反馈。
     """
@@ -202,18 +229,39 @@ def api_review_submit(detection_id: int, req: ReviewSubmitRequest):
         det = s.get(Detection, detection_id)
         if det is None:
             raise HTTPException(status_code=404, detail="检测记录不存在")
+        if det.target_type not in _LIVE_TYPES:
+            raise HTTPException(status_code=409, detail="试检记录不进入复核流程")
+        if det.workorder_id in archived_workorder_ids(s):
+            raise HTTPException(status_code=409, detail="存档工单不能提交复核")
         if _has_feedback(s, detection_id):
             raise HTTPException(status_code=409, detail="该记录已复核/已有反馈")
+        stage = _review_stage(det, False)
+        if stage != _REVIEW_STAGE_QUEUED:
+            raise HTTPException(status_code=409, detail="非法复核阶段，拒绝提交")
+        if req.review_stage is not None and req.review_stage != _REVIEW_STAGE_QUEUED:
+            raise HTTPException(status_code=409, detail="复核阶段必须为 queued")
         decision = (det.n_tiles or {}).get("decision")
+        detection_model_version = (det.n_tiles or {}).get("model_version")
 
     out = sl_service.submit_feedback_record(
         detection_id, "review", req.label,
         comment=req.comment, operator=req.operator,
-        region=req.region)
+        region=req.region, candidate_only=True)
+    # 反馈已成功落库后才推进显式阶段；不改表结构，兼容旧 pickle/数据库。
+    with session_scope() as s:
+        persisted = s.get(Detection, detection_id)
+        nt = dict(persisted.n_tiles or {})
+        nt["review_stage"] = _REVIEW_STAGE_SUBMITTED
+        persisted.n_tiles = nt
     log_action("review_submit",
                f"detection_id={detection_id} label={req.label} "
-               f"origin_decision={decision}", user=req.operator)
+               f"origin_decision={decision} review_stage=submitted", user=req.operator,
+               extra={"feedback_id": out["feedback_id"], "detection_id": detection_id,
+                      "review_stage": _REVIEW_STAGE_SUBMITTED,
+                      "origin_decision": decision,
+                      "detection_model_version": detection_model_version})
     return {"feedback_id": out["feedback_id"],
+            "review_stage": _REVIEW_STAGE_SUBMITTED,
             "engine_update": out["engine_update"],
             "note": out["note"], "category": out["category"],
             "pre": out["pre"], "post": out.get("post"),
@@ -242,22 +290,32 @@ def api_review_stats():
                                    | ~Detection.workorder_id.in_(arch))
         rows = rows_q.all()
         pending: dict = {}
+        pending_by_workorder: dict = {}
         for d in rows:
-            if _is_gray(d) and d.id not in fb_ids:
+            if (_is_gray(d) and d.id not in fb_ids
+                    and _review_stage(d, False) == _REVIEW_STAGE_QUEUED):
                 pending[d.category] = pending.get(d.category, 0) + 1
+                if d.workorder_id is not None:
+                    key = str(d.workorder_id)
+                    pending_by_workorder[key] = pending_by_workorder.get(key, 0) + 1
         if rev_wo_ids:
             q2 = (s.query(Detection)
                   .filter(_in_review_scope(rev_wo_ids, rev_cats),
                           Detection.target_type.in_(_LIVE_TYPES)).all())
             for d in q2:
-                if d.id not in fb_ids and not _is_gray(d):
+                if (d.id not in fb_ids and not _is_gray(d)
+                        and _review_stage(d, False) == _REVIEW_STAGE_QUEUED):
                     pending[d.category] = pending.get(d.category, 0) + 1
+                    if d.workorder_id is not None:
+                        key = str(d.workorder_id)
+                        pending_by_workorder[key] = pending_by_workorder.get(key, 0) + 1
         today0 = datetime.now().replace(hour=0, minute=0, second=0, microsecond=0)
         q = s.query(Feedback).filter(Feedback.feedback_type == "review")
         reviewed_total = q.count()
         reviewed_today = q.filter(Feedback.created_at >= today0).count()
     return {"pending_total": sum(pending.values()),
             "pending_by_category": pending,
+            "pending_by_workorder": pending_by_workorder,
             "categories": sorted(pending),  # M6a：有积压的品类列表（UI 下拉直用）
             "reviewed_today": reviewed_today,
             "reviewed_total": reviewed_total}

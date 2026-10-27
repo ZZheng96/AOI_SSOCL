@@ -1,0 +1,243 @@
+{
+  "temp": "C:\\Users\\imia\\AppData\\Local\\Temp\\aoi_finalperf_deg_wrxitaje",
+  "rows": [
+    {
+      "image": "det807_0599_repaired.png",
+      "decision": "normal",
+      "score": 0.678069720405768,
+      "raw": {
+        "blob": 0.09123443812131882,
+        "trad": 19.149412155151367
+      },
+      "cal": {
+        "blob": 0.53515625,
+        "trad": 0.84375
+      },
+      "trace_len": 1,
+      "fusion_degraded": {
+        "layout": {
+          "layout_degraded": true,
+          "layout_stats_source": "missing_in_snapshot",
+          "missing": [
+            "count_median",
+            "count_std",
+            "area_hi",
+            "spacing_median",
+            "spacing_std",
+            "sym_median",
+            "sym_std"
+          ]
+        }
+      },
+      "wall_ms": 1277.1
+    },
+    {
+      "image": "det401_0599_repaired.png",
+      "decision": "normal",
+      "score": 0.678069720405768,
+      "raw": {
+        "blob": 0.09123443812131882,
+        "trad": 19.149412155151367
+      },
+      "cal": {
+        "blob": 0.53515625,
+        "trad": 0.84375
+      },
+      "trace_len": 1,
+      "fusion_degraded": {
+        "layout": {
+          "layout_degraded": true,
+          "layout_stats_source": "missing_in_snapshot",
+          "missing": [
+            "count_median",
+            "count_std",
+            "area_hi",
+            "spacing_median",
+            "spacing_std",
+            "sym_median",
+            "sym_std"
+          ]
+        }
+      },
+      "wall_ms": 136.1
+    },
+    {
+      "image": "det593_0599_repaired.png",
+      "decision": "normal",
+      "score": 0.678069720405768,
+      "raw": {
+        "blob": 0.09123443812131882,
+        "trad": 19.149412155151367
+      },
+      "cal": {
+        "blob": 0.53515625,
+        "trad": 0.84375
+      },
+      "trace_len": 1,
+      "fusion_degraded": {
+        "layout": {
+          "layout_degraded": true,
+          "layout_stats_source": "missing_in_snapshot",
+          "missing": [
+            "count_median",
+            "count_std",
+            "area_hi",
+            "spacing_median",
+            "spacing_std",
+            "sym_median",
+            "sym_std"
+          ]
+        }
+      },
+      "wall_ms": 142.4
+    },
+    {
+      "image": "det823_0599_repaired.png",
+      "decision": "normal",
+      "score": 0.678069720405768,
+      "raw": {
+        "blob": 0.09123443812131882,
+        "trad": 19.149412155151367
+      },
+      "cal": {
+        "blob": 0.53515625,
+        "trad": 0.84375
+      },
+      "trace_len": 1,
+      "fusion_degraded": {
+        "layout": {
+          "layout_degraded": true,
+          "layout_stats_source": "missing_in_snapshot",
+          "missing": [
+            "count_median",
+            "count_std",
+            "area_hi",
+            "spacing_median",
+            "spacing_std",
+            "sym_median",
+            "sym_std"
+          ]
+        }
+      },
+      "wall_ms": 137.5
+    },
+    {
+      "image": "det266_det1_bench_00.png",
+      "decision": "anomaly",
+      "score": 2.0,
+      "raw": {
+        "blob": 0.21345606446266174,
+        "trad": 73.36799621582031
+      },
+      "cal": {
+        "blob": 2.0,
+        "trad": 2.0
+      },
+      "trace_len": 1,
+      "fusion_degraded": {
+        "layout": {
+          "layout_degraded": true,
+          "layout_stats_source": "missing_in_snapshot",
+          "missing": [
+            "count_median",
+            "count_std",
+            "area_hi",
+            "spacing_median",
+            "spacing_std",
+            "sym_median",
+            "sym_std"
+          ]
+        }
+      },
+      "wall_ms": 463.9
+    },
+    {
+      "image": "det798_det76_bench_06.png",
+      "decision": "anomaly",
+      "score": 2.0,
+      "raw": {
+        "blob": 0.20713543891906738,
+        "trad": 75.98040771484375
+      },
+      "cal": {
+        "blob": 2.0,
+        "trad": 2.0
+      },
+      "trace_len": 1,
+      "fusion_degraded": {
+        "layout": {
+          "layout_degraded": true,
+          "layout_stats_source": "missing_in_snapshot",
+          "missing": [
+            "count_median",
+            "count_std",
+            "area_hi",
+            "spacing_median",
+            "spacing_std",
+            "sym_median",
+            "sym_std"
+          ]
+        }
+      },
+      "wall_ms": 238.0
+    }
+  ],
+  "calibrators": {
+    "blob": {
+      "type": "CDFCalibrator",
+      "dict_keys": [
+        "edges",
+        "n_bins"
+      ]
+    },
+    "trad": {
+      "type": "CDFCalibrator",
+      "dict_keys": [
+        "edges",
+        "n_bins"
+      ]
+    },
+    "layout": {
+      "type": "CDFCalibrator",
+      "dict_keys": [
+        "edges",
+        "n_bins"
+      ]
+    }
+  },
+  "db_trace_lens": [
+    1,
+    1,
+    1,
+    1,
+    1,
+    1
+  ],
+  "degraded_slots": {
+    "layout": {
+      "layout_degraded": true,
+      "layout_stats_source": "missing_in_snapshot",
+      "missing": [
+        "count_median",
+        "count_std",
+        "area_hi",
+        "spacing_median",
+        "spacing_std",
+        "sym_median",
+        "sym_std"
+      ],
+      "reason": "layout 快照缺少必要拟合统计: count_median, count_std, area_hi, spacing_median, spacing_std, sym_median, sym_std；无法从旧 PCA 状态可靠重建，请用原训练数据重新 prepare",
+      "action": "用原训练数据重新 prepare 以恢复 layout 槽位",
+      "weights_before": {
+        "blob": 0.4528355253853769,
+        "trad": 0.39060953189082165,
+        "layout": 0.15655494272380147
+      },
+      "weights_after": {
+        "blob": 0.5368879946344736,
+        "trad": 0.4631120053655265,
+        "layout": 0.0
+      }
+    }
+  }
+}

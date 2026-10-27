@@ -1,0 +1,74 @@
+[
+  {
+    "event": 0,
+    "category": "gold_finger",
+    "t_submit": 270281.995,
+    "t_done": 270284.098,
+    "wall_ms": 2103.2,
+    "error": null
+  },
+  {
+    "event": 1,
+    "category": "gold_finger_b",
+    "t_submit": 270284.099,
+    "t_done": 270287.213,
+    "wall_ms": 3115.0,
+    "error": null
+  },
+  {
+    "event": 2,
+    "category": "gold_finger",
+    "t_submit": 270287.214,
+    "t_done": 270290.251,
+    "wall_ms": 3036.4,
+    "error": null
+  },
+  {
+    "event": 3,
+    "category": "gold_finger_b",
+    "t_submit": 270290.251,
+    "t_done": 270292.409,
+    "wall_ms": 2157.9,
+    "error": null
+  },
+  {
+    "event": 0,
+    "category": "gold_finger",
+    "t_submit": 270295.09,
+    "t_done": 270296.216,
+    "wall_ms": 1125.1,
+    "error": null
+  },
+  {
+    "event": 1,
+    "category": "gold_finger_b",
+    "t_submit": 270296.216,
+    "t_done": 270298.732,
+    "wall_ms": 2515.8,
+    "error": null
+  },
+  {
+    "event": 2,
+    "category": "gold_finger",
+    "t_submit": 270298.733,
+    "t_done": 270300.092,
+    "wall_ms": 1359.0,
+    "error": null
+  },
+  {
+    "event": 0,
+    "category": "gold_finger",
+    "t_submit": 270301.585,
+    "t_done": 270302.79,
+    "wall_ms": 1205.0,
+    "error": null
+  },
+  {
+    "event": 1,
+    "category": "gold_finger_b",
+    "t_submit": 270302.79,
+    "t_done": 270305.244,
+    "wall_ms": 2453.5,
+    "error": null
+  }
+]

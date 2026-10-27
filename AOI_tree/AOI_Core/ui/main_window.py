@@ -30,6 +30,7 @@ from ui.pages.common import make_level_badge, run_async, update_level_badge
 from ui.pages.dashboard_page import DashboardPage
 from ui.pages.data_page import DataPage
 from ui.pages.eval_page import EvalPage
+from ui.pages.feature_page import FeaturePage
 from ui.pages.feedback_page import FeedbackPage
 from ui.pages.learning_page import LearningPage
 from ui.pages.model_page import ModelPage
@@ -47,6 +48,7 @@ NAV_ITEMS = [
     ("数据管理", QStyle.SP_DirHomeIcon),
     ("数据增强", QStyle.SP_FileDialogNewFolder),
     ("模型管理", QStyle.SP_ComputerIcon),
+    ("特征工程", QStyle.SP_FileDialogContentsView),
     ("评估看板", QStyle.SP_DialogApplyButton),
     ("实时监控", QStyle.SP_MediaPlay),
     ("标注反馈", QStyle.SP_MessageBoxInformation),
@@ -56,11 +58,13 @@ NAV_ITEMS = [
 ]
 
 # M16b 导航分组标题：{插入位置（该 NAV_ITEMS 索引之前）: 分组名}
+# 2026-10-14：原用「── 准备期：数据与上线 ──」长划线标题，会撑出导航水平滚动条；
+# 先改为「准备期 · 数据与上线」，再按前端要求进一步收敛为两字分组名。
 NAV_GROUP_HEADERS = {
-    1: "── 准备期：数据与上线 ──",
-    5: "── 投产期：日常检测 ──",
-    7: "── 复盘期：学习与报表 ──",
-    9: "── 系统 ──",
+    1: "准备",
+    6: "投产",
+    8: "复盘",
+    10: "系统",
 }
 
 
@@ -100,6 +104,7 @@ class MainWindow(QMainWindow):
 
         self.client = ApiClient(base_url, self)
         self._budget_ms = 200.0
+        self._biz_budget: dict = {}   # AC-072：/system/info.business_budget
         self._categories: list[str] = []
         # U-workorder v2：全局以工单为主轴（工单 -> 品类联动 -> 条件徽标）
         self._workorders: list[dict] = []
@@ -125,7 +130,11 @@ class MainWindow(QMainWindow):
 
         self.nav = QListWidget()
         self.nav.setObjectName("nav")
-        self.nav.setFixedWidth(190)
+        # 2026-10-14：导航固定宽 + 关闭水平滚动条（导航项/分组标题按宽度排布，
+        # 不需要横向滚动；此前因内容宽度临界会冒出多余的水平滚动条）
+        self.nav.setFixedWidth(176)
+        self.nav.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
+        self.nav.setVerticalScrollBarPolicy(Qt.ScrollBarAsNeeded)
         style = self.style()
         # M16b：导航含分组标题行（不可选），row→页面栈索引经 _row2page 映射
         self._row2page: list[int | None] = []
@@ -136,15 +145,25 @@ class MainWindow(QMainWindow):
                 h = QListWidgetItem(header)
                 h.setFlags(Qt.NoItemFlags)  # 分组标题不可选
                 h.setForeground(QColor(TEXT_SUB))
+                hf = h.font()
+                hf.setPointSizeF(max(7.5, hf.pointSizeF() - 1.5))  # 分组标题小一号
+                h.setFont(hf)
                 self.nav.addItem(h)
                 self._row2page.append(None)
             item = QListWidgetItem(style.standardIcon(icon_id), title)
             item.setSizeHint(item.sizeHint().expandedTo(
-                item.sizeHint().__class__(190, 42)))
+                item.sizeHint().__class__(176, 42)))
             self.nav.addItem(item)
             self._title2row[title] = self.nav.count() - 1
             self._row2page.append(page_idx)
         body.addWidget(self.nav)
+        # 2026-10-14：导航与页面之间的竖直分割线改为独立 1px 分隔条——
+        # 用 QSS 的 border-right 会让列表视口宽度少 1px 从而触发水平滚动条。
+        nav_sep = QFrame()
+        nav_sep.setObjectName("navsep")
+        nav_sep.setFixedWidth(1)
+        nav_sep.setStyleSheet("background: #E5E7EB;")
+        body.addWidget(nav_sep)
 
         self.stack = QStackedWidget()
         body.addWidget(self.stack, 1)
@@ -185,7 +204,9 @@ class MainWindow(QMainWindow):
         title.setStyleSheet("color: #2F6FED;")
         lay.addWidget(title)
 
-        sub = QLabel("少样本即可上线 · 反馈即学即用")
+        # 副标题收敛为短句：为顶栏「算力」徽标（型号 · TOPS · 性能 xx%）腾出宽度，
+        # 避免窄屏（约 1180px）下顶栏溢出
+        sub = QLabel("少样本上线 · 反馈即学")
         sub.setProperty("subtext", True)
         lay.addWidget(sub)
         lay.addStretch(1)
@@ -203,11 +224,11 @@ class MainWindow(QMainWindow):
         self.badge_level = make_level_badge()
         lay.addWidget(self.badge_level)
 
-        self.badge_device = QLabel("设备 -")
+        self.badge_device = QLabel("算力 探测中…")
         self.badge_device.setProperty("badge", "muted")
         self.badge_device.setToolTip(
-            "推理计算设备：CUDA=使用 NVIDIA 显卡加速（检测快），\n"
-            "CPU=无显卡降速运行。此处显示型号便于确认显卡是否被识别")
+            "推理算力：估算 INT8 吞吐 + 耗时系数（赛题基准 RTX 2060 的耗时 × 该系数 ≈ 本机耗时）。\n"
+            "连接后端后自动刷新；鼠标停留查看明细")
         lay.addWidget(self.badge_device)
 
         # 产线状态徽标（前端反馈 2026-09-13 #7）：跟随当前工单，
@@ -215,15 +236,18 @@ class MainWindow(QMainWindow):
         self.badge_pipeline = QLabel("产线 -")
         self.badge_pipeline.setProperty("badge", "muted")
         self.badge_pipeline.setToolTip(
-            "当前工单的产线状态（运行/暂停/停止）；\n"
-            "产线一律在「实时监控」页手动启停")
+            "当前工单绑定的检测产线状态（运行/暂停/停止）。\n"
+            "它只影响当前工单的实时检测消费，不是电脑或物理生产线名称；\n"
+            "请在「实时监控」页手动启停。")
         lay.addWidget(self.badge_pipeline)
 
         # M15c：当前角色徽标（system/info.role，鉴权关闭时 admin）
         self.badge_role = QLabel("角色 -")
         self.badge_role.setProperty("badge", "info")
-        self.badge_role.setToolTip("当前 API Key 角色：operator 操作员 / "
-                                   "engineer 工程师 / admin 管理员")
+        self.badge_role.setToolTip(
+            "当前 API Key 角色：operator 操作员 / engineer 工程师 / admin 管理员。\n"
+            "角色由后端根据 X-API-Key 映射，不能在界面内直接切换；"
+            "切换需更换对应角色的 API Key 后重新连接。")
         lay.addWidget(self.badge_role)
 
         self.lbl_budget = QLabel("延迟预算 <200ms")
@@ -250,18 +274,21 @@ class MainWindow(QMainWindow):
         self.page_data = DataPage(self.client, get_cat, self.task_monitor)
         self.page_augment = AugmentPage(self.client, get_cat, self.task_monitor)
         self.page_model = ModelPage(self.client, get_cat, self.task_monitor)
+        self.page_feature = FeaturePage(self.client, get_cat)
+        get_biz = lambda: self._biz_budget  # noqa: E731
         self.page_eval = EvalPage(self.client, get_cat, get_budget,
-                                  self.task_monitor)
+                                  self.task_monitor, get_biz_budget=get_biz)
         self.page_monitor = MonitorPage(self.client, get_cat, get_budget)
         self.page_feedback = FeedbackPage(self.client, get_cat, self.task_monitor)
         self.page_learning = LearningPage(self.client, get_cat,
                                           self.task_monitor)
-        self.page_stats = StatsPage(self.client, get_cat, get_budget)
+        self.page_stats = StatsPage(self.client, get_cat, get_budget,
+                                    get_biz_budget=get_biz)
         self.page_settings = SettingsPage(self.client)
         for p in (self.page_dashboard, self.page_data, self.page_augment,
-                  self.page_model, self.page_eval, self.page_monitor,
-                  self.page_feedback, self.page_learning, self.page_stats,
-                  self.page_settings):
+                  self.page_model, self.page_feature, self.page_eval,
+                  self.page_monitor, self.page_feedback, self.page_learning,
+                  self.page_stats, self.page_settings):
             self.stack.addWidget(p)
             # U-workorder v2：各页数据条件徽标 = 当前工单条件
             p._get_level = self.current_workorder
@@ -425,6 +452,7 @@ class MainWindow(QMainWindow):
         self._categories = list(cats)
         # 数据页品类筛选同步
         self.page_data.reload(self._categories)
+        self.page_feature.reload(self._categories)
 
     def _load_workorders(self) -> None:
         """加载工单列表并刷新工单下拉（随后联动品类/徽标）。"""
@@ -476,19 +504,60 @@ class MainWindow(QMainWindow):
     def _ping_backend(self) -> None:
         run_async(self, self.client.ping, self._on_ping, lambda _e: None)
 
+    def _apply_device_badge(self, health: dict) -> None:
+        """顶栏「算力」徽标：`xx TOPS · 耗时 x.xx×`。
+
+        - TOPS：估算 INT8 吞吐（峰值口径）；
+        - 耗时系数：**赛题基准硬件（RTX 2060）的耗时 × 该系数 ≈ 本机耗时**，
+          >1 表示本机比基准慢、<1 表示比基准快，直接回答"这台机器快不快"。
+        不显示显卡型号（前端要求 2026-10-14）；型号/显存/CUDA 能力等明细在 tooltip。
+        """
+        device = str(health.get("device", "-")).lower()
+        if device == "cuda":
+            parts = []
+            tops = health.get("tops_int8")
+            factor = health.get("latency_factor")
+            if tops:
+                parts.append(f"{tops:g} TOPS")
+            if factor:
+                parts.append(f"耗时 {factor:g}×")
+            self.badge_device.setText(" · ".join(parts) or "GPU 已启用")
+            self.badge_device.setProperty("badge", "success")
+        else:
+            self.badge_device.setText("未启用 GPU 加速")
+            self.badge_device.setProperty("badge", "muted")
+
+        base = health.get("baseline_name") or "RTX 2060"
+        tip = ["推理算力（峰值口径，估算值，非厂商标称算力）",
+               f"计算设备：{'GPU（CUDA）' if device == 'cuda' else 'CPU'}"]
+        if health.get("tops_int8"):
+            tip.append(f"INT8 吞吐：≈{health['tops_int8']:g} TOPS"
+                       "（SM 数 × 每 SM 核心 × 2 × 主频，含 INT8 打包）")
+        if health.get("tflops_fp32"):
+            tip.append(f"FP32 峰值：≈{health['tflops_fp32']:g} TFLOPS")
+        if health.get("latency_factor"):
+            factor = health["latency_factor"]
+            cmp = "比基准慢" if factor > 1 else "比基准快"
+            tip.append(f"耗时系数：{factor:g}× —— 以赛题基准 {base} 的耗时为 1.0×，"
+                       f"本机约为其 {factor:g} 倍（{cmp}）；"
+                       "仅反映算力差异，实际耗时以「评估看板 → 延迟基准」实测为准")
+        if health.get("baseline_ratio_pct"):
+            tip.append(f"峰值算力相对 {base}：{health['baseline_ratio_pct']}%")
+        if health.get("vram_gb"):
+            tip.append(f"显存：{health['vram_gb']} GB")
+        if health.get("compute_capability"):
+            tip.append(f"CUDA 计算能力：{health['compute_capability']}"
+                       f"｜SM 数：{health.get('sm_count') or '-'}")
+        if health.get("clock_ghz"):
+            tip.append(f"估算用主频：{health['clock_ghz']} GHz")
+        self.badge_device.setToolTip("\n".join(tip))
+        self._repolish(self.badge_device)
+
     def _on_ping(self, health) -> None:
         if health and isinstance(health, dict) and health.get("status") == "ok":
             self.badge_conn.setText("● 后端已连接")
             self.badge_conn.setProperty("badge", "success")
-            device = str(health.get("device", "-")).lower()
-            gpu = str(health.get("gpu_name", "") or "")
-            if device == "cuda":
-                self.badge_device.setText(f"GPU {gpu[:18]}".strip())
-                self.badge_device.setProperty("badge", "success")
-            else:
-                self.badge_device.setText(device.upper() or "CPU")
-                self.badge_device.setProperty("badge", "muted")
-            self._repolish(self.badge_device)
+            self._apply_device_badge(health)
             # 首次连接成功后加载工单（品类随工单联动）与系统信息。
             # 工单为空也要只加载一次：否则每 3s ping 都会因 _workorders 为空
             # 重复 _load_workorders → _on_workorder_changed → 数据页 reload 循环
@@ -509,6 +578,8 @@ class MainWindow(QMainWindow):
         if budget:
             self._budget_ms = float(budget)
             self.lbl_budget.setText(f"延迟预算 <{self._budget_ms:.0f}ms")
+        if isinstance(info.get("business_budget"), dict):
+            self._biz_budget = dict(info["business_budget"])
         self._apply_role(str(info.get("role") or "admin"))
 
     def _apply_role(self, role: str) -> None:

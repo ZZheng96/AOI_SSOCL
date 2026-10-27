@@ -26,6 +26,7 @@ _SCHEMA: Dict[str, Dict[str, tuple]] = {
     },
     "security": {
         "max_upload_mb": (int, float), "api_key": (str,), "api_key_env": (str,),
+        "rate_limit_per_window": (int,), "rate_limit_window_s": (int, float),
     },
     "notify": {
         "timeout_s": (int, float), "alarm_window": (int,),
@@ -34,14 +35,81 @@ _SCHEMA: Dict[str, Dict[str, tuple]] = {
     },
     "self_learning": {
         "trigger_min_feedback": (int,), "lr": (int, float), "epochs": (int,),
-        "auto_activate": (bool,),
+        "auto_activate": (bool,), "learning_parallel": (bool,),
     },
+    "evaluation": {"benchmark_n_images": (int,), "benchmark_warmup": (int,)},
     "logging": {"max_mb": (int,), "backups": (int,)},
 }
+
+# AC-072（2026-10-13，用户定值“稍宽松”）：业务预算与保留期。
+# key → (类型, 默认值, 下限, 上限)；百分比 0~100，天/月/版本数 ≥1。
+# 保留期仅为配置与展示，系统不据此自动删除任何数据。
+BUSINESS_BUDGET_SPEC: Dict[str, tuple] = {
+    "g2_max_fpr_pct": (float, 5.0, 0.0, 100.0),
+    "g2_min_recall_pct": (float, 95.0, 0.0, 100.0),
+    "g6_max_old_recall_drop_pt": (float, 2.0, 0.0, 100.0),
+    "max_gray_ratio_pct": (float, 15.0, 0.0, 100.0),
+    "raw_hot_days": (int, 90, 1, 36500),
+    "raw_cold_months": (int, 12, 1, 1200),
+    "heatmap_overlay_days": (int, 30, 1, 36500),
+    "snapshot_keep_recent": (int, 10, 1, 10000),
+    "snapshot_keep_activated": (bool, True, None, None),
+    "evalrun_audit_months": (int, 12, 1, 1200),
+    "label_late_tolerance_days": (int, 7, 1, 3650),
+}
+# 反馈/事件/WAL 永久保留：固定口径，不开放修改
+FEEDBACK_EVENT_WAL_RETENTION = "永久"
+_SCHEMA["business_budget"] = {
+    k: ((int, float) if t is float else (t,))
+    for k, (t, *_r) in BUSINESS_BUDGET_SPEC.items()}
+
+# 第三轮（2026-10-14）：总览 §7 待用户拍板事项——由用户在设置页决定。
+# key → (类型, 默认值, 可选值 tuple 或 None)；默认值均为“保持现状/保守”。
+GOVERNANCE_DECISIONS_SPEC: Dict[str, tuple] = {
+    "gt_threshold_frozen": (bool, False, None),
+    "gt_threshold_frozen_at": (str, "", None),        # 服务端写入，只读
+    "gt_dataset_ref": (str, "", None),
+    "ac045_l1_real_training_enabled": (bool, False, None),
+    "ac046_l1_pollution_exit_enabled": (bool, False, None),
+    "candidate_release_mode": (str, "manual", ("manual", "auto_on_approve")),
+    "calibration_isolation": (str, "auto", ("auto", "self", "holdout")),
+    "dependency_lock_policy": (str, "warn", ("warn", "block")),
+    "ac062_legacy_artifact_dir": (str, "", None),
+    "sync28_29_accepted": (bool, False, None),
+    "production_acceptance_signed": (bool, False, None),
+    # 第三轮覆盖/速度：blob GPU 开关（与 AOI_BLOB_GPU / 槽位 cfg.gpu 任一为真即启用）
+    "blob_gpu_enabled": (bool, False, None),
+    # 批次覆盖：已批准纳入 train/good 的额外批次（逗号分隔，只登记，不自动重建）
+    "approved_extra_good_batches": (str, "", None),
+}
+# 冻结后锁定的业务阈值键（business_budget 段）
+FROZEN_THRESHOLD_KEYS = ("g2_max_fpr_pct", "g2_min_recall_pct",
+                         "g6_max_old_recall_drop_pt", "max_gray_ratio_pct")
+_SCHEMA["governance_decisions"] = {
+    k: (t,) for k, (t, *_r) in GOVERNANCE_DECISIONS_SPEC.items()}
 
 
 class ConfigValidationError(ValueError):
     """配置写回 schema 校验失败（A16）。"""
+
+
+def _check_range(section: str, key: str, value: Any) -> None:
+    """AC-072：business_budget 段取值范围校验（超界拒绝并提示）；
+    governance_decisions 段枚举校验。"""
+    if section == "governance_decisions" and key in GOVERNANCE_DECISIONS_SPEC:
+        choices = GOVERNANCE_DECISIONS_SPEC[key][2]
+        if choices and value not in choices:
+            raise ConfigValidationError(
+                f"{section}.{key} 取值非法：允许 {list(choices)}，实得 {value!r}")
+        return
+    if section != "business_budget" or key not in BUSINESS_BUDGET_SPEC:
+        return
+    _t, _d, lo, hi = BUSINESS_BUDGET_SPEC[key]
+    if lo is None or isinstance(value, bool):
+        return
+    if not (lo <= value <= hi):
+        raise ConfigValidationError(
+            f"{section}.{key} 超出范围：允许 {lo}～{hi}，实得 {value!r}")
 
 
 class Settings:
@@ -74,8 +142,45 @@ class Settings:
                 raise ConfigValidationError(
                     f"{section}.{key} 类型错误：期望 {types}，实得 "
                     f"{type(value).__name__}={value!r}")
+        _check_range(section, key, value)
         self._cfg.setdefault(section, {})[key] = value
         save_yaml_atomic(self.config_path, self._cfg)
+
+    # ── AC-072 业务预算与保留期 ──────────────────────────────
+    def business_budget(self) -> Dict[str, Any]:
+        """business_budget 段（缺项/非法存量值回落默认）+ 固定口径项。"""
+        sec = self._cfg.get("business_budget") or {}
+        out: Dict[str, Any] = {}
+        for key, (typ, default, lo, hi) in BUSINESS_BUDGET_SPEC.items():
+            v = sec.get(key, default)
+            ok = (isinstance(v, bool) if typ is bool else
+                  isinstance(v, (int, float)) and not isinstance(v, bool)
+                  and (typ is float or isinstance(v, int))
+                  and lo <= v <= hi)
+            out[key] = typ(v) if ok else default
+        out["feedback_event_wal_retention"] = FEEDBACK_EVENT_WAL_RETENTION
+        return out
+
+    def governance_decisions(self) -> Dict[str, Any]:
+        """governance_decisions 段（缺项/非法存量值回落默认）。"""
+        sec = self._cfg.get("governance_decisions") or {}
+        out: Dict[str, Any] = {}
+        for key, (typ, default, choices) in GOVERNANCE_DECISIONS_SPEC.items():
+            v = sec.get(key, default)
+            ok = isinstance(v, typ) and (not choices or v in choices)
+            out[key] = v if ok else default
+        return out
+
+    def candidate_release_policy(self, max_predict_ms: float,
+                                 valid_seconds: float) -> Dict[str, float]:
+        """由业务预算构造 candidate_release.evaluate 的 policy（比例 0~1）。"""
+        b = self.business_budget()
+        return {"max_fpr": b["g2_max_fpr_pct"] / 100.0,
+                "min_recall": b["g2_min_recall_pct"] / 100.0,
+                "max_gray": b["max_gray_ratio_pct"] / 100.0,
+                "old_recall_drop": b["g6_max_old_recall_drop_pt"] / 100.0,
+                "max_predict_ms": float(max_predict_ms),
+                "valid_seconds": float(valid_seconds)}
 
     # ── 常用路径 ─────────────────────────────────────────────
     @property

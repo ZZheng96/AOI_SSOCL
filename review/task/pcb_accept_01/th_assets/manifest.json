@@ -1,0 +1,72 @@
+{
+  "templ_2.png": {
+    "from": "d:\\CGAIC\\AOI_SSOCL\\stable_AOI_tree\\PCB_Dual\\alg_repo\\through_hole\\detect\\input\\standard_roi\\templ_2.png",
+    "sha256": "30868e4fb47f468e7a8b8cc9a7b8462b95435a58ff2852d813a9cc915342d911",
+    "shape": [
+      100,
+      100,
+      3
+    ]
+  },
+  "templ_3.png": {
+    "from": "d:\\CGAIC\\AOI_SSOCL\\stable_AOI_tree\\PCB_Dual\\alg_repo\\through_hole\\detect\\input\\standard_roi\\templ_3.png",
+    "sha256": "36e50e583b45dca854f35c4ceedfb5dfcf8af0f6013e1e63c251e8b4a9b1700e",
+    "shape": [
+      124,
+      262,
+      3
+    ]
+  },
+  "test_2-1_OK.png": {
+    "from": "d:\\CGAIC\\AOI_SSOCL\\stable_AOI_tree\\PCB_Dual\\alg_repo\\through_hole\\detect\\input\\roi\\2-1.png",
+    "sha256": "c1679aedb384e6a09f2f82f27eb9b479135013f20753421e51c4e621fb59eee8",
+    "shape": [
+      100,
+      100,
+      3
+    ]
+  },
+  "test_2-8_NG.png": {
+    "from": "d:\\CGAIC\\AOI_SSOCL\\stable_AOI_tree\\PCB_Dual\\alg_repo\\through_hole\\detect\\input\\roi\\2-8.png",
+    "sha256": "5b93b000404a652f3eced796868907deb7995856ac332aa4a457157844f09d37",
+    "shape": [
+      125,
+      124,
+      3
+    ]
+  },
+  "test_3-1_NG.png": {
+    "from": "d:\\CGAIC\\AOI_SSOCL\\stable_AOI_tree\\PCB_Dual\\alg_repo\\through_hole\\detect\\input\\roi\\3-1.png",
+    "sha256": "ffef2e10cb462a20a6c3162f31a7aea1d97fb2e9a6a5b1cbf5055a11a5afda3e",
+    "shape": [
+      124,
+      250,
+      3
+    ]
+  },
+  "test_3-2_NG.png": {
+    "from": "d:\\CGAIC\\AOI_SSOCL\\stable_AOI_tree\\PCB_Dual\\alg_repo\\through_hole\\detect\\input\\roi\\3-2.png",
+    "sha256": "454b690ec741c491b53574deab81c2608913b388bfcec946faba0c409e8f36bd",
+    "shape": [
+      122,
+      250,
+      3
+    ]
+  },
+  "template:TH_templ2_single": {
+    "standard": "d:\\CGAIC\\AOI_SSOCL\\review\\task\\pcb_accept_01\\temp_tree\\PCB_Dual\\templates\\TH_templ2_single\\standard.png",
+    "size": [
+      100,
+      100
+    ],
+    "status": "draft"
+  },
+  "template:TH_templ3_dual": {
+    "standard": "d:\\CGAIC\\AOI_SSOCL\\review\\task\\pcb_accept_01\\temp_tree\\PCB_Dual\\templates\\TH_templ3_dual\\standard.png",
+    "size": [
+      124,
+      262
+    ],
+    "status": "draft"
+  }
+}

@@ -1,0 +1,13 @@
+# TEST-01 复跑命令（工作目录任意；脚本内切换 cwd 到 stable AOI_Core）
+
+# 1. 生成抽样清单（seed=20261013，40 张 2500x2500，sha256 校验）
+py -3.11 d:\CGAIC\AOI_SSOCL\review\task\test01_e2e_latency\raw\gen_manifest.py
+
+# 2. 直接调用入口（隔离 TEMP，重新 prepare，含空闲+后台学习负载）
+py -3.11 d:\CGAIC\AOI_SSOCL\review\task\test01_e2e_latency\raw\bench_test01.py --mode direct --prepare-n 40
+
+# 3. HTTP 入口（隔离 uvicorn，随机端口）
+py -3.11 d:\CGAIC\AOI_SSOCL\review\task\test01_e2e_latency\raw\bench_test01.py --mode http --prepare-n 40
+
+# 产物：raw\per_image_direct.csv / per_image_http.csv / summary_direct.json / summary_http.json
+#       raw\learning_direct.json / learning_http.json / images.json

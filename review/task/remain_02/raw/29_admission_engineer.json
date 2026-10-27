@@ -1,0 +1,16 @@
+{
+  "name": "admission_engineer",
+  "method": "POST",
+  "path": "/api/models/feature-revisions/ba47d05c566a175eb8728a6aeece4c23d130dbd1af396f56e2b5866ae4ac8df8/admission",
+  "role": "engineer",
+  "request_body": {
+    "limit": 8
+  },
+  "status_code": 200,
+  "response": {
+    "task_id": 5,
+    "status": "queued",
+    "activated": false
+  },
+  "note": "只产证据 activated=false"
+}

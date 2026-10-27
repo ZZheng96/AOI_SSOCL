@@ -1,0 +1,13 @@
+{
+  "image": "np.full((64,64,3), 128, uint8)",
+  "candidate_raw_dtype": "float32",
+  "production_dtype": "float32",
+  "candidate_nan": 3,
+  "candidate_posinf": 0,
+  "candidate_neginf": 0,
+  "production_nan": 0,
+  "production_inf": 0,
+  "nonfinite_position_match": false,
+  "max_abs_diff_on_both_finite": 0.0,
+  "n_dims": 200
+}

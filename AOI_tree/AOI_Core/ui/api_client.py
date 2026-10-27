@@ -225,7 +225,7 @@ class ApiClient(QObject):
         return self.get("/api/models/readiness", silent=True)
 
     def incomplete_report(self) -> dict | None:
-        """GET /api/review/incomplete_report → {reports:[{category,warn,...}]}
+        """GET /api/review/incomplete_report → {reports:[{category,alert,...}],any_alert:bool}
         （M14c 不完备预警；静默失败）"""
         return self.get("/api/review/incomplete_report", silent=True)
 
@@ -678,6 +678,17 @@ class ApiClient(QObject):
         return self.upload("/api/detect/upload", file_path,
                            form={"category": category}, timeout=120)
 
+    def pair_heatmap(self, path: str, pair_template: str,
+                     same_view_confirmed: bool = False) -> dict | None:
+        """POST /api/detect/pair-heatmap：独立视觉辅助，不改生产判定。"""
+        if not same_view_confirmed:
+            raise ValueError("必须确认同位配对")
+        return self.post("/api/detect/pair-heatmap", json={
+            "path": os.path.abspath(path),
+            "pair_template": os.path.abspath(pair_template),
+            "same_view_confirmed": True,
+        }, timeout=120, silent=True)
+
     def detect_video(self, video_id: int, category: str,
                      interval: int = 10) -> dict | None:
         """POST /api/detect/video → {task_id}"""
@@ -724,6 +735,9 @@ class ApiClient(QObject):
             payload["region"] = [int(v) for v in region]
         return self.post("/api/feedback", json=payload)
 
+    def feedback_details(self, feedback_id: int) -> dict | None:
+        return self.get(f"/api/feedback/{int(feedback_id)}/details")
+
     def invalidate_feedback(self, feedback_id: int) -> dict | None:
         """POST /api/feedback/{id}/invalidate → 作废反馈（标错撤回）"""
         return self.post(f"/api/feedback/{feedback_id}/invalidate", json={})
@@ -745,6 +759,49 @@ class ApiClient(QObject):
         """GET /api/feedback/summary（可工单口径）"""
         params = {"workorder_id": workorder_id} if workorder_id else {}
         return self.get("/api/feedback/summary", params=params)
+
+    # ── 候选学习 / 独立验收 ─────────────────────────────────
+    def prepared_candidates(self, category: str = "") -> dict | None:
+        """GET /api/candidates/recovery/prepared：真实候选准备记录。"""
+        if category:
+            return self.get(f"/api/candidates/{quote(category)}/recovery/prepared",
+                            silent=True)
+        return self.get("/api/candidates/recovery/prepared", silent=True)
+
+    def candidate_status(self, category: str, version: int) -> dict | None:
+        """GET /api/candidates/{category}/{version}：候选状态与验收报告。"""
+        return self.get(f"/api/candidates/{quote(category)}/{int(version)}",
+                        silent=True)
+
+    def build_feedback_candidate(self, feedback_id: int,
+                                 parent_version: int) -> dict | None:
+        """POST /api/feedback/{id}/candidate：构建未激活候选。"""
+        return self.post(f"/api/feedback/{int(feedback_id)}/candidate",
+                         json={"parent_version": int(parent_version)})
+
+    def candidate_acceptance(self, category: str, version: int,
+                             old_image_ids: list[int],
+                             new_image_ids: list[int],
+                             policy: dict[str, float]) -> dict | None:
+        """POST candidate acceptance：提交真实 test 小样本独立验收。"""
+        return self.post(f"/api/candidates/{quote(category)}/{int(version)}/acceptance",
+                         json={"old_image_ids": [int(i) for i in old_image_ids],
+                               "new_image_ids": [int(i) for i in new_image_ids],
+                               "policy": dict(policy)})
+
+    def candidate_decision(self, category: str, version: int, approved: bool,
+                           report_hash: str, reason: str) -> dict | None:
+        """POST candidate decision：管理员批准/拒绝，不自动执行。"""
+        return self.post(f"/api/candidates/{quote(category)}/{int(version)}/decision",
+                         json={"approved": bool(approved),
+                               "report_hash": str(report_hash),
+                               "reason": str(reason)})
+
+    def activate_candidate(self, category: str, version: int,
+                           conflict_ok: bool = True) -> dict | None:
+        """POST candidate activate：管理员激活，门禁冲突交由页面展示。"""
+        return self.post(f"/api/candidates/{quote(category)}/{int(version)}/activate",
+                         conflict_ok=conflict_ok)
 
     # ── 灰区复核队列（M5）───────────────────────────────────
     def review_queue(self, category: str = "", page: int = 1,
@@ -777,6 +834,11 @@ class ApiClient(QObject):
         return self.get("/api/review/stats", silent=True)
 
     # ── 数据增强配置（§15.29：伪异常 / 预处理 / 训练增强）────────
+    def augment_ablation(self, pseudo: dict, preprocess: dict, enhance: dict,
+                         **options) -> dict | None:
+        return self.post("/api/augment/ablation", json={
+            "pseudo": pseudo, "preprocess": preprocess, "enhance": enhance, **options})
+
     def get_augment_config(self) -> dict | None:
         """GET /api/augment/config：数据增强配置（pseudo/preprocess/enhance）。"""
         return self.get("/api/augment/config", silent=True)
@@ -793,6 +855,19 @@ class ApiClient(QObject):
         if enhance:
             payload["enhance"] = enhance
         return self.put("/api/augment/config", json=payload)
+
+    def analyze_feature_space(self, payload: dict) -> dict:
+        response = self._session.post(self.base_url + '/api/augment/feature-space',
+                                      json=payload, timeout=self.timeout)
+        if not response.ok:
+            raise RuntimeError(f'分析提交失败（{response.status_code}）：{response.text[:500]}')
+        return response.json()
+
+    def preprocess_preview(self, image_id: int,
+                           preprocess: dict) -> dict | None:
+        """单张预处理外观预览，不保存配置、不入库、不执行推理。"""
+        return self.post("/api/preprocess/preview", json={
+            "image_id": image_id, "preprocess": preprocess})
 
     def pseudo_preview(self, image_id: int, method: str,
                        params: dict | None = None) -> dict | None:
@@ -939,11 +1014,15 @@ class ApiClient(QObject):
             payload["limit"] = limit
         return self.post("/api/eval/accuracy", json=payload)
 
-    def eval_benchmark(self, category: str, n_images: int = 20,
-                       warmup: int = 3) -> dict | None:
-        """POST /api/eval/benchmark → {task_id}"""
-        return self.post("/api/eval/benchmark", json={
-            "category": category, "n_images": n_images, "warmup": warmup})
+    def eval_benchmark(self, category: str, n_images: int | None = None,
+                       warmup: int | None = None) -> dict | None:
+        """POST /api/eval/benchmark → {task_id}；省略值由后端配置解析。"""
+        payload = {"category": category}
+        if n_images is not None:
+            payload["n_images"] = n_images
+        if warmup is not None:
+            payload["warmup"] = warmup
+        return self.post("/api/eval/benchmark", json=payload)
 
     def eval_robustness(self, category: str, split: str = "test",
                         limit: int = 12) -> dict | None:
@@ -952,14 +1031,22 @@ class ApiClient(QObject):
         return self.post("/api/eval/robustness", json={
             "category": category, "split": split, "limit": limit})
 
-    def list_eval_runs(self) -> list | None:
-        """GET /api/eval/runs → [EvalRun...]"""
-        data = self.get("/api/eval/runs")
-        if isinstance(data, list):
-            return data
-        if isinstance(data, dict):
-            return data.get("items", [])
-        return None
+    def list_eval_runs(self, *, all_pages: bool = False) -> list | None:
+        """GET /api/eval/runs；模型版本追溯时读取全部分页，避免首屏遗漏。"""
+        items = []
+        page = 1
+        while True:
+            data = (self.get("/api/eval/runs", params={"page": page, "page_size": 50})
+                    if all_pages else self.get("/api/eval/runs"))
+            if isinstance(data, list):
+                return items + data
+            if not isinstance(data, dict):
+                return None
+            batch = data.get("items", [])
+            items.extend(batch)
+            if not all_pages or not batch or len(items) >= data.get("total", len(items)):
+                return items
+            page += 1
 
     def delete_eval_run(self, run_id: int) -> dict | None:
         """DELETE /api/eval/runs/{run_id}（admin 权限，仅删记录行）。
@@ -1011,6 +1098,42 @@ class ApiClient(QObject):
         return self.post("/api/learning/contribution", json={
             "category": category})
 
+    def feature_revisions(self) -> dict | None:
+        """GET /api/models/feature-revisions：revision 注册表与生产绑定事实。"""
+        return self.get("/api/models/feature-revisions", silent=True)
+
+    def feature_set(self, category: str) -> dict | None:
+        """GET /api/models/feature-set/{category}：当前特征集 + 档案状态（静默失败）"""
+        return self.get(f"/api/models/feature-set/{quote(category)}", silent=True)
+
+    def feature_set_draft(self, category: str, groups: list, scoring: str,
+                          note: str = "") -> dict | None:
+        """POST draft：组启停/评分口径变更仅登记为候选（engineer）"""
+        return self.post(f"/api/models/feature-set/{quote(category)}/draft",
+                         json={"groups": groups, "scoring": scoring, "note": note})
+
+    def feature_set_report(self, category: str) -> dict | None:
+        """POST report：生成当前版本特征档案（engineer，后台任务）"""
+        return self.post(f"/api/models/feature-set/{quote(category)}/report")
+
+    def feature_set_rebuild(self, category: str) -> dict | None:
+        """POST rebuild：表示重建（重提特征→重建库→重校准，产出未激活新版本；engineer）"""
+        return self.post(f"/api/models/feature-set/{quote(category)}/rebuild",
+                         json={})
+
+    def feature_hard_pool(self, category: str) -> dict | None:
+        """GET hard-pool：AC-017 难例池来源计数/冲突/摘要（engineer，静默失败）"""
+        return self.get(f"/api/models/feature-set/{quote(category)}/hard-pool", silent=True)
+
+    def slot_health(self, category: str) -> dict | None:
+        """GET slot-health：AC-025/026 槽位健康+更新准入审计（engineer，静默失败）"""
+        return self.get(f"/api/models/{quote(category)}/slot-health", silent=True)
+
+    def feature_admission(self, revision_id: str, limit: int = 60) -> dict | None:
+        """POST admission：候选难例准入试算（engineer，后台任务，不激活）"""
+        return self.post(f"/api/models/feature-revisions/{quote(revision_id)}/admission",
+                         json={"limit": int(limit)})
+
     def learning_contribution_latest(self, category: str) -> dict | None:
         """GET /api/learning/contribution/{category}/latest（静默失败）"""
         return self.get(f"/api/learning/contribution/{quote(category)}/latest",
@@ -1028,6 +1151,13 @@ class ApiClient(QObject):
         return self.get(f"/api/learning/weight_history/{quote(category)}",
                         silent=True)
 
+    def candidate_weight_history(self, category: str,
+                                 version: int | None = None) -> dict | None:
+        params = {"version": version} if version is not None else {}
+        return self.get(
+            f"/api/learning/candidate_weight_history/{quote(category, safe='')}",
+            params=params, silent=True)
+
     # ── 追溯→学习→提升（M7）─────────────────────────────
     def flip_curve(self, category: str) -> dict | None:
         """GET /api/learning/flip_curve/{category}（M7a 翻案曲线）
@@ -1041,6 +1171,10 @@ class ApiClient(QObject):
         """GET /api/detections/{id}/trace（M7a 单帧追溯链）
         → {detection, model|None, feedbacks[], post|None}"""
         return self.get(f"/api/detections/{int(detection_id)}/trace")
+
+    def detection_explain(self, detection_id: int) -> dict | None:
+        """GET /api/detections/{id}/explain（AC-014 单帧解释：记录口径 + trad 测量）"""
+        return self.get(f"/api/detections/{int(detection_id)}/explain")
 
     def misjudged(self, category: str = "", page: int = 1,
                   page_size: int = 20) -> dict | None:
@@ -1073,6 +1207,11 @@ class ApiClient(QObject):
             params["category"] = category
         return self.get("/api/stats/timeseries", params=params)
 
+    def stats_latency_trend(self, workorder_id: int) -> dict | None:
+        """当前工单全部检测的批次/检测顺序耗时趋势。"""
+        return self.get("/api/stats/latency_trend",
+                        params={"workorder_id": workorder_id})
+
     # ── 质检报表（复核后口径，W-report 2026-08-29）─────────────
     @staticmethod
     def _scope_params(workorder_id: int | None, category: str,
@@ -1087,7 +1226,7 @@ class ApiClient(QObject):
     def stats_quality(self, workorder_id: int | None = None,
                       category: str = "", range_name: str = "all") -> dict | None:
         """GET /api/stats/quality_overview（复核后口径 KPI：覆盖率/真实不良率/
-        误报率/漏检率）"""
+        误报率/检出率）"""
         return self.get("/api/stats/quality_overview",
                         params=self._scope_params(workorder_id, category,
                                                   range_name))
@@ -1095,7 +1234,7 @@ class ApiClient(QObject):
     def stats_mistake_trend(self, workorder_id: int | None = None,
                             category: str = "", range_name: str = "30d"
                             ) -> dict | None:
-        """GET /api/stats/mistake_trend（按日 FP 率/FN 率/复核数）"""
+        """GET /api/stats/mistake_trend（按真实 Dataset 批次 FP 率/FN 率/复核数）"""
         return self.get("/api/stats/mistake_trend",
                         params=self._scope_params(workorder_id, category,
                                                   range_name))

@@ -1,0 +1,105 @@
+
+============================================================
+[run_all] 后端端到端 m02
+============================================================
+[testdata] 未找到可用数据集，已生成合成数据（MVTec-like 结构）：C:\Users\imia\AppData\Local\Temp\aoi_synth_56b_vllk\synth
+[data] good=10 defect=4 test_good=2
+[env] TMP=C:\Users\imia\AppData\Local\Temp\aoi_m2_5sjz4eew
+[db] 样本登记完成（10 normal train / 3 defect / 3 test）
+[prepare] task_id=1，等待完成...
+  [task 1]   0.0% 读取数据库样本...
+[dino] 使用随包 vendor 权重: D:\CGAIC\AOI_SSOCL\AOI_tree\assets\dinov2\dinov2_vits14_pretrain.pth
+[disc] 加载预训练头 D:\CGAIC\AOI_SSOCL\AOI_tree\AOI_Core\assets\disc_pretrain.pt
+  [fit] init_normal 提取 10 张完成 (1s)
+  [fit] init_defect 提取 2 张完成 (1s)
+  [fit] 加载全局类型判别器（D:\CGAIC\AOI_SSOCL\AOI_tree\assets\defect_clf.pkl）
+  [fit] 槽位 sem 完成 (1s)
+  [fit] 槽位 disc 完成 (1s)
+  [task 1]  47.0% 槽位 shead 拟合
+[shead] epoch 10/50 loss_n=5.1955 loss_a=6.6185
+[shead] epoch 20/50 loss_n=8.3958 loss_a=4.7772
+[shead] epoch 30/50 loss_n=5.4922 loss_a=6.9833
+[shead] epoch 40/50 loss_n=5.5594 loss_a=6.5391
+[shead] epoch 50/50 loss_n=6.8894 loss_a=5.9473
+[shead] fit 完成: normal=10 pseudo=30 real_defect=2 pos_total=32 X=42 batch=32 lr=0.001
+  [fit] 槽位 shead 完成 (3s)
+[fusion] sanity 加权: sem=0.500 disc=0.500 shead=0.000
+[fusion] train 域 fused AUROC=1.0（初始权重质量，协议内）
+[route] base=1.0000 router=1.0000 enabled=False (margin=0.005)
+[route] 准入=trace_only（样本不足（每集正/负 <3），只做追溯）
+  [fit] 视图模式 profile_missing（min_defect_px 未提供，保持整图） 局部分支=关（auto_profile）
+  [task 1]  79.0% 在线学习器初始化
+[prepare] ✅ version=v1 n_normal=10 n_defect=2
+[detect bad] score=1.9940 decision=anomaly is_anomaly=True latency=163.1ms slots={'sem': 1.999, 'disc': 1.989, 'shead': 0.328} triggered=sem
+[detect good] score=1.2764 decision=anomaly latency=58.3ms
+[detect] 未准备品类 400 + 提示 ✅
+[feedback] engine_update=None note=已排队候选；未应用、未激活，等待候选任务消费
+[feedback] 已排队候选，未直接应用 ✅
+[status] {'category': 'smoke_m2', 'versions': [1], 'current_version': 1, 'prepared': True, 'feedback_log_len': 0, 'unconsumed_db': 1}
+  [task 3]   0.0% 
+[consolidate] ✅ {'category': 'smoke_m2', 'version': 'v2', 'version_num': 2, 'from_version': 1, 'consolidation_id': 1, 'feedback_ids': [], 'feedback_count': 0, 'activated': True, 'message': '巩固落盘完成，已激活为新版本'}
+[models] v1/v2 登记与激活指针 ✅ (v1.origin=engine_fit v2.origin=self_learned_engine)
+[categories] prepared=True cur=v2 ✅
+[calibration] 410 Gone ✅
+[disc] 加载预训练头 D:\CGAIC\AOI_SSOCL\AOI_tree\AOI_Core\assets\disc_pretrain.pt
+[disc] 加载预训练头 D:\CGAIC\AOI_SSOCL\AOI_tree\AOI_Core\assets\disc_pretrain.pt
+[activate] v1→v2 切换 ✅
+[detect after consolidate] score=1.9932 decision=anomaly latency=195.7ms ✅
+  [task 5]   0.0% 
+[disc] 加载预训练头 D:\CGAIC\AOI_SSOCL\AOI_tree\AOI_Core\assets\disc_pretrain.pt
+[M2b accuracy] ✅ auroc=1.0000 f1=1.0000 n=3
+  [task 6]   0.0% 
+[disc] 加载预训练头 D:\CGAIC\AOI_SSOCL\AOI_tree\AOI_Core\assets\disc_pretrain.pt
+[disc] 加载预训练头 D:\CGAIC\AOI_SSOCL\AOI_tree\AOI_Core\assets\disc_pretrain.pt
+[M2b ab_compare] ✅ v2 vs v1 verdict=tie auroc 1.0 -> 1.0 分歧=0
+  [task 7]   0.0% 
+[disc] 加载预训练头 D:\CGAIC\AOI_SSOCL\AOI_tree\AOI_Core\assets\disc_pretrain.pt
+  [lc-rounds] 轮 1/2 反馈=5 学习前错误=0 已反馈重测acc=1.0000 错→对=0.0000 缺陷检出=0.0000 AUROC=1.0000 F1=0.5000
+  [task 7]  45.0% 多轮学习回放中（前向进度）...
+  [lc-rounds] 轮 2/2 反馈=10 学习前错误=1 已反馈重测acc=0.9000 错→对=0.0000 缺陷检出=0.0000 AUROC=1.0000 F1=0.5000
+  [task 7]  85.0% 多轮学习回放中（前向进度）...
+[M2b learning_curve] ✅ steps=[5, 10] auroc=[1.0, 1.0] initial=1.0 final=1.0 gain=0.0 efficiency=0.0
+  [task 8]   0.0% 
+[M2b contribution] ✅ ablation.full=1.0 leave_one_out={'sem': 1.0, 'disc': 1.0, 'shead': 1.0}
+[M2b shapley] 路由已下线（404/405）✅
+[M5a review/queue] ✅ 待复核 1 条（含插入的 gray 帧）
+[M5a review submit] ✅ feedback_type=review consumed=True engine_update=None stats={'pending_total': 0, 'pending_by_category': {}, 'categories': [], 'reviewed_today': 1, 'reviewed_total': 1}
+[M5a review] 重复复核 409 / 不存在 404 ✅
+[disc] 加载预训练头 D:\CGAIC\AOI_SSOCL\AOI_tree\AOI_Core\assets\disc_pretrain.pt
+[M5a gate] v2→v1 ✅ 0.3s skipped=True n=11 auroc None -> None divergent=0 reason=锚定样本不足（total=11 pos=1 neg=10，正负各需≥4），跳过门控
+[disc] 加载预训练头 D:\CGAIC\AOI_SSOCL\AOI_tree\AOI_Core\assets\disc_pretrain.pt
+[M5a gate] 回切 v2 ✅
+[M5a webhook] ✅ 不可达地址静默（webhook_error×2）且检测不阻塞
+[M5a webhook] 禁用路径 ✅
+[M5a online_curve] ✅ points=3 correctness=[0, 0, 1] correct_rate=0.33 last7d=3 weights={'sem': 0.5, 'disc': 0.5, 'shead': 0.0}
+[M6a review region] ✅ consumed=True region={'box': [10.0, 10.0, 50.0, 50.0], 'pre': {'score': 1.993951, 'decision': 'anomaly', 'slots': {'sem': 1.9993, 'disc': 1.9886, 'shead': 0.3281}}, 'box_source': 'human_box'} engine_update=None
+[M6a review region] label=0 忽略框选（正常回流）✅ engine_update=None
+[M6a alarm] 单元级：第5帧触发 / 冷却期去重 / 滑窗滑出 ✅
+[M6a alarm] 接线级 fired -> OperationLog×2 ✅
+[M6a detect] alarm={'active': True, 'window_hits': 6} open_alert=False ✅
+[M6a precheck] ✅ counts={'train_normal': 10, 'train_anomaly': 2, 'test_normal': 2, 'test_anomaly': 1, 'feedback': 0, 'template': 0} scenario=L1a resolutions=[] warnings=['正常图 10 张处于少样本区（10-49）：CDF 校准粒度较粗，AUROC 可能系统性低估约 0.1（M9 验收实测）；建议补到 50 张以上达到协议口径']; 空品类 -> None + 警告
+[M7a feedback pre] ✅ pre={'score': 1.994158, 'decision': 'anomaly', 'slots': {'sem': 1.9994, 'disc': 1.9889, 'shead': 0.0898}} engine_update=None
+[M7a feedback pre] DB region=dict 且 pre 非空 ✅
+[M7a legacy] region=list 存量反馈兼容（列表接口不炸）✅
+[M7a flip_curve] ✅ total=6 flipped=0 flip_rate=0.0 legacy=1 首点 pre=1.993951->1.993951
+[M7a flip_curve] 未准备品类 409 ✅
+[M7a trace] ✅ feedbacks=1 model={'id': 2, 'name': 'smoke_m2_v2', 'level': '0', 'category': 'smoke_m2', 'version': 'v2', 'path': 'C:\\Users\\imia\\AppData\\Local\\Temp\\aoi_m2_5sjz4eew\\storage\\engine\\snapshots\\smoke_m2\\v2', 'format': 'engine_snapshot', 'metrics': {'fit_seconds': 3.5858101844787598, 'slot_names': ['sem', 'disc', 'shead'], 'note': 'm2 冒烟巩固', 'feature_revision_binding': {'status': 'unknown', 'revision_id': None, 'reason': 'production_trad_not_revision_managed'}}, 'is_active': True, 'origin': 'self_learned_engine', 'parent_id': None, 'created_at': '2026-10-14T14:49:07.226177'} post={'score': 1.994158, 'decision': 'anomaly', 'latency_ms': 10.98}
+[M7a trace] 不存在记录 404 ✅
+[M7a misjudged] ✅ total=3 首行={'detection_id': 11, 'feedback_type': 'false_positive', 'pre_score': None}
+[M7a misjudged] CSV 导出（表头正确）✅
+[M8a legacy] ✅ 历史未分组批次 id=1 n_images=15，存量图已全部归组
+  [task 10]   0.0% 
+[M8a import_folder] ✅ dataset_id=3 3 张图挂批次，文件在 storage/images/smoke_m8/ds3/ 下
+[M8a datasets] ✅ 列表含新批次；详情分页 total=3 page_size=2 -> 2 条
+[M8a annotate] ✅ image_id=23 label normal->anomaly，OperationLog extra 含 image_id/old/new
+[M8a delete_dataset] ✅ {'deleted_images': 3, 'deleted_files': 3, 'affected_detections': 0}
+[M8a upload] ✅ 挂 uploads 批次 ds=3；delete_file=true 连文件删除
+  [task 11]   0.0% 
+[M8a orphan] ✅ scan 扫到孤儿文件，clean 删除 (n_scanned=9)
+[M8a stats/logs] ✅ overview?category 与全局差 1（other_m8）；timeseries?category 合计=11；logs action+category 过滤生效
+[M8a feedback] ✅ 反馈图自动登记 split=feedback，挂反馈回流批次 ds=4
+[M8a tree] ✅ 第四维 datasets 生效（smoke_m2 含 3 个批次节点），原 tree 保留
+✅ M2 + M2b + M5a + M6a + M7a + M8a 冒烟通过
+
+============================================================
+✓ 全部冒烟通过

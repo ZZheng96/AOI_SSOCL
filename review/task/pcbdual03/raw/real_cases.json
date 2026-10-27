@@ -1,0 +1,1738 @@
+[
+  {
+    "family": "SMT",
+    "algorithm": "solder_连锡",
+    "image": "d:\\CGAIC\\AOI_CV\\Dev_solder_smt_Alg\\test_images\\bridge_pair\\pair4\\PixPin_2026-07-01_09-28-28.png",
+    "standard": "d:\\CGAIC\\AOI_CV\\Dev_solder_smt_Alg\\test_images\\bridge_pair\\pair4\\PixPin_2026-07-01_09-22-58_OK.png",
+    "roi_file": "d:\\CGAIC\\AOI_CV\\Dev_solder_smt_Alg\\test_images\\bridge_pair\\pair4\\pad.json",
+    "params_file": "d:\\CGAIC\\AOI_CV\\Dev_solder_smt_Alg\\test_images\\bridge_pair\\pair4\\params.json",
+    "pads": [
+      [
+        23,
+        43,
+        258,
+        123
+      ],
+      [
+        24,
+        203,
+        258,
+        99
+      ],
+      [
+        29,
+        350,
+        257,
+        102
+      ],
+      [
+        30,
+        497,
+        257,
+        120
+      ],
+      [
+        695,
+        41,
+        258,
+        123
+      ],
+      [
+        696,
+        203,
+        259,
+        106
+      ],
+      [
+        701,
+        351,
+        257,
+        104
+      ],
+      [
+        704,
+        476,
+        256,
+        131
+      ]
+    ],
+    "source_status": "NG",
+    "adapter_status": "NG",
+    "source_boxes": [
+      [
+        145,
+        430,
+        87,
+        42
+      ]
+    ],
+    "adapter_boxes": [
+      [
+        145,
+        430,
+        87,
+        42
+      ]
+    ],
+    "status_boxes_equal": true,
+    "metadata_difference_keys": [],
+    "source_metadata": {
+      "num_defects": 1,
+      "mode": "diff_grow_ROI",
+      "has_template": true,
+      "pad_count": 8,
+      "solder_area": 11193,
+      "output_image": {
+        "shape": [
+          263,
+          400,
+          3
+        ],
+        "dtype": "uint8",
+        "sha256": "76802a6ca5ed73643b6212fcf1368fc2f178af1cd2ed45c720270fb97f9e8a27"
+      },
+      "defects_enabled": {
+        "excess": false,
+        "insufficient": false,
+        "bridge": true,
+        "cold_solder": false
+      },
+      "pad_rects_aligned": [
+        [
+          25,
+          32,
+          247,
+          117
+        ],
+        [
+          25,
+          188,
+          247,
+          94
+        ],
+        [
+          32,
+          331,
+          244,
+          96
+        ],
+        [
+          32,
+          472,
+          244,
+          112
+        ],
+        [
+          672,
+          32,
+          247,
+          117
+        ],
+        [
+          672,
+          188,
+          247,
+          98
+        ],
+        [
+          677,
+          331,
+          244,
+          98
+        ],
+        [
+          682,
+          451,
+          244,
+          124
+        ]
+      ]
+    },
+    "adapter_metadata": {
+      "diagnostics": {
+        "solder_mask": {
+          "shape": [
+            263,
+            400
+          ],
+          "dtype": "uint8",
+          "sha256": "c0117a2d073a769cfb1808041917a920ea89b1404a948bea61dcc9b9cb64489e"
+        },
+        "pad_coverage": "不可用：少锡判定未执行",
+        "ring_geometry": {
+          "outer": [
+            [
+              0,
+              0,
+              167,
+              109
+            ],
+            [
+              0,
+              46,
+              167,
+              109
+            ],
+            [
+              0,
+              107,
+              166,
+              109
+            ],
+            [
+              0,
+              171,
+              166,
+              92
+            ],
+            [
+              255,
+              0,
+              145,
+              109
+            ],
+            [
+              255,
+              47,
+              145,
+              109
+            ],
+            [
+              257,
+              108,
+              143,
+              109
+            ],
+            [
+              259,
+              164,
+              141,
+              99
+            ]
+          ],
+          "pad": [
+            [
+              11,
+              14,
+              105,
+              50
+            ],
+            [
+              11,
+              80,
+              105,
+              40
+            ],
+            [
+              14,
+              141,
+              104,
+              41
+            ],
+            [
+              14,
+              201,
+              104,
+              48
+            ],
+            [
+              286,
+              14,
+              105,
+              50
+            ],
+            [
+              286,
+              80,
+              105,
+              42
+            ],
+            [
+              288,
+              141,
+              104,
+              42
+            ],
+            [
+              290,
+              192,
+              104,
+              53
+            ]
+          ]
+        },
+        "diff_excess": {
+          "shape": [
+            263,
+            400
+          ],
+          "dtype": "uint8",
+          "sha256": "d060c54fec2addc70df69bd54a20404c141e4ed354ca2203ef2167d11053ac52"
+        },
+        "diff_cold": "不可用：虚焊差分未执行",
+        "excess_components": "不可用：多锡未执行",
+        "bridge_components": [
+          [
+            [
+              0,
+              0,
+              167,
+              263
+            ],
+            [
+              [
+                2,
+                3
+              ]
+            ],
+            true,
+            [
+              [
+                62,
+                183,
+                37,
+                18
+              ]
+            ]
+          ],
+          [
+            [
+              255,
+              0,
+              145,
+              263
+            ],
+            [],
+            false,
+            []
+          ]
+        ],
+        "cold_results": "不可用：虚焊未执行",
+        "coordinates": {
+          "space": "检测工作图",
+          "scale": 0.4250797024442083,
+          "roi_offset": [
+            0,
+            0
+          ]
+        },
+        "ring_mask": "不可用：当前检测项未执行多锡ring判定",
+        "rim_toe": "不可用：缺toe/rim或当前判定路径不支持",
+        "crack": "不可用：当前判定路径未执行/未导出"
+      },
+      "num_defects": 1,
+      "mode": "diff_grow_ROI",
+      "has_template": true,
+      "pad_count": 8,
+      "solder_area": 11193,
+      "output_image": {
+        "shape": [
+          263,
+          400,
+          3
+        ],
+        "dtype": "uint8",
+        "sha256": "76802a6ca5ed73643b6212fcf1368fc2f178af1cd2ed45c720270fb97f9e8a27"
+      },
+      "defects_enabled": {
+        "excess": false,
+        "insufficient": false,
+        "bridge": true,
+        "cold_solder": false
+      },
+      "pad_rects_aligned": [
+        [
+          25,
+          32,
+          247,
+          117
+        ],
+        [
+          25,
+          188,
+          247,
+          94
+        ],
+        [
+          32,
+          331,
+          244,
+          96
+        ],
+        [
+          32,
+          472,
+          244,
+          112
+        ],
+        [
+          672,
+          32,
+          247,
+          117
+        ],
+        [
+          672,
+          188,
+          247,
+          98
+        ],
+        [
+          677,
+          331,
+          244,
+          98
+        ],
+        [
+          682,
+          451,
+          244,
+          124
+        ]
+      ]
+    },
+    "source_message": "ok",
+    "adapter_message": "连锡 判定=NG，缺陷数=1，焊盘数=8",
+    "boundary": "toe/rim 文件未提供，不能覆盖全部虚焊几何分支；无精度结论"
+  },
+  {
+    "family": "SMT",
+    "algorithm": "solder_少锡",
+    "image": "d:\\CGAIC\\AOI_CV\\Dev_solder_smt_Alg\\test_images\\insufficient_pair\\pair4\\PixPin_2026-07-01_11-26-06.png",
+    "standard": "d:\\CGAIC\\AOI_CV\\Dev_solder_smt_Alg\\test_images\\insufficient_pair\\pair4\\PixPin_2026-07-01_11-26-43_OK.png",
+    "roi_file": "d:\\CGAIC\\AOI_CV\\Dev_solder_smt_Alg\\test_images\\insufficient_pair\\pair4\\pad.json",
+    "params_file": "d:\\CGAIC\\AOI_CV\\Dev_solder_smt_Alg\\test_images\\insufficient_pair\\pair4\\params.json",
+    "pads": [
+      [
+        45,
+        17,
+        76,
+        145
+      ],
+      [
+        159,
+        14,
+        70,
+        144
+      ],
+      [
+        271,
+        15,
+        70,
+        140
+      ],
+      [
+        386,
+        11,
+        68,
+        147
+      ],
+      [
+        46,
+        538,
+        76,
+        145
+      ],
+      [
+        160,
+        535,
+        70,
+        144
+      ],
+      [
+        272,
+        537,
+        70,
+        140
+      ],
+      [
+        387,
+        532,
+        68,
+        147
+      ]
+    ],
+    "source_status": "NG",
+    "adapter_status": "NG",
+    "source_boxes": [
+      [
+        374,
+        515,
+        62,
+        141
+      ]
+    ],
+    "adapter_boxes": [
+      [
+        374,
+        515,
+        62,
+        141
+      ]
+    ],
+    "status_boxes_equal": true,
+    "metadata_difference_keys": [],
+    "source_metadata": {
+      "num_defects": 1,
+      "mode": "diff_grow_ROI",
+      "has_template": true,
+      "pad_count": 8,
+      "solder_area": 10043,
+      "output_image": {
+        "shape": [
+          400,
+          274,
+          3
+        ],
+        "dtype": "uint8",
+        "sha256": "14002bbca65355bc2dc7eb5bfe0ca1a0a537bf3ac7c6c224ad2d713d92496eeb"
+      },
+      "defects_enabled": {
+        "excess": false,
+        "insufficient": true,
+        "bridge": false,
+        "cold_solder": false
+      },
+      "pad_rects_aligned": [
+        [
+          40,
+          15,
+          71,
+          137
+        ],
+        [
+          151,
+          13,
+          66,
+          137
+        ],
+        [
+          261,
+          13,
+          66,
+          134
+        ],
+        [
+          372,
+          10,
+          62,
+          141
+        ],
+        [
+          42,
+          520,
+          71,
+          137
+        ],
+        [
+          153,
+          518,
+          66,
+          137
+        ],
+        [
+          261,
+          520,
+          66,
+          134
+        ],
+        [
+          374,
+          515,
+          62,
+          141
+        ]
+      ]
+    },
+    "adapter_metadata": {
+      "diagnostics": {
+        "solder_mask": {
+          "shape": [
+            400,
+            274
+          ],
+          "dtype": "uint8",
+          "sha256": "2292cb20a88b1ffe497fa3a5150da0a485c5e8fea85e8c909e3102e9382a29ff"
+        },
+        "pad_coverage": [
+          [
+            24,
+            9,
+            42,
+            81,
+            0.39711934156378603,
+            false
+          ],
+          [
+            89,
+            8,
+            39,
+            81,
+            0.3969610636277303,
+            false
+          ],
+          [
+            154,
+            8,
+            39,
+            79,
+            0.4336254462836741,
+            false
+          ],
+          [
+            219,
+            6,
+            37,
+            83,
+            0.42657114946271574,
+            false
+          ],
+          [
+            25,
+            306,
+            42,
+            81,
+            0.3574368018812463,
+            false
+          ],
+          [
+            90,
+            305,
+            39,
+            81,
+            0.4289332067109845,
+            false
+          ],
+          [
+            154,
+            306,
+            39,
+            79,
+            0.42973060694579684,
+            false
+          ],
+          [
+            220,
+            303,
+            37,
+            83,
+            0.10061869098013676,
+            true
+          ]
+        ],
+        "ring_geometry": {
+          "outer": [
+            [
+              1,
+              0,
+              88,
+              129
+            ],
+            [
+              64,
+              0,
+              88,
+              129
+            ],
+            [
+              131,
+              0,
+              85,
+              125
+            ],
+            [
+              193,
+              0,
+              81,
+              131
+            ],
+            [
+              2,
+              282,
+              88,
+              118
+            ],
+            [
+              65,
+              281,
+              88,
+              119
+            ],
+            [
+              131,
+              283,
+              85,
+              117
+            ],
+            [
+              194,
+              279,
+              80,
+              121
+            ]
+          ],
+          "pad": [
+            [
+              24,
+              9,
+              42,
+              81
+            ],
+            [
+              89,
+              8,
+              39,
+              81
+            ],
+            [
+              154,
+              8,
+              39,
+              79
+            ],
+            [
+              219,
+              6,
+              37,
+              83
+            ],
+            [
+              25,
+              306,
+              42,
+              81
+            ],
+            [
+              90,
+              305,
+              39,
+              81
+            ],
+            [
+              154,
+              306,
+              39,
+              79
+            ],
+            [
+              220,
+              303,
+              37,
+              83
+            ]
+          ]
+        },
+        "diff_excess": {
+          "shape": [
+            400,
+            274
+          ],
+          "dtype": "uint8",
+          "sha256": "14e91a4fbbff62dd654c2205c88f4abfd5abf294e6c245afa52978a781664bdd"
+        },
+        "diff_cold": "不可用：虚焊差分未执行",
+        "excess_components": "不可用：多锡未执行",
+        "bridge_components": "不可用：连锡未执行",
+        "cold_results": "不可用：虚焊未执行",
+        "coordinates": {
+          "space": "检测工作图",
+          "scale": 0.5882352941176471,
+          "roi_offset": [
+            0,
+            0
+          ]
+        },
+        "ring_mask": "不可用：当前检测项未执行多锡ring判定",
+        "rim_toe": "不可用：缺toe/rim或当前判定路径不支持",
+        "crack": "不可用：当前判定路径未执行/未导出"
+      },
+      "num_defects": 1,
+      "mode": "diff_grow_ROI",
+      "has_template": true,
+      "pad_count": 8,
+      "solder_area": 10043,
+      "output_image": {
+        "shape": [
+          400,
+          274,
+          3
+        ],
+        "dtype": "uint8",
+        "sha256": "14002bbca65355bc2dc7eb5bfe0ca1a0a537bf3ac7c6c224ad2d713d92496eeb"
+      },
+      "defects_enabled": {
+        "excess": false,
+        "insufficient": true,
+        "bridge": false,
+        "cold_solder": false
+      },
+      "pad_rects_aligned": [
+        [
+          40,
+          15,
+          71,
+          137
+        ],
+        [
+          151,
+          13,
+          66,
+          137
+        ],
+        [
+          261,
+          13,
+          66,
+          134
+        ],
+        [
+          372,
+          10,
+          62,
+          141
+        ],
+        [
+          42,
+          520,
+          71,
+          137
+        ],
+        [
+          153,
+          518,
+          66,
+          137
+        ],
+        [
+          261,
+          520,
+          66,
+          134
+        ],
+        [
+          374,
+          515,
+          62,
+          141
+        ]
+      ]
+    },
+    "source_message": "ok",
+    "adapter_message": "少锡 判定=NG，缺陷数=1，焊盘数=8",
+    "boundary": "toe/rim 文件未提供，不能覆盖全部虚焊几何分支；无精度结论"
+  },
+  {
+    "family": "SMT",
+    "algorithm": "solder_虚焊",
+    "image": "d:\\CGAIC\\AOI_CV\\Dev_solder_smt_Alg\\test_images\\cold_solder_pair\\pair1\\PixPin_2026-07-01_08-41-22.png",
+    "standard": "d:\\CGAIC\\AOI_CV\\Dev_solder_smt_Alg\\test_images\\cold_solder_pair\\pair1\\PixPin_2026-07-01_08-41-56_OK.png",
+    "roi_file": "d:\\CGAIC\\AOI_CV\\Dev_solder_smt_Alg\\test_images\\cold_solder_pair\\pair1\\pad.json",
+    "params_file": "d:\\CGAIC\\AOI_CV\\Dev_solder_smt_Alg\\test_images\\cold_solder_pair\\pair1\\params.json",
+    "pads": [
+      [
+        12,
+        63,
+        195,
+        156
+      ],
+      [
+        582,
+        60,
+        172,
+        155
+      ],
+      [
+        1,
+        1,
+        216,
+        8
+      ],
+      [
+        542,
+        1,
+        177,
+        6
+      ],
+      [
+        723,
+        17,
+        22,
+        13
+      ],
+      [
+        733,
+        240,
+        20,
+        18
+      ],
+      [
+        480,
+        37,
+        8,
+        194
+      ],
+      [
+        382,
+        96,
+        2,
+        76
+      ],
+      [
+        355,
+        107,
+        2,
+        48
+      ],
+      [
+        1,
+        21,
+        211,
+        27
+      ],
+      [
+        2,
+        229,
+        214,
+        36
+      ],
+      [
+        247,
+        2,
+        279,
+        7
+      ],
+      [
+        573,
+        224,
+        107,
+        32
+      ],
+      [
+        565,
+        27,
+        116,
+        23
+      ],
+      [
+        121,
+        118,
+        80,
+        53
+      ],
+      [
+        590,
+        116,
+        89,
+        56
+      ],
+      [
+        96,
+        97,
+        99,
+        98
+      ],
+      [
+        602,
+        96,
+        97,
+        100
+      ]
+    ],
+    "source_status": "OK",
+    "adapter_status": "OK",
+    "source_boxes": [],
+    "adapter_boxes": [],
+    "status_boxes_equal": true,
+    "metadata_difference_keys": [],
+    "source_metadata": {
+      "num_defects": 0,
+      "mode": "diff_grow_ROI",
+      "has_template": true,
+      "pad_count": 12,
+      "solder_area": 13840,
+      "output_image": {
+        "shape": [
+          144,
+          400,
+          3
+        ],
+        "dtype": "uint8",
+        "sha256": "5c7b1a5c842a152c87506d59b6d893b3a6d438eacab72ccf6fdf252018a2d3c4"
+      },
+      "defects_enabled": {
+        "excess": false,
+        "insufficient": false,
+        "bridge": false,
+        "cold_solder": true
+      },
+      "pad_rects_aligned": [
+        [
+          11,
+          65,
+          203,
+          162
+        ],
+        [
+          607,
+          61,
+          178,
+          160
+        ],
+        [
+          756,
+          15,
+          21,
+          11
+        ],
+        [
+          766,
+          249,
+          19,
+          17
+        ],
+        [
+          0,
+          21,
+          219,
+          27
+        ],
+        [
+          1,
+          239,
+          223,
+          37
+        ],
+        [
+          597,
+          233,
+          110,
+          31
+        ],
+        [
+          590,
+          27,
+          120,
+          23
+        ],
+        [
+          124,
+          122,
+          83,
+          55
+        ],
+        [
+          615,
+          120,
+          93,
+          57
+        ],
+        [
+          99,
+          100,
+          102,
+          100
+        ],
+        [
+          629,
+          99,
+          100,
+          102
+        ]
+      ]
+    },
+    "adapter_metadata": {
+      "diagnostics": {
+        "crack": {
+          "0": {
+            "executed": true,
+            "detected": false,
+            "hough": {
+              "lines": [],
+              "roi_origin": [
+                6,
+                33
+              ]
+            },
+            "unavailable_reason": ""
+          },
+          "1": {
+            "executed": true,
+            "detected": false,
+            "hough": {
+              "lines": [],
+              "roi_origin": [
+                307,
+                31
+              ]
+            },
+            "unavailable_reason": ""
+          },
+          "2": {
+            "executed": false,
+            "detected": null,
+            "hough": "不可用：未执行或C++批量接口不返回线段",
+            "unavailable_reason": "规则1提前判定/缺输入/ROI不足"
+          },
+          "3": {
+            "executed": false,
+            "detected": null,
+            "hough": "不可用：未执行或C++批量接口不返回线段",
+            "unavailable_reason": "规则1提前判定/缺输入/ROI不足"
+          },
+          "4": {
+            "executed": false,
+            "detected": null,
+            "hough": "不可用：未执行或C++批量接口不返回线段",
+            "unavailable_reason": "规则1提前判定/缺输入/ROI不足"
+          },
+          "5": {
+            "executed": false,
+            "detected": null,
+            "hough": "不可用：未执行或C++批量接口不返回线段",
+            "unavailable_reason": "规则1提前判定/缺输入/ROI不足"
+          },
+          "6": {
+            "executed": false,
+            "detected": null,
+            "hough": "不可用：未执行或C++批量接口不返回线段",
+            "unavailable_reason": "规则1提前判定/缺输入/ROI不足"
+          },
+          "7": {
+            "executed": false,
+            "detected": null,
+            "hough": "不可用：未执行或C++批量接口不返回线段",
+            "unavailable_reason": "规则1提前判定/缺输入/ROI不足"
+          },
+          "8": {
+            "executed": true,
+            "detected": false,
+            "hough": {
+              "lines": [],
+              "roi_origin": [
+                63,
+                62
+              ]
+            },
+            "unavailable_reason": ""
+          },
+          "9": {
+            "executed": true,
+            "detected": false,
+            "hough": {
+              "lines": [],
+              "roi_origin": [
+                311,
+                61
+              ]
+            },
+            "unavailable_reason": ""
+          },
+          "10": {
+            "executed": true,
+            "detected": false,
+            "hough": {
+              "lines": [],
+              "roi_origin": [
+                50,
+                51
+              ]
+            },
+            "unavailable_reason": ""
+          },
+          "11": {
+            "executed": true,
+            "detected": false,
+            "hough": {
+              "lines": [],
+              "roi_origin": [
+                318,
+                50
+              ]
+            },
+            "unavailable_reason": ""
+          }
+        },
+        "solder_mask": {
+          "shape": [
+            144,
+            400
+          ],
+          "dtype": "uint8",
+          "sha256": "c6f7261ce84227ec2b99b4e72d5eb27b5e08290e9f2f43b4e4da7358664bf1eb"
+        },
+        "pad_coverage": "不可用：少锡判定未执行",
+        "ring_geometry": {
+          "outer": [
+            [
+              0,
+              9,
+              361,
+              130
+            ],
+            [
+              173,
+              7,
+              227,
+              129
+            ],
+            [
+              376,
+              7,
+              22,
+              8
+            ],
+            [
+              374,
+              124,
+              26,
+              13
+            ],
+            [
+              0,
+              0,
+              177,
+              63
+            ],
+            [
+              0,
+              98,
+              179,
+              46
+            ],
+            [
+              286,
+              111,
+              88,
+              31
+            ],
+            [
+              280,
+              3,
+              97,
+              34
+            ],
+            [
+              23,
+              54,
+              122,
+              44
+            ],
+            [
+              272,
+              53,
+              125,
+              45
+            ],
+            [
+              0,
+              36,
+              225,
+              81
+            ],
+            [
+              230,
+              35,
+              170,
+              82
+            ]
+          ],
+          "pad": [
+            [
+              6,
+              33,
+              103,
+              82
+            ],
+            [
+              307,
+              31,
+              90,
+              81
+            ],
+            [
+              382,
+              8,
+              11,
+              6
+            ],
+            [
+              387,
+              126,
+              10,
+              9
+            ],
+            [
+              0,
+              11,
+              111,
+              14
+            ],
+            [
+              1,
+              121,
+              113,
+              19
+            ],
+            [
+              302,
+              118,
+              56,
+              16
+            ],
+            [
+              298,
+              14,
+              61,
+              12
+            ],
+            [
+              63,
+              62,
+              42,
+              28
+            ],
+            [
+              311,
+              61,
+              47,
+              29
+            ],
+            [
+              50,
+              51,
+              52,
+              51
+            ],
+            [
+              318,
+              50,
+              51,
+              52
+            ]
+          ]
+        },
+        "diff_excess": {
+          "shape": [
+            144,
+            400
+          ],
+          "dtype": "uint8",
+          "sha256": "bb74cf245dff2e06ec53c349bc2fdbb7264848cce41a52ed99810ff942e6a8c7"
+        },
+        "diff_cold": {
+          "shape": [
+            144,
+            400
+          ],
+          "dtype": "uint8",
+          "sha256": "bb74cf245dff2e06ec53c349bc2fdbb7264848cce41a52ed99810ff942e6a8c7"
+        },
+        "excess_components": "不可用：多锡未执行",
+        "bridge_components": "不可用：连锡未执行",
+        "cold_results": [
+          [
+            6,
+            33,
+            103,
+            82,
+            0.0,
+            false,
+            [],
+            0.8653800615676059
+          ],
+          [
+            307,
+            31,
+            90,
+            81,
+            0.0,
+            false,
+            [],
+            0.7934156378600823
+          ],
+          [
+            382,
+            8,
+            11,
+            6,
+            0.0,
+            false,
+            [],
+            0.0
+          ],
+          [
+            387,
+            126,
+            10,
+            9,
+            0.0,
+            false,
+            [],
+            0.0
+          ],
+          [
+            0,
+            11,
+            111,
+            14,
+            0.0,
+            false,
+            [],
+            0.0
+          ],
+          [
+            1,
+            121,
+            113,
+            19,
+            0.0,
+            false,
+            [],
+            0.0
+          ],
+          [
+            302,
+            118,
+            56,
+            16,
+            0.0,
+            false,
+            [],
+            0.0
+          ],
+          [
+            298,
+            14,
+            61,
+            12,
+            0.0,
+            false,
+            [],
+            0.0
+          ],
+          [
+            63,
+            62,
+            42,
+            28,
+            0.0,
+            false,
+            [],
+            0.8460884353741497
+          ],
+          [
+            311,
+            61,
+            47,
+            29,
+            0.0,
+            false,
+            [],
+            0.8393250183418929
+          ],
+          [
+            50,
+            51,
+            52,
+            51,
+            0.0,
+            false,
+            [],
+            0.8446455505279035
+          ],
+          [
+            318,
+            50,
+            51,
+            52,
+            0.0,
+            false,
+            [],
+            0.8936651583710408
+          ]
+        ],
+        "coordinates": {
+          "space": "检测工作图",
+          "scale": 0.5050505050505051,
+          "roi_offset": [
+            0,
+            0
+          ]
+        },
+        "ring_mask": "不可用：当前检测项未执行多锡ring判定",
+        "rim_toe": "不可用：缺toe/rim或当前判定路径不支持"
+      },
+      "num_defects": 0,
+      "mode": "diff_grow_ROI",
+      "has_template": true,
+      "pad_count": 12,
+      "solder_area": 13840,
+      "output_image": {
+        "shape": [
+          144,
+          400,
+          3
+        ],
+        "dtype": "uint8",
+        "sha256": "5c7b1a5c842a152c87506d59b6d893b3a6d438eacab72ccf6fdf252018a2d3c4"
+      },
+      "defects_enabled": {
+        "excess": false,
+        "insufficient": false,
+        "bridge": false,
+        "cold_solder": true
+      },
+      "pad_rects_aligned": [
+        [
+          11,
+          65,
+          203,
+          162
+        ],
+        [
+          607,
+          61,
+          178,
+          160
+        ],
+        [
+          756,
+          15,
+          21,
+          11
+        ],
+        [
+          766,
+          249,
+          19,
+          17
+        ],
+        [
+          0,
+          21,
+          219,
+          27
+        ],
+        [
+          1,
+          239,
+          223,
+          37
+        ],
+        [
+          597,
+          233,
+          110,
+          31
+        ],
+        [
+          590,
+          27,
+          120,
+          23
+        ],
+        [
+          124,
+          122,
+          83,
+          55
+        ],
+        [
+          615,
+          120,
+          93,
+          57
+        ],
+        [
+          99,
+          100,
+          102,
+          100
+        ],
+        [
+          629,
+          99,
+          100,
+          102
+        ]
+      ]
+    },
+    "source_message": "ok",
+    "adapter_message": "虚焊 判定=OK，缺陷数=0，焊盘数=12",
+    "boundary": "toe/rim 文件未提供，不能覆盖全部虚焊几何分支；无精度结论"
+  },
+  {
+    "family": "Shift",
+    "image": "d:\\CGAIC\\AOI_CV\\Dev_shift_smt_Alg\\test_images_shift2\\113-DY-SMT_capa_balck_Shift-0618\\SMT_capa_balck_3_9_C44_20260618104527_Shift_.png",
+    "standard": "d:\\CGAIC\\AOI_CV\\Dev_shift_smt_Alg\\test_images_shift2\\113-DY-SMT_capa_balck_Shift-0618\\templ_SMT_capa_balck_3_9.png",
+    "roi_file": "d:\\CGAIC\\AOI_CV\\Dev_shift_smt_Alg\\test_images_shift2\\113-DY-SMT_capa_balck_Shift-0618\\pad.json",
+    "params_file": "d:\\CGAIC\\AOI_CV\\Dev_shift_smt_Alg\\test_images_shift2\\113-DY-SMT_capa_balck_Shift-0618\\params.json",
+    "source_status": "NG",
+    "adapter_status": "NG",
+    "source_boxes": [
+      [
+        148,
+        64,
+        419,
+        426
+      ]
+    ],
+    "adapter_boxes": [
+      [
+        148,
+        64,
+        419,
+        426
+      ]
+    ],
+    "status_boxes_equal": true,
+    "metadata_difference_keys": [],
+    "source_metadata": {
+      "output_image": {
+        "shape": [
+          550,
+          694,
+          3
+        ],
+        "dtype": "uint8",
+        "sha256": "842ffc3aa1a2df7efc016443e9cbcc5f4ead90f47c48932411c0a770cd20b279"
+      },
+      "base_mask": {
+        "shape": [
+          550,
+          694
+        ],
+        "dtype": "uint8",
+        "sha256": "8a562131c56f4967504ed98f6aedee0c83effbf2b20ec15956abf925380a82a0"
+      },
+      "base_box": [
+        148,
+        64,
+        419,
+        426
+      ],
+      "template_box": [
+        111,
+        91,
+        419,
+        426
+      ],
+      "is_shifted": true,
+      "dx": 37.0,
+      "dy": -27.0,
+      "shift_distance": 45.803929962395145,
+      "rotation_angle": 0.0
+    },
+    "adapter_metadata": {
+      "roi": [
+        111,
+        91,
+        419,
+        426
+      ],
+      "output_image": {
+        "shape": [
+          550,
+          694,
+          3
+        ],
+        "dtype": "uint8",
+        "sha256": "842ffc3aa1a2df7efc016443e9cbcc5f4ead90f47c48932411c0a770cd20b279"
+      },
+      "base_mask": {
+        "shape": [
+          550,
+          694
+        ],
+        "dtype": "uint8",
+        "sha256": "8a562131c56f4967504ed98f6aedee0c83effbf2b20ec15956abf925380a82a0"
+      },
+      "feature_map": {
+        "shape": [
+          125,
+          276
+        ],
+        "dtype": "float64",
+        "sha256": "87e992254f56de8cda790c23402aafa3d830707a3248c96b64cc05d4d92ddeaa"
+      },
+      "peak_score": 0.4323150116821135,
+      "peak_xy": [
+        148,
+        64
+      ],
+      "feature_origin": [
+        0,
+        0
+      ],
+      "feature_coordinates": "滑窗左上角原图坐标；feature_origin为图索引原点",
+      "base_box": [
+        148,
+        64,
+        419,
+        426
+      ],
+      "template_box": [
+        111,
+        91,
+        419,
+        426
+      ],
+      "is_shifted": true,
+      "dx": 37.0,
+      "dy": -27.0,
+      "shift_distance": 45.803929962395145,
+      "rotation_angle": 0.0,
+      "GT/IoU": "不可用：未提供真实GT"
+    }
+  },
+  {
+    "family": "TH",
+    "image": "D:\\CGAIC\\AOI_SSOCL\\AOI_tree\\PCB_Dual\\alg_repo\\through_hole\\detect\\input\\roi\\2-8.png",
+    "standard": "D:\\CGAIC\\AOI_SSOCL\\AOI_tree\\PCB_Dual\\alg_repo\\through_hole\\detect\\input\\standard_roi\\templ_2.png",
+    "roi_file": "D:\\CGAIC\\AOI_SSOCL\\AOI_tree\\PCB_Dual\\alg_repo\\through_hole\\detect\\input\\standard_roi\\templ_2.json",
+    "source_config": {
+      "solder_mode": "ellipse"
+    },
+    "source_protocol": "algorithm defaults + paired solder_mode; repository config.yaml not injected",
+    "batch_exact_equal": true,
+    "source_equal_items": [
+      "tht_孔洞",
+      "tht_少锡",
+      "tht_多锡包锡",
+      "tht_不出脚"
+    ],
+    "statuses": [
+      "OK",
+      "NG",
+      "OK",
+      "SKIP",
+      "OK"
+    ],
+    "boundary": "no GT; auto solder geometry, no manual ROI fabricated"
+  },
+  {
+    "family": "TH",
+    "image": "D:\\CGAIC\\AOI_SSOCL\\AOI_tree\\PCB_Dual\\alg_repo\\through_hole\\detect\\input\\roi\\3-2.png",
+    "standard": "D:\\CGAIC\\AOI_SSOCL\\AOI_tree\\PCB_Dual\\alg_repo\\through_hole\\detect\\input\\standard_roi\\templ_3.png",
+    "roi_file": "D:\\CGAIC\\AOI_SSOCL\\AOI_tree\\PCB_Dual\\alg_repo\\through_hole\\detect\\input\\standard_roi\\templ_3.json",
+    "source_config": {
+      "solder_mode": "ellipse"
+    },
+    "source_protocol": "algorithm defaults + paired solder_mode; repository config.yaml not injected",
+    "batch_exact_equal": true,
+    "source_equal_items": [
+      "tht_孔洞",
+      "tht_少锡",
+      "tht_多锡包锡",
+      "tht_不出脚"
+    ],
+    "statuses": [
+      "OK",
+      "NG",
+      "OK",
+      "SKIP",
+      "OK"
+    ],
+    "boundary": "no GT; auto solder geometry, no manual ROI fabricated"
+  }
+]

@@ -1,0 +1,36 @@
+{
+  "dataset": "btad",
+  "profile": "accuracy",
+  "scenario": "L1a",
+  "base_cfg": "engine_fast.yaml",
+  "seed": 42,
+  "max_test": 150,
+  "device": "cuda",
+  "started": "2026-10-14 13:44:30",
+  "categories": {
+    "01": {
+      "version": 1,
+      "n_test": 46,
+      "fused_auroc": 0.9771428571428571,
+      "fused_ap": 0.9870270270270272,
+      "ms_per_image": 253.3686005550882,
+      "slots": {
+        "sem": 0.9685714285714286,
+        "disc": 0.011428571428571429,
+        "shead": 0.9885714285714285,
+        "inp": 0.3628571428571429,
+        "blob": 0.7666666666666666,
+        "trad": 0.9714285714285714,
+        "layout": 0.8438095238095237
+      },
+      "fused_max_auroc": 0.9609523809523809,
+      "elapsed_s": 93.0
+    }
+  },
+  "summary": {
+    "n": 1,
+    "avg_auroc": 0.9771,
+    "ge09": 1,
+    "min": 0.9771
+  }
+}

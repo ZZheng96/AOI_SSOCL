@@ -1,0 +1,176 @@
+[engine] cat: 重放未巩固学习 1 条
+[TEMP learning trajectory] round 0
+[ssocl] U65 head_ft 完成: pos=8 neg=8 signed=0.0014 锚定集 shead 移动 0.0 累计触发 1 次
+[ssocl] U65 head_ft 完成: pos=8 neg=8 signed=0.0014 锚定集 shead 移动 0.0 累计触发 1 次
+[TEMP learning trajectory] round 1
+[ssocl] U65 head_ft 完成: pos=8 neg=8 signed=0.0133 锚定集 shead 移动 0.0 累计触发 2 次
+[ssocl] U65 head_ft 完成: pos=8 neg=8 signed=0.0133 锚定集 shead 移动 0.0 累计触发 1 次
+[TEMP learning trajectory] round 2
+[ssocl] U65 head_ft 完成: pos=8 neg=8 signed=0.0251 锚定集 shead 移动 0.0 累计触发 2 次
+[ssocl] U65 head_ft 完成: pos=8 neg=8 signed=0.0251 锚定集 shead 移动 0.0 累计触发 1 次
+[ssocl] U65 门控否决: head_ft 锚定集 fused 0.0000→0.1497 signed=0.150 (上行限 -100 / 下行限 100.0)，锚定集 shead 原始分移动 0.0，回滚 head （pos=8 neg=8，冷却 10 反馈）
+[ssocl] U65 门控否决: head_ft 锚定集 fused 0.0000→0.1497 signed=0.150 (上行限 -100.0 / 下行限 100.0)，锚定集 shead 原始分移动 0.0，回滚 head （pos=8 neg=8，冷却 10 反馈）
+[TEMP learning validation] missing
+[TEMP learning validation] field
+[TEMP learning validation] shape
+[TEMP learning validation] version
+[TEMP learning validation] method
+[TEMP real feedback] 0
+[TEMP real feedback] 1
+[TEMP real feedback] 2
+[TEMP real feedback] 3
+[TEMP real feedback] 4
+[TEMP real feedback] 5
+[TEMP budget] events
+[TEMP budget] loo
+[TEMP budget] search
+[TEMP budget] steps
+[TEMP budget] reloads
+[TEMP budget] snapshot_bytes
+[TEMP budget] patch_bytes
+[TEMP cancel] budget:parent_events
+[TEMP cancel] budget:after_reload
+[TEMP cancel] before_prepared
+[TEMP cancel] after_prepared
+[TEMP recovery] before_save
+[TEMP recovery] after_save
+[TEMP recovery] before_prepared
+[TEMP recovery] after_prepared
+[TEMP recovery] before_rename
+[TEMP recovery] after_rename
+[TEMP recovery] before_completed
+[TEMP recovery] after_completed
+[TEMP integrity] candidate
+[TEMP integrity] parent
+[TEMP integrity] wal
+[TEMP integrity] current
+[TEMP mutex] child process recover while training
+[5/8] RegressGate 审计条目 / _audit_decide / 汇总（先验/门控前否决）
+[6/8] trace.update_log 带 audit；无 handler → None
+[+] AC-037 低于 PatchCore 且耗缺陷样本时披露；缺 current 报错
+[+] AC-037 variants/ablations：gain/harm/inconclusive + 分组副作用
+[7/8] persist：regress_gate 审计/基准分往返 + 旧快照兼容 + cde_report.json
+[8/8] _retrain_router 维度签名 + effective_weights/weights_semantics
+[1/8] 校准契约 / 融合基线 / 分层切分
+[3/8] 域差：insufficient / normal_drift / shift
+[2/8] router 准入：样本不足 / trace_only（不胜固定权重）
+[4/8] slot_health：能力表 + 运行时状态 + open 不进融合
+[+] slot-health API：engineer 可读 / operator 403 / 未准备 enabled=False
+[1/5] box_evidence 区域主导/平坦槽位/无正向证据
+[4/5] /detections/{id}/explain 路由（TEMP SQLite）
+[3/5] explain_trad 无 trad 槽位
+[5/5] UI 文本 + ExplainDialog offscreen
+[2/5] _to_result 无区域证据回退整图口径
+[1/4] engine.feature_set 只读快照 / not_applicable / 未加载
+[3b/4] 自动档案钩子 insufficient/queued/already_running/disabled/error
+[3/4] draft 只登记候选 / 400 / 403 / 手动档案 / 自动钩子
+[2/4] GET 角色 can_edit + 档案状态 insufficient/not_generated/stale/current
+[3c/4] AC-017 难例池 GET / 准入试算 POST（403/409/queued 不激活）
+[4/4] 学习页特征集卡片 offscreen（操作员只读）
+[TEMP attribution] real handler -> engine -> finite JSON
+[engine] cat: 重放未巩固学习 1 条
+[engine] cat: 重放未巩固学习 0 条（跳过 2 条：图像缺失/重放失败，详见内存审计）
+[engine] cat: 重放未巩固学习 1 条
+[2/4] grouped 打分与 TradSlot._dist 同口径（跳最近邻 [1:4]）
+[1/4] admission_metrics 通过/增益/冗余/G1/G2/open/planned/不足
+[4/4] 试算端到端 → 证据 JSON → revision 门禁（未通过拒批/通过可批）
+[AC-034] open 原因归类：drift 标漂移、各原因单列计数
+[3/4] 难例池：来源/冲突/漂移/排除 test 与作废/train 参照
+[TEMP budget] events
+[TEMP budget] loo
+[TEMP budget] search
+[TEMP budget] steps
+[TEMP budget] reloads
+[TEMP budget] snapshot_bytes
+[TEMP budget] patch_bytes
+[TEMP cancel] budget:parent_events
+[TEMP cancel] budget:after_reload
+[TEMP cancel] before_prepared
+[TEMP cancel] after_prepared
+[TEMP recovery] before_save
+[TEMP recovery] after_save
+[TEMP recovery] before_prepared
+[TEMP recovery] after_prepared
+[TEMP recovery] before_rename
+[TEMP recovery] after_rename
+[TEMP recovery] before_completed
+[TEMP recovery] after_completed
+[TEMP integrity] candidate
+[TEMP integrity] parent
+[TEMP integrity] wal
+[TEMP integrity] current
+[TEMP mutex] child process recover while training
+[2b/4] AC-064 争议/噪声隔离
+[3/4] 定位评估 + dev 选择
+[1/4] 后处理版本 + 区域记录
+[2/4] 区域复核纯函数
+[4/4] 引擎透出 → 渲染 → 落库 → 区域复核 API
+[权限/血缘] TEMP 检测落库 + 真实鉴权中间件
+[1/3] TEMP SQLite + API
+[2/3] 状态、幂等、冲突与反馈事件
+[3/3] Qt offscreen 展示 + 处置提交
+[AC-049] 空集/单样本/单类别安全，未定义指标为 unavailable
+[AC-049] 缺种子/种子不一致/缺 ID/重复/缺样本/标签冲突拒绝配对
+[AC-049] NaN/Inf/缺分数不虚构 AUROC，二值预测不虚构 gray
+[AC-049] 按 ID 配对/工作决策/gray 口径/输入不变
+[3/3] 区域复核 API 透出 human_box/reviewer/revision/train_status
+[1/3] 候选框 vs 人工真值：source/reviewer/revision/train_status
+[2/3] disputed / 不一致状态不进训练
+[7/7] 对话框：拖框→add / 选中→revise（乐观锁）
+[6/7] 对话框：叠加框/高亮/新列/API 路径
+[2/7] add payload：reason/operator/revision/越界校验
+[4/7] 叠加颜色映射：候选/人工可训/人工未训/拒绝/争议
+[1/7] 坐标换算：缩放/反向拖拽/越界裁剪/往返
+[3/7] revise payload：须 region_id + expected_revision
+[5/7] to_dict 透出 region_review 派生视图
+[5/9] API：delete/undo 幂等、revision 409、撤销冲突 409、模型框删除 422、落库不进训练
+[3/9] 后端 delete：仅人工框、须 reason、软删除留档、不进训练
+[4/9] 后端 undo：反向修订、仅本人、他人改过→冲突、链完整
+[7/9] 离屏 UI：删除人工框（模型框拦截）→ 画布隐藏、表格留档
+[6/9] 离屏 UI：选中显示 4 角手柄 → 拖 br 角 → revise 提交（须理由）
+[9/9] 离屏 UI：删除/撤销携带过期 revision → 409 刷新后可重试
+[8/9] 离屏 UI：撤销上一步（恢复框/状态）与他人修改后 409 提示
+[1/9] 纯函数：角点/命中容差/拖拽约束（对角固定、最小尺寸、图内、不翻转）
+[2/9] 纯函数：can_delete / delete、undo payload 校验
+[3/5] 候选构建 → guard.regions + review.consumption 回写 + API/to_dict 透出
+[5/5] 旧 guard（无 regions）行为不变；无 eligible 框不回写
+[4/5] 消费后修订/作废/删除 → 发布前 fail-closed（REGION_STALE）
+[1/5] 消费快照 + used/used_by 派生，不改 revision/events
+[2/5] 消费后修订/作废/删除 → stale_after_use + reason
+[2/4] 下行（recenter 意图方向）不触发累计拦截
+[3/4] 连续 3 次违规冻结；冻结期正常更新也回滚；unfreeze 恢复
+[4/4] status 可 JSON 化回填；旧快照无 init_* 不判累计
+[1/4] 小步上行漂移：单步过门，累计越限回滚
+[2/5] activate/rollback 遇 stale 默认拒绝，allow_stale 放行
+[1/5] stale 拒在线学习/巩固（激活+候选路径），current 放行
+[5/5] /models/{id}/activate 遇 stale → 409 带重建指引
+[4/5] _prepare_engine 重建：trigger/parent/不激活/跳过自动档案
+[3/5] rebuild 路由：403 / 409 无版本 / 继承 scenario,profile / pending
+[dino] 使用随包 vendor 权重: D:\CGAIC\AOI_SSOCL\AOI_tree\assets\dinov2\dinov2_vits14_pretrain.pth
+[1/3] fresh build reference
+[dino] 使用随包 vendor 权重: D:\CGAIC\AOI_SSOCL\AOI_tree\assets\dinov2\dinov2_vits14_pretrain.pth
+[2/3] cache hit after same seed
+[3/3] unseen RNG state rebuilds mapping
+[dino] 使用随包 vendor 权重: D:\CGAIC\AOI_SSOCL\AOI_tree\assets\dinov2\dinov2_vits14_pretrain.pth
+[dino] 使用随包 vendor 权重: D:\CGAIC\AOI_SSOCL\AOI_tree\assets\dinov2\dinov2_vits14_pretrain.pth
+[1/4] activate allow_stale=true → 409，service/engine 未调用、指针不变
+[3/4] activate 缺省/false 保持原路径，service 收到 allow_stale=False
+[2/4] rollback allow_stale=true → 409，engine.rollback 未调用、指针不变
+[4/4] rollback 缺省保持原路径，engine 收到 allow_stale=False
+[5/5] 真实 api_stats_overview（临时 SQLite）→ 工作台卡片/口径行（+103.61s）
+[1/5] 完整口径字段 → 文案（耗时/e2e/P95/缺失数/窗口/分母/来源）（+103.64s）
+[2/5] 缺数据/旧后端：显示 —/不可用，不出现 0 ms 或 0.0%（+103.64s）
+[4/5] 旧后端 payload（无新口径字段）：_fill_kpi 不崩、不冒充 0（+103.64s）
+[3/5] 工作台离屏实例化：口径卡片初始“—”、tooltip 含口径定义（+103.65s）
+[7/7] 真实 overview/quality_overview（临时 SQLite）→ 统计页卡片/口径行（+103.58s）
+[5/7] 批次表：e2e 后端补 0.0 → “—”，推理/e2e 分列，无复核比率 “—”（+103.65s）
+[6/7] 导出 CSV：分母为 0 的比率/缺失 e2e 留空，不写 0（+103.71s）
+[4/7] 完整 scope_stats：推理与 e2e 分列，口径行含窗口/分母/工单/来源（+103.71s）
+[2/7] 离屏实例化：推理/e2e 两张卡初始“—”，口径行+tooltip 含口径定义（+103.76s）
+[3/7] 旧后端/空范围（avg_latency_ms=0.0）：显示 —/不可用，不出现 0 ms / 0.0%（+103.81s）
+[1/7] 统计页复用工作台口径函数/常量（同一对象，非复制）（+103.86s）
+[+] AC-038 生产入口不调 engine.submit_feedback / 不传 candidate_only=False
+[+] AC-038 service 默认 candidate_only=True 且 legacy 须显式放行
+[+] AC-038 主干进程级只读共享：eval + requires_grad=False + 同一对象
+[dino] 使用随包 vendor 权重: D:\CGAIC\AOI_SSOCL\AOI_tree\assets\dinov2\dinov2_vits14_pretrain.pth
+[dino] 使用随包 vendor 权重: D:\CGAIC\AOI_SSOCL\AOI_tree\assets\dinov2\dinov2_vits14_pretrain.pth

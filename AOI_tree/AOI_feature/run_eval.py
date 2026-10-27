@@ -28,7 +28,11 @@ from AOI_feature.contribution import evaluate_category              # noqa: E402
 from AOI_feature.report import save_category_report, save_summary   # noqa: E402
 
 ensure_core_importable()
-from algo.data import mvtec_like, datalocal           # noqa: E402
+try:
+    from algo.data import mvtec_like, datalocal       # noqa: E402
+except ModuleNotFoundError:
+    # AOI_SSOCL：AOI_Core/algo/data 已移除，数据协议加载器由 EXPs/src/data 提供（只读）
+    from data import mvtec_like, datalocal            # noqa: E402
 
 
 def load_image_unicode(path):
@@ -56,7 +60,7 @@ def load_bundle(dataset, root, category, args):
 def run_evaluation(fs: FeatureSet, dataset: str, root: str | None,
                    category: str | None, n_init_normal=60, n_init_defect=30,
                    max_test=150, k=3, n_perm=5, seed=42, out=None,
-                   progress=None) -> tuple[list, list]:
+                   progress=None, revision_store=None) -> tuple[list, list]:
     """执行贡献评估并落盘报告，返回 (results, groups_meta)。供 CLI 与 GUI 复用。
 
     progress: 可选回调 fn(msg: str)。
@@ -73,8 +77,52 @@ def run_evaluation(fs: FeatureSet, dataset: str, root: str | None,
         f"合计 {sum(m['dim'] for m in groups_meta)} 维")
 
     def run(bundle, name):
-        return evaluate_category(fs, bundle, load_image_unicode, groups_meta,
-                                 k=k, n_perm=n_perm, seed=seed, name=name)
+        import json
+        from algo.feature_revision import FeatureSetRevision, digest, file_hash
+        split = {}
+        for part in ("init_normal", "init_defect", "val", "test"):
+            split[part] = []
+            for item in bundle.get(part, []):
+                path = item[0] if isinstance(item, (tuple, list)) else item
+                split[part].append({"path": str(path), "sha256": file_hash(path),
+                                    "label": item[1] if isinstance(item, (tuple, list)) else None})
+        snapshot = {"type": "experimental_group_knn", "k": k, "zclip": 10.0,
+                    "reference_sha256": digest(split["init_normal"]),
+                    "production_snapshot": "unknown", "fitted_artifact": "unknown",
+                    "evaluation_protocol": {"n_perm": n_perm, "seed": seed}}
+        manifest = fs.revision_manifest(dataset_split=split, model_snapshot=snapshot, seed=seed)
+        rid = digest(manifest)
+        res = evaluate_category(fs, bundle, load_image_unicode, groups_meta,
+                                k=k, n_perm=n_perm, seed=seed, name=name)
+        if digest(fs.revision_manifest(dataset_split=split, model_snapshot=snapshot, seed=seed)) != rid:
+            raise ValueError("评价期间特征配置或实现发生变化")
+        for items in split.values():
+            for item in items:
+                if file_hash(item["path"]) != item["sha256"]:
+                    raise ValueError("评价期间数据内容发生变化")
+        res["meta"]["feature_revision_id"] = rid
+        res["meta"]["feature_revision_manifest"] = manifest
+        # 贡献实验不是独立生产验收，不能自动批准。
+        if out:
+            os.makedirs(out, exist_ok=True)
+            store = FeatureSetRevision(revision_store or os.path.join(out, "feature_revisions.json"))
+            store.register(manifest)
+            evidence = {"revision_id": rid, "eval_run_id": digest(res), "status": "completed",
+                        "seed": seed, "dataset_split": split, "model_snapshot": snapshot,
+                        "independent": False, "acceptance": "unavailable",
+                        "auroc": res["full_auroc"], "result": res}
+            path = os.path.join(out, f"evaluation_{rid}_{digest(res)}.json")
+            encoded = json.dumps(evidence, ensure_ascii=False, indent=2, allow_nan=False)
+            try:
+                with open(path, "x", encoding="utf-8") as f:
+                    f.write(encoded)
+            except FileExistsError:
+                with open(path, encoding="utf-8") as f:
+                    if f.read() != encoded:
+                        raise ValueError("冻结评价工件冲突，禁止覆盖")
+            if store.list()[rid]["state"] == "draft":
+                store.transition(rid, "evaluated", actor="AOI_feature.run_eval", evidence_path=path)
+        return res
 
     results = []
     if dataset == "synthetic":

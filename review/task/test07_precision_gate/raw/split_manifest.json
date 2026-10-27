@@ -1,0 +1,392 @@
+{
+  "train": [
+    {
+      "id": 1,
+      "path": "D:\\CGAIC\\data_local\\gold_finger\\train\\good\\0598_repaired.png",
+      "label": "normal",
+      "sha256": "334fd4a65d10974992b9cefa5118569d1ca56ab5f30359a8a7f2f024cd56c0c7"
+    },
+    {
+      "id": 2,
+      "path": "D:\\CGAIC\\data_local\\gold_finger\\train\\good\\0599_repaired.png",
+      "label": "normal",
+      "sha256": "996933313d083cc30f79fb2b76f89712d8cf2a29449b1ed29aad2fedda0c9c29"
+    },
+    {
+      "id": 3,
+      "path": "D:\\CGAIC\\data_local\\gold_finger\\train\\good\\0602_repaired.png",
+      "label": "normal",
+      "sha256": "ee28fbad221d8ab06b17524ba6d67ed561ca6f577f9115945c8c91476d1e5c45"
+    },
+    {
+      "id": 4,
+      "path": "D:\\CGAIC\\data_local\\gold_finger\\train\\good\\0604_repaired.png",
+      "label": "normal",
+      "sha256": "f3ff8c2705445cf226110af7938f0ebe7445c73a0959b5959105312f1cc3dd2a"
+    },
+    {
+      "id": 5,
+      "path": "D:\\CGAIC\\data_local\\gold_finger\\train\\good\\0605_repaired.png",
+      "label": "normal",
+      "sha256": "9b7077079541fa12f324d6854a6cff15c3dd2ac02f426855b3000c628f5aefe3"
+    },
+    {
+      "id": 6,
+      "path": "D:\\CGAIC\\data_local\\gold_finger\\train\\good\\0606_repaired.png",
+      "label": "normal",
+      "sha256": "3cf7e236836b6873da77a918cb93b341b3b0ba683dd9c8b82e12ad004265531e"
+    },
+    {
+      "id": 7,
+      "path": "D:\\CGAIC\\data_local\\gold_finger\\train\\good\\0607_repaired.png",
+      "label": "normal",
+      "sha256": "fd0e216bb321056da00e18dbca1e467ef1aeee9eaafcc3e3f67f3b8af37458f0"
+    },
+    {
+      "id": 8,
+      "path": "D:\\CGAIC\\data_local\\gold_finger\\train\\good\\0609_repaired.png",
+      "label": "normal",
+      "sha256": "af58cf2fbb83e7614bc4be14a470d4a1340a0ac87bffb6c0e8fa9a8e174e9a9c"
+    },
+    {
+      "id": 9,
+      "path": "D:\\CGAIC\\data_local\\gold_finger\\train\\good\\0610_repaired.png",
+      "label": "normal",
+      "sha256": "707d15bd5f037fe1f2222635246ce8564b4d1c35bc6ffeaee3ead10ed157a2c3"
+    },
+    {
+      "id": 10,
+      "path": "D:\\CGAIC\\data_local\\gold_finger\\train\\good\\0611_repaired.png",
+      "label": "normal",
+      "sha256": "dbfb8c8b14027f4c6eba30b7f68d189454eb91907bb97c129a98ec186f77bfd5"
+    },
+    {
+      "id": 11,
+      "path": "D:\\CGAIC\\data_local\\gold_finger\\train\\good\\0613_repaired.png",
+      "label": "normal",
+      "sha256": "03ac3fb4bf658685a6fb285ee78a1e7532dcd5650577ffecf91a50ec7c62f880"
+    },
+    {
+      "id": 12,
+      "path": "D:\\CGAIC\\data_local\\gold_finger\\train\\good\\0617_repaired.png",
+      "label": "normal",
+      "sha256": "25196a549eb92fac338b8c9f6e99e761dddf9a293e5368f1ccbe166138c2e060"
+    },
+    {
+      "id": 13,
+      "path": "D:\\CGAIC\\data_local\\gold_finger\\train\\good\\0618_repaired.png",
+      "label": "normal",
+      "sha256": "98059282a314e640f645f41a752aa6c9c753ec158426236aeb0574bb52d2141b"
+    },
+    {
+      "id": 14,
+      "path": "D:\\CGAIC\\data_local\\gold_finger\\train\\good\\0621_repaired.png",
+      "label": "normal",
+      "sha256": "11500edb9fe651e13637fa191c179886b065f93964121a02f05d3f1b15678abc"
+    }
+  ],
+  "train_anomaly": [
+    {
+      "id": 15,
+      "path": "D:\\CGAIC\\data_local\\gold_finger\\test\\defect\\0598.png",
+      "label": "anomaly",
+      "sha256": "33157185eea126e93c148f4ba45dd83d3149e94787cfbfc97e52ea8354c31768"
+    },
+    {
+      "id": 16,
+      "path": "D:\\CGAIC\\data_local\\gold_finger\\test\\defect\\0599.png",
+      "label": "anomaly",
+      "sha256": "eff3396324e6d518be71e0609a9d562bdb7948159c21f194f1ead1fbd11549e8"
+    },
+    {
+      "id": 17,
+      "path": "D:\\CGAIC\\data_local\\gold_finger\\test\\defect\\0602.png",
+      "label": "anomaly",
+      "sha256": "f39225684a4b923cce403c1e65bf9a3b1105de434cfdee2f13536b28e0a4d6f0"
+    },
+    {
+      "id": 18,
+      "path": "D:\\CGAIC\\data_local\\gold_finger\\test\\defect\\0604.png",
+      "label": "anomaly",
+      "sha256": "74ca749e2b4ba78afaece55bd8ca69e058ee03b6df09fb57c8e0baf934ca2f89"
+    },
+    {
+      "id": 19,
+      "path": "D:\\CGAIC\\data_local\\gold_finger\\test\\defect\\0605.png",
+      "label": "anomaly",
+      "sha256": "6ac6f7deaa259ba648a167b2e6d6a86d38b5bd2f3bc299ccf06eb91a6b75cd14"
+    },
+    {
+      "id": 20,
+      "path": "D:\\CGAIC\\data_local\\gold_finger\\test\\defect\\0606.png",
+      "label": "anomaly",
+      "sha256": "8b367ffcdc8da1405f065f529ecb6a6531cb7d9fc23cddb20bf68bb32192c1a8"
+    },
+    {
+      "id": 21,
+      "path": "D:\\CGAIC\\data_local\\gold_finger\\test\\defect\\0607.png",
+      "label": "anomaly",
+      "sha256": "4fafac30ab606d124b07f84090a83e91e4608883f3bc8464fc1cc506e8ee7483"
+    },
+    {
+      "id": 22,
+      "path": "D:\\CGAIC\\data_local\\gold_finger\\test\\defect\\0609.png",
+      "label": "anomaly",
+      "sha256": "189b41abb2d802734bdb1252b19796d905c1d64229a84a8cd76fd60c4f1ae3f7"
+    },
+    {
+      "id": 23,
+      "path": "D:\\CGAIC\\data_local\\gold_finger\\test\\defect\\0610.png",
+      "label": "anomaly",
+      "sha256": "175cf3b921a733c9b47c3e71e613c0e858e1dcb326940eeb659e500184b25fea"
+    },
+    {
+      "id": 24,
+      "path": "D:\\CGAIC\\data_local\\gold_finger\\test\\defect\\0611.png",
+      "label": "anomaly",
+      "sha256": "814f89e1f4ef845ad936b9912466fa8e33d0320f1fed4091637ed1e203981971"
+    },
+    {
+      "id": 25,
+      "path": "D:\\CGAIC\\data_local\\gold_finger\\test\\defect\\0613.png",
+      "label": "anomaly",
+      "sha256": "4d70972347f51b1cfd4045eb7d48bd2473ddc63a20aabf6cec26155408eb7504"
+    },
+    {
+      "id": 26,
+      "path": "D:\\CGAIC\\data_local\\gold_finger\\test\\defect\\0617.png",
+      "label": "anomaly",
+      "sha256": "0b852cc65bca26564ac00e41fb07e2baa0d309cb6cd669cbfd971e683a8cf93f"
+    },
+    {
+      "id": 27,
+      "path": "D:\\CGAIC\\data_local\\gold_finger\\test\\defect\\0618.png",
+      "label": "anomaly",
+      "sha256": "dba51e77c01aea441c6c40ea17bbe7e43919d22e6dd4fe6bb3dbabe477321754"
+    },
+    {
+      "id": 28,
+      "path": "D:\\CGAIC\\data_local\\gold_finger\\test\\defect\\0621.png",
+      "label": "anomaly",
+      "sha256": "43109f45cadc0abd87aaf803290754aed673f66cc3242551e63cd36bdc143f8a"
+    },
+    {
+      "id": 29,
+      "path": "D:\\CGAIC\\data_local\\gold_finger\\test\\defect\\1289.jpg",
+      "label": "anomaly",
+      "sha256": "e32e51447cba490fdc258d6e7b9cf20007930ecff9705835db17437a94978c14"
+    },
+    {
+      "id": 30,
+      "path": "D:\\CGAIC\\data_local\\gold_finger\\test\\defect\\1290.jpg",
+      "label": "anomaly",
+      "sha256": "bb7865d3987a2f23abdd0318f98ad549c925ad43d165edc736dd003d02073769"
+    },
+    {
+      "id": 31,
+      "path": "D:\\CGAIC\\data_local\\gold_finger\\test\\defect\\1291.jpg",
+      "label": "anomaly",
+      "sha256": "a5a45b377bd30c9077bb0bec05f02dd42e31014c690044a586f9f4bb223fbe75"
+    },
+    {
+      "id": 32,
+      "path": "D:\\CGAIC\\data_local\\gold_finger\\test\\defect\\1292.jpg",
+      "label": "anomaly",
+      "sha256": "7bed8f672aa2efe1b83e9793a930c7633dac32cbf224ada92a7571d16e08aeb9"
+    },
+    {
+      "id": 33,
+      "path": "D:\\CGAIC\\data_local\\gold_finger\\test\\defect\\1293.jpg",
+      "label": "anomaly",
+      "sha256": "db5d47ae0b8948ca7ca0da1f7cf01670c877e9bb9a9b7b48ff9e2a294f71ea85"
+    },
+    {
+      "id": 34,
+      "path": "D:\\CGAIC\\data_local\\gold_finger\\test\\defect\\1294.jpg",
+      "label": "anomaly",
+      "sha256": "ca5065d0ee2bf17864d060c4642b6cc2fc8fa96f0507870b9db6ebc90a7b6129"
+    },
+    {
+      "id": 35,
+      "path": "D:\\CGAIC\\data_local\\gold_finger\\test\\defect\\1295.jpg",
+      "label": "anomaly",
+      "sha256": "b0a68e16d42cd887cf433f7e4b5edd6329b20f768bf1a978097bd2ba1b7685ff"
+    },
+    {
+      "id": 36,
+      "path": "D:\\CGAIC\\data_local\\gold_finger\\test\\defect\\1296.jpg",
+      "label": "anomaly",
+      "sha256": "ff38c51f98caa1fe8bfae5f4cc1b83e06b8c05a36301c5102db892c0f5a52b15"
+    },
+    {
+      "id": 37,
+      "path": "D:\\CGAIC\\data_local\\gold_finger\\test\\defect\\1297.jpg",
+      "label": "anomaly",
+      "sha256": "71dad2176af1eb2f3f1bc665445b921298f585bdbef53e6d1e68206a9130f72e"
+    },
+    {
+      "id": 38,
+      "path": "D:\\CGAIC\\data_local\\gold_finger\\test\\defect\\1298.jpg",
+      "label": "anomaly",
+      "sha256": "efb74deba92e88990657fb84a55edda46fb8d4a08b550f492b420086b6c81214"
+    },
+    {
+      "id": 39,
+      "path": "D:\\CGAIC\\data_local\\gold_finger\\test\\defect\\1300.jpg",
+      "label": "anomaly",
+      "sha256": "d45ca1e5a7c8ff6998dfaa8e3d61bf15a17ad59b2b5410f7a5c1bafe4ed52722"
+    },
+    {
+      "id": 40,
+      "path": "D:\\CGAIC\\data_local\\gold_finger\\test\\defect\\1302.jpg",
+      "label": "anomaly",
+      "sha256": "ce4c9862a8d0ce81700aec31f30e755a884e35031b27756d56f859fe8bd999bf"
+    },
+    {
+      "id": 41,
+      "path": "D:\\CGAIC\\data_local\\gold_finger\\test\\defect\\1303.jpg",
+      "label": "anomaly",
+      "sha256": "13546a48b6a5fb72fdcacee6898e25e221297f0ead952e5b8ecff76e8914c708"
+    },
+    {
+      "id": 42,
+      "path": "D:\\CGAIC\\data_local\\gold_finger\\test\\defect\\1304.jpg",
+      "label": "anomaly",
+      "sha256": "856e153ae143c0f14dc48a01bf9600117ec892f74e4c3fcd410b38a0eec59849"
+    },
+    {
+      "id": 43,
+      "path": "D:\\CGAIC\\data_local\\gold_finger\\test\\defect\\1305.jpg",
+      "label": "anomaly",
+      "sha256": "7bfedd4044246149273b913fbaf0230f3642a64d8d91549f4ee8d0648ec3d1e8"
+    },
+    {
+      "id": 44,
+      "path": "D:\\CGAIC\\data_local\\gold_finger\\test\\defect\\1307.jpg",
+      "label": "anomaly",
+      "sha256": "d9c7d7778584aa97cfd4c806c9cc6e9442ba98ddad0cca78f0ac2958421127aa"
+    }
+  ],
+  "test": [
+    {
+      "id": 45,
+      "path": "D:\\CGAIC\\data_local\\gold_finger\\test\\good\\Image_20260116193703828_repaired.jpg",
+      "label": "normal",
+      "sha256": "2d9b27af93f5bb7bb28ad3722ac7c058b16f565dc2e9338130cc8721e82eb69f"
+    },
+    {
+      "id": 46,
+      "path": "D:\\CGAIC\\data_local\\gold_finger\\test\\good\\Image_20260116193843246_repaired.jpg",
+      "label": "normal",
+      "sha256": "868f586fc45b838386a3cf750a9cc3c1cfe896018d9727aa9fe6eabba16814ee"
+    },
+    {
+      "id": 47,
+      "path": "D:\\CGAIC\\data_local\\gold_finger\\test\\good\\Image_20260116193850558_repaired.jpg",
+      "label": "normal",
+      "sha256": "fef269324714c8b4028e403f41557d8159a8d95849164f873c26942383db9b91"
+    },
+    {
+      "id": 48,
+      "path": "D:\\CGAIC\\data_local\\gold_finger\\test\\good\\Image_20260116193859871_repaired.jpg",
+      "label": "normal",
+      "sha256": "54ec622a1e8701598af31e2c93cdc1ae4869c9b464c0b8d2553b4f72eb69401d"
+    },
+    {
+      "id": 49,
+      "path": "D:\\CGAIC\\data_local\\gold_finger\\test\\good\\Image_20260116194217730_repaired.jpg",
+      "label": "normal",
+      "sha256": "a7a3d9fafa30fac773e1f97d68c4af8c3f48b76dc862151cd6cbb94c1a4b9c50"
+    },
+    {
+      "id": 50,
+      "path": "D:\\CGAIC\\data_local\\gold_finger\\test\\good\\Image_20260116194228683_repaired.jpg",
+      "label": "normal",
+      "sha256": "0bed62eca7403021ec5fbe73b6e213246bfdbf3d053163d60169300f9afe5688"
+    },
+    {
+      "id": 51,
+      "path": "D:\\CGAIC\\data_local\\gold_finger\\test\\good\\Image_20260116194235228_repaired.jpg",
+      "label": "normal",
+      "sha256": "1d6a8e2f45dcd26c69ca6bb7d6c17ea262d236f285df1b9a0fa52dcff594e0f4"
+    },
+    {
+      "id": 52,
+      "path": "D:\\CGAIC\\data_local\\gold_finger\\test\\good\\Image_20260116194241339_repaired.jpg",
+      "label": "normal",
+      "sha256": "a17a6cc02b363496c9c78f477e6ddce5d1fb9d87e82fb4c6a1e6ab117625e00a"
+    },
+    {
+      "id": 53,
+      "path": "D:\\CGAIC\\data_local\\gold_finger\\test\\good\\Image_20260116194259739_repaired.jpg",
+      "label": "normal",
+      "sha256": "e68a5b63fc0dead06ddc83ee96f92fb81dea2667bcec808e47a7dab35eaecab9"
+    },
+    {
+      "id": 54,
+      "path": "D:\\CGAIC\\data_local\\gold_finger\\test\\good\\Image_20260116194303443_repaired.jpg",
+      "label": "normal",
+      "sha256": "2eb749a2496c2e0e4a59f8f18719edc16fcec9a5e615791bbed05658b168f6a0"
+    },
+    {
+      "id": 55,
+      "path": "D:\\CGAIC\\data_local\\gold_finger\\test\\defect\\1308.jpg",
+      "label": "anomaly",
+      "sha256": "714bb5caae10edbff5355fa3d1683632285cf0c781b9fd5cf63476a605742584"
+    },
+    {
+      "id": 56,
+      "path": "D:\\CGAIC\\data_local\\gold_finger\\test\\defect\\1310.jpg",
+      "label": "anomaly",
+      "sha256": "cc02c636b13b8d81ea3178fe735a46f3929a7aafb5c6cfde68107949df173757"
+    },
+    {
+      "id": 57,
+      "path": "D:\\CGAIC\\data_local\\gold_finger\\test\\defect\\1312.jpg",
+      "label": "anomaly",
+      "sha256": "e34e93ee51940efa81327e9ee69f329e32fb428c4f13d94e82b68eb615a050d7"
+    },
+    {
+      "id": 58,
+      "path": "D:\\CGAIC\\data_local\\gold_finger\\test\\defect\\1314.jpg",
+      "label": "anomaly",
+      "sha256": "28ac93e78a88db1c5d2345d124bbb4c1dcd9cff6d7584476b149464cd0a9e301"
+    },
+    {
+      "id": 59,
+      "path": "D:\\CGAIC\\data_local\\gold_finger\\test\\defect\\1315.jpg",
+      "label": "anomaly",
+      "sha256": "6b174ac71d694c03c62aee064f93fa56adf8c0865d5139b11d99474464e15639"
+    },
+    {
+      "id": 60,
+      "path": "D:\\CGAIC\\data_local\\gold_finger\\test\\defect\\1316.jpg",
+      "label": "anomaly",
+      "sha256": "37f952d88d7c0dc6f2d27d28bc253c9f30a06cf5f673d4e5a50705e1f8accfd8"
+    },
+    {
+      "id": 61,
+      "path": "D:\\CGAIC\\data_local\\gold_finger\\test\\defect\\1317.jpg",
+      "label": "anomaly",
+      "sha256": "7fac216481ac9e5f2c84a4b268f155bdf70f328748b76e9ff0aa33fe111e32e5"
+    },
+    {
+      "id": 62,
+      "path": "D:\\CGAIC\\data_local\\gold_finger\\test\\defect\\1318.jpg",
+      "label": "anomaly",
+      "sha256": "cef4df1898e9e815896b8b44a3b3ea327d97640cd5f904e93ca5e2d4a5d4f260"
+    },
+    {
+      "id": 63,
+      "path": "D:\\CGAIC\\data_local\\gold_finger\\test\\defect\\1319.jpg",
+      "label": "anomaly",
+      "sha256": "1f92583da1cb8effbc9d5b836b18e1c4129ca88264d88885c928f2594e2218cc"
+    },
+    {
+      "id": 64,
+      "path": "D:\\CGAIC\\data_local\\gold_finger\\test\\defect\\1320.jpg",
+      "label": "anomaly",
+      "sha256": "34cd61ad9359ef63892c73f4b556d610d95700f8eac977893dc1b8700363e721"
+    }
+  ]
+}

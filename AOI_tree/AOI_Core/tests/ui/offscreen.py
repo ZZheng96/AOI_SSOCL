@@ -12,8 +12,8 @@ import time
 from ..framework import Ctx, run_test
 
 
-def _ui_smoke() -> tuple[int, list[str]]:
-    """返回 (通过页面数, 错误列表)。"""
+def _ui_smoke() -> tuple[int, int, list[str]]:
+    """返回 (通过页面数, 页面总数, 错误列表)。"""
     os.environ.setdefault("QT_QPA_PLATFORM", "offscreen")
     from PySide6.QtWidgets import QApplication, QMessageBox
     # 离屏环境无交互：屏蔽模态弹窗（后端离线时错误弹窗会阻塞事件循环）
@@ -49,13 +49,14 @@ def _ui_smoke() -> tuple[int, list[str]]:
         except Exception as e:  # noqa: BLE001
             errors.append(f"page{i}: {e}")
     w.close()
-    return n_pages, errors
+    return n_pages, total, errors
 
 
 def run(ctx: Ctx) -> None:
-    n, errors = _ui_smoke()
-    ctx.check("UI 10 页面全部实例化并切换（M16b 含工作台/系统设置）",
-              n >= 10 and not errors, f"pages={n} errors={errors}")
+    n, total, errors = _ui_smoke()
+    ctx.check("UI 当前导航页面全部实例化并切换（含特征工程）",
+              n == total and total >= 11 and not errors,
+              f"pages={n}/{total} errors={errors}")
     ctx.metrics["ui"] = {"pages_loaded": n, "errors": errors}
 
 

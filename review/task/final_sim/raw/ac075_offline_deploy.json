@@ -1,0 +1,67 @@
+{
+  "vendor_offline": {
+    "net_attempts": [],
+    "cache_dir": "C:\\Users\\imia\\AppData\\Local\\Temp\\aoi_offline_pgm3n5mm\\home_empty1/.cache/torch/hub/facebookresearch_dinov2_main",
+    "ok": true,
+    "shape": [
+      1,
+      384,
+      4,
+      4
+    ],
+    "feat_sum": 12.414608811261132,
+    "feat_head": [
+      -0.1161990612745285,
+      -0.17613276839256287,
+      -0.12566369771957397,
+      -0.0032998237293213606,
+      -0.16839516162872314,
+      -0.08033468574285507,
+      -0.08254598081111908,
+      -0.18058547377586365
+    ],
+    "dinov2_file": "C:\\Users\\imia\\AppData\\Local\\Temp\\aoi_offline_pgm3n5mm\\pkg_full\\dinov2\\dinov2\\__init__.py",
+    "stdout_tail": [
+      "[dino] 使用随包 vendor 权重: C:\\Users\\imia\\AppData\\Local\\Temp\\aoi_offline_pgm3n5mm\\pkg_full\\dinov2\\dinov2_vits14_pretrain.pth"
+    ]
+  },
+  "fallback_cache": {
+    "net_attempts": [],
+    "cache_dir": "C:\\Users\\imia\\AppData\\Local\\Temp\\aoi_offline_pgm3n5mm\\home_cache/.cache/torch/hub/facebookresearch_dinov2_main",
+    "ok": true,
+    "shape": [
+      1,
+      384,
+      4,
+      4
+    ],
+    "feat_sum": 12.414608811261132,
+    "feat_head": [
+      -0.1161990612745285,
+      -0.17613276839256287,
+      -0.12566369771957397,
+      -0.0032998237293213606,
+      -0.16839516162872314,
+      -0.08033468574285507,
+      -0.08254598081111908,
+      -0.18058547377586365
+    ],
+    "dinov2_file": "C:\\Users\\imia\\AppData\\Local\\Temp\\aoi_offline_pgm3n5mm\\home_cache/.cache/torch/hub/facebookresearch_dinov2_main\\dinov2\\__init__.py",
+    "stdout_tail": [
+      "[dino] 随包 vendor 目录缺权重，回退 hub 缓存/在线: C:\\Users\\imia\\AppData\\Local\\Temp\\aoi_offline_pgm3n5mm\\pkg_noweight\\dinov2\\dinov2_vits14_pretrain.pth"
+    ]
+  },
+  "missing_weights": {
+    "net_attempts": [
+      "('github.com', 443)"
+    ],
+    "cache_dir": "C:\\Users\\imia\\AppData\\Local\\Temp\\aoi_offline_pgm3n5mm\\home_empty3/.cache/torch/hub/facebookresearch_dinov2_main",
+    "ok": false,
+    "err_type": "RuntimeError",
+    "err": "DINOv2 权重缺失且无法在线获取（离线部署需随包 vendor）：已查找 vendor=C:\\Users\\imia\\AppData\\Local\\Temp\\aoi_offline_pgm3n5mm\\pkg_noweight\\dinov2（需含 dinov2_vits14_pretrain.pth，可用 DINOV2_LOCAL_DIR 指定）、hub 缓存=C:\\Users\\imia\\AppData\\Local\\Temp\\aoi_offline_pgm3n5mm\\home_empty3/.cache/torch/hub/facebookresearch_dinov2_main；原因: RuntimeError: It looks like there is no internet connection and the repo could not be found in the cache (C:\\Users\\imia\\AppData\\Local\\Temp\\aoi_offline_pgm3n5mm\\home_empty3\\.cache\\torch\\hub)",
+    "cause": "RuntimeError",
+    "stdout_tail": [
+      "[dino] 随包 vendor 目录缺权重，回退 hub 缓存/在线: C:\\Users\\imia\\AppData\\Local\\Temp\\aoi_offline_pgm3n5mm\\pkg_noweight\\dinov2\\dinov2_vits14_pretrain.pth"
+    ]
+  }
+}

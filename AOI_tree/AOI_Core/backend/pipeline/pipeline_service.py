@@ -91,17 +91,12 @@ class PipelineService:
 
         with session_scope() as s:
             wos = (s.query(WorkOrder)
-                   .filter(WorkOrder.review_enabled.is_(True)).all())
+                   .filter(WorkOrder.review_enabled.is_(True),
+                           WorkOrder.status != "closed",
+                           WorkOrder.archived.is_(False)).all())
             for wo in wos:
-                feedback_exists = exists().where(
-                    Feedback.detection_id == Detection.id,
-                    Feedback.invalidated.is_(False))
-                n_pending = (s.query(Detection.id)
-                              .filter(Detection.workorder_id == wo.id,
-                                      Detection.target_type.in_(
-                                          ("pipeline", "stream", "plc")),
-                                      ~feedback_exists)
-                              .count())
+                from ..api._wo_shared import _n_pending_review
+                n_pending = _n_pending_review(s, wo.id)
                 if (wo.pipeline_status == "running"
                         and n_pending >= high):
                     # 背压自动暂停用独立状态 auto_paused，与人工暂停 paused
@@ -134,7 +129,9 @@ class PipelineService:
         # 在数据库会话外执行检测，避免推理耗时期间长期占用事务
         with session_scope() as s:
             wos = (s.query(WorkOrder)
-                   .filter(WorkOrder.pipeline_status == "running").all())
+                   .filter(WorkOrder.pipeline_status == "running",
+                           WorkOrder.status != "closed",
+                           WorkOrder.archived.is_(False)).all())
             job = None
             requeue_marker = None
             from ..engine import get_engine
@@ -198,37 +195,21 @@ class PipelineService:
                 if job:
                     break
 
-                # 2) 普通检测组：按导入批次找首张「尚未产生检测记录」图
-                # （回队批次已有检测记录，天然不会被此处 ~det_exists 选中，
-                #   与回队重检互不冲突）
-                ds_q = (s.query(Dataset)
-                        .filter(Dataset.datasource_id.in_(src_ids))
-                        .order_by(Dataset.id.desc()).all())
-                for ds in ds_q:
+                # 普通消费与监控使用同一检测分组，排除预训练/模板/归档图。
+                from ..api._wo_shared import (_pipeline_pending_query,
+                                              _workorder_detect_batches)
+                for batch in _workorder_detect_batches(s, wo):
                     try:
-                        engine.get_pipeline(ds.category)
+                        engine.get_pipeline(batch["category"])
                     except Exception:  # noqa: BLE001
-                        # 品类未准备：整批次跳过（否则同一张图反复送检失败
-                        # 无限重试，产线被卡死；用户准备该品类后自动恢复）
                         continue
-                    det_for_wo = (s.query(Detection.id)
-                                  .filter(Detection.image_id == ImageRow.id,
-                                          Detection.workorder_id == wo.id,
-                                          Detection.target_type == "pipeline")
-                                  .exists())
-                    # Image.processing_status 是跨工单全局字段；旧检测不能证明
-                    # 当前 claiming 属于本工单，也不能安全恢复可能已死锁的 claim。
-                    det_exists = det_for_wo
-                    img = (s.query(ImageRow)
-                           .filter(ImageRow.dataset_id == ds.id,
-                                   ImageRow.processing_status.in_(
-                                       ("pending", "succeeded")),
-                                   ~det_exists)
+                    img = (_pipeline_pending_query(s, wo.id, batch["image_ids"])
+                           .filter(ImageRow.processing_status.in_(
+                               ("pending", "succeeded")))
                            .order_by(ImageRow.id.asc()).first())
-                    if img is None or img.id is None:
-                        continue
-                    job = (wo, img)
-                    break
+                    if img is not None:
+                        job = (wo, img)
+                        break
                 if job:
                     break
             if job is None:
@@ -257,12 +238,12 @@ class PipelineService:
             image_id = img.id
         try:
             svc = get_detection_service()
-            # 产线检测关闭热力图落盘：单图耗时红线 ≤1s，逐帧热力图
-            # 渲染/存盘是最大开销（0.5-2.1s），产线只看判定与分数
+            # 产线检测落热力图/叠加图：监控页实时流可随帧切换热力图、
+            # 叠加图图层（单帧耗时增加，按需求开启）
             # target_type="pipeline" + workorder_id：监控页实时流与复核
             # 队列按产线路径/工单归属精确订阅
             svc.detect_image(path, category, image_id=image_id, persist=True,
-                             with_heatmap=False, target_type="pipeline",
+                             with_heatmap=True, target_type="pipeline",
                              workorder_id=_wo.id, claim_token=claim_token)
         except Exception as e:  # noqa: BLE001
             error = str(e)[:512]
@@ -287,7 +268,9 @@ class PipelineService:
                           WorkOrderSource.datasource_id == DataSource.id)
                     .join(WorkOrder, WorkOrder.id == WorkOrderSource.workorder_id)
                     .filter(DataSource.source_type == "rtsp",
-                            WorkOrder.pipeline_status == "running").all())
+                            WorkOrder.pipeline_status == "running",
+                            WorkOrder.status != "closed",
+                            WorkOrder.archived.is_(False)).all())
             active = {(src.id, wo_id) for src, wo_id in rows}
 
         # 先停止不再运行的 (source, workorder)，但不要立即删除记录；旧线程
@@ -316,9 +299,6 @@ class PipelineService:
             t.start()
 
     def _rtsp_loop(self, src, workorder_id=None, stop_event=None) -> None:
-        import os
-        import tempfile
-
         import cv2
         from .service import get_detection_service
 
@@ -350,20 +330,14 @@ class PipelineService:
                         cap.set(cv2.CAP_PROP_POS_FRAMES, 0)
                         continue
                     break
-                fd, tmp = tempfile.mkstemp(suffix=".jpg")
-                os.close(fd)
+                # §77：原始帧内存直检，不再 tempfile→imwrite→detect_image→remove
+                # 落热力图/叠加图：监控页实时流可随帧切换图层
                 try:
-                    cv2.imwrite(tmp, frame)
-                    svc.detect_image(tmp, category, persist=True,
-                                     with_heatmap=False, target_type="stream",
-                                     workorder_id=workorder_id)
+                    svc.detect_ndarray(frame, category, persist=True,
+                                       with_heatmap=True, target_type="stream",
+                                       workorder_id=workorder_id)
                 except Exception as e:  # noqa: BLE001
                     log.warning("[pipeline] rtsp 送检异常 source=%s：%s", src.id, e)
-                finally:
-                    try:
-                        os.remove(tmp)
-                    except OSError:
-                        pass
                 time.sleep(self.interval)
         finally:
             try:

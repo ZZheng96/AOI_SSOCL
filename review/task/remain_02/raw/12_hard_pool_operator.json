@@ -1,0 +1,12 @@
+{
+  "name": "hard_pool_operator",
+  "method": "GET",
+  "path": "/api/models/feature-set/gold_finger/hard-pool",
+  "role": "operator",
+  "request_body": null,
+  "status_code": 403,
+  "response": {
+    "detail": "权限不足：该操作需要 engineer 及以上角色（当前 operator）"
+  },
+  "note": "难例池 engineer 起"
+}

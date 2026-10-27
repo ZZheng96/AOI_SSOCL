@@ -1,0 +1,60 @@
+{
+  "prod_db": {
+    "path": "d:\\CGAIC\\AOI_SSOCL\\stable_AOI_tree\\AOI_Core\\database\\aoi.db",
+    "type": "file",
+    "sha256": "97340c192e19486e3110dd6d66ddf84ad699653916c97c76aea1546223473549"
+  },
+  "prod_snap_gold_finger": {
+    "path": "d:\\CGAIC\\AOI_SSOCL\\stable_AOI_tree\\AOI_Core\\storage\\engine\\snapshots\\gold_finger",
+    "type": "dir",
+    "n_files": 41,
+    "files": {
+      "current.json": "6d1fe9b16a03e5a9ffbd2485ba6afea317f14cb01bde2cd64ebba6394e19b99d",
+      "v1/align_ref.npy": "f92eefdddb47abb9888b46f9218d488a54d56d2b2809abbe15de003ecf6ebfe3",
+      "v1/calibrators.npz": "e794b0173350c2c02bff6aa1c1c3027a4ea977f88a90b346d8ee27d4311e31f1",
+      "v1/cfg.yaml": "5c2ae1a842a3d3dd37213905ee784e9b89377cd2fa1d64f8cc1c2576ab9c941c",
+      "v1/consensus.json": "3b2b8a80eedd7640851b2811f6c32f6e5d5c27ab006880c8354c4198e147873a",
+      "v1/decider.json": "dc214a037741da6485f007d42c033f1f543cc102ff62ecc0f21aba1fa35fe318",
+      "v1/meta.json": "d1d2484d94ba8b17fb4bdd7716c1cb01bac812f4143c56a88e40b305f57f2aec",
+      "v1/open.npz": "186ac5ba6a9ab053a705dd12f08b98c1376d4af9931e81e7eb185fd5d0872e24",
+      "v1/open_meta.json": "7f75a0a494d0a650b53bc2ad26283dfb0ce0b397f3537f520c87430146e9ea1f",
+      "v1/router.pt": "1da5b801bb05b929de6c51fef13495f6f5b535d975a2bd3d3668763ec2951bb2",
+      "v1/router_gate.json": "85643782eeb0f2b8819e496a0216bd004446d7765eae2c33c51689e7e7087a3a",
+      "v1/sanity.json": "47fb55d5eb66a689adc94ef36a771e25f6f6db4de110d22ddabfbd2fc10667ae",
+      "v1/slot_state.pkl": "f55e339751f11399378f48de9ea3b2ee65720aaaf5a731b8d7461bfa81218c9e",
+      "v1/ssocl/cal_hist.npz": "bb0bd38f3e97674adbf9a07eb499b64d39244acda2f71c2ccb6a08953abed9b4",
+      "v1/ssocl/defect_bank.pkl": "dad5d63a23897ecf023a8aacb4ae0336d35aa409ecb81faa28da6e59beedec48",
+      "v1/ssocl/handler.json": "a7b1d24ac367278eddcd574afc9c038267ea375d6e32120d4d412bc44f7f3ec1",
+      "v1/ssocl/normal_bank.pkl": "365a8b6b8cd54571e236bf44706f0557c2b4b03647b1054f3c5d7497e1fad713",
+      "v1/ssocl/regress_gate.json": "9c712f0ea1b7962b473f4e4deb3c8663d2d0e34701ef966bacde1e065376f503",
+      "v1/ssocl/ssocl_cfg.json": "25259d7e66b47b4613c4efb2c7e3f00febb35ff79a0267506786b954cbff0425",
+      "v1/ssocl/weight_learner.json": "6b38a6d4037a828024c8c3e2efd984057ff326c6111efeaec63e0849d623dde1",
+      "v1/weights.json": "2e9bbbe15585d6e68dae07a3755b24d3a112b52c56a9fc6b1823175c154e8ce4",
+      "v2/align_ref.npy": "f92eefdddb47abb9888b46f9218d488a54d56d2b2809abbe15de003ecf6ebfe3",
+      "v2/calibrators.npz": "44dd963cc9349e6d99ebba0a988b8acbe59dfa38234fb5dce14f67c7ba39dfb8",
+      "v2/cfg.yaml": "b220b228e8b592baf4897a6e8457da0b90106c98e66513a11795f26669e9502f",
+      "v2/consensus.json": "3b2b8a80eedd7640851b2811f6c32f6e5d5c27ab006880c8354c4198e147873a",
+      "v2/decider.json": "633331a5ac5e5c8566f2fdc50491538bf84ab3f694f6f452def85ce7f50141b0",
+      "v2/meta.json": "25fd40a21e11c683c25605498a52871bd22d2029b6deafe2f578168e25d07764",
+      "v2/open.npz": "8739c76e681f900923b900c9df0ef75cf421d39cabb54650c4b9ad19b6a76d85",
+      "v2/open_meta.json": "7c48fcc111c77b0109af0c9ac8973a3dae2babe4ca425f994c8cc6cf260f96ba",
+      "v2/router.pt": "b73c6a4fe08e25da461605c2492073ba3367ec4458d2890a762f57dc38f273db",
+      "v2/router_gate.json": "443c241561e7d60e6e7470d985dc757b382904d09be56708e80a9a0f94fa9605",
+      "v2/sanity.json": "b2c1d093350bd52fc6b9c0c2e1bf899f6f6ea5fb1dc18c2b2273ef9fcf65b46b",
+      "v2/slot_state.pkl": "22c8cf1d80ca5de01c9baf2d596f922efac984396f30fcd4c03683ba6412b9fa",
+      "v2/ssocl/cal_hist.npz": "0142ea4cb0de60e7701ad79375e09e3994182f42773ea0b4403c0cde9588d016",
+      "v2/ssocl/defect_bank.pkl": "dad5d63a23897ecf023a8aacb4ae0336d35aa409ecb81faa28da6e59beedec48",
+      "v2/ssocl/handler.json": "f4e49cbcef27c2e0bb1d0ba9d0fefd42d12cbe8b6e7eb651115ef2c55ab58f88",
+      "v2/ssocl/normal_bank.pkl": "b8c0ed32a86982dad47343149ee324fb29be66e15433c50eb9ae34f54aad4797",
+      "v2/ssocl/regress_gate.json": "be8ab393226e2234ca2eb46e38abef13a3a22c35b759cceb2c5c7c864b85b112",
+      "v2/ssocl/ssocl_cfg.json": "25259d7e66b47b4613c4efb2c7e3f00febb35ff79a0267506786b954cbff0425",
+      "v2/ssocl/weight_learner.json": "2d5d56e87103da401f0dd7b57a2f341c91c2fb7eaaec85356580f503d8f14caa",
+      "v2/weights.json": "6708521990bbbd16035f8996fca7844788461c79fcfc89d566af36792f5a1d0d"
+    }
+  },
+  "prod_config": {
+    "path": "d:\\CGAIC\\AOI_SSOCL\\stable_AOI_tree\\AOI_Core\\configs\\default.yaml",
+    "type": "file",
+    "sha256": "50fc4843e4be64e780715ff5839a56ae672e35b5f98da310bddfc27873615bfb"
+  }
+}

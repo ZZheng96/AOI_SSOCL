@@ -6,8 +6,8 @@ import threading
 from PySide6.QtCore import Qt, QEvent, QThread, QTimer, Signal
 from PySide6.QtGui import QPixmap
 from PySide6.QtWidgets import (QCheckBox, QComboBox, QFormLayout, QFrame,
-                               QHBoxLayout, QLabel, QPushButton, QVBoxLayout,
-                               QWidget)
+                               QHBoxLayout, QLabel, QPushButton, QScrollArea,
+                               QSizePolicy, QVBoxLayout, QWidget)
 
 from ui.api_client import ApiClient, ApiWorker
 
@@ -137,10 +137,22 @@ def _forget(workers: list, w: QThread) -> None:
     w.deleteLater()
 
 
-def make_banner(text: str) -> QLabel:
-    """赛题问题横幅标签（浅蓝底圆角）。"""
+def make_banner(text: str, wrap: bool = False) -> QLabel:
+    """赛题问题横幅标签（浅蓝底圆角）。
+
+    2026-10-14（前端反馈）：页面顶部的标题横幅**默认不换行、也不横向拉伸**——
+    开启 wordWrap 会让 QLabel 的 sizeHint 收窄，于是"明明放得下也会折成两行"；
+    而允许拉伸时，在没有 stretch 的顶栏行里它又会撑成一条通栏长条（模型管理页）。
+    统一成"贴着文字、左对齐"，各页顶部风格才一致。
+    只有确实很长的告警横幅（如标注反馈页的「不完备预警」）才传 wrap=True 允许折行。
+    """
     lb = QLabel(text)
     lb.setProperty("banner", True)
+    if wrap:
+        lb.setWordWrap(True)
+        lb.setSizePolicy(QSizePolicy.MinimumExpanding, QSizePolicy.Preferred)
+    else:
+        lb.setSizePolicy(QSizePolicy.Maximum, QSizePolicy.Preferred)
     return lb
 
 
@@ -283,6 +295,9 @@ def make_level_badge() -> QLabel:
     """
     lb = QLabel("数据条件：-")
     lb.setProperty("badge", "muted")
+    # 2026-10-14：徽标不参与横向拉伸——不限制时它会跟着布局一起变宽，
+    # 在模型管理页（该行没有 stretch）会变成一条很宽的橙色长条，与其他页风格不一致
+    lb.setSizePolicy(QSizePolicy.Maximum, QSizePolicy.Fixed)
     lb.setToolTip("当前工单声明的数据条件（在「工作台」创建/编辑工单时指定）。\n"
                   "条件 = 标注档位（仅正常图 / 图像级标注 / 缺陷位置标注）\n"
                   "＋ 可叠加开关（品类独立 / 模板比对）")
@@ -318,12 +333,13 @@ def update_level_badge(badge: QLabel, get_level) -> None:
 
 
 def attach_level_badge(page: QWidget, layout) -> QLabel:
-    """把数据条件徽标挂到页面顶部布局，并注册 page.update_level_badge()。
+    """注册页面的数据条件刷新钩子，但不在页面重复显示徽标。
 
-    数据条件来源 page._get_level（由主窗口注入当前工单条件）。
+    数据条件已在主窗口顶栏统一显示，并随当前工单切换；页面内部仍保留
+    update_level_badge() 兼容入口，避免旧页面逻辑失效。
     """
     badge = make_level_badge()
-    layout.addWidget(badge)
+    badge.setVisible(False)
     page._level_badge = badge  # type: ignore[attr-defined]
 
     def _update() -> None:
@@ -429,6 +445,61 @@ def make_card() -> QFrame:
     return card
 
 
+def make_scroll_area(content: QWidget) -> QScrollArea:
+    """把内容放进页面级滚动区。
+
+    2026-10-14（前端反馈）：内容多的页面（学习效果 / 存档统计）此前把图表挤在
+    固定高度里，图题与坐标轴都被压得看不清；统一整页滚动后，各卡片按自然高度
+    排列，视口不够时滚动查看。
+    """
+    sa = QScrollArea()
+    sa.setWidgetResizable(True)
+    sa.setFrameShape(QFrame.NoFrame)
+    sa.setWidget(content)
+    return sa
+
+
+def wrap_card_heads(root: QWidget) -> None:
+    """让卡片小标题（property heading=True）允许折行。
+
+    窄卡片上的长图题此前会被截断（如「翻案曲线（灰=学习前判定分，蓝=当前引擎
+    重判定分，绿点=已翻案）」），统一开 wordWrap 后自动折到第二行。
+    """
+    for lb in root.findChildren(QLabel):
+        if lb.property("heading"):
+            lb.setWordWrap(True)
+
+
+def make_card_title(text: str) -> QWidget:
+    """卡片标题：主标题加粗；**括号里的说明拆到下一行、灰色小字、自动换行**。
+
+    2026-10-14（前端反馈）：括号说明原来和主标题挤在同一行，既占横向空间又常被
+    截断。拆成"主标题 + 灰色小字说明"两行后，图题一眼可读、也给图让出了空间
+    （一行排四张图时尤其明显）。
+    """
+    main, note = text.strip(), ""
+    if "（" in main and main.endswith("）"):
+        i = main.index("（")
+        note = main[i + 1:-1].strip()
+        main = main[:i].strip()
+    box = QWidget()
+    lay = QVBoxLayout(box)
+    lay.setContentsMargins(0, 0, 0, 0)
+    lay.setSpacing(1)
+    head = QLabel(main)
+    head.setProperty("heading", True)
+    lay.addWidget(head)
+    if note:
+        sub = QLabel(note)
+        sub.setProperty("subtext", True)
+        sub.setWordWrap(True)
+        f = sub.font()
+        f.setPointSizeF(max(7.5, f.pointSizeF() - 1.0))
+        sub.setFont(f)
+        lay.addWidget(sub)
+    return box
+
+
 def make_empty_hint(text: str = "暂无数据") -> QLabel:
     """空数据态友好提示标签。"""
     lb = QLabel(text)
@@ -511,6 +582,8 @@ def make_thumb_cell(text: str = "加载中…") -> QLabel:
     """表格缩略图单元格标签。"""
     lb = QLabel(text)
     lb.setAlignment(Qt.AlignCenter)
-    lb.setMinimumSize(96, 60)
+    # 2026-10-14：缩略图单元格最小尺寸收到 72×48，避免把「缩略图」列顶宽
+    # （原先 96×60 会超出列宽并挤占相邻列）
+    lb.setMinimumSize(72, 48)
     lb.setStyleSheet("color:#9CA3AF; background:transparent;")
     return lb

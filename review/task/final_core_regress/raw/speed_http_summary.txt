@@ -1,0 +1,6 @@
+﻿phases Counter({'hot': 32, 'warmup': 5, 'cold_first_request': 1})
+reported_model_ms        n=32 mean=141.3 p50=136.7 p95=185.2 max=264.7
+reported_partial_e2e_ms  n=32 mean=199.6 p50=194.6 p95=246.7 max=324.6
+wall_ms                  n=32 mean=238.5 p50=236.0 p95=286.8 max=360.8
+inputs ['input_00.jpg', 'input_01.jpg']
+timing_gate_only false

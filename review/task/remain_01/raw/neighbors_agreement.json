@@ -1,0 +1,97 @@
+{
+  "n_images": 6,
+  "exact_match_rate": 0.8333333333333334,
+  "mean_overlap_rate": 1.0,
+  "rows": [
+    {
+      "image": "train0",
+      "candidate": [
+        4,
+        1,
+        5
+      ],
+      "production": [
+        4,
+        1,
+        5
+      ],
+      "exact_match": true,
+      "overlap": 3
+    },
+    {
+      "image": "train1",
+      "candidate": [
+        5,
+        4,
+        0
+      ],
+      "production": [
+        5,
+        0,
+        4
+      ],
+      "exact_match": false,
+      "overlap": 3
+    },
+    {
+      "image": "train2",
+      "candidate": [
+        1,
+        3,
+        5
+      ],
+      "production": [
+        1,
+        3,
+        5
+      ],
+      "exact_match": true,
+      "overlap": 3
+    },
+    {
+      "image": "probe0",
+      "candidate": [
+        0,
+        1,
+        2
+      ],
+      "production": [
+        0,
+        1,
+        2
+      ],
+      "exact_match": true,
+      "overlap": 3
+    },
+    {
+      "image": "probe1",
+      "candidate": [
+        3,
+        1,
+        2
+      ],
+      "production": [
+        3,
+        1,
+        2
+      ],
+      "exact_match": true,
+      "overlap": 3
+    },
+    {
+      "image": "probe2",
+      "candidate": [
+        1,
+        3,
+        5
+      ],
+      "production": [
+        1,
+        3,
+        5
+      ],
+      "exact_match": true,
+      "overlap": 3
+    }
+  ]
+}

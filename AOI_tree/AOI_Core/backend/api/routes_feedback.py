@@ -24,20 +24,97 @@ from .schemas import FeedbackCreateRequest, SelfUpdateRequest, to_dict
 router = APIRouter()
 
 
+class CandidateFeedbackRequest(FeedbackCreateRequest):
+    parent_version: int
+
+
+class CandidateBuildRequest(BaseModel):
+    parent_version: int
+
+
+@router.post("/feedback/{feedback_id}/candidate", dependencies=[Depends(require_role("engineer"))])
+def api_build_feedback_candidate(feedback_id: int, req: CandidateBuildRequest):
+    """显式消费已排队反馈；引擎失败意图仍须恢复，构建结果须独立验收和发布。"""
+    with session_scope() as s:
+        fb = s.get(Feedback, feedback_id)
+        if fb is None:
+            raise HTTPException(status_code=404, detail="反馈不存在")
+        trace = fb.learning_trace or {}
+        if fb.invalidated or fb.consumed or not trace.get("candidate_only"):
+            raise HTTPException(status_code=409, detail="仅未消费的有效候选反馈可构建")
+        if trace.get("learning_status") in ("candidate", "candidate_pending"):
+            if trace.get("candidate_parent") != req.parent_version:
+                raise HTTPException(status_code=409, detail="反馈已绑定其他候选父版本")
+            return {"feedback_id": feedback_id, "task_id": None,
+                    "learning_status": trace["learning_status"],
+                    "candidate": trace.get("candidate"), "idempotent": True,
+                    "model_activation_status": "unchanged"}
+        if trace.get("learning_status") == "late_excluded":
+            raise HTTPException(status_code=409, detail="迟到标签仅统计，不允许候选入训")
+
+    def fn(progress_cb):
+        progress_cb(0, 2, "独立候选装载与学习（不切换生产）")
+        out = sl_service.build_feedback_candidate(feedback_id, req.parent_version)
+        progress_cb(1, 2, "登记真实候选快照，仍须独立验收/批准/激活")
+        from . import routes_models
+        routes_models.register_engine_snapshots()
+        progress_cb(2, 2, "完成")
+        return out
+
+    task_id = task_manager.submit("candidate_feedback",
+                                  {"feedback_id": feedback_id, **req.model_dump()}, fn)
+    log_action("feedback_candidate_build", f"feedback_id={feedback_id} parent={req.parent_version}")
+    return {"feedback_id": feedback_id, "task_id": task_id,
+            "model_activation_status": "unchanged", "activated": False}
+
+
+@router.post("/feedback/candidate", dependencies=[Depends(require_role("engineer"))])
+def api_candidate_feedback(req: CandidateFeedbackRequest):
+    """显式候选路径；旧反馈与auto_activate语义保持不变。"""
+    if not req.source_event_id:
+        raise HTTPException(status_code=422, detail="候选反馈必须提供source_event_id")
+    try:
+        stored = sl_service.submit_feedback_record(
+            req.detection_id, req.feedback_type, req.operator_label,
+            defect_type=req.defect_type, comment=req.comment, region=req.region,
+            operator=req.operator, source_event_id=req.source_event_id, candidate_only=True)
+    except sl_service.FeedbackConflict as e:
+        raise HTTPException(status_code=409, detail=str(e))
+    except ValueError as e:
+        raise HTTPException(status_code=404, detail=str(e))
+
+    def fn(progress_cb):
+        progress_cb(0, 2, "独立候选装载与学习（不切换生产）")
+        out = sl_service.build_feedback_candidate(stored["feedback_id"], req.parent_version)
+        progress_cb(1, 2, "候选完成，禁止未验收激活")
+        from . import routes_models
+        routes_models.register_engine_snapshots()
+        progress_cb(2, 2, "完成")
+        return out
+
+    if stored.get("idempotent"):
+        out = api_build_feedback_candidate(
+            stored["feedback_id"], CandidateBuildRequest(parent_version=req.parent_version))
+        return {**stored, **out}
+    task_id = task_manager.submit("candidate_feedback", req.model_dump(), fn)
+    return {**stored, "task_id": task_id, "model_activation_status": "unchanged"}
+
+
 # ── 反馈 ─────────────────────────────────────────────────────
 @router.post("/feedback")
 def api_create_feedback(req: FeedbackCreateRequest):
-    """提交反馈：写 Feedback 表 + 引擎即学（submit_feedback）+ 今日统计。
+    """提交生产反馈：写入 Feedback/候选队列，不修改生产工作态。
 
-    引擎未 prepare / 品类无快照时不报错中断：落库照常，
-    响应 engine_update=None 并注明"模型未就绪，反馈仅落库"。
+    返回字段保持旧契约；candidate_queued != applied != activated。
     """
     try:
         out = sl_service.submit_feedback_record(
             req.detection_id, req.feedback_type, req.operator_label,
             defect_type=req.defect_type, comment=req.comment,
             region=req.region, operator=req.operator,
-            source_event_id=req.source_event_id)
+            source_event_id=req.source_event_id, candidate_only=True)
+    except sl_service.FeedbackConflict as e:
+        raise HTTPException(status_code=409, detail=str(e))
     except ValueError as e:
         raise HTTPException(status_code=404, detail=str(e))
     return {"id": out["feedback_id"], "engine_update": out["engine_update"],
@@ -49,7 +126,19 @@ def api_create_feedback(req: FeedbackCreateRequest):
             "consolidation_status": out["consolidation_status"],
             "model_activation_status": out["model_activation_status"],
             "model_version_before": out["model_version_before"],
-            "model_version_after": out["model_version_after"]}
+            "model_version_after": out["model_version_after"],
+            "details": sl_service.feedback_details(out.get("learning_trace"))}
+
+
+@router.get("/feedback/{feedback_id}/details")
+def api_feedback_details(feedback_id: int):
+    """持久反馈结果详情，无模型装载、重推或历史补算。"""
+    with session_scope() as s:
+        fb = s.get(Feedback, feedback_id)
+        if fb is None:
+            raise HTTPException(status_code=404, detail="反馈不存在")
+        return sl_service.feedback_json({
+            **to_dict(fb), "details": sl_service.feedback_details(fb.learning_trace)})
 
 
 @router.get("/feedback")
@@ -95,7 +184,8 @@ def api_list_feedback(consumed: Optional[bool] = None,
                          final_score=det.final_score,
                          is_anomaly=det.is_anomaly,
                          category=det.category)
-            items.append(d)
+            d["details"] = sl_service.feedback_details(fb.learning_trace)
+            items.append(sl_service.feedback_json(d))
         return {"total": total, "items": items}
 
 
@@ -117,8 +207,12 @@ def api_invalidate_feedback(feedback_id: int, operator: str = "operator"):
                     "note": "该反馈已是作废状态"}
         fb.invalidated = True
         was_consumed = bool(fb.consumed)
+        detection_id, source_event_id = fb.detection_id, fb.source_event_id
     log_action("feedback_invalidate", f"feedback_id={feedback_id}",
-               user=operator)
+               user=operator,
+               extra={"feedback_id": feedback_id, "detection_id": detection_id,
+                      "source_event_id": source_event_id, "invalidated": True,
+                      "was_consumed": was_consumed})
     note = "已作废：不计入统计与曲线，对应检测重新进入复核队列。"
     if was_consumed:
         note += "该反馈已被引擎即学消费——模型内的影响需回滚到反馈前版本消除。"
@@ -158,7 +252,9 @@ def api_self_learning_update(req: SelfUpdateRequest):
 
     def fn(progress_cb):
         progress_cb(0, 2, "巩固落盘（快照固化）...")
-        out = sl_service.consolidate(req.category, note=req.note or "")
+        out = sl_service.consolidate(
+            req.category, note=req.note or "",
+            activate=req.auto_activate)  # None → 设置中心 auto_activate
         progress_cb(1, 2, "登记 Model 行...")
         routes_models.register_engine_snapshots()
         progress_cb(2, 2, "完成")
@@ -239,25 +335,17 @@ def api_feedback_traditional(req: TraditionalReviewRequest):
                             .filter(Feedback.source_event_id == req.source_event_id)
                             .first())
             if existing is not None:
-                from ..engine import get_engine
-                try:
-                    current_version = get_engine().current_version(
-                        det.category if det is not None else req.category)
-                except Exception:  # noqa: BLE001
-                    current_version = None
-                return {"detection_id": det_id, "feedback_id": existing.id,
-                        "feedback_type": existing.feedback_type,
-                        "aoi_ng": aoi_ng, "trad_ng": bool(existing.operator_label == 1),
-                        "engine_update": {"idempotent": True, "consumed": existing.consumed},
-                        "pre": (existing.region or {}).get("pre"), "note": "重复来源事件",
-                        "feedback_status": "stored", "learning_status": "applied" if existing.consumed else "unavailable",
-                        "consolidation_status": "not_requested", "model_activation_status": "unchanged",
-                        "model_version_before": current_version, "model_version_after": current_version}
+                original = s.get(DetectionRow, existing.detection_id)
+                if (original is None or original.image_path != img
+                        or original.category != req.category):
+                    raise HTTPException(status_code=409, detail="来源事件ID对应不同图片/品类")
+                det_id = original.id
+                aoi_ng = bool(original.is_anomaly)
             has_fb = (s.query(Feedback.id)
                       .filter(Feedback.detection_id == det_id,
                               Feedback.invalidated == False)  # noqa: E712
                       .first()) is not None
-        if has_fb:
+        if has_fb and existing is None:
             raise HTTPException(
                 status_code=409,
                 detail=f"该图检测记录 {det_id} 已有反馈（可先作废旧反馈再重判）")
@@ -282,7 +370,10 @@ def api_feedback_traditional(req: TraditionalReviewRequest):
             region=req.region,
             operator=operator,
             source_event_id=req.source_event_id,
+            candidate_only=True,
         )
+    except sl_service.FeedbackConflict as e:
+        raise HTTPException(status_code=409, detail=str(e))
     except ValueError as e:
         raise HTTPException(status_code=404, detail=str(e))
     log_action("feedback_traditional",

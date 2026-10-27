@@ -145,16 +145,29 @@ class FeatureClient:
             extra=extra,
         )
 
-    def predict_image_path(self, category: str, path: str) -> DetectionResult:
+    def predict_image_path(self, category: str, path: str,
+                           pair_template: Optional[str] = None) -> DetectionResult:
         p = str(Path(path).resolve())
-        d = self._req("POST", "/detect/image",
-                      json={"path": p, "category": category, "with_heatmap": True})
+        body = {"path": p, "category": category, "with_heatmap": True}
+        if pair_template is not None:
+            body["pair_template"] = str(Path(pair_template).resolve())
+        d = self._req("POST", "/detect/image", json=body)
         self._remember(str(path), d.get("detection_id"))
         self._remember(p, d.get("detection_id"))
         return self._to_result(d)
 
+    def pair_heatmap(self, path: str, pair_template: str, *, same_view_confirmed: bool) -> Dict[str, Any]:
+        if not same_view_confirmed:
+            raise ValueError("必须确认同位配对")
+        return self._req("POST", "/detect/pair-heatmap", json={
+            "path": str(Path(path).resolve()),
+            "pair_template": str(Path(pair_template).resolve()),
+            "same_view_confirmed": True,
+        })
+
     def predict_ndarray(self, category: str, rgb: np.ndarray,
-                        path_hint: Optional[str] = None) -> DetectionResult:
+                        path_hint: Optional[str] = None,
+                        pair_template: Optional[str] = None) -> DetectionResult:
         import cv2
 
         img = rgb
@@ -164,9 +177,12 @@ class FeatureClient:
         if not ok:
             raise CoreError("图像编码失败")
         name = Path(path_hint).name if path_hint else "frame.png"
+        data = {"category": category}
+        if pair_template is not None:
+            data["pair_template"] = str(Path(pair_template).resolve())
         d = self._req("POST", "/detect/upload",
                       files={"file": (name, buf.tobytes(), "image/png")},
-                      data={"category": category})
+                      data=data)
         self._remember(path_hint, d.get("detection_id"))
         return self._to_result(d)
 

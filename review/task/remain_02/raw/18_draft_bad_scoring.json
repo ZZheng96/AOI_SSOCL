@@ -1,0 +1,17 @@
+{
+  "name": "draft_bad_scoring",
+  "method": "POST",
+  "path": "/api/models/feature-set/gold_finger/draft",
+  "role": "engineer",
+  "request_body": {
+    "groups": [
+      "glcm"
+    ],
+    "scoring": "max"
+  },
+  "status_code": 400,
+  "response": {
+    "detail": "scoring 仅支持 legacy/grouped: max"
+  },
+  "note": ""
+}

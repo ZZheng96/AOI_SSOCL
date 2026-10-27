@@ -1,0 +1,10 @@
+# TEST-06 复跑命令（AC-062 旧生产 trad 协议八项等价比对）
+# 工作目录必须切到 AOI_Core；python 用 py -3.11（本机 python 命令报 9009）
+# 退出码：0 = PASS(equivalent)，1 = FAIL(new_candidate)
+
+cd /d d:\CGAIC\AOI_SSOCL\AOI_tree\AOI_Core
+py -3.11 "d:\CGAIC\AOI_SSOCL\review\task\test06_trad_parity\raw\run_test06.py"
+
+# PowerShell 带日志落盘版：
+# Set-Location d:\CGAIC\AOI_SSOCL\AOI_tree\AOI_Core
+# py -3.11 "d:\CGAIC\AOI_SSOCL\review\task\test06_trad_parity\raw\run_test06.py" 2>&1 | Tee-Object -FilePath "d:\CGAIC\AOI_SSOCL\review\task\test06_trad_parity\raw\run_log.txt"

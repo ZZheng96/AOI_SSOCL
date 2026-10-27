@@ -1,0 +1,54 @@
+{
+  "dataset": "mvtec",
+  "profile": "accuracy",
+  "scenario": "L1a",
+  "base_cfg": "engine_fast.yaml",
+  "seed": 42,
+  "max_test": 150,
+  "device": "cuda",
+  "started": "2026-10-14 13:41:15",
+  "categories": {
+    "bottle": {
+      "version": 1,
+      "n_test": 53,
+      "fused_auroc": 1.0,
+      "fused_ap": 0.9999999999999999,
+      "ms_per_image": 222.5950394036635,
+      "slots": {
+        "sem": 0.9946969696969697,
+        "disc": 0.990909090909091,
+        "shead": 1.0,
+        "inp": 0.7477272727272728,
+        "blob": 0.8030303030303031,
+        "trad": 0.9287878787878788,
+        "layout": 0.6356060606060605
+      },
+      "fused_max_auroc": 0.9833333333333333,
+      "elapsed_s": 75.8
+    },
+    "screw": {
+      "version": 1,
+      "n_test": 114,
+      "fused_auroc": 0.9415730337078652,
+      "fused_ap": 0.9813014620140417,
+      "ms_per_image": 223.3519010376512,
+      "slots": {
+        "sem": 0.9157303370786517,
+        "disc": 0.5867415730337079,
+        "shead": 0.9382022471910112,
+        "inp": 0.5292134831460674,
+        "blob": 0.742247191011236,
+        "trad": 0.09752808988764045,
+        "layout": 0.43460674157303375
+      },
+      "fused_max_auroc": 0.5334831460674158,
+      "elapsed_s": 88.6
+    }
+  },
+  "summary": {
+    "n": 2,
+    "avg_auroc": 0.9708,
+    "ge09": 2,
+    "min": 0.9416
+  }
+}

@@ -1,0 +1,29 @@
+﻿python.exe : D:\CGAIC\AOI_SSOCL\AOI_tree\assets\dinov2\dinov2\layers\swiglu_ffn.py:51: UserWarning: xFormers is not ava
+ilable (SwiGLU)
+At line:15 char:3287
++ ... offscreen"; & "C:\Program Files\Python311\python.exe" $env:TEMP\fcr_v ...
++                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: (D:\CGAIC\AOI_SS...ilable (SwiGLU):String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+  warnings.warn("xFormers is not available (SwiGLU)")
+D:\CGAIC\AOI_SSOCL\AOI_tree\assets\dinov2\dinov2\layers\attention.py:33: UserWarning: xFormers is not available (Attent
+ion)
+  warnings.warn("xFormers is not available (Attention)")
+D:\CGAIC\AOI_SSOCL\AOI_tree\assets\dinov2\dinov2\layers\block.py:40: UserWarning: xFormers is not available (Block)
+  warnings.warn("xFormers is not available (Block)")
+[dino] 使用随包 vendor 权重: D:\CGAIC\AOI_SSOCL\AOI_tree\assets\dinov2\dinov2_vits14_pretrain.pth
+[dino] 使用随包 vendor 权重: D:\CGAIC\AOI_SSOCL\AOI_tree\assets\dinov2\dinov2_vits14_pretrain.pth
+{
+  "exps_dino": {
+    "vendor_dir": "D:\\CGAIC\\AOI_SSOCL\\AOI_tree\\assets\\dinov2",
+    "dim": 384,
+    "weights_exists": true
+  },
+  "exps_trad_path": "D:\\CGAIC\\AOI_SSOCL\\AOI_tree\\EXPs\\vendor\\traditional.py",
+  "core_dino": {
+    "vendor_dir": "D:\\CGAIC\\AOI_SSOCL\\AOI_tree\\assets\\dinov2",
+    "dim": 384
+  }
+}
+V1 PASS

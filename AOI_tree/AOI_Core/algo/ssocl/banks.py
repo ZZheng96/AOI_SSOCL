@@ -63,6 +63,33 @@ def _norm_patch(feats, device="cpu"):
     return flat
 
 
+def _feat_hash(f):
+    """AC-028：条目内容 hash（fp16 字节 sha256 前 16 位），血缘/去重/混库核对用。"""
+    import hashlib
+    t = f.detach().cpu().contiguous().half().numpy()
+    return hashlib.sha256(t.tobytes()).hexdigest()[:16]
+
+
+def _meta(f, op, source, version, ts, image_id=None, **extra):
+    """AC-028：记忆条目血缘（来源/时间/版本/hash/独立图标识）。"""
+    m = {"op": op, "source": source, "t": ts, "v": version,
+         "hash": _feat_hash(f), "n": int(f.shape[0]),
+         "image_id": image_id}
+    m.update({k: v for k, v in extra.items() if v is not None})
+    return m
+
+
+def _aligned_meta(entries, metas, op):
+    """旧快照兼容：meta 缺失/长度不齐时按条目补 legacy 血缘（不改条目本身）。"""
+    metas = list(metas or [])
+    if len(metas) == len(entries):
+        return metas
+    # 对不齐时无法可靠逐条对应 → 全部按 legacy 标注（诚实：血缘未知）
+    return [{"op": op, "source": "legacy", "t": e[1], "v": None,
+             "hash": _feat_hash(e[0]), "n": int(e[0].shape[0]),
+             "image_id": None, "legacy": True} for e in entries]
+
+
 class NormalBank:
     """正常模式库：锚定（受保护）+ 扩展（版本化可回滚）+ 成簇入库 + 回流熔断。"""
 
@@ -70,13 +97,23 @@ class NormalBank:
                  defect_ratio_thresh=0.30, snapshots_max=3):
         self.core_max = core_max
         self.ext_max = ext_max
-        self.cluster_k = cluster_k          # 成簇所需连续命中次数（§7.2）
+        self.cluster_k = cluster_k          # 成簇所需独立图命中数（§7.2）
         self.sim_thresh = sim_thresh        # 与现有库的相似度阈值（归一化相似）
         self.defect_ratio_thresh = defect_ratio_thresh   # 回流熔断缺陷率阈值（§7.2）
         self.snapshots_max = snapshots_max
         self.core = None                    # (M,384) fp16 锚定库 patch（受保护）
         self.ext = []                       # list[(n,384) fp16, ts, source] 扩展库
-        self.cluster_hits = {}              # 相似区域命中计数（成簇证据累积）
+        self.cluster_hits = {}              # 候选簇 id -> 连续命中数（AC-029）
+        # AC-029：严格成簇——候选样本间相似（描述子 cos≥cluster_sim）+ 窗口内
+        # 连续命中 cluster_k 次才入库；旧实现按"与库相似度"0.01 分桶计数，
+        # 互不相似的样本只要库相似度同桶即被累计，不是聚类。
+        self.cluster_sim = 0.90
+        self.cluster_window = 20            # 超过窗口未再命中 → 簇失效（非连续）
+        self._clusters = []                 # [{id, centroid(D,), hits, last_seq}]
+        self._seq = 0
+        self._cluster_next = 0
+        self.ext_meta = []                  # AC-028：与 ext 逐条对齐的血缘
+        self.core_meta = None
         self.recent_decisions = []          # 在线缺陷率滑动窗
         self.defect_ratio = 0.0
         self.version = 0
@@ -94,6 +131,8 @@ class NormalBank:
         target = min(self.core_max * 8, n)
         idx = rng.choice(n, target, replace=False)
         self.core = f[idx]
+        self.core_meta = {"op": "seed_core", "source": "train_good_anchor",
+                          "t": time.time(), "n_src_patches": int(n)}
         return self
 
     def _sim_to(self, feat):
@@ -131,7 +170,8 @@ class NormalBank:
         self.defect_ratio = 0.0
         return self
 
-    def reflow_candidate(self, tile_feats, min_ext_feat=1):
+    def reflow_candidate(self, tile_feats, min_ext_feat=1, image_id=None,
+                         signature=None):
         """成簇判定（§7.2）：连续出现、自相似、一致性通过才入扩展库。
 
         返回 "accepted"（成簇入库）/ "pending"（累积证据）/ "rejected"（疑似缺陷，拒绝）。
@@ -139,33 +179,98 @@ class NormalBank:
         f = _norm_patch(tile_feats)
         sim = self._sim_to(f)
         if sim is None:
-            return "accepted"          # 库空（理论上 fit 后不空），直接收
+            return self._cluster_vote(f, image_id=image_id, signature=signature)
         s = float(sim.max())           # 样本与库的最相似 patch
         if s < self.sim_thresh:        # 与现有库差异太大 → 疑为新缺陷而非新正常
             return "rejected"
-        key = int(round(s * 100))      # 按相似度桶累积证据
-        self.cluster_hits[key] = self.cluster_hits.get(key, 0) + 1
-        if self.cluster_hits[key] >= self.cluster_k:
+        return self._cluster_vote(f, image_id=image_id, signature=signature)
+
+    _REP_MAX = 256                     # 簇代表 patch 子样本上限（相似计算成本封顶）
+
+    def _cluster_vote(self, f, image_id=None, signature=None):
+        """AC-029：候选间相似 + 连续命中。
+        相似 = 新样本 patch 到簇代表 patch 的最近邻 cos 均值（样本对样本，
+        而非样本对库）；窗口 cluster_window 内未再命中的簇失效（不连续）。"""
+        from ..common.image_identity import near_duplicate
+        identity = {"image_id": image_id, "hash": _feat_hash(f), "signature": signature}
+        seen = getattr(self, "_cluster_identities", [])
+        if any((image_id is not None and m.get("image_id") == image_id)
+               or m.get("hash") == identity["hash"]
+               or near_duplicate(signature, m.get("signature")) for m in seen):
+            return "pending"
+        self._cluster_identities = seen + [identity]
+        self._seq = getattr(self, "_seq", 0) + 1
+        clusters = [c for c in getattr(self, "_clusters", [])
+                    if self._seq - c["last_seq"] <= getattr(self, "cluster_window", 20)]
+        rep = f
+        if rep.shape[0] > self._REP_MAX:
+            g = torch.Generator().manual_seed(0)
+            rep = rep[torch.randperm(rep.shape[0], generator=g)[:self._REP_MAX]]
+        rep = rep.float()
+        best, best_s = None, -1.0
+        for c in clusters:
+            s = float((rep @ c["rep"].T).max(dim=1).values.mean())
+            if s > best_s:
+                best, best_s = c, s
+        if best is not None and best_s >= getattr(self, "cluster_sim", 0.90):
+            best["hits"] += 1
+            best["last_seq"] = self._seq
+        else:
+            cid = getattr(self, "_cluster_next", 0)
+            self._cluster_next = cid + 1
+            best = {"id": cid, "rep": rep, "hits": 1, "last_seq": self._seq}
+            clusters.append(best)
+        self.cluster_hits = {c["id"]: c["hits"] for c in clusters}
+        if best["hits"] >= self.cluster_k:
+            clusters.remove(best)                 # 成簇入库后清空该簇证据
+            self.cluster_hits.pop(best["id"], None)
+            self._clusters = clusters
             return "accepted"
+        self._clusters = clusters
         return "pending"
 
-    def add_ext(self, tile_feats, source="feedback", min_feat=64):
-        """入扩展库（版本化）；超限淘汰最旧。"""
+    def add_ext(self, tile_feats, source="feedback", min_feat=64, image_id=None):
+        """入扩展库（版本化）；超限淘汰最旧。AC-028：同步记录条目血缘。"""
         f = _norm_patch(tile_feats)
         if f.shape[0] < min_feat:
             return False
-        self.ext.append([f, time.time(), source])
+        ts = time.time()
+        meta = _aligned_meta(self.ext, getattr(self, "ext_meta", None), "add_ext")
+        digest = _feat_hash(f)
+        if any((image_id is not None and m.get("image_id") == image_id)
+               or m.get("hash") == digest for m in meta):
+            return False
+        self.ext.append([f, ts, source])
+        self.version += 1
+        meta.append(_meta(f, "add_ext", source, self.version, ts, image_id))
         if len(self.ext) > self.ext_max:
             self.ext = self.ext[-self.ext_max:]
-        self.version += 1
-        self.updated_ts.append({"t": time.time(), "op": "add_ext", "source": source,
-                                "v": self.version})
+            meta = meta[-self.ext_max:]
+        self.ext_meta = meta
+        self.updated_ts.append({"t": ts, "op": "add_ext", "source": source,
+                                "v": self.version, "hash": meta[-1]["hash"]})
         return True
+
+    def lineage(self):
+        """AC-028：库资产血缘清单（记忆资产≠训练权重；逐条来源/时间/版本/hash）。"""
+        core = self.core
+        return {"kind": "normal_bank", "memory_not_weights": True,
+                "version": self.version,
+                "core": None if core is None else {
+                    "n": int(core.shape[0]), "hash": _feat_hash(core),
+                    "protected": True, **(getattr(self, "core_meta", None) or {})},
+                "ext": _aligned_meta(self.ext, getattr(self, "ext_meta", None), "add_ext"),
+                "pending_clusters": dict(self.cluster_hits)}
 
     def snapshot(self, tag="op"):
         self._snapshots.append({"tag": tag,
                                 "ext": [[e[0].clone(), e[1], e[2]] for e in self.ext],
+                                "ext_meta": [dict(m) for m in _aligned_meta(
+                                    self.ext, getattr(self, "ext_meta", None), "add_ext")],
                                 "cluster_hits": dict(self.cluster_hits),
+                                "clusters": [dict(c) for c in getattr(self, "_clusters", [])],
+                                "seq": getattr(self, "_seq", 0),
+                                "cluster_identities": list(getattr(self, "_cluster_identities", [])),
                                 "updated_ts": list(self.updated_ts),
                                 "version": self.version})
         if len(self._snapshots) > self.snapshots_max:
@@ -178,7 +283,11 @@ class NormalBank:
             return False
         snap = self._snapshots.pop()
         self.ext = [[e[0], e[1], e[2]] for e in snap["ext"]]
+        self.ext_meta = _aligned_meta(self.ext, snap.get("ext_meta"), "add_ext")
         self.cluster_hits = dict(snap.get("cluster_hits", {}))
+        self._clusters = [dict(c) for c in snap.get("clusters", [])]
+        self._seq = snap.get("seq", getattr(self, "_seq", 0))
+        self._cluster_identities = list(snap.get("cluster_identities", []))
         self.updated_ts = list(snap.get("updated_ts", []))
         self.version = snap["version"]
         return True
@@ -206,19 +315,24 @@ class DefectBank:
         self.min_hit = min_hit
         self.snapshots_max = snapshots_max
         self.samples = []                 # list[(M,384) fp16, ts, n_patches]
+        self.sample_meta = []             # AC-028：与 samples 对齐的血缘
         self.n_hits = []                  # 命中计数（活跃度，供主动学习/淘汰）
         self.version = 0
         self.updated_ts = []
         self._snapshots = []
 
-    def add(self, tile_feats, source="feedback"):
+    # AC-032：可进孵育的纯 patch 来源（确认框 / 合格伪框）；整图 add 不进孵育
+    PURE_OPS = ("add_box", "add_patch")
+
+    def add(self, tile_feats, source="feedback", image_id=None, defect_type=None):
         """确认缺陷入库：特征全量缓存零重算（§7.3 工程前提）。"""
         f = _norm_patch(tile_feats)
         if f.shape[0] < 4:
             return False
-        return self._append(f, "add", source)
+        return self._append(f, "add", source, image_id=image_id, defect_type=defect_type)
 
-    def add_patch_feats(self, patch_feats, source="feedback"):
+    def add_patch_feats(self, patch_feats, source="feedback", image_id=None,
+                        defect_type=None):
         """U121（2026-08-26，M14 同步）：直接 patch 特征（(K,D) 每行一 patch）
         入库——blob 伪框化拦截库（无 GT 框时用 blob 响应图 top 异常 patch 作
         缺陷区域，demo4 裁切思想：缺陷区域 patch 比整图纯净，信噪比高）。
@@ -227,10 +341,12 @@ class DefectBank:
         f = torch.as_tensor(np.asarray(patch_feats, dtype=np.float32))
         if f.ndim == 2 and f.shape[0] >= 4:
             f = F.normalize(f, dim=1).half()
-            return self._append(f, "add_patch", source)
+            return self._append(f, "add_patch", source, image_id=image_id,
+                                defect_type=defect_type)
         return False
 
-    def add_box(self, tile_feats, box, source="feedback"):
+    def add_box(self, tile_feats, box, source="feedback", image_id=None,
+                defect_type=None):
         """U64（2026-08-18）：框内确认缺陷入库——用户在线提供缺陷框标注
         （归一化 [x0,y0,x1,y1]），只把**框内 patch 特征**入缺陷样例库。
 
@@ -247,36 +363,80 @@ class DefectBank:
             f = f.unsqueeze(0)
         T, D, G, _ = f.shape
         if T != 1:                                    # 框映射只对整图 single 特征有效
-            return self.add(tile_feats, source)
+            return self.add(tile_feats, source, image_id=image_id, defect_type=defect_type)
         try:
             x0, y0, x1, y1 = (float(v) for v in box)
         except (TypeError, ValueError):
-            return self.add(tile_feats, source)
+            return self.add(tile_feats, source, image_id=image_id, defect_type=defect_type)
         if not (0.0 <= x0 < x1 <= 1.0 and 0.0 <= y0 < y1 <= 1.0):
-            return self.add(tile_feats, source)
+            return self.add(tile_feats, source, image_id=image_id, defect_type=defect_type)
         x0g = max(0, min(G, int(x0 * G)))
         y0g = max(0, min(G, int(y0 * G)))
         x1g = max(0, min(G, int(np.ceil(x1 * G))))
         y1g = max(0, min(G, int(np.ceil(y1 * G))))
         if x1g - x0g < 2 or y1g - y0g < 2:            # 框太小几乎无 patch
-            return self.add(tile_feats, source)
+            return self.add(tile_feats, source, image_id=image_id, defect_type=defect_type)
         n_patch = (x1g - x0g) * (y1g - y0g)
         if n_patch < 4:                               # 保底：patch 太少回退整图
-            return self.add(tile_feats, source)
+            return self.add(tile_feats, source, image_id=image_id, defect_type=defect_type)
         flat = _norm_patch(f[:, :, y0g:y1g, x0g:x1g])
-        return self._append(flat, "add_box", source,
-                            box=[round(v, 4) for v in (x0, y0, x1, y1)])
+        return self._append(flat, "add_box", source, image_id=image_id,
+                            box=[round(v, 4) for v in (x0, y0, x1, y1)],
+                            defect_type=defect_type)
 
-    def _append(self, f, op, source, box=None):
-        """add/add_box 公共入库：samples/version/updated_ts 留痕。"""
-        self.samples.append([f, time.time(), f.shape[0]])
+    def _append(self, f, op, source, box=None, image_id=None, defect_type=None):
+        """add/add_box 公共入库：samples/version/updated_ts/sample_meta 留痕。"""
+        ts = time.time()
+        meta = _aligned_meta(self.samples, getattr(self, "sample_meta", None), "add")
+        self.samples.append([f, ts, f.shape[0]])
         self.n_hits.append(0)
         self.version += 1
-        rec = {"t": time.time(), "op": op, "source": source, "v": self.version}
+        meta.append(_meta(f, op, source, self.version, ts, image_id=image_id, box=box,
+                          defect_type=(str(defect_type).strip() or None)
+                          if defect_type is not None else None))
+        self.sample_meta = meta
+        rec = {"t": ts, "op": op, "source": source, "v": self.version,
+               "hash": meta[-1]["hash"]}
         if box is not None:
             rec["box"] = box
         self.updated_ts.append(rec)
         return True
+
+    def incubation_pool(self):
+        """AC-032：孵育正样本池——仅纯 patch（框内/伪框），整图 add 与 legacy 不进。
+
+        -> (samples[list[(M,D) fp16]], image_ids[list[str]])，image_id 缺失时以
+        hash 代（同一特征重复入库不重复计数）。"""
+        metas = _aligned_meta(self.samples, getattr(self, "sample_meta", None), "add")
+        feats, ids = [], []
+        for s, m in zip(self.samples, metas):
+            if m.get("op") in self.PURE_OPS and not m.get("legacy"):
+                feats.append(s[0])
+                ids.append(str(m.get("image_id") or m.get("hash")))
+        return feats, ids
+
+    ANY_TYPE = "_any"
+
+    def incubation_pool_typed(self):
+        """按缺陷类型孵育用：-> (feats, image_ids, defect_types)，与 incubation_pool
+        同序同筛选；无类型（含旧快照条目）归 "_any"。"""
+        metas = _aligned_meta(self.samples, getattr(self, "sample_meta", None), "add")
+        feats, ids, types = [], [], []
+        for s, m in zip(self.samples, metas):
+            if m.get("op") in self.PURE_OPS and not m.get("legacy"):
+                feats.append(s[0])
+                ids.append(str(m.get("image_id") or m.get("hash")))
+                types.append(str(m.get("defect_type") or self.ANY_TYPE))
+        return feats, ids, types
+
+    def lineage(self):
+        """AC-028：缺陷样例库血缘（记忆资产≠训练权重）。"""
+        metas = _aligned_meta(self.samples, getattr(self, "sample_meta", None), "add")
+        _, ids = self.incubation_pool()
+        return {"kind": "defect_bank", "memory_not_weights": True,
+                "version": self.version,
+                "samples": [dict(m, hits=int(h)) for m, h in zip(metas, self.n_hits)],
+                "n_pure": len(ids), "n_pure_images": len(set(ids))}
 
     def intercept_score(self, tile_feats, normal_bank=None):
         """-> 近邻拦截加分 ∈ [0, boost]（无样例返回 0）。
@@ -328,6 +488,9 @@ class DefectBank:
         self._snapshots.append({"tag": tag,
                                 "samples": [[s[0].clone(), s[1], s[2]]
                                             for s in self.samples],
+                                "sample_meta": [dict(m) for m in _aligned_meta(
+                                    self.samples, getattr(self, "sample_meta", None),
+                                    "add")],
                                 "n_hits": list(self.n_hits),
                                 "updated_ts": list(self.updated_ts),
                                 "version": self.version})
@@ -340,6 +503,7 @@ class DefectBank:
             return False
         snap = self._snapshots.pop()
         self.samples = [[e[0], e[1], e[2]] for e in snap["samples"]]
+        self.sample_meta = _aligned_meta(self.samples, snap.get("sample_meta"), "add")
         self.n_hits = list(snap["n_hits"])
         self.updated_ts = list(snap.get("updated_ts", []))
         self.version = snap["version"]

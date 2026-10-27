@@ -1,0 +1,18 @@
+{
+  "name": "transition_admin_skip_level",
+  "method": "POST",
+  "path": "/api/models/feature-revisions/ba47d05c566a175eb8728a6aeece4c23d130dbd1af396f56e2b5866ae4ac8df8/transition",
+  "role": "admin",
+  "request_body": {
+    "target": "active",
+    "actor": "remain02-admin"
+  },
+  "status_code": 409,
+  "response": {
+    "detail": {
+      "message": "禁止越级、重复激活或复活 retired revision",
+      "force_allowed": false
+    }
+  },
+  "note": "禁止越级激活"
+}

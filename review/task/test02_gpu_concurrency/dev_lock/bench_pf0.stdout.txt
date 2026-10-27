@@ -1,0 +1,140 @@
+[isolate] C:\Users\imia\AppData\Local\Temp\aoi_test02_lock_b7zbkgk5 prefetch=0
+[dino] 使用随包 vendor 权重: d:\CGAIC\AOI_SSOCL\AOI_tree\assets\dinov2\dinov2_vits14_pretrain.pth
+[disc] 加载预训练头 d:\CGAIC\AOI_SSOCL\AOI_tree\AOI_Core\assets\disc_pretrain.pt
+    [extract] 20/40 (3s)
+    [extract] 40/40 (6s)
+  [fit] init_normal 提取 40 张完成 (6s)
+  [fit] 槽位 sem 完成 (8s)
+  [fit] 槽位 disc 完成 (8s)
+[shead] epoch 10/50 loss_n=6.1512 loss_a=6.5852
+[shead] epoch 20/50 loss_n=6.1374 loss_a=6.2248
+[shead] epoch 30/50 loss_n=5.7939 loss_a=6.2835
+[shead] epoch 40/50 loss_n=6.5424 loss_a=5.5134
+[shead] epoch 50/50 loss_n=6.1188 loss_a=5.7691
+[shead] fit 完成: normal=40 pseudo=120 real_defect=0 pos_total=120 X=160 batch=32 lr=0.001
+  [fit] 槽位 shead 完成 (11s)
+  [fit] 视图模式 profile_missing（min_defect_px 未提供，保持整图） 局部分支=关（auto_profile）
+    [extract] 20/20 (3s)
+[prepare] gold_finger v1 40 imgs 25.3s
+[disc] 加载预训练头 d:\CGAIC\AOI_SSOCL\AOI_tree\AOI_Core\assets\disc_pretrain.pt
+    [extract] 20/30 (3s)
+  [fit] init_normal 提取 30 张完成 (5s)
+  [fit] 槽位 sem 完成 (6s)
+  [fit] 槽位 disc 完成 (6s)
+[shead] epoch 10/50 loss_n=7.1009 loss_a=5.4688
+[shead] epoch 20/50 loss_n=5.5359 loss_a=6.6467
+[shead] epoch 30/50 loss_n=6.4030 loss_a=6.5638
+[shead] epoch 40/50 loss_n=5.4632 loss_a=6.4240
+[shead] epoch 50/50 loss_n=5.3355 loss_a=6.7024
+[shead] fit 完成: normal=30 pseudo=90 real_defect=0 pos_total=90 X=120 batch=32 lr=0.001
+  [fit] 槽位 shead 完成 (7s)
+  [fit] 视图模式 profile_missing（min_defect_px 未提供，保持整图） 局部分支=关（auto_profile）
+    [extract] 20/20 (3s)
+[prepare] gold_finger_b v1 30 imgs 20.1s
+[warmup] done
+  [acc serial] 10/40
+  [acc serial] 20/40
+  [acc serial] 30/40
+  [acc serial] 40/40
+[acc] c4 vs serial mismatches=0
+[run] concurrency=1 load=idle requests=24
+    c1_idle 8/24
+    c1_idle 16/24
+    c1_idle 24/24
+  -> n=24 p50=177.2 p95=245.9 max=276.0ms
+[run] concurrency=1 load=learning requests=24
+  learning 1 wall=2103.2ms OK
+    c1_learning 8/24
+  learning 2 wall=3115.0ms OK
+    c1_learning 16/24
+  learning 3 wall=3036.4ms OK
+    c1_learning 24/24
+  learning 4 wall=2157.9ms OK
+  -> n=24 p50=187.9 p95=1410.8 max=1499.8ms
+[run] concurrency=2 load=idle requests=24
+    c2_idle 8/24
+    c2_idle 16/24
+    c2_idle 24/24
+  -> n=24 p50=214.8 p95=294.0 max=315.2ms
+[run] concurrency=2 load=learning requests=24
+  learning 1 wall=1125.1ms OK
+    c2_learning 8/24
+    c2_learning 16/24
+  learning 2 wall=2515.8ms OK
+    c2_learning 24/24
+  learning 3 wall=1359.0ms OK
+  -> n=24 p50=181.1 p95=903.6 max=1086.4ms
+[run] concurrency=4 load=idle requests=24
+    c4_idle 8/24
+    c4_idle 16/24
+    c4_idle 24/24
+  -> n=24 p50=234.1 p95=302.7 max=339.0ms
+[run] concurrency=4 load=learning requests=24
+  learning 1 wall=1205.0ms OK
+    c4_learning 8/24
+    c4_learning 16/24
+    c4_learning 24/24
+  learning 2 wall=2453.5ms OK
+  -> n=24 p50=259.9 p95=953.0 max=1021.5ms
+{
+  "temp": "C:\\Users\\imia\\AppData\\Local\\Temp\\aoi_test02_lock_b7zbkgk5",
+  "prefetch": false,
+  "categories": [
+    "gold_finger",
+    "gold_finger_b"
+  ],
+  "requests_per_level": 24,
+  "learning_events": 9,
+  "learning_errors": 0,
+  "acc_c4_vs_serial_mismatch": 0,
+  "levels": {
+    "c1_idle": {
+      "n": 24,
+      "wall_p50": 177.225,
+      "wall_p95": 245.8517,
+      "wall_max": 275.954,
+      "lock_wait_p95": 0.002,
+      "infer_p50": 66.16
+    },
+    "c1_learning": {
+      "n": 24,
+      "wall_p50": 187.858,
+      "wall_p95": 1410.8064999999995,
+      "wall_max": 1499.838,
+      "lock_wait_p95": 1079.2843999999998,
+      "infer_p50": 76.2775
+    },
+    "c2_idle": {
+      "n": 24,
+      "wall_p50": 214.77050000000003,
+      "wall_p95": 293.9983499999999,
+      "wall_max": 315.196,
+      "lock_wait_p95": 0.002849999999999998,
+      "infer_p50": 90.46000000000001
+    },
+    "c2_learning": {
+      "n": 24,
+      "wall_p50": 181.05900000000003,
+      "wall_p95": 903.5726,
+      "wall_max": 1086.429,
+      "lock_wait_p95": 693.4927,
+      "infer_p50": 55.244
+    },
+    "c4_idle": {
+      "n": 24,
+      "wall_p50": 234.093,
+      "wall_p95": 302.6666999999999,
+      "wall_max": 338.955,
+      "lock_wait_p95": 77.71919999999986,
+      "infer_p50": 81.324
+    },
+    "c4_learning": {
+      "n": 24,
+      "wall_p50": 259.921,
+      "wall_p95": 953.0347499999998,
+      "wall_max": 1021.465,
+      "lock_wait_p95": 742.2430499999998,
+      "infer_p50": 93.452
+    }
+  }
+}

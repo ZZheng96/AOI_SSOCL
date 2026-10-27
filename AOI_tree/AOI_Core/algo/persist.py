@@ -63,6 +63,85 @@ import yaml
 from .eval.offline import Pipeline
 
 
+def _production_feature_metadata(pipe: Pipeline) -> Dict[str, Any]:
+    """记录当前生产 trad 实现；不把 AOI_feature 实验配置视为生产配置。"""
+    trad = pipe.slots.get("trad")
+    if trad is None:
+        return {"status": "unknown", "reason": "trad_slot_missing"}
+    try:
+        from .vendor import traditional
+        impl_path = os.path.abspath(traditional.__file__)
+        impl_hash = _sha256_file(impl_path) if os.path.isfile(impl_path) else None
+    except Exception:
+        impl_path, impl_hash = None, None
+    config = {key: getattr(trad, key) for key in ("topk", "zclip") if hasattr(trad, key)}
+    config_hash = hashlib.sha256(json.dumps(
+        config, ensure_ascii=False, sort_keys=True,
+        separators=(",", ":")).encode("utf-8")).hexdigest()
+    extractor = getattr(trad, "ext", None)
+    fixed_dim = getattr(extractor, "_fixed_dim", None)
+    slot_path = os.path.abspath(sys.modules[type(trad).__module__].__file__)
+    return {"schema_version": 1,
+            "status": "production_active", "source": "AOI_Core/algo/vendor/traditional.py",
+            "implementation_file": impl_path, "implementation_sha256": impl_hash,
+            "slot_implementation_sha256": _sha256_file(slot_path),
+            "config": config, "config_sha256": config_hash,
+            "extractor": type(extractor).__name__ if extractor is not None else None,
+            "dimension": fixed_dim if fixed_dim is not None else getattr(extractor, "dim", None),
+            "random_seed": 0,
+            # AC-015：表示签名（注册表/启用组/评分口径/预处理）；加载时比对判 stale
+            "feature_signature": feature_signature(trad)}
+
+
+def feature_signature(trad) -> Optional[Dict[str, Any]]:
+    """trad 表示签名：注册表 hash + 启用组 + 评分口径 + 预处理 + 提取实现 hash。"""
+    if trad is None or not hasattr(trad, "signature"):
+        return None
+    from .features import registry as freg
+    sig = dict(trad.signature())
+    sig["preprocess"] = dict(freg.PREPROCESS)
+    try:
+        from .vendor import traditional
+        sig["extractor_sha256"] = _sha256_file(os.path.abspath(traditional.__file__))
+    except Exception:
+        sig["extractor_sha256"] = None
+    sig.pop("dimension", None)   # 维度属于数据形状，不属于表示配置
+    return sig
+
+
+def _feature_revision_binding() -> Dict[str, Any]:
+    """快照落盘时记录真实 revision 指针；无绑定时明确 unbound。"""
+    try:
+        from .feature_revision import FeatureSetRevision
+        from backend.core.config import get_settings
+        store = FeatureSetRevision(
+            get_settings().storage("feature_revisions") / "registry.json")
+        ptr = store.production_pointer()
+        if not ptr or not ptr.get("current"):
+            return {"status": "unbound", "revision_id": None}
+        return {"status": "bound", "revision_id": ptr["current"],
+                "model_snapshot": ptr.get("model_snapshot")}
+    except Exception:  # noqa: BLE001 血缘读取失败不阻塞快照，但明确 unknown
+        return {"status": "unknown", "revision_id": None,
+                "reason": "feature_revision_unavailable"}
+
+
+def feature_signature_drift(saved: Optional[Dict[str, Any]],
+                            current: Optional[Dict[str, Any]]) -> List[str]:
+    """返回签名不一致的字段（空列表=一致；旧快照无签名返回 ['missing']）。"""
+    if not saved:
+        return ["missing"]
+    if not current:
+        return []
+    keys = ("registry_sha256", "extractor_sha256", "groups", "scoring", "preprocess")
+    return [k for k in keys if saved.get(k) != current.get(k)]
+
+
+_TRAD_GROUP_STATE = ("group_spec", "scoring", "groups", "group_scale", "group_weight",
+                     "group_valid_dims", "group_normal", "raw_p5", "raw_p95",
+                     "ref_paths", "selection_report")
+
+
 def _slot_state(slot) -> Dict[str, Any]:
     """提取单个槽位的 fit 后可变状态。"""
     name = slot.name
@@ -100,15 +179,30 @@ def _slot_state(slot) -> Dict[str, Any]:
                 state[attr] = getattr(slot, attr)
         return state
     if name == "trad":
-        return {"bank_w": getattr(slot, "bank_w", None),
-                "norm_w": getattr(slot, "norm_w", None),
-                "config": getattr(slot, "cfg", None)}
+        state = {"bank_w": getattr(slot, "bank_w", None),
+                 "norm_w": getattr(slot, "norm_w", None),
+                 "config": getattr(slot, "cfg", None)}
+        # AC-010/015：组级配置与拟合态（旧快照无这些键时按 all/legacy 恢复）
+        for attr in _TRAD_GROUP_STATE:
+            if hasattr(slot, attr):
+                state[attr] = deepcopy(getattr(slot, attr))
+        return state
     if name == "layout":
         return {"norm": getattr(slot, "norm", None),
                 "centroids": getattr(slot, "centroids", None),
                 "patterns": getattr(slot, "patterns", None),
                 "n_components": getattr(slot, "n_components", None),
-                "pca": getattr(slot, "pca", None)}
+                "pca": getattr(slot, "pca", None),
+                # 2026-10-11 修复：现行统计布局槽位的拟合态（此前只存旧 PCA 设计的
+                # 键，新槽位拟合属性完全未持久化——load_snapshot 后 score_tiles
+                # 必崩 AttributeError: count_median，学习回放/重启后检测均中招）
+                "count_median": getattr(slot, "count_median", None),
+                "count_std": getattr(slot, "count_std", None),
+                "area_hi": getattr(slot, "area_hi", None),
+                "spacing_median": getattr(slot, "spacing_median", None),
+                "spacing_std": getattr(slot, "spacing_std", None),
+                "sym_median": getattr(slot, "sym_median", None),
+                "sym_std": getattr(slot, "sym_std", None)}
     if name == "blob":
         return {"sigmas": getattr(slot, "sigmas", None)}
     if name == "inp":
@@ -122,9 +216,29 @@ def _slot_state(slot) -> Dict[str, Any]:
     return {}
 
 
+LAYOUT_REQUIRED_STATS = ("count_median", "count_std", "area_hi", "spacing_median",
+                         "spacing_std", "sym_median", "sym_std")
+
+
+class LayoutStatsMissing(ValueError):
+    """layout 快照缺拟合统计（2026-10-11 前保存的旧快照只存旧 PCA 键）。
+    仍是 ValueError：直接调用 _restore_slot_state 的严格语义不变；
+    仅 load_snapshot 的非候选路径捕获后显式降级该槽位（FIX-SNAP，V§63）。"""
+
+    def __init__(self, missing):
+        self.missing = list(missing)
+        super().__init__(
+            "layout 快照缺少必要拟合统计: " + ", ".join(self.missing)
+            + "；无法从旧 PCA 状态可靠重建，请用原训练数据重新 prepare")
+
+
 def _restore_slot_state(slot, state: Dict[str, Any]) -> None:
     """把快照状态注入槽位。"""
     name = slot.name
+    if name == "layout":
+        missing = [key for key in LAYOUT_REQUIRED_STATS if state.get(key) is None]
+        if missing:
+            raise LayoutStatsMissing(missing)
     if not state:
         return
     if name == "sem":
@@ -159,11 +273,19 @@ def _restore_slot_state(slot, state: Dict[str, Any]) -> None:
         if head is not None:
             head.eval()
     elif name == "trad":
-        for k in ("bank_w", "norm_w", "cfg"):
+        for k in ("bank_w", "norm_w"):
             if k in state and state[k] is not None:
-                setattr(slot, k if k != "cfg" else "cfg", state[k])
+                setattr(slot, k, state[k])
+        config = state.get("cfg", state.get("config"))
+        if config is not None:
+            slot.cfg = config
+        for attr in _TRAD_GROUP_STATE:
+            if attr in state and state[attr] is not None:
+                setattr(slot, attr, state[attr])
     elif name == "layout":
-        for k in ("norm", "centroids", "patterns", "n_components", "pca"):
+        for k in ("norm", "centroids", "patterns", "n_components", "pca",
+                  "count_median", "count_std", "area_hi",
+                  "spacing_median", "spacing_std", "sym_median", "sym_std"):
             if k in state and state[k] is not None:
                 setattr(slot, k, state[k])
     elif name == "blob":
@@ -201,6 +323,21 @@ def _sha256_file(path: str) -> str:
     return digest.hexdigest()
 
 
+# 只读外部大文件（backbone 权重 ~85MB）哈希缓存：键含 size+mtime_ns，文件被替换即失效。
+# 巩固在品类锁内调用 save_snapshot，避免每次重算整份权重哈希。
+_EXT_HASH_CACHE: Dict[Tuple[str, int, int], str] = {}
+
+
+def _sha256_file_cached(path: str) -> str:
+    st = os.stat(path)
+    key = (os.path.abspath(path), st.st_size, st.st_mtime_ns)
+    h = _EXT_HASH_CACHE.get(key)
+    if h is None:
+        h = _sha256_file(path)
+        _EXT_HASH_CACHE[key] = h
+    return h
+
+
 def _artifact_hashes(snapshot_dir: str) -> Dict[str, str]:
     """只收集快照内文件；meta.json 自身不参与哈希。"""
     hashes = {}
@@ -214,6 +351,69 @@ def _artifact_hashes(snapshot_dir: str) -> Dict[str, str]:
                     raise ValueError(f"快照包含符号链接: {rel}")
                 hashes[rel] = _sha256_file(path)
     return hashes
+
+
+# AC-035：快照组件清单（组件 → 工件前缀），用于盘点“库/sem/孵育头/校准/weights/回归基线/feature/code”
+SNAPSHOT_COMPONENTS = {
+    "normal_bank": ["ssocl/normal_bank.pkl"],
+    "defect_bank": ["ssocl/defect_bank.pkl"],
+    "sem_and_slots": ["slot_state.pkl"],
+    "incubate_heads": ["ssocl/head_mgr.pkl"],
+    "calibration": ["calibrators.npz", "decider.json", "ssocl/cal_hist.npz"],
+    "weights": ["weights.json", "ssocl/weight_learner.json", "router.pt", "router_gate.json"],
+    "regress_baseline": ["ssocl/regress_gate.json"],
+    "learning_state": ["ssocl/learning_state.pkl", "ssocl/ssocl_cfg.json"],
+    "config": ["cfg.yaml"],
+}
+# 派生缓存：不入快照，加载后按需重建；列出以便审计“未快照 ≠ 遗漏”
+CACHE_INVENTORY = {
+    "backbone_feature_cache": "推理期特征缓存，随进程重建，不跨快照复用",
+    "ext_hash_cache": "backbone 权重哈希缓存，键含 size+mtime，文件变即失效",
+    "normal_bank_stream_stats": "缺陷率滑动窗，加载时 reset_stream_stats",
+    "global_defect_clf": "跨品类共享模型，按 cfg 路径加载，不属品类快照",
+}
+_CODE_HASH: Optional[str] = None
+
+
+def code_sha256() -> str:
+    """algo 包全部 .py 的聚合哈希（进程内缓存）；代码变即快照可追溯为不同实现。"""
+    global _CODE_HASH
+    if _CODE_HASH is None:
+        root = os.path.dirname(os.path.abspath(__file__))
+        digest = hashlib.sha256()
+        for r, dirs, files in os.walk(root):
+            dirs[:] = sorted(d for d in dirs if d != "__pycache__")
+            for name in sorted(files):
+                if name.endswith(".py"):
+                    p = os.path.join(r, name)
+                    digest.update(os.path.relpath(p, root).replace(os.sep, "/").encode())
+                    digest.update(_sha256_file(p).encode())
+        _CODE_HASH = digest.hexdigest()
+    return _CODE_HASH
+
+
+def component_manifest(artifacts: Dict[str, str]) -> Dict[str, Any]:
+    """组件 → {files: {rel: sha}, present: bool}；缺失组件列出便于盘点。"""
+    out = {}
+    for comp, rels in SNAPSHOT_COMPONENTS.items():
+        files = {r: artifacts[r] for r in rels if r in artifacts}
+        out[comp] = {"files": files, "present": bool(files)}
+    return out
+
+
+def _restore_gate_ac036(gate, gs: Dict[str, Any]) -> None:
+    """AC-036：回填固定初始尾部/冻结状态；旧快照缺字段保持构造默认（init_*=None 不判累计）。"""
+    for k in getattr(gate, "PERSIST_FIELDS", ()):
+        if gs.get(k) is not None:
+            setattr(gate, k, gs[k])
+
+
+def representation_drift(meta: Dict[str, Any], current_backbone_sha: Optional[str]) -> List[str]:
+    """AC-035 禁混库：backbone 权重变化 → sem/库/disc 向量与新表示不可混用。"""
+    saved = meta.get("backbone_sha256")
+    if saved and current_backbone_sha and saved != current_backbone_sha:
+        return ["backbone_sha256"]
+    return []
 
 
 def _backbone_file(pipe: Pipeline) -> Optional[str]:
@@ -252,14 +452,11 @@ def _verify_snapshot(snapshot_dir: str) -> None:
         raise ValueError("快照 cfg_hash 与 cfg.yaml 不匹配")
 
 
-def save_snapshot(pipe: Pipeline, snapshot_dir: str,
-                  *, version: int, parent_version: Optional[int] = None,
-                  trigger: str = "fit", note: str = "",
-                  ssocl_cfg: Optional[Dict[str, Any]] = None) -> str:
-    """保存 Pipeline 为独立快照目录。返回 snapshot_dir。
-
-    ssocl_cfg：引擎侧在线学习配置（banks/gate/head_ft 等），随快照落盘
-    ssocl/ssocl_cfg.json，保证快照自包含（加载不再依赖硬编码模板）。"""
+def write_snapshot_state(pipe: Pipeline, snapshot_dir: str,
+                         *, parent_version: Optional[int] = None,
+                         trigger: str = "fit", note: str = "",
+                         ssocl_cfg: Optional[Dict[str, Any]] = None) -> Dict[str, Any]:
+    """写全部状态文件（需持有 pipe 一致性），返回不含哈希/版本的 meta 草稿。"""
     os.makedirs(snapshot_dir, exist_ok=True)
 
     # 1. cfg.yaml（配置副本，离线加载 backbone 用）
@@ -297,8 +494,16 @@ def save_snapshot(pipe: Pipeline, snapshot_dir: str,
     if getattr(pipe, "router", None) is not None:
         torch.save(pipe.router.state_dict(), os.path.join(snapshot_dir, "router.pt"))
     rg_path = os.path.join(snapshot_dir, "router_gate.json")
+    rg = pipe.router_gate
+    if rg is not None and getattr(pipe, "router_slot_names", None):
+        rg = {**rg, "slot_names": list(pipe.router_slot_names)}   # AC-021 维度签名
     with open(rg_path, "w", encoding="utf-8") as f:
-        json.dump(pipe.router_gate, f, ensure_ascii=False, indent=2)
+        json.dump(rg, f, ensure_ascii=False, indent=2, default=lambda o: o.item()
+                  if hasattr(o, "item") else str(o))
+    # 5.5 C/D/E 报告（AC-018~027）：校准契约/融合基线/路由准入/域差/冷启动/权重语义
+    with open(os.path.join(snapshot_dir, "cde_report.json"), "w", encoding="utf-8") as f:
+        json.dump(getattr(pipe, "cde_report", None), f, ensure_ascii=False, indent=2,
+                  default=lambda o: o.item() if hasattr(o, "item") else str(o))
 
     # 6. open_det
     open_path = os.path.join(snapshot_dir, "open.npz")
@@ -320,6 +525,17 @@ def save_snapshot(pipe: Pipeline, snapshot_dir: str,
     # 7.5 对位预警参考（M11d）：有则随快照存取，保证 load 后预警行为一致
     if getattr(pipe, "_align_ref", None) is not None:
         np.save(os.path.join(snapshot_dir, "align_ref.npy"), pipe._align_ref)
+
+    # 7.6 A 块局部分支（AC-005/006）：npz（无 pickle）+ json（视图签名/阈值/预算报告）
+    _jdef = lambda o: o.item() if hasattr(o, "item") else str(o)   # noqa: E731
+    lb = getattr(pipe, "local_branch", None)
+    if lb is not None:
+        np.savez_compressed(os.path.join(snapshot_dir, "local_branch.npz"), **lb.state_arrays())
+    with open(os.path.join(snapshot_dir, "local_branch.json"), "w", encoding="utf-8") as f:
+        json.dump({"state": lb.state_meta() if lb is not None else None,
+                   "view_mode": getattr(pipe, "view_mode", None),
+                   "branch_budget_report": getattr(pipe, "branch_budget_report", None)},
+                  f, ensure_ascii=False, indent=2, default=_jdef)
 
     # 7. SSCL（在线状态）—— handler 非空才有
     ssocl_dir = os.path.join(snapshot_dir, "ssocl")
@@ -366,7 +582,13 @@ def save_snapshot(pipe: Pipeline, snapshot_dir: str,
                     "base_mean": float(getattr(gate, "base_mean")) if getattr(gate, "base_mean", None) is not None else None,
                     "base_std": float(getattr(gate, "base_std")) if getattr(gate, "base_std", None) is not None else None,
                     "history": list(getattr(gate, "history", []) or []),
+                    "audit": list(getattr(gate, "audit", []) or []),
+                    "audit_seq": int(getattr(gate, "_seq", 0) or 0),
+                    "base_scores": [float(x) for x in (getattr(gate, "base_scores", []) or [])],
                 }
+                # AC-036：固定初始尾部/累计上限/冻结状态
+                for _k in getattr(gate, "PERSIST_FIELDS", ()):
+                    snap[_k] = getattr(gate, _k, None)
                 with open(os.path.join(ssocl_dir, "regress_gate.json"), "w", encoding="utf-8") as f:
                     json.dump(snap, f, ensure_ascii=False, indent=2, default=str)
         except Exception:
@@ -406,7 +628,7 @@ def save_snapshot(pipe: Pipeline, snapshot_dir: str,
                     json.dump(wh[-300:], f, ensure_ascii=False, indent=2, default=str)
         except Exception:
             pass
-        if pipe.head_mgr is not None and getattr(pipe.head_mgr, "head", None) is not None:
+        if pipe.head_mgr is not None:
             with open(os.path.join(ssocl_dir, "head_mgr.pkl"), "wb") as f:
                 pickle.dump(pipe.head_mgr, f, protocol=pickle.HIGHEST_PROTOCOL)
         # 每槽 _cal_normal_hist
@@ -415,20 +637,22 @@ def save_snapshot(pipe: Pipeline, snapshot_dir: str,
         if hist_dict:
             np.savez_compressed(os.path.join(ssocl_dir, "cal_hist.npz"), **hist_dict)
 
-    # 8. meta.json（版本信息，原子写）
-    artifacts = _artifact_hashes(snapshot_dir)
-    backbone_path = _backbone_file(pipe)
-    backbone_sha256 = (_sha256_file(backbone_path)
-                       if backbone_path and os.path.isfile(backbone_path) else None)
-    meta = {"version": int(version),
-            "cfg_hash": artifacts["cfg.yaml"],
-            "artifact_hashes": artifacts,
+    # 显式续训契约；旧 handler.json 不是学习态，不能作为恢复依据。
+    from .ssocl.learning_state import capture, VERSION
+    learning_manifest = {"version": VERSION, "enabled": pipe.handler is not None}
+    if pipe.handler is not None:
+        learning = capture(pipe)
+        with open(os.path.join(ssocl_dir, "learning_state.pkl"), "wb") as f:
+            pickle.dump(learning, f, protocol=pickle.HIGHEST_PROTOCOL)
+        with open(os.path.join(ssocl_dir, "ssocl_cfg.json"), "w", encoding="utf-8") as f:
+            json.dump(learning["config"], f, ensure_ascii=False, indent=2)
+
+    # 8. meta.json 所需的 pipe 内存态在此一并取出；哈希与写 meta 不再读 pipe。
+    meta = {"learning_state": learning_manifest,
             "python_version": sys.version.split()[0],
             "torch_version": torch.__version__,
             "numpy_version": np.__version__,
-            "backbone_local_file": backbone_path,
-            "backbone_sha256": backbone_sha256,
-            "backbone_file_available": backbone_sha256 is not None,
+            "backbone_local_file": _backbone_file(pipe),
             "parent_version": int(parent_version) if parent_version is not None else None,
             "created_at": time.strftime("%Y-%m-%d %H:%M:%S"),
             "trigger": trigger,
@@ -436,11 +660,64 @@ def save_snapshot(pipe: Pipeline, snapshot_dir: str,
             "fit_seconds": float(getattr(pipe, "fit_seconds", 0.0)),
             "ssocl_enabled": pipe.handler is not None,
             "weights_mode": pipe.cfg.get("fusion", {}).get("weight_mode", "equal"),
-            "slot_names": list(pipe.slots.keys())}
+            "slot_names": list(pipe.slots.keys()),
+            # AC-035 RNG 盘点：只记录策略/种子（不恢复全局 RNG 状态，推理本身确定性）
+            "rng": {"policy": "fit/训练期固定种子；推理确定性；在线学习按样本顺序确定",
+                    "seed": (pipe.cfg.get("seed") if isinstance(pipe.cfg, dict) else None),
+                    "feature_random_seed": 0},
+            "production_feature_metadata": _production_feature_metadata(pipe),
+            "feature_revision_binding": _feature_revision_binding()}
+    return meta
+
+
+def finalize_snapshot(snapshot_dir: str, meta: Dict[str, Any], *, version: int) -> str:
+    """对已写好的状态文件计算哈希并原子写 meta.json；不访问 pipe，可在锁外执行。"""
+    artifacts = _artifact_hashes(snapshot_dir)
+    backbone_path = meta.get("backbone_local_file")
+    backbone_sha256 = (_sha256_file_cached(backbone_path)
+                       if backbone_path and os.path.isfile(backbone_path) else None)
+    full = {"version": int(version),
+            "cfg_hash": artifacts["cfg.yaml"],
+            "artifact_hashes": artifacts,
+            "backbone_sha256": backbone_sha256,
+            "backbone_file_available": backbone_sha256 is not None,
+            "code_sha256": code_sha256(),
+            "components": component_manifest(artifacts),
+            "cache_inventory": dict(CACHE_INVENTORY)}
+    full.update({k: v for k, v in meta.items() if k not in full})
     meta_path = os.path.join(snapshot_dir, "meta.json")
-    _atomic_write(meta_path, lambda tmp: (
-        open(tmp, "w", encoding="utf-8").write(json.dumps(meta, ensure_ascii=False, indent=2))))
+
+    def _write_meta(tmp):
+        with open(tmp, "w", encoding="utf-8") as f:
+            f.write(json.dumps(full, ensure_ascii=False, indent=2))
+    _atomic_write(meta_path, _write_meta)
     return snapshot_dir
+
+
+def set_snapshot_version(snapshot_dir: str, version: int) -> None:
+    """只改写 meta.json 的 version（不涉及 artifact 哈希，meta 自身不参与哈希）。"""
+    meta_path = os.path.join(snapshot_dir, "meta.json")
+    with open(meta_path, "r", encoding="utf-8") as f:
+        meta = json.load(f)
+    meta["version"] = int(version)
+
+    def _write_meta(tmp):
+        with open(tmp, "w", encoding="utf-8") as f:
+            f.write(json.dumps(meta, ensure_ascii=False, indent=2))
+    _atomic_write(meta_path, _write_meta)
+
+
+def save_snapshot(pipe: Pipeline, snapshot_dir: str,
+                  *, version: int, parent_version: Optional[int] = None,
+                  trigger: str = "fit", note: str = "",
+                  ssocl_cfg: Optional[Dict[str, Any]] = None) -> str:
+    """保存 Pipeline 为独立快照目录。返回 snapshot_dir。
+
+    ssocl_cfg：引擎侧在线学习配置（banks/gate/head_ft 等），随快照落盘
+    ssocl/ssocl_cfg.json，保证快照自包含（加载不再依赖硬编码模板）。"""
+    meta = write_snapshot_state(pipe, snapshot_dir, parent_version=parent_version,
+                                trigger=trigger, note=note, ssocl_cfg=ssocl_cfg)
+    return finalize_snapshot(snapshot_dir, meta, version=version)
 
 
 def list_versions(category_dir: str) -> List[int]:
@@ -474,14 +751,39 @@ def set_current_version(category_dir: str, version: int) -> None:
     """原子写激活版本指针。"""
     os.makedirs(category_dir, exist_ok=True)
     target = os.path.join(category_dir, "current.json")
-    _atomic_write(target, lambda tmp: (
-        open(tmp, "w", encoding="utf-8").write(
-            json.dumps({"version": int(version), "set_at": time.strftime("%Y-%m-%d %H:%M:%S")},
-                       ensure_ascii=False, indent=2))))
+    payload = {"version": int(version), "set_at": time.strftime("%Y-%m-%d %H:%M:%S")}
+
+    def _write_current(tmp):
+        with open(tmp, "w", encoding="utf-8") as f:
+            f.write(json.dumps(payload, ensure_ascii=False, indent=2))
+    _atomic_write(target, _write_current)
+
+
+def _load_local_branch(pipe, snapshot_dir):
+    """A 块局部分支加载；旧快照无文件 → 仅整图（local_branch=None）。
+    视图签名不一致时 LocalBranch.load_state 置 enabled=False（AC-005）。"""
+    pipe.local_branch, pipe.view_mode, pipe.branch_budget_report = None, None, None
+    jp = os.path.join(snapshot_dir, "local_branch.json")
+    if not os.path.exists(jp):
+        return
+    with open(jp, "r", encoding="utf-8") as f:
+        meta = json.load(f)
+    pipe.view_mode = meta.get("view_mode")
+    pipe.branch_budget_report = meta.get("branch_budget_report")
+    npz = os.path.join(snapshot_dir, "local_branch.npz")
+    if meta.get("state") is None or not os.path.exists(npz) or pipe.backbone is None:
+        return
+    from .decision.local_branch import LocalBranch
+    dev = getattr(pipe.backbone, "device_", "cuda")
+    lb = LocalBranch(pipe.cfg, pipe.backbone, device=dev,
+                     bounds=(pipe.view_mode or {}).get("bounds"))
+    with np.load(npz, allow_pickle=False) as arr:
+        lb.load_state({k: arr[k] for k in arr.files}, meta["state"])
+    pipe.local_branch = lb
 
 
 def load_snapshot(snapshot_dir: str, device: str,
-                  *, _rebuild_backbone=True) -> Pipeline:
+                  *, _rebuild_backbone=True, candidate=False) -> Pipeline:
     """按快照目录加载 Pipeline。返回的 pipe.predict 应与 save 前一致。
 
     backbone/disc/shead 的预训练 init_from 在 cfg.yaml 中保留原绝对路径，
@@ -489,20 +791,106 @@ def load_snapshot(snapshot_dir: str, device: str,
     """
     # 先验完整性，再解析配置、构建模型或反序列化任何状态。
     _verify_snapshot(snapshot_dir)
+    meta_path = os.path.join(snapshot_dir, "meta.json")
+    if os.path.exists(meta_path):
+        with open(meta_path, "r", encoding="utf-8") as f:
+            snapshot_meta = json.load(f)
+    else:
+        snapshot_meta = {"production_feature_metadata": {
+            "status": "legacy_unknown", "reason": "meta_missing"}}
+    from .ssocl.learning_state import VERSION, restore, _plain
+    from .common.safe_pickle import safe_pickle_load
+    manifest = snapshot_meta.get("learning_state")
+    learning = None
+    if manifest is not None:
+        if (type(manifest) is not dict or set(manifest) != {"version", "enabled"}
+                or type(manifest["version"]) is not int or manifest["version"] != VERSION
+                or type(manifest["enabled"]) is not bool
+                or manifest["enabled"] != snapshot_meta.get("ssocl_enabled")):
+            raise ValueError("未知或无效候选学习态 manifest")
+        if manifest["enabled"]:
+            state_path = os.path.join(snapshot_dir, "ssocl", "learning_state.pkl")
+            if not os.path.isfile(state_path):
+                raise ValueError("候选缺必要学习态，不可恢复")
+            for required in ("normal_bank.pkl", "defect_bank.pkl", "ssocl_cfg.json"):
+                if not os.path.isfile(os.path.join(snapshot_dir, "ssocl", required)):
+                    raise ValueError("候选缺必要学习工件: " + required)
+            learning = safe_pickle_load(state_path)
+            _plain(learning)
+            if type(learning.get("head_manager_present")) is not bool:
+                raise ValueError("候选孵育管理器状态缺失")
+            if learning["head_manager_present"] and not os.path.isfile(os.path.join(snapshot_dir, "ssocl", "head_mgr.pkl")):
+                raise ValueError("候选缺必要孵育管理器工件")
+    elif candidate:
+        raise ValueError("legacy 快照缺必要学习态，候选不可恢复；请重新 prepare")
+    if candidate and not snapshot_meta.get("artifact_hashes"):
+        raise ValueError("候选缺完整性 manifest，不可恢复")
     with open(os.path.join(snapshot_dir, "cfg.yaml"), "r", encoding="utf-8") as f:
         cfg = yaml.safe_load(f)
     from .factory import build
     backbone, slots = build(cfg, device)
     pipe = Pipeline(cfg, backbone, slots)
+    pipe.production_feature_metadata = snapshot_meta.get(
+        "production_feature_metadata", {"status": "legacy_unknown", "reason": "field_missing"})
 
     # slot state
     from .common.safe_pickle import safe_pickle_load
     slots_state = safe_pickle_load(os.path.join(snapshot_dir, "slot_state.pkl"))
     order = slots_state.pop("_order", list(pipe.slots.keys()))
+    if candidate:
+        if order != list(pipe.slots) or set(slots_state) != set(pipe.slots):
+            raise ValueError("候选槽位状态不完整")
+        for name, slot in pipe.slots.items():
+            if name in ("shead", "disc"):
+                saved = slots_state[name].get("head_state_dict")
+                expected = slot.head.state_dict()
+                if (not isinstance(saved, dict) or set(saved) != set(expected)
+                        or any(not torch.is_tensor(saved[k]) or saved[k].shape != expected[k].shape
+                               for k in expected)):
+                    raise ValueError("候选 head 参数缺失/shape 不匹配: " + name)
+    # FIX-SNAP（V§63）：显式降级登记。统计缺失时不补默认常数、不用未知标签图重拟合
+    # （无训练特征可确定性重算）——候选路径仍严格拒绝；生产加载把 layout 移出
+    # 打分/融合并在 pipe.degraded_slots / decision_trace 中显式标注。
+    pipe.degraded_slots = {}
     for name in order:
         if name not in pipe.slots:
             continue
-        _restore_slot_state(pipe.slots[name], slots_state.get(name, {}))
+        try:
+            _restore_slot_state(pipe.slots[name], slots_state.get(name, {}))
+        except LayoutStatsMissing as e:
+            if candidate:
+                raise
+            pipe.degraded_slots[name] = {
+                "layout_degraded": True,
+                "layout_stats_source": "missing_in_snapshot",
+                "missing": e.missing,
+                "reason": str(e),
+                "action": "用原训练数据重新 prepare 以恢复 layout 槽位"}
+            warnings.warn("快照降级加载：" + str(e))
+
+    # AC-015：表示签名比对——注册表/提取实现/启用组/评分口径/预处理变化即 stale，
+    # 须重提特征+重建库+重校准+过 G2 后才能当生产快照使用（禁止新旧向量混用）
+    saved_sig = (pipe.production_feature_metadata or {}).get("feature_signature")
+    drift = feature_signature_drift(saved_sig, feature_signature(pipe.slots.get("trad")))
+    pipe.feature_representation = {
+        "status": ("legacy_unsigned" if drift == ["missing"] else "stale" if drift else "current"),
+        "drift": drift,
+        "action": ("重提特征→重建库→重校准→过 G2 后再激活" if drift and drift != ["missing"] else None)}
+    if pipe.feature_representation["status"] == "stale":
+        warnings.warn("trad 表示签名与快照不一致: " + ",".join(drift))
+        if candidate:
+            raise ValueError("候选特征表示已过期（" + ",".join(drift) + "），须重建后再评估")
+    # AC-035 禁混库：backbone 权重变化 → 库/sem/disc 向量与当前表示不一致
+    bb_path = _backbone_file(pipe) if pipe.backbone is not None else None
+    cur_bb = _sha256_file_cached(bb_path) if bb_path and os.path.isfile(bb_path) else None
+    bb_drift = representation_drift(snapshot_meta, cur_bb)
+    pipe.backbone_representation = {"status": "stale" if bb_drift else "current",
+                                    "drift": bb_drift}
+    if bb_drift:
+        warnings.warn("backbone 权重与快照不一致，库/sem 向量不可混用，须重提重建")
+        if candidate:
+            raise ValueError("候选 backbone 表示已变化，禁止混库，须重提特征重建库")
+    pipe.code_drift = (snapshot_meta.get("code_sha256") not in (None, code_sha256()))
 
     # calibrators
     from .fusion.calibrate import CDFCalibrator, TplCalibrator
@@ -551,6 +939,20 @@ def load_snapshot(snapshot_dir: str, device: str,
         pipe._score_slots = [n for n in pipe.slots if n in fm0["only_slots"]]
     else:
         pipe._score_slots = list(pipe.slots.keys())
+    if pipe.degraded_slots:
+        # FIX-SNAP：降级槽位不打分、不进融合；其余权重按原比例重归一化保持融合尺度。
+        # 原权重留档；tau 在含该槽位的融合上校准，阈值偏移风险见 V§63 边界。
+        pipe._score_slots = [n for n in pipe._score_slots if n not in pipe.degraded_slots]
+        w_orig = dict(pipe.weights)
+        kept = {k: v for k, v in w_orig.items() if k not in pipe.degraded_slots}
+        tot = sum(kept.values())
+        if not pipe._score_slots or tot <= 0:
+            raise ValueError("快照降级后无可用融合槽位/权重，请重新 prepare")
+        pipe.weights = {k: (v / tot if k not in pipe.degraded_slots else 0.0)
+                        for k, v in w_orig.items()}
+        for info in pipe.degraded_slots.values():
+            info["weights_before"] = w_orig
+            info["weights_after"] = dict(pipe.weights)
     pipe._last_eval = None
     pipe._ablate_intercept = False
     # M11d 对位预警参考（旧快照无此文件 → None，预警自动停用）
@@ -560,23 +962,36 @@ def load_snapshot(snapshot_dir: str, device: str,
             pipe._align_ref = np.load(_ar_path)
         except Exception:  # noqa: BLE001 参考损坏仅停用预警
             pipe._align_ref = None
+    _load_local_branch(pipe, snapshot_dir)
 
     # router
     r_path = os.path.join(snapshot_dir, "router.pt")
     rg_path = os.path.join(snapshot_dir, "router_gate.json")
     pipe.router = None
     pipe.router_gate = None
-    if os.path.exists(r_path) and getattr(pipe, "router", None) is None:
-        from .fusion.router import LinearRouter
-        n_slots = len([n for n in pipe.slots if n != "open"])
-        if n_slots:
-            pipe.router = LinearRouter(n_slots).to(device)
-            missing, extra = pipe.router.load_state_dict(torch.load(r_path, map_location=device, weights_only=False),
-                                                     strict=False)
-            pipe.router.eval()
+    pipe.router_slot_names = None
     if os.path.exists(rg_path):
         with open(rg_path, "r", encoding="utf-8") as f:
             pipe.router_gate = json.load(f)
+    if isinstance(pipe.router_gate, dict) and pipe.router_gate.get("slot_names"):
+        pipe.router_slot_names = list(pipe.router_gate["slot_names"])
+    if os.path.exists(r_path):
+        from .fusion.router import LinearRouter
+        sd = torch.load(r_path, map_location=device, weights_only=False)
+        # AC-021：维度以 state_dict 为准（旧逻辑按非 open 槽数，skip 模式下错配）
+        n_slots = int(sd["W"].shape[0]) if "W" in sd else len(pipe._score_slots)
+        if n_slots:
+            pipe.router = LinearRouter(n_slots).to(device)
+            pipe.router.load_state_dict(sd, strict=False)
+            pipe.router.eval()
+        if pipe.router_slot_names is None:   # 旧快照：fit 口径 sorted(_score_slots)
+            cand = sorted(pipe._score_slots)
+            pipe.router_slot_names = cand if len(cand) == n_slots else None
+    cde_p = os.path.join(snapshot_dir, "cde_report.json")
+    pipe.cde_report = None
+    if os.path.exists(cde_p):
+        with open(cde_p, "r", encoding="utf-8") as f:
+            pipe.cde_report = json.load(f)
 
     # open_det
     open_meta_path = os.path.join(snapshot_dir, "open_meta.json")
@@ -643,9 +1058,14 @@ def load_snapshot(snapshot_dir: str, device: str,
         else:
             print(f"[persist][警告] 快照缺 ssocl_cfg.json（旧版快照），"
                   f"按硬编码模板恢复：{snapshot_dir}", flush=True)
+        if learning is not None:
+            tmp_cfg = learning["config"]
         _bk = tmp_cfg.get("banks", {})
         # 直接装配（不调用 enable_ssocl，避免重复锚定集采样）
+        saved_weights = dict(pipe.weights)
         pipe.handler = FeedbackHandler(pipe, tmp_cfg)
+        if learning is not None:
+            pipe.weights = saved_weights
         if os.path.exists(nb_path):
             pipe.handler.normal_bank = safe_pickle_load(nb_path)
             # 2026-08-30：缺陷率滑动窗是当前决策流的实时属性，不随快照传播
@@ -654,19 +1074,23 @@ def load_snapshot(snapshot_dir: str, device: str,
             # v7-4：快照内 bank 携带构建期参数（旧快照 cluster_k/sim_thresh
             # 过严），内容保留、可调参数按当前配置刷新
             _nb = pipe.handler.normal_bank
-            _nb.cluster_k = _bk.get("cluster_k", _nb.cluster_k)
-            _nb.sim_thresh = _bk.get("sim_thresh", _nb.sim_thresh)
-            _nb.ext_max = _bk.get("ext_max", _nb.ext_max)
+            if learning is None:
+                _nb.cluster_k = _bk.get("cluster_k", _nb.cluster_k)
+                _nb.sim_thresh = _bk.get("sim_thresh", _nb.sim_thresh)
+                _nb.ext_max = _bk.get("ext_max", _nb.ext_max)
         if os.path.exists(db_path):
             pipe.handler.defect_bank = safe_pickle_load(db_path)
             # v7-4：旧快照 defect_bank 的 sim_thresh=0.85 近乎不命中，
             # 内容（样例）保留、拦截参数按当前配置刷新
             _db = pipe.handler.defect_bank
-            _db.topk = _bk.get("intercept_topk", _db.topk)
-            _db.boost = _bk.get("intercept_boost", _db.boost)
-            _db.sim_thresh = _bk.get("intercept_sim", _db.sim_thresh)
+            if learning is None:
+                _db.topk = _bk.get("intercept_topk", _db.topk)
+                _db.boost = _bk.get("intercept_boost", _db.boost)
+                _db.sim_thresh = _bk.get("intercept_sim", _db.sim_thresh)
         pipe.selector = ActiveSelector(tmp_cfg.get("active", {}))
-        if os.path.exists(hm_path):
+        if learning is not None and not learning["head_manager_present"]:
+            pipe.head_mgr = None
+        elif os.path.exists(hm_path):
             pipe.head_mgr = safe_pickle_load(hm_path)
         else:
             pipe.head_mgr = HeadManager(tmp_cfg.get("incubate", {}))
@@ -676,7 +1100,21 @@ def load_snapshot(snapshot_dir: str, device: str,
             hist_npz.close()
         # RegressGate 恢复：gate_snapshot 里保留 anchor_paths + base_mean/std，
         # 避免 load 后再重跑锚定集 _predict_fused_only（慢且引入数值差异）。
-        if os.path.exists(gate_path):
+        if learning is not None:
+            restore(pipe, learning)
+            # AC-026：审计/基准分不在 learning_state 严格键内，从 regress_gate.json 补读
+            if os.path.exists(gate_path):
+                try:
+                    with open(gate_path, "r", encoding="utf-8") as f:
+                        gs = json.load(f)
+                    g0 = pipe.handler.gate
+                    g0.audit = list(gs.get("audit", []) or [])
+                    g0.base_scores = [float(x) for x in (gs.get("base_scores") or [])]
+                    g0._seq = int(gs.get("audit_seq", len(g0.audit)) or 0)
+                    _restore_gate_ac036(g0, gs)
+                except Exception as e:
+                    print(f"[persist] RegressGate 审计补读失败，跳过: {e}", flush=True)
+        if learning is None and os.path.exists(gate_path):
             try:
                 with open(gate_path, "r", encoding="utf-8") as f:
                     gs = json.load(f)
@@ -688,11 +1126,17 @@ def load_snapshot(snapshot_dir: str, device: str,
                 gate.base_mean = float(gs["base_mean"]) if gs.get("base_mean") is not None else None
                 gate.base_std = float(gs["base_std"]) if gs.get("base_std") is not None else None
                 gate.history = list(gs.get("history", []) or [])
+                # AC-026：审计 + 锚定基准分（旧快照无字段 → 空）
+                gate.audit = list(gs.get("audit", []) or [])
+                gate.base_scores = [float(x) for x in (gs.get("base_scores") or [])]
+                gate._seq = int(gs.get("audit_seq", len(gate.audit)) or 0)
+                _restore_gate_ac036(gate, gs)
+                gate.context_fn = getattr(pipe.handler.gate, "context_fn", None)
                 pipe.handler.gate = gate
             except Exception as e:
                 print(f"[persist] RegressGate 恢复失败，跳过: {e}", flush=True)
         # SlotWeightLearner 恢复（跳过方法名；"_height_flagged" 恢复为 set）
-        if os.path.exists(wl_path):
+        if learning is None and os.path.exists(wl_path):
             try:
                 with open(wl_path, "r", encoding="utf-8") as f:
                     wl_state = json.load(f)
@@ -726,7 +1170,7 @@ def load_snapshot(snapshot_dir: str, device: str,
         # 必须在兜底 gate2.setup（内部调 _predict_fused_only ×20）之前。
         try:
             aps = list(getattr(pipe.handler.gate, "anchor_paths", []) or [])
-            if aps and not getattr(pipe, "_anchor_items", None):
+            if learning is None and aps and not getattr(pipe, "_anchor_items", None):
                 pipe._anchor_items = pipe._tile_and_extract(aps)
         except Exception as e:
             print(f"[persist] 锚定集特征重建失败（门控回落缓存路径）: {e}",
@@ -735,7 +1179,7 @@ def load_snapshot(snapshot_dir: str, device: str,
         # 用 pipeline._train_normal_paths 抽样 anchor_size 个正常路径重算 base_mean/std。
         try:
             gate2 = getattr(pipe.handler, "gate", None)
-            if gate2 is not None and (gate2.base_mean is None or gate2.base_std is None):
+            if learning is None and gate2 is not None and (gate2.base_mean is None or gate2.base_std is None):
                 tpaths = list(getattr(pipe, "_train_normal_paths", []) or [])
                 if tpaths:
                     rng2 = np.random.default_rng(0)
@@ -745,6 +1189,11 @@ def load_snapshot(snapshot_dir: str, device: str,
         except Exception as e:
             print(f"[persist] RegressGate 兜底 setup 失败: {e}", flush=True)
 
+    if learning is not None:
+        restore(pipe, learning)
+        if not candidate:
+            pipe.handler.normal_bank.reset_stream_stats()
+    pipe._candidate_mode = bool(candidate)
     # 清运行时缓存
     pipe._item_cache.clear()
     return pipe

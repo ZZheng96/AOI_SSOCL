@@ -28,6 +28,10 @@ TEXT_SUB = "#6B7280"       # 次要文字
 # 否则 Fusion 风格下箭头不渲染，用户反馈"下拉标志看不见"）
 _ARROW_DOWN = (Path(__file__).resolve().parents[1]
                / "assets" / "arrow_down.png").as_posix()
+# 数值输入框（QSpinBox/QDoubleSpinBox）的上下箭头图片：同样必须显式指定，
+# 否则两个调节按钮会渲染成空白小方块（前端反馈 2026-10-14）
+_ARROW_UP = (Path(__file__).resolve().parents[1]
+             / "assets" / "arrow_up.png").as_posix()
 
 LIGHT_QSS = f"""
 * {{
@@ -115,6 +119,13 @@ QPushButton[flat="true"] {{
     color: {PRIMARY};
 }}
 QPushButton[flat="true"]:hover {{ background: {PRIMARY_LIGHT}; }}
+/* 紧凑按钮（表格单元格 / 小面板内的行内操作，2026-10-14 新增：
+   避免小面板里的按钮被拉伸成长条或挤成省略号） */
+QPushButton[compact="true"] {{
+    padding: 3px 10px;
+    font-size: 8.5pt;
+    min-height: 20px;
+}}
 /* 分段按钮（图层切换等，checkable） */
 QPushButton[segment="true"] {{
     border: 1px solid #D1D5DB;
@@ -145,17 +156,52 @@ QComboBox::down-arrow {{
     width: 14px;
     height: 14px;
 }}
+/* 数值输入框的上下调节按钮（2026-10-14：此前只显示成两个空白小方块） */
+QSpinBox, QDoubleSpinBox {{ padding-right: 26px; }}
+QSpinBox::up-button, QDoubleSpinBox::up-button {{
+    subcontrol-origin: border;
+    subcontrol-position: top right;
+    width: 20px;
+    margin: 1px 1px 0 0;
+    background: #F9FAFB;
+    border-left: 1px solid #D1D5DB;
+    border-top-right-radius: 5px;
+}}
+QSpinBox::down-button, QDoubleSpinBox::down-button {{
+    subcontrol-origin: border;
+    subcontrol-position: bottom right;
+    width: 20px;
+    margin: 0 1px 1px 0;
+    background: #F9FAFB;
+    border-left: 1px solid #D1D5DB;
+    border-bottom-right-radius: 5px;
+}}
+QSpinBox::up-button:hover, QDoubleSpinBox::up-button:hover,
+QSpinBox::down-button:hover, QDoubleSpinBox::down-button:hover {{
+    background: #E5E7EB;
+}}
+QSpinBox::up-arrow, QDoubleSpinBox::up-arrow {{
+    image: url({_ARROW_UP});
+    width: 12px;
+    height: 12px;
+}}
+QSpinBox::down-arrow, QDoubleSpinBox::down-arrow {{
+    image: url({_ARROW_DOWN});
+    width: 12px;
+    height: 12px;
+}}
 QComboBox QAbstractItemView {{
     background: #FFFFFF;
     border: 1px solid {CARD_BORDER};
     selection-background-color: {PRIMARY_LIGHT};
     selection-color: {TEXT};
 }}
-/* ── 导航列表（白底 + 选中左侧蓝色指示条） ── */
+/* ── 导航列表（白底 + 选中左侧蓝色指示条） ──
+   2026-10-14：不再用 border-right 画分割线（会让列表视口少 1px 并触发
+   水平滚动条），改由主窗口在导航与页面之间插一条独立 1px 分隔线。 */
 QListWidget#nav {{
     background: #FFFFFF;
     border: none;
-    border-right: 1px solid {CARD_BORDER};
     padding: 8px 0px;
 }}
 QListWidget#nav::item {{

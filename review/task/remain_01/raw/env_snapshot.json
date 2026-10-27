@@ -1,0 +1,13 @@
+{
+  "python": "3.11.9",
+  "platform": "Windows-10-10.0.19045-SP0",
+  "numpy": "2.4.6",
+  "tree": "d:\\CGAIC\\AOI_SSOCL\\stable_AOI_tree",
+  "candidate_mode": "legacy_u27",
+  "atol": 1e-06,
+  "global_seed": 0,
+  "cv2": "5.0.0",
+  "skimage": "0.26.0",
+  "scipy": "1.17.1",
+  "pywt": "1.8.0"
+}

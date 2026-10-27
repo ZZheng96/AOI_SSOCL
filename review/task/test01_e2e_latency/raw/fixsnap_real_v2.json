@@ -1,0 +1,73 @@
+{
+  "temp": "C:\\Users\\imia\\AppData\\Local\\Temp\\aoi_fixsnap_qtkjf6qx",
+  "load_s": 0.863,
+  "degraded_slots": {
+    "layout": {
+      "layout_degraded": true,
+      "layout_stats_source": "missing_in_snapshot",
+      "missing": [
+        "count_median",
+        "count_std",
+        "area_hi",
+        "spacing_median",
+        "spacing_std",
+        "sym_median",
+        "sym_std"
+      ],
+      "reason": "layout 快照缺少必要拟合统计: count_median, count_std, area_hi, spacing_median, spacing_std, sym_median, sym_std；无法从旧 PCA 状态可靠重建，请用原训练数据重新 prepare",
+      "action": "用原训练数据重新 prepare 以恢复 layout 槽位",
+      "weights_before": {
+        "blob": 0.4528355253853769,
+        "trad": 0.39060953189082165,
+        "layout": 0.15655494272380147
+      },
+      "weights_after": {
+        "blob": 0.5368879946344736,
+        "trad": 0.4631120053655265,
+        "layout": 0.0
+      }
+    }
+  },
+  "inference": [
+    {
+      "image": "det468_det14_bench_02.png",
+      "wall_ms": 619.0,
+      "decision": "anomaly",
+      "score": 2.0,
+      "model_version": 2,
+      "degraded_in_trace": false
+    },
+    {
+      "image": "det583_det14_bench_02.png",
+      "wall_ms": 396.3,
+      "decision": "anomaly",
+      "score": 2.0,
+      "model_version": 2,
+      "degraded_in_trace": false
+    },
+    {
+      "image": "det911_bench_05.png",
+      "wall_ms": 514.7,
+      "decision": "anomaly",
+      "score": 2.0,
+      "model_version": 2,
+      "degraded_in_trace": false
+    },
+    {
+      "image": "det317_det1_bench_00.png",
+      "wall_ms": 454.8,
+      "decision": "anomaly",
+      "score": 2.0,
+      "model_version": 2,
+      "degraded_in_trace": false
+    },
+    {
+      "image": "det4_bench_00.png",
+      "wall_ms": 470.2,
+      "decision": "anomaly",
+      "score": 2.0,
+      "model_version": 2,
+      "degraded_in_trace": false
+    }
+  ]
+}

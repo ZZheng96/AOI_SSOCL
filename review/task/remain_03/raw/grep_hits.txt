@@ -1,0 +1,32 @@
+# Grep 命中盘点（稳定版 d:\CGAIC\AOI_SSOCL\stable_AOI_tree\AOI_Core，2026-10-14）
+
+## Q1: feature_revision|FeatureSetRevision|detection_stamp|production_pointer|bind_production|rollback_production（全库）
+命中文件（生产代码）：
+- algo/feature_revision.py        —— 类/指针/stamp 定义处
+- algo/release_ops.py:11,140,147,191-198,201 —— revision_binding/feature_ops_view 定义
+- algo/features/parity.py:4,10    —— parity 证据生成（供 _parity 消费）
+- algo/persist.py:652             —— 快照 meta 硬编码 unknown
+- backend/api/routes_models.py:237,274-312,410,447,479,629,637 —— revision CRUD/门禁 API（无 bind/rollback 路由）
+- backend/evaluation/hard_admission.py:54,320-332 —— 难例准入证据
+- ui/pages/model_page.py:625、ui/pages/learning_page.py:777 —— 仅展示
+命中文件（测试）：tests/smoke/test_feature_revision.py、test_feature_set.py、test_final_model_parity.py、
+  test_hard_admission.py、test_round2_release.py（bind_production L198-199 / rollback_production L206 唯二调用方）
+未命中（关键空白）：algo/slots/trad.py、algo/vendor/traditional.py、algo/decide.py、
+  backend/engine/__init__.py、backend/pipeline/service.py —— 生产推理与落库路径零引用。
+
+## Q2: backend "Detection(" 
+仅 2 处：db/models.py:215（表定义）、pipeline/service.py:719（唯一写入点）。
+
+## Q3: backend "bind_production|rollback_production|detection_stamp|revision_binding|feature_revision_binding"
+仅 2 处（均只读展示/门禁死分支）：routes_models.py:237、routes_models.py:629。
+→ bind_production/rollback_production/detection_stamp/revision_binding 在 backend 零调用。
+
+## Q4: 全库 "revision_binding|feature_ops_view"
+定义：algo/release_ops.py:191、201；调用方：仅 tests/smoke/test_round2_release.py:191-207。生产零调用。
+
+## Q5: backend "feature_revisions"
+routes_models.py:276,299（registry.json 存储）；evaluation/hard_admission.py:320（证据目录）。
+→ storage("feature_revisions") 仅为门禁侧车存储，生产推理不读。
+
+## Q6: algo/decide.py "class DetectionResult|model_version|feature|seed|revision|snapshot"
+无匹配 —— decide.py 无血缘字段。

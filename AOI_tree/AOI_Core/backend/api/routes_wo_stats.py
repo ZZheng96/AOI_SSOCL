@@ -9,6 +9,7 @@ from ..core.security import require_role
 from ..db.database import log_action, session_scope
 from ..db.models import Detection, Feedback, Image as ImageRow, WorkOrder
 from ._wo_shared import (_batch_stats_by_ids, _source_capability,
+                         _pipeline_pending_query, _release_pipeline_claims,
                          _workorder_detect_batches, _workorder_item,
                          _workorder_sources)
 from .schemas import QueueDatasetRequest
@@ -75,8 +76,11 @@ def api_pipeline_control(workorder_id: int, action: str):
         wo = s.get(WorkOrder, workorder_id)
         if wo is None:
             raise HTTPException(status_code=404, detail="工单不存在")
+        if action == "resume" and (wo.archived or wo.status == "closed"):
+            raise HTTPException(status_code=409, detail="已关闭或存档工单不能启动产线")
         if action == "stop":
             wo.pipeline_status = "stopped"
+            _release_pipeline_claims(s, workorder_id)
             qcfg = dict(wo.queue_json or {})
             # 被清空的回队批次数（requeued_ids 的 key 数）
             n_cleared = len(qcfg.get("requeued_ids") or {})
@@ -151,12 +155,21 @@ def api_workorder_queue(workorder_id: int):
         pipeline_status = wo.pipeline_status
         auto_resume = bool(wo.auto_resume)
         qcfg = dict(wo.queue_json or {})
-        requeued = {str(x) for x in (qcfg.get("requeued") or [])}
+        requeued = {str(x) for x in (qcfg.get("requeued_ids") or {})}
         requeued_at = {str(k): v for k, v in (qcfg.get("requeued_at") or {}).items()}
         items = []
         for b in _workorder_detect_batches(s, wo):
-            st = _batch_stats_by_ids(s, b["image_ids"])
+            st = _batch_stats_by_ids(s, b["image_ids"],
+                                     workorder_id=wo.id,
+                                     target_types=("pipeline",))
             key = b["batch_key"]
+            ids = (qcfg.get("requeued_ids") or {}).get(key, b["image_ids"])
+            pending = _pipeline_pending_query(
+                s, wo.id, ids, key in requeued, requeued_at.get(key))
+            st["n_pending"] = pending.filter(ImageRow.processing_status.in_(
+                ("pending", "succeeded"))).count()
+            st["n_failed"] = pending.filter(ImageRow.processing_status == "failed").count()
+            st["n_claiming"] = pending.filter(ImageRow.processing_status == "claiming").count()
             items.append({
                 "batch_key": key,
                 "source": b["source"], "source_id": b["datasource_id"],
@@ -259,7 +272,9 @@ def api_workorder_learn(workorder_id: int):
     for cat in cats:
         try:
             out = sl_service.consolidate(cat, note=f"工单「{name}」学习提升")
-            applied.append(f"{cat}→{out['version']}")
+            # UI-P0.4：候选与已激活不混称（auto_activate 默认关＝仅生成候选）
+            applied.append(f"{cat}→{out['version']}"
+                           + ("(已激活)" if out.get("activated") else "(候选,待激活)"))
         except Exception:  # noqa: BLE001 未准备品类跳过
             continue
     if applied:
@@ -273,7 +288,9 @@ def api_workorder_learn(workorder_id: int):
     resumed = False
     with session_scope() as s:
         wo = s.get(WorkOrder, workorder_id)
-        if wo is not None and wo.auto_resume:
+        if (applied and wo is not None and wo.auto_resume
+                and not wo.archived and wo.status != "closed"
+                and wo.pipeline_status == "auto_paused"):
             wo.pipeline_status = "running"
             resumed = True
             s.flush()
@@ -295,10 +312,10 @@ def _decision_of(d: Detection) -> str:
 
 
 def _p95(values: list) -> float:
-    """p95（升序取 ceil(0.95n)-1 位；空列表返回 0）。"""
+    """p95（升序取 ceil(0.95n)-1 位；空列表返回 None，不以 0 冒充缺失）。"""
     import math
     if not values:
-        return 0.0
+        return None
     vs = sorted(float(v) for v in values)
     return vs[max(0, math.ceil(0.95 * len(vs)) - 1)]
 
@@ -337,10 +354,9 @@ def _workorder_report(workorder_id: int) -> dict:
         for d in dets:
             dec = _decision_of(d)
             n_dec[dec] += 1
-            # 延迟口径：端到端（含解码/持久化）优先，旧数据回退纯推理耗时
-            latencies.append(float(
-                d.latency_e2e_ms if d.latency_e2e_ms is not None
-                else (d.latency_ms or 0.0)))
+            # 延迟口径：仅端到端（含解码/持久化）真实值；缺失不以推理耗时冒充（AC-058）
+            if d.latency_e2e_ms is not None:
+                latencies.append(float(d.latency_e2e_ms))
             fbs = fb_map.get(d.id, [])
             n_fp += sum(1 for f in fbs if f.feedback_type == "false_positive")
             n_fn += sum(1 for f in fbs if f.feedback_type == "false_negative")
@@ -374,10 +390,12 @@ def _workorder_report(workorder_id: int) -> dict:
             "n_anomaly": n_dec["anomaly"],
             "n_gray": n_dec["gray"],
             "defect_rate": (round((n_dec["anomaly"] + n_dec["gray"]) / n_total, 4)
-                            if n_total else 0.0),
-            "avg_latency_ms": (round(sum(latencies) / n_total, 1)
-                               if n_total else 0.0),
-            "p95_latency_ms": round(_p95(latencies), 1),
+                            if n_total else None),
+            "avg_latency_ms": (round(sum(latencies) / len(latencies), 1)
+                               if latencies else None),
+            "n_e2e_missing": n_total - len(latencies),
+            "p95_latency_ms": (round(_p95(latencies), 1)
+                               if latencies else None),
             "n_feedback": sum(len(v) for v in fb_map.values()),
             "n_false_positive": n_fp,
             "n_false_negative": n_fn,
@@ -412,8 +430,9 @@ def api_workorder_report_csv(workorder_id: int):
     w.writerow(["总检测数", sm["n_total"], "正常", sm["n_normal"],
                 "异常", sm["n_anomaly"], "灰区", sm["n_gray"],
                 "不良率", sm["defect_rate"]])
-    w.writerow(["平均延迟ms", sm["avg_latency_ms"],
-                "p95延迟ms", sm["p95_latency_ms"],
+    w.writerow(["平均延迟ms(e2e)", sm["avg_latency_ms"],
+                "p95延迟ms(e2e)", sm["p95_latency_ms"],
+                "e2e缺失", sm["n_e2e_missing"],
                 "反馈数", sm["n_feedback"],
                 "误报", sm["n_false_positive"],
                 "漏检", sm["n_false_negative"]])

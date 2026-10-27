@@ -1,0 +1,28 @@
+{
+  "name": "hard_pool_engineer",
+  "method": "GET",
+  "path": "/api/models/feature-set/gold_finger/hard-pool",
+  "role": "engineer",
+  "request_body": null,
+  "status_code": 200,
+  "response": {
+    "category": "gold_finger",
+    "counts": {
+      "miss": 0,
+      "open_defect": 0,
+      "confirmed_defect": 0,
+      "fp": 0,
+      "open_normal": 0,
+      "train_normal": 8,
+      "pos": 0,
+      "neg": 8,
+      "conflict": 0,
+      "drift": 0,
+      "open_causes": {}
+    },
+    "sha256": "c29bf3fae5a8af57f0fa1c214b3619afe5e620eda415b45398484728f06e3f5c",
+    "conflicts": [],
+    "n_items": 8
+  },
+  "note": ""
+}

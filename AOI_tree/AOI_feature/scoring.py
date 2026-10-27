@@ -11,20 +11,16 @@ Z_CLIP = 10.0   # U36：稀疏维 z 爆炸截断（与 trad 槽位 zclip 同值�
 
 
 def extract_features(extractor, paths, load_image):
-    """逐图提取特征，U27 口径：每张图提取前固定全局 RNG（extractor 内②区域
-    自相似子采样用未播种 np.random.choice），提取后恢复状态。"""
+    """逐图提取特征，使用显式 default_rng(42)，不污染进程全局 RNG。"""
     feats, ok_paths = [], []
     for p in paths:
         img = load_image(p)
         if img is None:                      # 解码失败显式剔除，下游按 ok_paths 对齐
             print(f"[warn] 解码失败已剔除: {p}")
             continue
-        state = np.random.get_state()
-        np.random.seed(0)
-        try:
-            feats.append(extractor.extract(img).astype(np.float64))
-        finally:
-            np.random.set_state(state)
+        feats.append(
+            extractor.extract(img, rng=np.random.default_rng(42)).astype(np.float32, copy=False)
+        )
         ok_paths.append(p)
     return np.stack(feats), ok_paths
 
@@ -36,10 +32,14 @@ class GroupKNN:
         self.k = k
 
     def fit(self, ref_vecs: np.ndarray):
-        """ref_vecs: [N, D] 训练正常特征（仅 train 域，isolation 红线）"""
-        self.mean = ref_vecs.mean(axis=0)
-        self.std = ref_vecs.std(axis=0) + 1e-6          # 与 trad 槽位同取 1e-6
-        self.bank = np.clip((ref_vecs - self.mean) / self.std, -Z_CLIP, Z_CLIP)
+        """ref_vecs: [N, D] 训练正常特征（仅 train 域，isolation 红线）。"""
+        ref_vecs = np.asarray(ref_vecs, dtype=np.float32)
+        self.mean = ref_vecs.mean(axis=0, dtype=np.float32)
+        self.std = ref_vecs.std(axis=0, dtype=np.float32) + np.float32(1e-6)
+        self.bank = np.clip(
+            (ref_vecs - self.mean) / self.std,
+            -np.float32(Z_CLIP), np.float32(Z_CLIP),
+        ).astype(np.float32, copy=False)
         return self
 
     def score(self, vecs: np.ndarray, dims: slice | np.ndarray | None = None,

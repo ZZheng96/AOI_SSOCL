@@ -1,0 +1,29 @@
+{
+  "task_check": "预处理",
+  "tree": "stable",
+  "candidate_mode": "legacy_u27",
+  "harness_check_key": "preprocess",
+  "pass": false,
+  "evidence": {
+    "spec_equal": true,
+    "candidate_spec": {
+      "max_side": 256,
+      "min_side": 32,
+      "color": "RGB",
+      "nan_policy": "zero",
+      "selfsim_rng": "default_rng(42)",
+      "global_seed": 0
+    },
+    "production_spec": {
+      "max_side": 256,
+      "min_side": 32,
+      "color": "RGB",
+      "nan_policy": "zero",
+      "selfsim_rng": "default_rng(42)",
+      "global_seed": 0
+    },
+    "resize_probe_max_abs_diff": 14.665191650390625,
+    "n_resize_probes": 2,
+    "atol": 1e-06
+  }
+}

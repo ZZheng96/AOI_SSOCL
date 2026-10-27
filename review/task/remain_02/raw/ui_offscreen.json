@@ -1,0 +1,36 @@
+[
+  {
+    "role": "operator",
+    "http_status": 200,
+    "can_edit_api": false,
+    "btn_draft_enabled": false,
+    "btn_report_enabled": false,
+    "btn_rebuild_enabled": false,
+    "scoring_combo_enabled": false,
+    "status_text": "模型 v2｜启用 15/15 组，200/200 维｜评分 legacy｜<span style='color:#22C55E'>档案最新</span>；仅工程师可修改配置/生成档案<br><span style='color:#F59E0B'>已重建 v3，待激活门控（G2）</span>",
+    "n_checks": 15,
+    "n_groups_api": 15,
+    "all_checks_enabled_match_can_edit": true,
+    "pending_rebuild_version_api": 3,
+    "pending_shown_in_ui": true,
+    "screenshot": "ui_feature_set_card_operator.png",
+    "pass": true
+  },
+  {
+    "role": "engineer",
+    "http_status": 200,
+    "can_edit_api": true,
+    "btn_draft_enabled": true,
+    "btn_report_enabled": true,
+    "btn_rebuild_enabled": true,
+    "scoring_combo_enabled": true,
+    "status_text": "模型 v2｜启用 15/15 组，200/200 维｜评分 legacy｜<span style='color:#22C55E'>档案最新</span><br><span style='color:#F59E0B'>已重建 v3，待激活门控（G2）</span>",
+    "n_checks": 15,
+    "n_groups_api": 15,
+    "all_checks_enabled_match_can_edit": true,
+    "pending_rebuild_version_api": 3,
+    "pending_shown_in_ui": true,
+    "screenshot": "ui_feature_set_card_engineer.png",
+    "pass": true
+  }
+]

@@ -1,0 +1,334 @@
+{
+  "selected_on": "dev(seed=1001)",
+  "frozen_cfg": {
+    "hierarchical": {
+      "mask_thresh": 0.4,
+      "min_area": 4,
+      "work_side": 512
+    }
+  },
+  "frozen_postproc": {
+    "mask_thresh": 0.4,
+    "min_area": 4,
+    "morph": "ellipse5_open_close",
+    "work_side": 512,
+    "top_k": null,
+    "version_id": "pp-2f54c2e670"
+  },
+  "dev_result": {
+    "iou_thr": 0.5,
+    "postproc": "pp-2f54c2e670",
+    "n_images": 36,
+    "n_gt": 104,
+    "n_pred": 99,
+    "tp": 96,
+    "instance_recall": 0.9230769230769231,
+    "precision": 0.9696969696969697,
+    "mislocalization_rate": 0.05555555555555555,
+    "mean_iou": 0.8049559106226131
+  },
+  "test_result(seed=2002)": {
+    "iou_thr": 0.5,
+    "postproc": "pp-2f54c2e670",
+    "n_images": 36,
+    "n_gt": 101,
+    "n_pred": 100,
+    "tp": 99,
+    "instance_recall": 0.9801980198019802,
+    "precision": 0.99,
+    "mislocalization_rate": 0.027777777777777776,
+    "mean_iou": 0.8064919141672029
+  },
+  "test_per_scenario": {
+    "normal": {
+      "iou_thr": 0.5,
+      "postproc": "pp-2f54c2e670",
+      "n_images": 6,
+      "n_gt": 10,
+      "n_pred": 10,
+      "tp": 10,
+      "instance_recall": 1.0,
+      "precision": 1.0,
+      "mislocalization_rate": 0.0,
+      "mean_iou": 0.8544707130722141
+    },
+    "multiscale": {
+      "iou_thr": 0.5,
+      "postproc": "pp-2f54c2e670",
+      "n_images": 6,
+      "n_gt": 13,
+      "n_pred": 13,
+      "tp": 13,
+      "instance_recall": 1.0,
+      "precision": 1.0,
+      "mislocalization_rate": 0.0,
+      "mean_iou": 0.8488344950211985
+    },
+    "adjacent": {
+      "iou_thr": 0.5,
+      "postproc": "pp-2f54c2e670",
+      "n_images": 6,
+      "n_gt": 12,
+      "n_pred": 12,
+      "tp": 12,
+      "instance_recall": 1.0,
+      "precision": 1.0,
+      "mislocalization_rate": 0.0,
+      "mean_iou": 0.8108121683868671
+    },
+    "small": {
+      "iou_thr": 0.5,
+      "postproc": "pp-2f54c2e670",
+      "n_images": 6,
+      "n_gt": 12,
+      "n_pred": 11,
+      "tp": 10,
+      "instance_recall": 0.8333333333333334,
+      "precision": 0.9090909090909091,
+      "mislocalization_rate": 0.16666666666666666,
+      "mean_iou": 0.6677123869007198
+    },
+    "boundary": {
+      "iou_thr": 0.5,
+      "postproc": "pp-2f54c2e670",
+      "n_images": 6,
+      "n_gt": 12,
+      "n_pred": 12,
+      "tp": 12,
+      "instance_recall": 1.0,
+      "precision": 1.0,
+      "mislocalization_rate": 0.0,
+      "mean_iou": 0.9040272033929398
+    },
+    "topk": {
+      "iou_thr": 0.5,
+      "postproc": "pp-2f54c2e670",
+      "n_images": 6,
+      "n_gt": 42,
+      "n_pred": 42,
+      "tp": 42,
+      "instance_recall": 1.0,
+      "precision": 1.0,
+      "mislocalization_rate": 0.0,
+      "mean_iou": 0.7859035144331069
+    }
+  },
+  "test_default_cfg": {
+    "iou_thr": 0.5,
+    "postproc": "pp-0c1c8d0366",
+    "n_images": 36,
+    "n_gt": 101,
+    "n_pred": 100,
+    "tp": 88,
+    "instance_recall": 0.8712871287128713,
+    "precision": 0.88,
+    "mislocalization_rate": 0.027777777777777776,
+    "mean_iou": 0.8777754340796524
+  },
+  "dev_grid": [
+    {
+      "cfg": {
+        "mask_thresh": 0.3,
+        "min_area": 4,
+        "work_side": 512
+      },
+      "iou_thr": 0.5,
+      "postproc": "pp-225b9e4d52",
+      "n_images": 36,
+      "n_gt": 104,
+      "n_pred": 98,
+      "tp": 85,
+      "instance_recall": 0.8173076923076923,
+      "precision": 0.8673469387755102,
+      "mislocalization_rate": 0.16666666666666666,
+      "mean_iou": 0.7402858546337353
+    },
+    {
+      "cfg": {
+        "mask_thresh": 0.3,
+        "min_area": 16,
+        "work_side": 512
+      },
+      "iou_thr": 0.5,
+      "postproc": "pp-fe9672e07e",
+      "n_images": 36,
+      "n_gt": 104,
+      "n_pred": 98,
+      "tp": 85,
+      "instance_recall": 0.8173076923076923,
+      "precision": 0.8673469387755102,
+      "mislocalization_rate": 0.16666666666666666,
+      "mean_iou": 0.7402858546337353
+    },
+    {
+      "cfg": {
+        "mask_thresh": 0.3,
+        "min_area": 48,
+        "work_side": 512
+      },
+      "iou_thr": 0.5,
+      "postproc": "pp-2e904f9597",
+      "n_images": 36,
+      "n_gt": 104,
+      "n_pred": 98,
+      "tp": 85,
+      "instance_recall": 0.8173076923076923,
+      "precision": 0.8673469387755102,
+      "mislocalization_rate": 0.16666666666666666,
+      "mean_iou": 0.7402858546337353
+    },
+    {
+      "cfg": {
+        "mask_thresh": 0.4,
+        "min_area": 4,
+        "work_side": 512
+      },
+      "iou_thr": 0.5,
+      "postproc": "pp-2f54c2e670",
+      "n_images": 36,
+      "n_gt": 104,
+      "n_pred": 99,
+      "tp": 96,
+      "instance_recall": 0.9230769230769231,
+      "precision": 0.9696969696969697,
+      "mislocalization_rate": 0.05555555555555555,
+      "mean_iou": 0.8049559106226131
+    },
+    {
+      "cfg": {
+        "mask_thresh": 0.4,
+        "min_area": 16,
+        "work_side": 512
+      },
+      "iou_thr": 0.5,
+      "postproc": "pp-1fbc9938de",
+      "n_images": 36,
+      "n_gt": 104,
+      "n_pred": 99,
+      "tp": 96,
+      "instance_recall": 0.9230769230769231,
+      "precision": 0.9696969696969697,
+      "mislocalization_rate": 0.05555555555555555,
+      "mean_iou": 0.8049559106226131
+    },
+    {
+      "cfg": {
+        "mask_thresh": 0.4,
+        "min_area": 48,
+        "work_side": 512
+      },
+      "iou_thr": 0.5,
+      "postproc": "pp-8f2e52bf09",
+      "n_images": 36,
+      "n_gt": 104,
+      "n_pred": 99,
+      "tp": 96,
+      "instance_recall": 0.9230769230769231,
+      "precision": 0.9696969696969697,
+      "mislocalization_rate": 0.05555555555555555,
+      "mean_iou": 0.8049559106226131
+    },
+    {
+      "cfg": {
+        "mask_thresh": 0.5,
+        "min_area": 4,
+        "work_side": 512
+      },
+      "iou_thr": 0.5,
+      "postproc": "pp-77869a3b9e",
+      "n_images": 36,
+      "n_gt": 104,
+      "n_pred": 98,
+      "tp": 84,
+      "instance_recall": 0.8076923076923077,
+      "precision": 0.8571428571428571,
+      "mislocalization_rate": 0.05555555555555555,
+      "mean_iou": 0.8697634706910606
+    },
+    {
+      "cfg": {
+        "mask_thresh": 0.5,
+        "min_area": 16,
+        "work_side": 512
+      },
+      "iou_thr": 0.5,
+      "postproc": "pp-0c1c8d0366",
+      "n_images": 36,
+      "n_gt": 104,
+      "n_pred": 98,
+      "tp": 84,
+      "instance_recall": 0.8076923076923077,
+      "precision": 0.8571428571428571,
+      "mislocalization_rate": 0.05555555555555555,
+      "mean_iou": 0.8697634706910606
+    },
+    {
+      "cfg": {
+        "mask_thresh": 0.5,
+        "min_area": 48,
+        "work_side": 512
+      },
+      "iou_thr": 0.5,
+      "postproc": "pp-18903c66e9",
+      "n_images": 36,
+      "n_gt": 104,
+      "n_pred": 98,
+      "tp": 84,
+      "instance_recall": 0.8076923076923077,
+      "precision": 0.8571428571428571,
+      "mislocalization_rate": 0.05555555555555555,
+      "mean_iou": 0.8697634706910606
+    },
+    {
+      "cfg": {
+        "mask_thresh": 0.6,
+        "min_area": 4,
+        "work_side": 512
+      },
+      "iou_thr": 0.5,
+      "postproc": "pp-66dacd7aa9",
+      "n_images": 36,
+      "n_gt": 104,
+      "n_pred": 93,
+      "tp": 76,
+      "instance_recall": 0.7307692307692307,
+      "precision": 0.8172043010752689,
+      "mislocalization_rate": 0.05555555555555555,
+      "mean_iou": 0.7617822723156095
+    },
+    {
+      "cfg": {
+        "mask_thresh": 0.6,
+        "min_area": 16,
+        "work_side": 512
+      },
+      "iou_thr": 0.5,
+      "postproc": "pp-175d0c4f0b",
+      "n_images": 36,
+      "n_gt": 104,
+      "n_pred": 93,
+      "tp": 76,
+      "instance_recall": 0.7307692307692307,
+      "precision": 0.8172043010752689,
+      "mislocalization_rate": 0.05555555555555555,
+      "mean_iou": 0.7617822723156095
+    },
+    {
+      "cfg": {
+        "mask_thresh": 0.6,
+        "min_area": 48,
+        "work_side": 512
+      },
+      "iou_thr": 0.5,
+      "postproc": "pp-196963b743",
+      "n_images": 36,
+      "n_gt": 104,
+      "n_pred": 92,
+      "tp": 76,
+      "instance_recall": 0.7307692307692307,
+      "precision": 0.8260869565217391,
+      "mislocalization_rate": 0.05555555555555555,
+      "mean_iou": 0.7617822723156095
+    }
+  ]
+}

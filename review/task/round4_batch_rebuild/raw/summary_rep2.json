@@ -1,0 +1,328 @@
+{
+  "fit": {
+    "B_before": {
+      "version": 1,
+      "n_normal": 14,
+      "n_defect": 0,
+      "tau_high": 0.8951302083333331,
+      "tau_gray": 0.7881510416666666,
+      "weights": {
+        "sem": 0.3333333333333333,
+        "disc": 0.3333333333333333,
+        "shead": 0.3333333333333333
+      },
+      "prepare_s": 9.0
+    },
+    "B_after": {
+      "version": 1,
+      "n_normal": 22,
+      "n_defect": 0,
+      "tau_high": 0.6633072916666666,
+      "tau_gray": 0.6498697916666666,
+      "weights": {
+        "sem": 0.3333333333333333,
+        "disc": 0.3333333333333333,
+        "shead": 0.3333333333333333
+      },
+      "prepare_s": 13.4
+    },
+    "A_before": {
+      "version": 1,
+      "n_normal": 14,
+      "n_defect": 30,
+      "tau_high": 0.8281202498726222,
+      "tau_gray": 0.8121825729591259,
+      "weights": {
+        "sem": 0.36118659420289856,
+        "disc": 0.2776268115942029,
+        "shead": 0.36118659420289856
+      },
+      "prepare_s": 9.7
+    },
+    "A_after": {
+      "version": 1,
+      "n_normal": 22,
+      "n_defect": 30,
+      "tau_high": 0.7488903407655382,
+      "tau_gray": 0.748699429951996,
+      "weights": {
+        "sem": 0.25265285497726125,
+        "disc": 0.0,
+        "shead": 0.7473471450227388
+      },
+      "prepare_s": 16.9
+    }
+  },
+  "metrics": {
+    "B_before": {
+      "E1": {
+        "n_normal": 9,
+        "n_defect": 10,
+        "auroc": 0.7556,
+        "fixed_fpr": 0.5556,
+        "fixed_recall": 0.9,
+        "wp_fpr5": {
+          "recall": 0.2,
+          "fpr": 0.0,
+          "threshold": 1.3605531862253033,
+          "tp": 2,
+          "fp": 0,
+          "fn": 8,
+          "tn": 9,
+          "max_fpr": 0.05,
+          "note": "参考工作点，不修改生产阈值"
+        }
+      },
+      "E2": {
+        "n_normal": 9,
+        "n_defect": 9,
+        "auroc": 0.5432,
+        "fixed_fpr": 0.5556,
+        "fixed_recall": 0.6667,
+        "wp_fpr5": {
+          "recall": 0.1111,
+          "fpr": 0.0,
+          "threshold": 1.3524213583709022,
+          "tp": 1,
+          "fp": 0,
+          "fn": 8,
+          "tn": 9,
+          "max_fpr": 0.05,
+          "note": "参考工作点，不修改生产阈值"
+        }
+      },
+      "E1+E2": {
+        "n_normal": 9,
+        "n_defect": 19,
+        "auroc": 0.655,
+        "fixed_fpr": 0.5556,
+        "fixed_recall": 0.7895,
+        "wp_fpr5": {
+          "recall": 0.1579,
+          "fpr": 0.0,
+          "threshold": 1.3524213583709022,
+          "tp": 3,
+          "fp": 0,
+          "fn": 16,
+          "tn": 9,
+          "max_fpr": 0.05,
+          "note": "参考工作点，不修改生产阈值"
+        }
+      },
+      "fpr_eval_normal": 0.5556,
+      "fpr_orig_normal": 0.9375,
+      "fpr_eval_Image_2026": 0.3333,
+      "fpr_eval_t_fov": 1.0,
+      "orig_normal_fused_max": 1.5778
+    },
+    "B_after": {
+      "E1": {
+        "n_normal": 9,
+        "n_defect": 10,
+        "auroc": 0.6222,
+        "fixed_fpr": 0.3333,
+        "fixed_recall": 0.2,
+        "wp_fpr5": {
+          "recall": 0.1,
+          "fpr": 0.0,
+          "threshold": 1.6541556056782745,
+          "tp": 1,
+          "fp": 0,
+          "fn": 9,
+          "tn": 9,
+          "max_fpr": 0.05,
+          "note": "参考工作点，不修改生产阈值"
+        }
+      },
+      "E2": {
+        "n_normal": 9,
+        "n_defect": 9,
+        "auroc": 0.5432,
+        "fixed_fpr": 0.3333,
+        "fixed_recall": 0.3333,
+        "wp_fpr5": {
+          "recall": 0.1111,
+          "fpr": 0.0,
+          "threshold": 1.5560696141497647,
+          "tp": 1,
+          "fp": 0,
+          "fn": 8,
+          "tn": 9,
+          "max_fpr": 0.05,
+          "note": "参考工作点，不修改生产阈值"
+        }
+      },
+      "E1+E2": {
+        "n_normal": 9,
+        "n_defect": 19,
+        "auroc": 0.5848,
+        "fixed_fpr": 0.3333,
+        "fixed_recall": 0.2632,
+        "wp_fpr5": {
+          "recall": 0.1053,
+          "fpr": 0.0,
+          "threshold": 1.5560696141497647,
+          "tp": 2,
+          "fp": 0,
+          "fn": 17,
+          "tn": 9,
+          "max_fpr": 0.05,
+          "note": "参考工作点，不修改生产阈值"
+        }
+      },
+      "fpr_eval_normal": 0.3333,
+      "fpr_orig_normal": 0.5,
+      "fpr_eval_Image_2026": 0.1667,
+      "fpr_eval_t_fov": 0.6667,
+      "orig_normal_fused_max": 1.6513
+    },
+    "A_before": {
+      "E1": {
+        "n_normal": 9,
+        "n_defect": 10,
+        "auroc": 0.6556,
+        "fixed_fpr": 1.0,
+        "fixed_recall": 1.0,
+        "wp_fpr5": {
+          "recall": 0.0,
+          "fpr": 0.0,
+          "threshold": 1.9948113416123154,
+          "tp": 0,
+          "fp": 0,
+          "fn": 10,
+          "tn": 9,
+          "max_fpr": 0.05,
+          "note": "参考工作点，不修改生产阈值"
+        }
+      },
+      "E2": {
+        "n_normal": 9,
+        "n_defect": 9,
+        "auroc": 0.5309,
+        "fixed_fpr": 1.0,
+        "fixed_recall": 1.0,
+        "wp_fpr5": {
+          "recall": 0.0,
+          "fpr": 0.0,
+          "threshold": 1.9948113416123154,
+          "tp": 0,
+          "fp": 0,
+          "fn": 9,
+          "tn": 9,
+          "max_fpr": 0.05,
+          "note": "参考工作点，不修改生产阈值"
+        }
+      },
+      "E1+E2": {
+        "n_normal": 9,
+        "n_defect": 19,
+        "auroc": 0.5965,
+        "fixed_fpr": 1.0,
+        "fixed_recall": 1.0,
+        "wp_fpr5": {
+          "recall": 0.0,
+          "fpr": 0.0,
+          "threshold": 1.9948113416123154,
+          "tp": 0,
+          "fp": 0,
+          "fn": 19,
+          "tn": 9,
+          "max_fpr": 0.05,
+          "note": "参考工作点，不修改生产阈值"
+        }
+      },
+      "fpr_eval_normal": 1.0,
+      "fpr_orig_normal": 1.0,
+      "fpr_eval_Image_2026": 1.0,
+      "fpr_eval_t_fov": 1.0,
+      "orig_normal_fused_max": 1.9948
+    },
+    "A_after": {
+      "E1": {
+        "n_normal": 9,
+        "n_defect": 10,
+        "auroc": 1.0,
+        "fixed_fpr": 0.3333,
+        "fixed_recall": 1.0,
+        "wp_fpr5": {
+          "recall": 1.0,
+          "fpr": 0.0,
+          "threshold": 1.9952276326828935,
+          "tp": 10,
+          "fp": 0,
+          "fn": 0,
+          "tn": 9,
+          "max_fpr": 0.05,
+          "note": "参考工作点，不修改生产阈值"
+        }
+      },
+      "E2": {
+        "n_normal": 9,
+        "n_defect": 9,
+        "auroc": 0.5802,
+        "fixed_fpr": 0.3333,
+        "fixed_recall": 0.3333,
+        "wp_fpr5": {
+          "recall": 0.0,
+          "fpr": 0.0,
+          "threshold": 0.894123032155622,
+          "tp": 0,
+          "fp": 0,
+          "fn": 9,
+          "tn": 9,
+          "max_fpr": 0.05,
+          "note": "参考工作点，不修改生产阈值"
+        }
+      },
+      "E1+E2": {
+        "n_normal": 9,
+        "n_defect": 19,
+        "auroc": 0.8012,
+        "fixed_fpr": 0.3333,
+        "fixed_recall": 0.6842,
+        "wp_fpr5": {
+          "recall": 0.5263,
+          "fpr": 0.0,
+          "threshold": 1.9952276326828935,
+          "tp": 10,
+          "fp": 0,
+          "fn": 9,
+          "tn": 9,
+          "max_fpr": 0.05,
+          "note": "参考工作点，不修改生产阈值"
+        }
+      },
+      "fpr_eval_normal": 0.3333,
+      "fpr_orig_normal": 1.0,
+      "fpr_eval_Image_2026": 0.0,
+      "fpr_eval_t_fov": 1.0,
+      "orig_normal_fused_max": 1.9984
+    }
+  },
+  "latency": {
+    "B_before": {
+      "n": 240,
+      "p50": 56.5,
+      "p95": 256.2,
+      "max": 2044.9
+    },
+    "B_after": {
+      "n": 240,
+      "p50": 58.4,
+      "p95": 254.6,
+      "max": 2463.3
+    },
+    "A_before": {
+      "n": 240,
+      "p50": 113.4,
+      "p95": 400.7,
+      "max": 2648.8
+    },
+    "A_after": {
+      "n": 240,
+      "p50": 94.0,
+      "p95": 257.3,
+      "max": 1363.4
+    }
+  }
+}

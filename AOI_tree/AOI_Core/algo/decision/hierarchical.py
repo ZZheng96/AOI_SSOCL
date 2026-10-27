@@ -24,27 +24,34 @@ SLOT_TYPE_MAP = {
 }
 
 
-def build_heatmap_mask(heatmaps, image_size, thresh, weight_by_slot=None):
+def build_heatmap_mask(heatmaps, image_size, thresh, weight_by_slot=None,
+                       tiles=None, src_size=None):
     """槽位热力图 → 融合热力图 + 像素级掩码（L2 定位）。
 
     heatmaps: dict[slot_name -> list[(G,G) ndarray]]（每 tile 一张，None 表示无热力图）
+    tiles/src_size：tile 框（原图坐标）与原图尺寸；给出时按 tile 位置贴回（AC-004
+    原图反解），否则视为单 tile 整图。tiles 也可为 dict[slot_name -> tiles]（局部分支）。
     融合：每槽位 tile max 拼合到全图坐标，跨槽位按 weight_by_slot 加权平均（默认等权）。
     掩码：heatmap >= thresh，形态学开闭降噪。
     返回 (fused_heatmap HxW float, mask HxW uint8, per_slot_maps dict)
     """
+    from ..common.tiling import paste_tile_heatmaps
     h, w = image_size
     per_slot = {}
-    for name, hms in heatmaps.items():
-        if not hms or hms[0] is None:
+    for name, hms in list(heatmaps.items()):
+        if not hms or all(hm is None for hm in hms):
             continue
-        slot_map = np.zeros((h, w), dtype=np.float32)
-        for i, hm in enumerate(hms):
-            if hm is None:
-                continue
-            hm = np.asarray(hm, dtype=np.float32)
-            # 当前实现：单 tile 整图，直接 resize 到全图
-            r = cv2.resize(hm, (w, h), interpolation=cv2.INTER_LINEAR)
-            slot_map = np.maximum(slot_map, r)
+        st = tiles.get(name) if isinstance(tiles, dict) else tiles
+        if st is not None and src_size is not None and len(st) == len(hms):
+            slot_map = paste_tile_heatmaps(hms, st, src_size, (h, w))
+        else:
+            slot_map = np.zeros((h, w), dtype=np.float32)
+            for hm in hms:
+                if hm is None:
+                    continue
+                r = cv2.resize(np.asarray(hm, dtype=np.float32), (w, h),
+                               interpolation=cv2.INTER_LINEAR)
+                slot_map = np.maximum(slot_map, r)
         per_slot[name] = slot_map
     if not per_slot:
         return None, None, {}
@@ -83,6 +90,41 @@ def boxes_from_mask(mask, min_area=16):
         if area >= min_area:
             boxes.append({"bbox": [int(x), int(y), int(x + w), int(y + h)],
                           "area": int(area)})
+    return boxes
+
+
+def box_evidence(boxes, per_slot_maps, weights=None, image_slots=None, top=3):
+    """AC-014 逐框区域证据（工作网格坐标，boxes_from_mask 之后、放大前调用）。
+
+    每槽位：框内均值 region、整图均值 base、对比 contrast=region-base（热图已逐槽
+    min-max 归一化，量纲为"该槽位内相对强度"，不是缺陷概率）。主导槽位取
+    weight×contrast 最大者；无空间热图或热图平坦的槽位记 image_only，不参与框级主导。
+    image_slots：有整图分但无热图的槽位（如 trad 整图特征），列为 image_only。
+    """
+    weights = weights or {}
+    flat = {n for n, m in per_slot_maps.items() if float(m.max()) <= 1e-6}
+    base = {n: float(m.mean()) for n, m in per_slot_maps.items()}
+    img_only = sorted(set(image_slots or []) - set(per_slot_maps) | flat)
+    for b in boxes:
+        x0, y0, x1, y1 = b["bbox"]
+        ev = []
+        for n, m in per_slot_maps.items():
+            if n in flat:
+                continue
+            r = m[y0:max(y1, y0 + 1), x0:max(x1, x0 + 1)]
+            reg = float(r.mean()) if r.size else 0.0
+            peak = float(r.max()) if r.size else 0.0
+            c = reg - base[n]
+            ev.append({"slot": n, "region_mean": round(reg, 4), "region_peak": round(peak, 4),
+                       "image_mean": round(base[n], 4), "contrast": round(c, 4),
+                       "weight": round(float(weights.get(n, 1.0)), 4),
+                       "weighted": round(float(weights.get(n, 1.0)) * c, 4)})
+        ev.sort(key=lambda e: -e["weighted"])
+        dom = ev[0]["slot"] if ev and ev[0]["weighted"] > 0 else ""
+        b["dominant_slot"] = dom
+        b["evidence"] = {"level": "region" if dom else "none", "slots": ev[:top],
+                         "image_only_slots": img_only,
+                         "semantics": "框内相对热图强度（逐槽归一化），非缺陷概率"}
     return boxes
 
 

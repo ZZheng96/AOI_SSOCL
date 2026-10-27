@@ -1,0 +1,73 @@
+﻿[remain01] tree=stable (d:\CGAIC\AOI_SSOCL\stable_AOI_tree)
+[remain01] candidate_mode=legacy_u27: 全局 RandomState + np.random.seed(0) 包裹（非 default_rng(42)）
+[remain01] 导入 AOI_Core harness 与 AOI_feature 候选...
+[remain01] 写出 env_snapshot.json
+[remain01] 构造固定输入：train=6x64x64(seed0-5) + probe=300x280(seed100)/20x40(seed101)/64x64(seed102) + 常量图128...
+[remain01] 实例化候选适配器（FeatureSet trunk_200 + GroupKNN k=3）...
+py : d:\CGAIC\AOI_SSOCL\stable_AOI_tree\AOI_feature\feature_lib.py:208: FutureWarning: Parameter `min_size` is deprecat
+ed since version 0.26.0 and will be removed in 2.0.0 (or later). To avoid this warning, please use the parameter `max_s
+ize` instead. For more details, see the documentation of `remove_small_objects`. Note that the new threshold removes ob
+jects smaller than **or equal to** its value, while the previous parameter only removed smaller ones.
+所在位置 C:\Users\imia\AppData\Local\Temp\trae\run-command\scripts\ps-script-61a993f2-1972-4868-8f3c-4c5dbcfc613a.ps1:19 字符
+: 5
++     py -3.11 d:\CGAIC\AOI_SSOCL\review\task\remain_01\raw\run_remain0 ...
++     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: (d:\CGAIC\AOI_SS...d smaller ones.:String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+  bw = morphology.remove_small_objects(bw.astype(bool), min_size=p["min_size"])
+[remain01] run_parity 开始（参照=生产 TradSlot 全新实例）...
+d:\CGAIC\AOI_SSOCL\stable_AOI_tree\AOI_Core\algo\vendor\traditional.py:264: FutureWarning: Parameter `min_size` is depr
+ecated since version 0.26.0 and will be removed in 2.0.0 (or later). To avoid this warning, please use the parameter `m
+ax_size` instead. For more details, see the documentation of `remove_small_objects`. Note that the new threshold remove
+s objects smaller than **or equal to** its value, while the previous parameter only removed smaller ones.
+  bw = morphology.remove_small_objects(bw.astype(bool), min_size=50)
+[remain01] 写出 parity_result.json
+[remain01] run_parity 完成：status=failed failed=['extraction', 'preprocess', 'knn_neighbors_self_match', 'scoring', 'report', 'bank_compatibility'] max_abs_diff=1.467e+01
+[remain01] 逐项明细复算（生产参照新实例 + fit）...
+  [1/8] extraction ...
+  [2/8] preprocess ...
+  [3/8] dimension_order_slice ...
+  [4/8] rng ...
+  [5/8] dtype/nonfinite（常量图 128）...
+d:\CGAIC\AOI_SSOCL\stable_AOI_tree\AOI_feature\feature_lib.py:106: RuntimeWarning: Mean of empty slice
+  out.append(float(np.sqrt(dist2[dist2 > 0]).mean()))
+C:\Program Files\Python311\Lib\site-packages\numpy\_core\_methods.py:142: RuntimeWarning: invalid value encountered in 
+divide
+  ret = ret.dtype.type(ret / rcount)
+C:\Program Files\Python311\Lib\site-packages\numpy\lib\_function_base_impl.py:3023: RuntimeWarning: invalid value encou
+ntered in divide
+  c /= stddev[:, None]
+  [6/8] knn_neighbors_self_match ...
+  [7/8] scoring ...
+  [8/8] report ...
+[remain01] 写出 rng_snapshots.json
+[remain01] 写出 neighbors_agreement.json
+[remain01] 写出 constant_image.json
+[remain01] 逐组差异归因（15 组 x 3 探针）...
+  probe0 300x280: worst=selfsim max|diff|=1.467e+01
+  probe1 20x40: worst=selfsim max|diff|=2.901e+00
+  probe2 64x64: worst=selfsim max|diff|=9.513e+00
+[remain01] 写出 group_diffs.json
+[remain01] 拆分任务八项逐项 JSON...
+[remain01] 写出 01_extraction.json
+[remain01] 写出 02_preprocess.json
+[remain01] 写出 03_dimension_order_slice.json
+[remain01] 写出 04_rng.json
+[remain01] 写出 05_dtype_nonfinite.json
+[remain01] 写出 06_knn_neighbors_self_match.json
+[remain01] 写出 07_scoring.json
+[remain01] 写出 08_report.json
+[remain01] ==== 任务八项逐项结论（tree=stable）====
+  FAIL  01_extraction  特征提取
+  FAIL  02_preprocess  预处理
+  PASS  03_dimension_order_slice  15组/200维顺序与slice
+  PASS  04_rng  显式default_rng(42)行为
+  FAIL  05_dtype_nonfinite  dtype/非有限值处理
+  FAIL  06_knn_neighbors_self_match  kNN邻居/自匹配
+  FAIL  07_scoring  评分
+  FAIL  08_report  报告
+[remain01] harness 八项: extraction=F, preprocess=F, dimension_order_slice=T, rng=T, knn_neighbors_self_match=F, scoring=F, report=F, bank_compatibility=F
+[remain01] baseline_hashes={'vendor/traditional.py': '8b74188c777ccee9745b1e0d62d4cb045dfd0e2ea6c26f84c6c2350cdc23f8a2', 'slots/trad.py': 'd3caf552b2e5a467552f4353cc7b94d69877ae3c0232aa5872816e3a94e7bbdd'}
+[remain01] production_hashes(now)={'vendor/traditional.py': '8b74188c777ccee9745b1e0d62d4cb045dfd0e2ea6c26f84c6c2350cdc23f8a2', 'slots/trad.py': 'd3caf552b2e5a467552f4353cc7b94d69877ae3c0232aa5872816e3a94e7bbdd'}
+[remain01] 全部完成，用时 9.8s

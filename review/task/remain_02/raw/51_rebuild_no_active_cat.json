@@ -1,0 +1,12 @@
+{
+  "name": "rebuild_no_active_cat",
+  "method": "POST",
+  "path": "/api/models/feature-set/__no_such_cat__/rebuild",
+  "role": "engineer",
+  "request_body": {},
+  "status_code": 409,
+  "response": {
+    "detail": "品类 __no_such_cat__ 无激活版本，请直接准备模型"
+  },
+  "note": "无激活版本 → 409"
+}

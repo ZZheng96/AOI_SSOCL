@@ -174,6 +174,81 @@ class DefectClassifier:
         n_exp = getattr(self.clf, "n_features_in_", None)
         if n_exp is not None and x.shape[0] != n_exp:
             return None
-        proba = self.clf.predict_proba(x[None, :])[0]
+        proba = self._fast_proba(x)
+        if proba is None:
+            proba = self.clf.predict_proba(x[None, :])[0]
         top = int(np.argmax(proba))
-        return FIVE[top], float(proba[top])
+        # proba 列序为 clf.classes_（FIVE 下标的已出现子集），缺类时不能直接 FIVE[top]
+        cls = int(self.clf.classes_[top])
+        return FIVE[cls], float(proba[top])
+
+    def __getstate__(self):
+        st = dict(self.__dict__)
+        st.pop("_packed", None)          # 运行期加速缓存不落盘
+        return st
+
+    def _fast_proba(self, x):
+        """G1（2026-10-12）：单样本森林向量化遍历。sklearn 单样本 predict_proba 逐树
+        Python 调度 ~20ms；此处把 300 棵树打包成定长数组，按深度同步下降，~1ms。
+        首次构建时与 sklearn 结果自检（max diff ≤1e-9 且 argmax 一致），不一致则永久回退。"""
+        packed = getattr(self, "_packed", None)
+        if packed is False:
+            return None
+        if packed is None:
+            try:
+                packed = self._pack_forest()
+                ref = self.clf.predict_proba(x[None, :])[0]
+                got = self._traverse(packed, x)
+                if got.shape != ref.shape or np.max(np.abs(got - ref)) > 1e-9 \
+                        or int(np.argmax(got)) != int(np.argmax(ref)):
+                    raise ValueError("fast forest mismatch")
+                self._packed = packed
+                return ref
+            except Exception:  # noqa: BLE001
+                self._packed = False
+                return None
+        return self._traverse(packed, x)
+
+    def _pack_forest(self):
+        ests = self.clf.estimators_
+        n_cls = len(self.clf.classes_)
+        m = max(e.tree_.node_count for e in ests)
+        T = len(ests)
+        left = np.full((T, m), -1, np.int64)
+        right = np.full((T, m), -1, np.int64)
+        feat = np.zeros((T, m), np.int64)
+        thr = np.zeros((T, m), np.float64)
+        val = np.zeros((T, m, n_cls), np.float64)
+        depth = 0
+        for i, e in enumerate(ests):
+            t = e.tree_
+            n = t.node_count
+            left[i, :n] = t.children_left
+            right[i, :n] = t.children_right
+            feat[i, :n] = np.maximum(t.feature, 0)
+            thr[i, :n] = t.threshold
+            v = np.asarray(t.value[:, 0, :n_cls], np.float64)
+            s = v.sum(axis=1, keepdims=True)
+            s[s == 0.0] = 1.0
+            val[i, :n] = v / s
+            depth = max(depth, int(t.max_depth))
+        return {"left": left, "right": right, "feat": feat, "thr": thr,
+                "val": val, "depth": depth, "rows": np.arange(T)}
+
+    @staticmethod
+    def _traverse(p, x):
+        x32 = np.asarray(x, np.float32).astype(np.float64)   # sklearn 内部按 float32 比较
+        rows = p["rows"]
+        node = np.zeros(len(rows), np.int64)
+        for _ in range(p["depth"]):
+            lft = p["left"][rows, node]
+            leaf = lft < 0
+            if leaf.all():
+                break
+            go_left = x32[p["feat"][rows, node]] <= p["thr"][rows, node]
+            nxt = np.where(go_left, lft, p["right"][rows, node])
+            node = np.where(leaf, node, nxt)
+        acc = np.zeros(p["val"].shape[2], np.float64)
+        for i in range(len(rows)):                    # 与 sklearn 相同的逐树累加次序
+            acc += p["val"][i, node[i]]
+        return acc / len(rows)

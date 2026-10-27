@@ -1,0 +1,161 @@
+{
+  "temp": "C:\\Users\\imia\\AppData\\Local\\Temp\\aoi_finalperf_vram_8ca5dmts",
+  "scope": "AC-070 显存峰值 + AC-071 冷启动分段（真实 GPU，TEMP 快照副本）。\n\n口径：torch.cuda.max_memory_allocated（PyTorch 分配器口径，不含 CUDA context / cudnn workspace\n以外的驱动占用）；每个场景前 reset_peak_memory_stats，报告 base=场景前 allocated、peak、delta。\n场景：idle（单品类推理 5 张）/ train（learn_candidate 候选隔离 1 次 + 旧在线即学 1 次）/\nreplay（驱逐 pipe 后重载并重放 WAL）/ multi（gold_finger + smt_solder 双品类常驻交替推理）。\n",
+  "device": {
+    "name": "NVIDIA GeForce GTX 1660 SUPER",
+    "total_mib": 6143.7
+  },
+  "cold_start": {
+    "gold_finger": {
+      "version": 2,
+      "load_ms": 549.15,
+      "replay_ms": 0.09,
+      "budget": {
+        "max_load_ms": 30000,
+        "max_replay_ms": 10000,
+        "max_first_infer_ms": 5000,
+        "max_warm_ms": 1000
+      },
+      "violations": [],
+      "within_budget": true,
+      "first_infer_ms": 313.99,
+      "warmup_runs": 3,
+      "warm_ms": 326.76,
+      "warm_samples_ms": [
+        312.65,
+        326.76,
+        374.08
+      ]
+    },
+    "smt_solder": {
+      "version": 4,
+      "load_ms": 1547.84,
+      "replay_ms": 0.13,
+      "budget": {
+        "max_load_ms": 30000,
+        "max_replay_ms": 10000,
+        "max_first_infer_ms": 5000,
+        "max_warm_ms": 1000
+      },
+      "violations": [],
+      "within_budget": true,
+      "first_infer_ms": 216.65,
+      "warmup_runs": 3,
+      "warm_ms": 112.91,
+      "warm_samples_ms": [
+        112.91,
+        118.83,
+        92.73
+      ]
+    },
+    "smt_solder_replay": {
+      "version": 4,
+      "load_ms": 301.31,
+      "replay_ms": 477.89,
+      "budget": {
+        "max_load_ms": 30000,
+        "max_replay_ms": 10000,
+        "max_first_infer_ms": 5000,
+        "max_warm_ms": 1000
+      },
+      "violations": [],
+      "within_budget": true
+    }
+  },
+  "scenes": {
+    "idle": {
+      "base_mib": 0.0,
+      "peak_mib": 0.0,
+      "delta_mib": 0.0,
+      "after_mib": 0.0,
+      "reserved_mib": 2.0,
+      "peak_frac_of_device": 0.0,
+      "wall_ms": 1732.9
+    },
+    "idle_dino": {
+      "base_mib": 0.0,
+      "peak_mib": 117.2,
+      "delta_mib": 117.2,
+      "after_mib": 93.8,
+      "reserved_mib": 132.0,
+      "peak_frac_of_device": 0.0191,
+      "wall_ms": 3011.4
+    },
+    "train_candidate": {
+      "base_mib": 93.8,
+      "peak_mib": 93.8,
+      "delta_mib": 0.0,
+      "after_mib": 93.8,
+      "reserved_mib": 132.0,
+      "peak_frac_of_device": 0.0153,
+      "wall_ms": 340.8,
+      "error": "ValueError('legacy 快照缺必要学习态，候选不可恢复；请重新 prepare')"
+    },
+    "train_online": {
+      "base_mib": 93.8,
+      "peak_mib": 125.3,
+      "delta_mib": 31.5,
+      "after_mib": 102.0,
+      "reserved_mib": 152.0,
+      "peak_frac_of_device": 0.0204,
+      "wall_ms": 542.0
+    },
+    "replay": {
+      "base_mib": 102.0,
+      "peak_mib": 127.7,
+      "delta_mib": 25.8,
+      "after_mib": 103.5,
+      "reserved_mib": 154.0,
+      "peak_frac_of_device": 0.0208,
+      "wall_ms": 906.1
+    },
+    "multi": {
+      "base_mib": 103.5,
+      "peak_mib": 126.9,
+      "delta_mib": 23.4,
+      "after_mib": 103.5,
+      "reserved_mib": 154.0,
+      "peak_frac_of_device": 0.0207,
+      "wall_ms": 2256.2
+    }
+  },
+  "train_online": {
+    "path": "d:\\CGAIC\\AOI_SSOCL\\stable_AOI_tree\\AOI_Core\\storage\\archive\\gold_finger\\20261011\\det7_bench_03.png",
+    "verdict": "wrong",
+    "label": 1,
+    "feedback_ms": 378.97,
+    "action": "difficult_queued",
+    "attribution": {
+      "mode": "fn",
+      "series": [
+        {
+          "step": "signal_presence",
+          "top_slot": "disc",
+          "top_cal": 2.0,
+          "ok": true
+        },
+        {
+          "step": "fusion_dilution",
+          "fused": 0.5713
+        }
+      ],
+      "verdict": "undertrained_fusion",
+      "next": "路由定向微调（难例参与 MIL 排序）"
+    },
+    "fuse_blocked": true,
+    "lock": {
+      "yield_ms": 0.0,
+      "prefetch_ms": 160.09,
+      "lock_wait_ms": 0.002,
+      "lock_hold_ms": 380.45,
+      "prefetched": true
+    }
+  },
+  "resident_categories": [
+    "gold_finger",
+    "smt_solder"
+  ],
+  "max_peak_mib": 127.7,
+  "default_limit_mib": 5222.1,
+  "headroom_ok": true
+}

@@ -241,6 +241,9 @@ class Detection(Base, TimestampMixin):
     # 端到端延迟（解码+推理+热力图产物，持久化前全程）；旧数据为 NULL，
     # 统计/判定口径 coalesce 回退 latency_ms（纯推理）
     latency_e2e_ms: Mapped[float | None] = mapped_column(Float, nullable=True)
+    # 生产特征 revision 血缘；未绑定时保留 NULL/unknown，不从 registry 猜测。
+    feature_revision_id: Mapped[str | None] = mapped_column(String(64), nullable=True, index=True)
+    feature_lineage: Mapped[dict] = mapped_column(JSON, default=dict)
     n_tiles: Mapped[dict] = mapped_column(JSON, default=dict)  # {"l1":36,"l2":5,"l3":2}
     heatmap_path: Mapped[str | None] = mapped_column(String(512), nullable=True)
     overlay_path: Mapped[str | None] = mapped_column(String(512), nullable=True)
@@ -262,7 +265,7 @@ class Feedback(Base, TimestampMixin):
     consumed: Mapped[bool] = mapped_column(Boolean, default=False, index=True)  # 是否已用于增量更新
     calibration_excluded: Mapped[bool] = mapped_column(Boolean, default=False)  # 误检反馈是否被移出校准集
     invalidated: Mapped[bool] = mapped_column(Boolean, default=False, index=True)  # 已作废（标错撤回）：不计入统计/曲线/复核已判
-    source_event_id: Mapped[str | None] = mapped_column(String(128), nullable=True, index=True)
+    source_event_id: Mapped[str | None] = mapped_column(String(128), nullable=True, index=True, unique=True)
     model_version_before: Mapped[str | None] = mapped_column(String(32), nullable=True)
     model_version_after: Mapped[str | None] = mapped_column(String(32), nullable=True)
     post: Mapped[dict | None] = mapped_column(JSON, nullable=True)

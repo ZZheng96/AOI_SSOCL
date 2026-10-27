@@ -1,0 +1,226 @@
+{
+  "task_check": "15组/200维顺序与slice",
+  "tree": "stable",
+  "candidate_mode": "legacy_u27",
+  "harness_check_key": "dimension_order_slice",
+  "pass": true,
+  "evidence": {
+    "trace_errors": [],
+    "candidate_slices": [
+      {
+        "key": "glcm",
+        "slice": [
+          0,
+          4
+        ]
+      },
+      {
+        "key": "selfsim",
+        "slice": [
+          4,
+          9
+        ]
+      },
+      {
+        "key": "edge",
+        "slice": [
+          9,
+          37
+        ]
+      },
+      {
+        "key": "hog",
+        "slice": [
+          37,
+          48
+        ]
+      },
+      {
+        "key": "shape",
+        "slice": [
+          48,
+          59
+        ]
+      },
+      {
+        "key": "gray",
+        "slice": [
+          59,
+          71
+        ]
+      },
+      {
+        "key": "gloss",
+        "slice": [
+          71,
+          75
+        ]
+      },
+      {
+        "key": "color",
+        "slice": [
+          75,
+          111
+        ]
+      },
+      {
+        "key": "fft",
+        "slice": [
+          111,
+          124
+        ]
+      },
+      {
+        "key": "wavelet",
+        "slice": [
+          124,
+          164
+        ]
+      },
+      {
+        "key": "logic",
+        "slice": [
+          164,
+          170
+        ]
+      },
+      {
+        "key": "gabor",
+        "slice": [
+          170,
+          178
+        ]
+      },
+      {
+        "key": "log",
+        "slice": [
+          178,
+          183
+        ]
+      },
+      {
+        "key": "pc",
+        "slice": [
+          183,
+          186
+        ]
+      },
+      {
+        "key": "surf",
+        "slice": [
+          186,
+          200
+        ]
+      }
+    ],
+    "production_slices": [
+      {
+        "key": "glcm",
+        "slice": [
+          0,
+          4
+        ]
+      },
+      {
+        "key": "selfsim",
+        "slice": [
+          4,
+          9
+        ]
+      },
+      {
+        "key": "edge",
+        "slice": [
+          9,
+          37
+        ]
+      },
+      {
+        "key": "hog",
+        "slice": [
+          37,
+          48
+        ]
+      },
+      {
+        "key": "shape",
+        "slice": [
+          48,
+          59
+        ]
+      },
+      {
+        "key": "gray",
+        "slice": [
+          59,
+          71
+        ]
+      },
+      {
+        "key": "gloss",
+        "slice": [
+          71,
+          75
+        ]
+      },
+      {
+        "key": "color",
+        "slice": [
+          75,
+          111
+        ]
+      },
+      {
+        "key": "fft",
+        "slice": [
+          111,
+          124
+        ]
+      },
+      {
+        "key": "wavelet",
+        "slice": [
+          124,
+          164
+        ]
+      },
+      {
+        "key": "logic",
+        "slice": [
+          164,
+          170
+        ]
+      },
+      {
+        "key": "gabor",
+        "slice": [
+          170,
+          178
+        ]
+      },
+      {
+        "key": "log",
+        "slice": [
+          178,
+          183
+        ]
+      },
+      {
+        "key": "pc",
+        "slice": [
+          183,
+          186
+        ]
+      },
+      {
+        "key": "surf",
+        "slice": [
+          186,
+          200
+        ]
+      }
+    ],
+    "slices_equal": true,
+    "dimension": 200
+  }
+}

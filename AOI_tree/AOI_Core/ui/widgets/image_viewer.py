@@ -6,7 +6,7 @@
 """
 from __future__ import annotations
 
-from PySide6.QtCore import QPointF, QRectF, Qt, QThread, Signal
+from PySide6.QtCore import QPointF, QRectF, Qt, QThread, QTimer, Signal
 from PySide6.QtGui import QColor, QMouseEvent, QPainter, QPen, QPixmap, QWheelEvent
 from PySide6.QtWidgets import (
     QDialog,
@@ -24,13 +24,14 @@ LAYER_NAMES = {"original": "原图", "heatmap": "热力图", "overlay": "叠加�
 class _DownloadWorker(QThread):
     """后台下载图片字节。"""
 
-    loaded = Signal(str, bytes)  # layer, bytes
-    failed = Signal(str)
+    loaded = Signal(int, str, bytes)  # generation, layer, bytes
+    failed = Signal(int, str, str)    # generation, layer, message
 
-    def __init__(self, url: str, layer: str, parent=None):
+    def __init__(self, url: str, layer: str, generation: int, parent=None):
         super().__init__(parent)
         self._url = url
         self._layer = layer
+        self._generation = generation
 
     def run(self) -> None:
         try:
@@ -43,9 +44,9 @@ class _DownloadWorker(QThread):
                 headers["X-API-Key"] = key
             r = requests.get(self._url, timeout=20, headers=headers)
             r.raise_for_status()
-            self.loaded.emit(self._layer, r.content)
+            self.loaded.emit(self._generation, self._layer, r.content)
         except Exception as e:  # noqa: BLE001
-            self.failed.emit(f"图片加载失败：{e}")
+            self.failed.emit(self._generation, self._layer, f"图片加载失败：{e}")
 
 
 class ImageViewer(QGraphicsView):
@@ -64,7 +65,11 @@ class ImageViewer(QGraphicsView):
         self._scene.addItem(self._pixmap_item)
 
         self._pixmaps: dict[str, QPixmap | None] = {k: None for k in LAYERS}
-        self._layer = "original"
+        self._layer_ready: dict[str, bool] = {k: False for k in LAYERS}
+        self._generation = 0
+        self._layer = "overlay"  # 默认叠加图（产线帧已落叠加图/热力图）
+        self._fit_pending = False
+        self._user_zoomed = False
         self._box_items: list[QGraphicsRectItem] = []
         self._boxes_visible = True
         self._select_mode = False
@@ -85,16 +90,17 @@ class ImageViewer(QGraphicsView):
     # ── 图像加载 ──────────────────────────────────────────
     def set_image_bytes(self, data: bytes, layer: str = "original") -> None:
         pm = QPixmap()
-        pm.loadFromData(data)
-        if pm.isNull():
+        if not pm.loadFromData(data) or pm.isNull():
             return
         self._pixmaps[layer] = pm
-        if layer == self._layer:
-            self._show_current()
+        self._layer_ready[layer] = True
+        self._show_current()
 
     def set_image_url(self, url: str, layer: str = "original") -> None:
-        worker = _DownloadWorker(url, layer, self)
+        self._layer_ready[layer] = False
+        worker = _DownloadWorker(url, layer, self._generation, self)
         worker.loaded.connect(self._on_loaded)
+        worker.failed.connect(self._on_failed)
         worker.finished.connect(lambda w=worker: self._forget_worker(w))
         self._workers.append(worker)
         worker.start()
@@ -104,11 +110,20 @@ class ImageViewer(QGraphicsView):
         if pm.isNull():
             return
         self._pixmaps[layer] = pm
-        if layer == self._layer:
-            self._show_current()
+        self._layer_ready[layer] = True
+        self._show_current()
 
-    def _on_loaded(self, layer: str, data: bytes) -> None:
-        self.set_image_bytes(data, layer)
+    def _on_loaded(self, generation: int, layer: str, data: bytes) -> None:
+        if generation == self._generation:
+            if layer == self._layer:
+                self._fit_pending = True
+            self.set_image_bytes(data, layer)
+
+    def _on_failed(self, generation: int, layer: str, message: str) -> None:
+        if generation == self._generation:
+            self._layer_ready[layer] = False
+            if layer == self._layer:
+                self._show_current()
 
     def _forget_worker(self, w: QThread) -> None:
         if w in self._workers:
@@ -116,7 +131,11 @@ class ImageViewer(QGraphicsView):
         w.deleteLater()
 
     def clear_images(self) -> None:
+        self._generation += 1
+        self._fit_pending = False
+        self._user_zoomed = False
         self._pixmaps = {k: None for k in LAYERS}
+        self._layer_ready = {k: False for k in LAYERS}
         self._pixmap_item.setPixmap(QPixmap())
         self.clear_boxes()
         self.clear_selection()
@@ -132,18 +151,22 @@ class ImageViewer(QGraphicsView):
         return self._layer
 
     def _show_current(self) -> None:
+        # 图层必须显示自身资源，禁止叠加图/热力图缺失时静默回退原图。
+        # 否则按钮虽选中 overlay，画面却会伪装成原图，掩盖下载或落盘故障。
         pm = self._pixmaps.get(self._layer)
-        if pm is None or pm.isNull():
-            # 当前层无图时回退到原图
-            pm = self._pixmaps.get("original")
-        if pm is None or pm.isNull():
+        if not self._layer_ready.get(self._layer) or pm is None or pm.isNull():
             self._pixmap_item.setPixmap(QPixmap())
             return
         self._pixmap_item.setPixmap(pm)
         self._scene.setSceneRect(QRectF(pm.rect()))
         self._redraw_boxes()
+        if self._fit_pending:
+            self._fit_pending = False
+            if not self._user_zoomed:
+                self.fit_to_view()
 
     def fit_to_view(self) -> None:
+        self._user_zoomed = False
         if not self._pixmap_item.pixmap().isNull():
             self.fitInView(self._pixmap_item, Qt.KeepAspectRatio)
 
@@ -211,6 +234,7 @@ class ImageViewer(QGraphicsView):
         if self._pixmap_item.pixmap().isNull():
             return
         factor = 1.25 if event.angleDelta().y() > 0 else 0.8
+        self._user_zoomed = True
         self.scale(factor, factor)
 
     def keyPressEvent(self, event) -> None:  # noqa: N802
@@ -272,8 +296,29 @@ class ImageViewer(QGraphicsView):
             return
         super().mouseReleaseEvent(event)
 
-    def resizeEvent(self, event) -> None:  # noqa: N802
+    def show_image(self, path_or_url: str | None = None, boxes=None,
+                   base_qpixmap: QPixmap | None = None) -> None:
+        """兼容旧接口：设置原图（本地路径）+ 可选缺陷框。"""
+        self.clear_images()
+        if base_qpixmap is not None and not base_qpixmap.isNull():
+            self._pixmaps["original"] = base_qpixmap
+            self._layer_ready["original"] = True
+        if path_or_url:
+            pm = QPixmap(path_or_url)
+            if not pm.isNull():
+                self._pixmaps["original"] = pm
+                self._layer_ready["original"] = True
+        self._show_current()
+        self.fit_to_view()  # 默认适应窗口
+        if boxes:
+            self.set_boxes(boxes)
+
+    def resizeEvent(self, event) -> None:  # noqa: N802 - Qt 接口
         super().resizeEvent(event)
+        # 延迟到事件循环空闲时再适应：fitInView 同步触发滚动条变化会
+        # 重入 resizeEvent，直接调用可能递归导致栈溢出崩溃
+        if not self._user_zoomed:
+            QTimer.singleShot(0, self.fit_to_view)
 
 
 class ImagePreviewDialog(QDialog):

@@ -8,7 +8,9 @@ from PySide6.QtWidgets import (
     QHBoxLayout,
     QLabel,
     QMainWindow,
+    QMenuBar,
     QMessageBox,
+    QSizePolicy,
     QTabWidget,
     QVBoxLayout,
     QWidget,
@@ -89,12 +91,12 @@ class MainWindow(QMainWindow):
         self.model_page = CoreHubPage()
         self._model_tab_name = "特征学习（AOI_Core）"
 
+        self._tab_detect = self.tabs.addTab(self.detect_page, "算法调试")
+        self._tab_preprocess = self.tabs.addTab(self.preprocess_page, "预处理")
         self._tab_inspect = self.tabs.addTab(self.inspect_page, "自动检测")
         self._tab_history = self.tabs.addTab(self.history_page, "历史")
         self._tab_studio = self.tabs.addTab(self.studio_page, "模板建模")
         self._tab_models = self.tabs.addTab(self.model_page, self._model_tab_name)
-        self._tab_detect = self.tabs.addTab(self.detect_page, "算法调试")
-        self._tab_preprocess = self.tabs.addTab(self.preprocess_page, "预处理")
         body_lay.addWidget(self.tabs, 1)
         shell_lay.addWidget(body, 1)
         self.setCentralWidget(shell)
@@ -109,9 +111,11 @@ class MainWindow(QMainWindow):
         self.tabs.currentChanged.connect(self._on_tab_changed)
 
         self._build_menu()
+        self.statusBar().hide()
+        self.statusBar().messageChanged.connect(self._show_header_status)
         self.statusBar().showMessage("就绪")
-        self._check_adapter_errors()
         self._on_tab_changed(self.tabs.currentIndex())
+        self._check_adapter_errors()
 
     def _build_header(self) -> QWidget:
         header = QFrame()
@@ -127,25 +131,56 @@ class MainWindow(QMainWindow):
         title.setObjectName("BrandTitle")
         lay.addWidget(mark, 0, Qt.AlignmentFlag.AlignVCenter)
         lay.addWidget(title)
-        lay.addStretch(1)
+
+        self.header_menu = QMenuBar(header)
+        self.header_menu.setNativeMenuBar(False)
+        self.header_menu.setStyleSheet("QMenuBar { border: none; padding: 0; }")
+        lay.addWidget(self.header_menu)
 
         self.lbl_header_runtime = QLabel("")
         self.lbl_header_runtime.setObjectName("HeaderMeta")
-        self.lbl_header_tab = QLabel("")
-        self.lbl_header_tab.setObjectName("HeaderMeta")
-        lay.addWidget(self.lbl_header_runtime, 0, Qt.AlignmentFlag.AlignVCenter)
-        sep = QLabel("·")
-        sep.setObjectName("HeaderMeta")
-        lay.addWidget(sep)
-        lay.addWidget(self.lbl_header_tab, 0, Qt.AlignmentFlag.AlignVCenter)
+        self.lbl_header_runtime.setMinimumWidth(120)
+        self.lbl_header_runtime.setSizePolicy(QSizePolicy.Policy.Ignored, QSizePolicy.Policy.Preferred)
+        lay.addWidget(self.lbl_header_runtime, 1, Qt.AlignmentFlag.AlignVCenter)
+
+        self.lbl_header_status = QLabel("就绪")
+        self.lbl_header_status.setObjectName("HeaderMeta")
+        self.lbl_header_status.setMinimumWidth(80)
+        self.lbl_header_status.setMaximumWidth(230)
+        self.lbl_header_status.setSizePolicy(QSizePolicy.Policy.Ignored, QSizePolicy.Policy.Preferred)
+        lay.addWidget(self.lbl_header_status, 1, Qt.AlignmentFlag.AlignVCenter)
         return header
+
+    def _show_header_status(self, message: str) -> None:
+        text = message or "就绪"
+        self.lbl_header_status.setToolTip(text)
+        self.lbl_header_status.setText(
+            self.lbl_header_status.fontMetrics().elidedText(
+                text, Qt.TextElideMode.ElideRight, self.lbl_header_status.width()
+            )
+        )
+
+    def resizeEvent(self, event) -> None:
+        super().resizeEvent(event)
+        if hasattr(self, "lbl_header_status"):
+            self._show_header_status(self.lbl_header_status.toolTip())
+            text = self.lbl_header_runtime.toolTip()
+            self.lbl_header_runtime.setText(
+                self.lbl_header_runtime.fontMetrics().elidedText(
+                    text, Qt.TextElideMode.ElideMiddle, self.lbl_header_runtime.width()
+                )
+            )
 
     def _refresh_header_runtime(self) -> None:
         snap = self.inspect_page.header_snapshot()
         running = "检测中" if snap["running"] else "就绪"
         ver = f" v{snap['version']}" if snap.get("version") is not None else ""
+        text = f"{snap['template']}{ver}  ·  {snap['index']}/{snap['total']}  ·  直通率 {snap['yield']}  ·  {running}"
+        self.lbl_header_runtime.setToolTip(text)
         self.lbl_header_runtime.setText(
-            f"{snap['template']}{ver}  ·  {snap['index']}/{snap['total']}  ·  直通率 {snap['yield']}  ·  {running}"
+            self.lbl_header_runtime.fontMetrics().elidedText(
+                text, Qt.TextElideMode.ElideMiddle, self.lbl_header_runtime.width()
+            )
         )
 
     def _on_tab_changed(self, index: int) -> None:
@@ -162,12 +197,12 @@ class MainWindow(QMainWindow):
                 self.model_page.ensure_built()
             except Exception as exc:  # noqa: BLE001
                 self.statusBar().showMessage(f"AOI_Core 页面加载失败：{exc}", 8000)
-        self.lbl_header_tab.setText(names.get(index, ""))
+                return
         self._refresh_header_runtime()
         self.statusBar().showMessage(names.get(index, "就绪"))
 
     def _build_menu(self) -> None:
-        menu = self.menuBar().addMenu("设置")
+        menu = self.header_menu.addMenu("设置")
         act_settings = QAction("系统设置（尺寸门禁 / 输出目录）…", self)
         act_settings.triggered.connect(self._open_settings)
         menu.addAction(act_settings)
@@ -182,7 +217,7 @@ class MainWindow(QMainWindow):
         act_errs.triggered.connect(self._show_adapter_errors)
         menu.addAction(act_errs)
 
-        tpl_menu = self.menuBar().addMenu("模板")
+        tpl_menu = self.header_menu.addMenu("模板")
         act_migrate = QAction("导入旧标定 → 生成模板草稿…", self)
         act_migrate.triggered.connect(self._migrate_legacy)
         tpl_menu.addAction(act_migrate)

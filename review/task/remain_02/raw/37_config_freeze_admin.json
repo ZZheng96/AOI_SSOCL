@@ -1,0 +1,19 @@
+{
+  "name": "config_freeze_admin",
+  "method": "POST",
+  "path": "/api/system/config",
+  "role": "admin",
+  "request_body": {
+    "governance_decisions.gt_threshold_frozen": true
+  },
+  "status_code": 200,
+  "response": {
+    "applied": [
+      "governance_decisions.gt_threshold_frozen",
+      "governance_decisions.gt_threshold_frozen_at"
+    ],
+    "rejected": [],
+    "errors": {}
+  },
+  "note": ""
+}

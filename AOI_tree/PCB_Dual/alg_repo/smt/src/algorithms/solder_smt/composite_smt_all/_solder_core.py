@@ -831,6 +831,10 @@ def judge_excess(solder_mask, pad_rects, group_rects, img_shape, p, diff_mask_fu
     for (px, py, pw, ph) in pad_rects:
         cv2.rectangle(pad_mask, (int(px), int(py)), (int(px + pw), int(py + ph)), 255, -1)
 
+    if p.get("_diagnostics") is not None:
+        ring = group_mask.copy()
+        ring[pad_mask > 0] = 0
+        p["_diagnostics"]["ring_mask"] = ring
     excess_mask = cv2.bitwise_and(solder_mask, group_mask)
     excess_mask[pad_mask > 0] = 0
 
@@ -1297,6 +1301,8 @@ def judge_cold_solder(img, solder_mask, pad_rects, img_shape, p,
                 rim_mask = _rect_mask(rim_rect[0], rim_rect[1], rim_rect[2], rim_rect[3], img_shape)
                 toe_mask = _rect_mask(toe_rect[0], toe_rect[1], toe_rect[2], toe_rect[3], img_shape)
                 detect_area_mask = cv2.subtract(rim_mask, toe_mask)
+                if p.get("_diagnostics") is not None:
+                    p["_diagnostics"].setdefault("rim_toe", {})[i] = detect_area_mask
                 detect_area_count = int(np.count_nonzero(detect_area_mask))
                 if detect_area_count > 0:
                     solder_in_detect = cv2.bitwise_and(solder_for_cold, detect_area_mask)
@@ -1318,6 +1324,7 @@ def judge_cold_solder(img, solder_mask, pad_rects, img_shape, p,
         # ── 批量crack检测 ──
         # C++批量检测对小数量pad(<=3)有pybind11开销，用Python更快
         crack_results = {}  # pad_index -> bool
+        crack_lines = {}
         if crack_needed_rois:
             # C++批量检测对小数量pad有pybind11开销，阈值可配
             crack_cpp_min_pads = (p or {}).get("crack_cpp_min_pads", 4)
@@ -1336,8 +1343,16 @@ def judge_cold_solder(img, solder_mask, pad_rects, img_shape, p,
                     x2c = min(gray.shape[1], rx + rw); y2c = min(gray.shape[0], ry + rh)
                     gray_roi = gray[y1c:y2c, x1c:x2c]
                     pad_mask_roi = np.full((y2c-y1c, x2c-x1c), 255, dtype=np.uint8)
-                    crack_results[pad_i], _ = _detect_crack_hough(gray_roi, pad_mask_roi, p)
+                    crack_results[pad_i], lines = _detect_crack_hough(gray_roi, pad_mask_roi, p)
+                    if p.get("_diagnostics") is not None:
+                        crack_lines[pad_i] = {"lines": lines, "roi_origin": [x1c, y1c]}
 
+        if p.get("_diagnostics") is not None:
+            p["_diagnostics"]["crack"] = {
+                i: {"executed": i in crack_results, "detected": crack_results.get(i),
+                    "hough": crack_lines.get(i, "不可用：未执行或C++批量接口不返回线段"),
+                    "unavailable_reason": "规则1提前判定/缺输入/ROI不足" if i not in crack_results else ""}
+                for i in range(len(pad_rects))}
         for i, (x, y, w, h) in enumerate(pad_rects):
             # 使用预计算结果
             rule1_ng = pre_rule1_ng[i]

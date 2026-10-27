@@ -112,8 +112,8 @@ class WorkOrderCreateDialog(QDialog):
         self.setMinimumWidth(520)
         lay = QVBoxLayout(self)
 
-        tip = QLabel("工单 = 一条产线质检任务：挂接数据源（数据条件由数据源"
-                     "属性自动聚合），统计与检测都以工单为基础")
+        tip = QLabel("工单 = 一条产线质检任务：必须挂接至少一个已建立的数据源；"
+                     "数据条件由数据源属性和实际数据自动聚合，统计与检测都以工单为基础")
         tip.setProperty("subtext", True)
         tip.setWordWrap(True)
         lay.addWidget(tip)

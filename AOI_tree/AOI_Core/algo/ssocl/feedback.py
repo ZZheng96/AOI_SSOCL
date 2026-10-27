@@ -1,10 +1,10 @@
 """M3 三类反馈 handler（§7.1）：在线 SSOCL 闭环编排层
 
 - 判对：正常 → 回流评估（成簇入库 + CDF 重估）；缺陷 → 入缺陷样例库
-- 判错：难例入样例库 + 难例队列（≥10 触发批量级路由微调）+ 归因决策树
+- 判错：默认进入待确认难例队列；显式关闭 defer_wrong_feedback 才学习确认标签
 - 无反馈：高置信/灰区分类 → 主动选样队列（§7.5）
 
-每次更新过回归门控（锚定集 fused 分布漂移超限 → 回滚，§7.2/§7.6），全程留痕。
+记忆、权重及阈值更新各走对应门控；锚定漂移、FPR 或反馈 LOO 判据拒绝则回滚，留痕。
 """
 import contextlib
 import time
@@ -29,33 +29,186 @@ class RegressGate:
         self.base_mean = None
         self.base_std = None
         self.history = []
+        # AC-026 更新准入审计：每轮更新一条（快照 id + 前后锚定 FPR/灰区 + 反馈侧指标）
+        self.base_scores = []
+        self.audit = []
+        self._seq = 0
+        self.context_fn = None         # handler 注入：返回反馈侧缓存指标（零前向）
+        # AC-036 固定初始尾部 + 累计上限 + 连续违规冻结（recenter 不改 init_*）
+        self.init_mean = None
+        self.init_std = None
+        self.init_p95 = None
+        self.init_tail = None          # 初始锚定集自身超 p95 比例（小样本时≠0.05）
+        self.cum_cap = 4.0             # 相对初始基准的累计上行漂移上限（init_std 单位）
+        self.tail_cap = 0.10           # 超初始 p95 比例相对 init_tail 的增量上限
+        self.freeze_after = 3          # 连续违规次数达到即冻结
+        self.violations = 0
+        self.frozen = False
+
+    # 持久化字段（persist 通过 getattr 读写，旧快照缺失时取默认）
+    PERSIST_FIELDS = ("init_mean", "init_std", "init_p95", "init_tail", "cum_cap",
+                      "tail_cap", "freeze_after", "violations", "frozen")
+
+    def _set_init(self, scores):
+        a = np.asarray(scores, float)
+        self.init_mean = float(a.mean())
+        self.init_std = float(a.std()) + 1e-9
+        self.init_p95 = float(np.percentile(a, 95))
+        self.init_tail = float((a > self.init_p95).mean())
 
     def setup(self, pipeline, anchor_paths):
         """锚定集（train/good 抽样，已由 enable_ssocl 提取特征）算基准分布。
         红线 3：锚定集只用正常图。"""
         self.anchor_paths = list(anchor_paths)
         scores = [pipeline._predict_final_fused(p) for p in self.anchor_paths]
+        self.base_scores = [float(s) for s in scores]
         self.base_mean = float(np.mean(scores))
         self.base_std = float(np.std(scores)) + 1e-9
+        self._set_init(scores)
         return self
+
+    def cumulative(self, scores):
+        """相对固定初始基准的累计指标：(cum_drift 有符号, tail_rate)。旧快照无 init → (0, None)。"""
+        if getattr(self, "init_mean", None) is None or not len(scores):
+            return 0.0, None
+        a = np.asarray(scores, float)
+        return (float((a.mean() - self.init_mean) / self.init_std),
+                float((a > self.init_p95).mean()))
 
     def check(self, pipeline, tag="update"):
         """更新后漂移检查：|new_mean - base_mean| > tol 判定退化。
-        返回 (ok, drift, new_mean)；ok=False 时调用方回滚。"""
-        scores = [pipeline._predict_final_fused(p) for p in self.anchor_paths]
+        返回 (ok, drift, new_mean)；ok=False 时调用方回滚。
+        AC-036：冻结或累计/尾部越限时把 drift 抬到 >tol 且 new_mean 置上行，
+        使所有调用点（含定向门控）统一走回滚分支。"""
+        scores = self._anchor_scores(pipeline, remember=True)
         new_mean = float(np.mean(scores))
         drift = abs(new_mean - self.base_mean) / self.base_std
+        cum, tail = self.cumulative(scores)
+        # 锚定集全为正常图：上行=误报风险累积；下行是 recenter 的意图方向，由单步门控约束
+        tail0 = getattr(self, "init_tail", None) or 0.0
+        cum_bad = (cum > getattr(self, "cum_cap", 4.0)
+                   or (tail is not None and tail - tail0 > getattr(self, "tail_cap", 0.10)))
+        frozen = bool(getattr(self, "frozen", False))
+        if frozen or cum_bad:
+            drift = max(drift, self.tol * 2 + 1.0)
+            new_mean = max(new_mean, self.base_mean)
         ok = drift <= self.tol
+        self._track(ok)
         self.history.append({"t": time.time(), "tag": tag, "drift": round(drift, 4),
-                             "new_mean": round(new_mean, 4), "ok": ok})
+                             "new_mean": round(new_mean, 4), "ok": ok,
+                             "cum_drift": round(cum, 4),
+                             "tail_rate": None if tail is None else round(tail, 4),
+                             "frozen": bool(getattr(self, "frozen", False))})
+        self.record_audit(pipeline, tag, scores, drift,
+                          extra={"cum_drift": round(cum, 4), "tail_rate": tail,
+                                 "cum_violation": bool(cum_bad), "frozen": frozen})
         return ok, drift, new_mean
+
+    # §78 check→recenter 锚定分复用（非持久化；旧 pickle 对象走类默认值）
+    _pending = None
+    reuse_stats = None
+
+    def _anchor_scores(self, pipeline, remember):
+        """锚定集 fused（逐张 = _predict_final_fused）。pipeline 提供 §78 门控接口时
+        额外留存 (id, 状态指纹, 重放信息) 供紧随的 recenter 复用；否则照旧逐张算。"""
+        self._pending = None
+        pass_fn = getattr(type(pipeline), "_gate_anchor_pass", None)
+        tok_fn = getattr(type(pipeline), "_gate_state_token", None)
+        # 实例级覆盖 _predict_final_fused（测试桩/诊断注入）时尊重覆盖，走原逐张路径
+        overridden = "_predict_final_fused" in getattr(pipeline, "__dict__", {})
+        if not (remember and callable(pass_fn) and callable(tok_fn)) or overridden:
+            return [pipeline._predict_final_fused(p) for p in self.anchor_paths]
+        replay = pipeline._gate_anchor_pass(self.anchor_paths)
+        self._pending = (id(pipeline), list(self.anchor_paths),
+                         pipeline._gate_state_token(), replay)
+        return [r[0] for r in replay]
+
+    def _reuse_pending(self, pipeline):
+        """单次消费 check 留存：同一 pipeline、同一锚定集、状态指纹一致 → 重放副作用
+        并返回分数；任一不符返回 None（调用方重算）。"""
+        pend, self._pending = self._pending, None
+        st = self.reuse_stats
+        if st is None:
+            st = self.reuse_stats = {"reused": 0, "recomputed": 0, "mismatch": 0}
+        if pend is None:
+            st["recomputed"] += 1
+            return None
+        pid, paths, token, replay = pend
+        if (pid != id(pipeline) or paths != list(self.anchor_paths)
+                or token != pipeline._gate_state_token()):
+            st["mismatch"] += 1
+            st["recomputed"] += 1
+            return None
+        pipeline._gate_anchor_replay(replay)
+        st["reused"] += 1
+        return [r[0] for r in replay]
+
+    def _track(self, ok):
+        """连续违规计数；达 freeze_after 冻结，需 unfreeze 人工恢复。"""
+        if ok:
+            self.violations = 0
+            return
+        self.violations = int(getattr(self, "violations", 0)) + 1
+        if self.violations >= int(getattr(self, "freeze_after", 3)):
+            self.frozen = True
+
+    def unfreeze(self, pipeline=None, rebase=False):
+        """人工恢复：清违规计数；rebase=True 时以当前分布重置初始尾部（须经审批）。"""
+        self.frozen = False
+        self.violations = 0
+        if rebase and pipeline is not None and self.anchor_paths:
+            self._set_init([pipeline._predict_final_fused(p) for p in self.anchor_paths])
+
+    def status(self):
+        return {k: getattr(self, k, None) for k in self.PERSIST_FIELDS}
+
+    def record_audit(self, pipeline, tag, after_scores, drift, extra=None):
+        """复用本次门控已算的锚定分（零额外前向）生成审计条目。
+        anchor_fpr / gray_rate 以当前 τ 计；锚定集是 train/good 抽样（非反馈流），
+        作为"独立于本轮更新样本"的正常参照。最终 accepted/rolled_back 由门控
+        调用点经 FeedbackHandler._audit_decide 显式写入。"""
+        self._seq += 1
+        dec = getattr(pipeline, "decider", None)
+        th = float(getattr(dec, "tau_high", np.nan)) if dec is not None else np.nan
+        tg = float(getattr(dec, "tau_gray", np.nan)) if dec is not None else np.nan
+
+        def _rates(sc):
+            a = np.asarray(sc, float)
+            if a.size == 0 or not np.isfinite(th):
+                return None, None
+            fpr = float((a >= th).mean())
+            gray = float(((a >= tg) & (a < th)).mean()) if np.isfinite(tg) else None
+            return round(fpr, 4), (None if gray is None else round(gray, 4))
+        fb, gb = _rates(self.base_scores)
+        fa, ga = _rates(after_scores)
+        e = {"snapshot_id": f"upd-{self._seq:05d}", "t": time.time(), "op": tag,
+             "drift": round(float(drift), 4), "gate_ok": bool(drift <= self.tol),
+             "n_anchor": len(after_scores),
+             "anchor_fpr": {"before": fb, "after": fa},
+             "anchor_gray_rate": {"before": gb, "after": ga}}
+        if self.context_fn is not None:
+            try:
+                e.update(self.context_fn())
+            except Exception as ex:     # 审计不得阻断更新路径
+                e["context_error"] = str(ex)
+        if extra:
+            e.update(extra)
+        self.audit.append(e)
+        if len(self.audit) > 500:
+            self.audit = self.audit[-500:]
+        return e
 
     def recenter(self, pipeline):
         """基准同步（2026-08-30）：有意图的分布修正（如虚高 CDF 重估，意图方向
         = 正常锚 fused 下移）通过定向门控后，门控基准跟随新分布——否则基准
         停在旧分布，后续所有门控（reflow/权重写回/阈值重估）以旧基准测量会
-        连锁误判漂移，学习通道全部锁死。"""
-        scores = [pipeline._predict_final_fused(p) for p in self.anchor_paths]
+        连锁误判漂移，学习通道全部锁死。
+        §78：紧随 check 且状态指纹未变时复用 check 的锚定分（重放其缺陷率窗/追溯
+        副作用），省一整轮锚定前向；指纹失配/无 check 留存则照旧重算（fail-closed）。"""
+        scores = self._reuse_pending(pipeline)
+        if scores is None:
+            scores = self._anchor_scores(pipeline, remember=False)
+        self.base_scores = [float(s) for s in scores]
         self.base_mean = float(np.mean(scores))
         self.base_std = float(np.std(scores)) + 1e-9
         return self.base_mean
@@ -175,6 +328,10 @@ class FeedbackHandler:
 
     def __init__(self, pipeline, cfg):
         self.p = pipeline
+        from copy import deepcopy
+        self._learning_cfg = deepcopy(cfg)
+        self._candidate_torch_gen = torch.Generator(device="cpu")
+        self._candidate_torch_gen.manual_seed(int(pipeline.cfg.get("seed", 42)))
         b = cfg.get("banks", {})
         self.normal_bank = NormalBank(
             core_max=b.get("core_max", 512), ext_max=b.get("ext_max", 256),
@@ -187,6 +344,8 @@ class FeedbackHandler:
         g = cfg.get("gate", {})
         self.gate = RegressGate(tol=g.get("tol", 0.05),
                                 anchor_size=g.get("anchor_size", 20))
+        self.gate.context_fn = self._audit_context
+        self._sem_bank_base = None       # setup 时 sem bank 行数（G1 kNN 耗时比估计基准）
         r = cfg.get("router_finetune", {})
         self.rt_trigger = r.get("trigger", 10)
         self.rt_lr = r.get("lr", 1e-4)
@@ -222,7 +381,16 @@ class FeedbackHandler:
                 tot = sum(init_w.values())
                 if tot > 0:
                     init_w = {s: v / tot for s, v in init_w.items()}
+                    w_before = dict(getattr(self.p, "weights", {}) or {})
                     self.p.weights = dict(init_w)     # 首次 feedback 前直接应用
+                    # AC-026：先验写入亦留审计（setup 前无锚定基准，门控不适用）
+                    self.gate._seq += 1
+                    self.gate.audit.append({
+                        "snapshot_id": f"upd-{self.gate._seq:05d}", "t": time.time(),
+                        "op": "weight_prior", "gate": "not_applicable_pre_setup",
+                        "source": "fit 协议内先验（cfg.weight_prior）",
+                        "weights_before": {k: round(float(v), 4) for k, v in w_before.items()},
+                        "weights_after": {k: round(float(v), 4) for k, v in init_w.items()}})
                     print(f"[ssocl] weight_prior 应用: "
                           + " ".join(f"{k}={v:.3f}" for k, v in init_w.items()), flush=True)
         self.weight_learner = SlotWeightLearner(
@@ -400,12 +568,12 @@ class FeedbackHandler:
             cfg.get("height_recal_min_defect_feedback", 10))
         # ---- 2026-10-05 SSOCL 根因修复（报告 12.9）----
         # 根因：人工确认正常（有真值）被送入为无标签伪回流设计的成簇门
-        # （reflow_candidate：同一 0.01 相似度桶命中 3 次 / s<0.75 拒），域偏移的
+        # （reflow_candidate：独立图间 patch 相似成簇 / s<0.75 拒），域偏移的
         # test 正常几乎从不 accepted → sem 记忆与 CDF 从未吸收新域；阈值重估需攒
         # 20 条正常；权重写回在反向排序时永久拒绝。三条学习通道全部静默。
         # 修复：
-        #  1) labeled_reflow：有真值正常直接并入 sem/CDF，门控改为"已反馈样本
-        #     pairwise AUC 不下降 + 锚定集上行不超 tol"；
+        #  1) labeled_reflow：有真值正常直接并入 sem/CDF，门控为缺陷反馈
+        #     LOO 召回不下降 + 锚定集上行不超 tol；
         #  2) pair_thresh：已反馈正常/缺陷双侧（当前模型重打分）选平衡准确率
         #     最优阈值，每侧 ≥ pair_min_each 即可；
         #  3) 权重写回以已反馈样本 pairwise AUC 净改善为判据（允许修正反向排序）。
@@ -421,6 +589,16 @@ class FeedbackHandler:
         self.pair_hi_margin_min = float(sf.get("pair_hi_margin_min", 0.05))
         # 上调阈值（降召回方向）候选离最近反馈分的最小间隔
         self.pair_up_margin_min = float(sf.get("pair_up_margin_min", 0.015))
+        # AC-030：无反馈默认只缓存/选样；自动回流须显式开启，且同时满足
+        # 高置信正常（fused ≤ max_fused）+ 域内（open_score ≤ max_open）+
+        # 候选间成簇一致（reflow_candidate accepted）+ 熔断未触发 + 锚定门控
+        ua = cfg.get("unlabeled_reflow", {}) or {}
+        self.unlabeled_reflow = bool(ua.get("enabled", False))
+        self.ua_max_fused = float(ua.get("max_fused", 0.2))
+        self.ua_max_open = float(ua.get("max_open", 0.5))
+        # AC-031：缺陷入库后独立锚定 FPR 上升容忍（默认 0=任何上升即回滚）
+        self.defect_fpr_tol = float((cfg.get("defect_gate", {}) or {}).get("fpr_tol", 0.0))
+        self.defect_scope_min = int((cfg.get("incubate", {}) or {}).get("min_samples", 8))
         # I5（2026-10-06）下调方向锚定增量护栏：区间内小幅下调（移动量 <
         # pair_struct_down_move）不得让 train/good 锚定误检率超过当前阈值
         # （反馈样本覆盖不到的 holdout 正常误检风险——screw s42/s1 R6 实测
@@ -480,19 +658,112 @@ class FeedbackHandler:
         if anchor_paths is None:
             anchor_paths = self.gate.anchor_paths
         self.gate.setup(self.p, anchor_paths or train_normal_paths)
+        self._sem_bank_base = self._sem_bank_rows()
         self.normal_bank.seed_core(self.p._anchor_feats(), rng=rng)
         return self
 
+    # ---- AC-026 更新准入审计 ----
+    def _sem_bank_rows(self):
+        slot = getattr(self.p, "slots", {}).get("sem")
+        bank = getattr(slot, "bank", None)
+        return None if bank is None else int(bank.shape[0])
+
+    def _audit_context(self):
+        """审计条目的反馈侧指标（零前向）：复用 _recent_fb 缓存槽位分 × 当前权重。
+        缓存分来自反馈当时的模型状态，更新后可能已过期——字段名带 _cached 明示。
+        G1 估计：sem kNN 耗时近似与 bank 行数线性，取当前/setup 行数比。"""
+        dec = getattr(self.p, "decider", None)
+        th = float(getattr(dec, "tau_high", np.nan)) if dec is not None else np.nan
+        w = getattr(self.p, "weights", None) or {}
+        ctx = {"n_recent_fb": len(self._recent_fb)}
+        if self._recent_fb and w and np.isfinite(th):
+            def cached(row):
+                ss, lab = row[:2]
+                conf = row[2] if len(row) > 2 else {}
+                return float(fuse(ss, w, conf)), lab
+            scored = [cached(row) for row in self._recent_fb]
+            pos = [s for s, lab in scored if lab == 1]
+            neg = [s for s, lab in scored if lab != 1]
+            ctx["recall_cached"] = (round(float(np.mean([s >= th for s in pos])), 4)
+                                    if pos else None)
+            ctx["ood_fpr_cached"] = (round(float(np.mean([s >= th for s in neg])), 4)
+                                     if neg else None)
+        rows = self._sem_bank_rows()
+        base = self._sem_bank_base
+        ctx["g1_estimate"] = {
+            "sem_bank_rows": rows, "sem_bank_rows_setup": base,
+            "knn_cost_ratio": (round(rows / base, 3) if rows and base else None),
+            "method": "sem kNN 耗时∝bank 行数（估算，非实测）"}
+        return ctx
+
+    def _audit_weight(self, scores, drift, old_w, new_w, auc=None):
+        """权重写回门控审计（复用已算锚定分；门控 tol 为 weight_gate_tol）。"""
+        extra = {"gate_tol": self.weight_gate_tol,
+                 "gate_ok": bool(drift <= self.weight_gate_tol),
+                 "weights_before": {k: round(float(v), 4) for k, v in old_w.items()},
+                 "weights_after": {k: round(float(v), 4) for k, v in new_w.items()}}
+        if auc is not None:
+            extra["feedback_pair_auc"] = auc
+        self.gate.record_audit(self.p, "weight_learn", scores, drift, extra=extra)
+
+    def _audit_decide(self, decision, reason=None):
+        """门控后由调用方显式落定本轮结局（accepted/rolled_back）。
+        不按时间窗匹配 rollback_log：门控前否决（reject_pairwise 等）不产生审计
+        条目，时间窗匹配会把它们误挂到上一条同族审计上。"""
+        if decision != "accepted":
+            self.gate._pending = None      # §78：回滚后 check 留存作废（不依赖指纹判失配）
+        if self.gate.audit:
+            self.gate.audit[-1]["decision"] = decision
+            if reason:
+                self.gate.audit[-1]["rollback_reason"] = reason
+
+    def update_audit_report(self):
+        """审计条目汇总：decision 由门控调用点显式写入；未写入的
+        （外部直接调 gate.check）按 gate_ok 归 accepted/rejected。
+        rollback_log 结构不变，门控前否决只在 rollback_log 中。"""
+        out = []
+        for e in self.gate.audit:
+            if e.get("gate") == "not_applicable_pre_setup":
+                status = "applied_prior"
+            else:
+                status = e.get("decision") or (
+                    "accepted" if e.get("gate_ok", True) else "rejected")
+            out.append({**e, "status": status})
+        n = {k: sum(o["status"] == k for o in out)
+             for k in ("accepted", "rolled_back", "rejected", "applied_prior")}
+        return {"entries": out, "counts": n,
+                "pre_gate_rejects": sum(1 for r in self.rollback_log
+                                        if str(r.get("reason", "")).startswith("reject_"))}
+
+    from .learning_state import candidate_random
+
     # ---- 三类反馈（§7.1）----
-    def feedback(self, path, verdict, label=None, feats=None, box=None):
+    @candidate_random
+    def feedback(self, path, verdict, label=None, feats=None, box=None, defect_type=None):
         """verdict: "correct"|"wrong"|"none"；label: 0 正常 / 1 缺陷（判对/判错时已知）。
         box（U64，2026-08-18）：用户在线提供的缺陷框标注——归一化 [x0,y0,x1,y1]
         或 [框1, 框2, ...]（list of boxes，一图多框）。label==1 且 box 提供时只把
         框内 patch 特征入缺陷样例库（add_box，信噪比更高）；否则走原 add 整图。
         信息层次策略（U64 登记）：框 = 在线反馈路径的"有标注"层次信息（模拟操作员
         画框反馈），诚实记录 entry["box"]；fit/初始化不用 test，合法。
+        defect_type（2026-10-15）：缺陷类型，写入缺陷样例血缘供按类型孵育；None 归 "_any"。
         返回处理记录（供学习曲线/追溯）。"""
+        from algo.ssocl.candidate_budget import charge_image
+        charge_image(path)
+        self._fb_defect_type = defect_type             # 本次反馈的类型（_add_defect_sample 读）
         item = self.p._get_item(path, feats)
+        from ..common.image_identity import image_signature, near_duplicate
+        signature = image_signature(item["img"]) if item.get("img") is not None else None
+        seen = getattr(self.normal_bank, "feedback_identities", [])
+        from .banks import _feat_hash, _norm_patch
+        feat_hash = _feat_hash(_norm_patch(item["feats"])) if item.get("feats") is not None else None
+        if label is not None and verdict != "none" and any(
+                (signature is not None and near_duplicate(signature, s.get("signature")))
+                or (feat_hash is not None and feat_hash == s.get("feat_hash"))
+                or (signature is None and feat_hash is None and s.get("path") == path)
+                for s in seen):
+            return {"path": path, "action": "duplicate_feedback_skipped",
+                    "reason": "near_duplicate_image", "route": self.route_of(verdict, label)}
         rec = self.p._record(item)                     # 打分/校准/基础融合（拦截前）
         # U69：决策口径对齐 predict——拦截加分后 fused 才是决策实际分数
         #（_finalize 同款：defect_bank 相对相似加分 + head_mgr boost，min cap 1.0；
@@ -500,7 +771,7 @@ class FeedbackHandler:
         # 均须对齐决策实际口径）
         # U70：no_cap_fused 时同样不 cap（与 _finalize 同口径，防反馈侧与 predict
         # 侧 fused 分布不一致导致阈值重估失真）
-        if not self.p._ablate_intercept:
+        if not self.p._ablate_intercept and item.get("feats") is not None:
             boost = self.defect_bank.intercept_score(
                 item["feats"], normal_bank=self.normal_bank)
             if self.p.head_mgr is not None:
@@ -512,9 +783,10 @@ class FeedbackHandler:
             rec["fused"] = float(fused_boosted)
         rec["decision"] = self.p.decider.decide(rec["fused"])
         # 2026-10-05 根因修复（自匹配泄漏）：样本被吸收进 sem/defect bank 之前的
-        # 样本外分数 = prequential 分数；阈值/权重判据只用它（重打分会自匹配虚高）
+        # 样本外分数 = prequential 分数；作为 preq 模式记录，默认判据用当前状态 LOO。
         if label is not None and item.get("feats") is not None:
             self._preq.append({"ss": dict(rec["slot_scores"]),
+                               "confidence": dict(rec.get("slot_confidences", {})),
                                "boost": float(rec.get("boost", 0.0)),
                                "label": int(label)})
             if len(self._preq) > self.preq_max:
@@ -523,7 +795,9 @@ class FeedbackHandler:
         entry = {"t": time.time(), "path": path, "verdict": verdict,
                  "label": lab, "fused": round(rec["fused"], 4),
                  "decision": rec["decision"], "slots": rec["slot_scores"],
-                 "box": box is not None}
+                 "slot_confidences": dict(rec.get("slot_confidences", {})),
+                 "box": box is not None,
+                 "route": self.route_of(verdict, label)}   # AC-030：四类分路留痕
         if verdict == "wrong" and self.defer_wrong_feedback:
             self.difficult.append({"path": path, "slots": rec["slot_scores"],
                                    "deferred": True, "label": label})
@@ -562,21 +836,38 @@ class FeedbackHandler:
                 else:
                     entry.update(self._reflow(item, "correct_normal", labeled=True))
             else:                                      # 缺陷判对 → 入样例库
-                self._add_defect_sample(item, box, "correct_defect")
+                entry.update(self._defect_scope(
+                    self._add_defect_sample(item, box, "correct_defect")))
                 self.stats["defect_add"] += 1
-                entry["action"] = "defect_sample_add"
+                entry["action"] = ("defect_sample_add" if item.get("feats") is not None
+                                    else "defect_learning_not_supported")
         elif verdict == "wrong":
             if label == 0:                             # 误检：正常→异常
                 entry.update(self._reflow(item, "false_positive", labeled=True))
-                entry["attribution"] = attribute_failure(
-                    rec, self.p, mode="fp", item=item)
+                if item.get("feats") is not None:
+                    entry["attribution"] = attribute_failure(
+                        rec, self.p, mode="fp", item=item)
+                else:
+                    entry["attribution"] = {
+                        "mode": "fp",
+                        "verdict": "traditional_only",
+                        "next": "跳过 patch bank 归因",
+                    }
             else:                                      # 漏检：缺陷→正常
-                self._add_defect_sample(item, box, "false_negative")
+                entry.update(self._defect_scope(
+                    self._add_defect_sample(item, box, "false_negative")))
                 self.difficult.append({"path": path, "slots": rec["slot_scores"]})
                 self.stats["defect_add"] += 1
                 entry["action"] = "difficult_queued"
-                entry["attribution"] = attribute_failure(
-                    rec, self.p, mode="fn", item=item)
+                if item.get("feats") is not None:
+                    entry["attribution"] = attribute_failure(
+                        rec, self.p, mode="fn", item=item)
+                else:
+                    entry["attribution"] = {
+                        "mode": "fn",
+                        "verdict": "traditional_only",
+                        "next": "跳过 patch bank 归因",
+                    }
                 self._maybe_finetune_router()
         elif label is not None:                  # verdict=none 但真值已知（review
             # 灰区复核等"以人工 label 为准"的反馈，map_verdict_label 设计意图）：
@@ -585,9 +876,11 @@ class FeedbackHandler:
             if label == 0:                             # 人工确认正常 → 回流评估
                 entry.update(self._reflow(item, "review_normal", labeled=True))
             else:                                      # 人工确认缺陷 → 入样例库
-                self._add_defect_sample(item, box, "review_defect")
+                entry.update(self._defect_scope(
+                    self._add_defect_sample(item, box, "review_defect")))
                 self.stats["defect_add"] += 1
-                entry["action"] = "defect_sample_add"
+                entry["action"] = ("defect_sample_add" if item.get("feats") is not None
+                                    else "defect_learning_not_supported")
         else:                                          # 无反馈：置信门槛分流
             entry.update(self._unlabeled(item, rec))
         self.feedback_log.append(entry)
@@ -610,7 +903,8 @@ class FeedbackHandler:
             self._n_labeled_fb += 1
             # U109：缓存最近带真值反馈样本的槽位校准分（权重写回 margin 判据用，
             # 零额外前向——只用融合权重重新加权缓存分）
-            self._recent_fb.append((dict(rec["slot_scores"]), label))
+            self._recent_fb.append((dict(rec["slot_scores"]), label,
+                                    dict(rec.get("slot_confidences", {}))))
             if len(self._recent_fb) > 12:
                 self._recent_fb = self._recent_fb[-12:]
             # U62（实施 2 原料）：收集确认正常（label=0）反馈样本的各槽位
@@ -662,6 +956,9 @@ class FeedbackHandler:
                 self.defect_bank, self.p._anchor_feats())
             if head is not None:
                 entry["incubated_head"] = True
+        if label is not None and verdict != "none":
+            self.normal_bank.feedback_identities = seen + [
+                {"path": path, "signature": signature, "feat_hash": feat_hash}]
         return entry
 
     # ---- 内部动作 ----
@@ -669,46 +966,99 @@ class FeedbackHandler:
         """U64：缺陷样本入缺陷样例库——有框走 add_box（框内 patch，更纯净），
         无框走原 add 整图。box 支持单框 [x0,y0,x1,y1] 或 list of boxes（逐框
         add_box，一图多框全利用）。entry 留痕 box/n_boxes。"""
+        if item.get("feats") is None:
+            return False
         self.defect_bank.snapshot(f"defect_{source}")
+        iid = item.get("path")                         # AC-028/032：独立图血缘
+        dt = getattr(self, "_fb_defect_type", None)    # 按类型孵育：类型血缘
         if box is None:
             if self.intercept_crop and "blob" in self.p.slots \
                     and item.get("tile_imgs") is not None:
                 patch = self._blob_top_patches(item)   # U121：伪框化（缺陷区域 patch）
                 if patch is not None:
-                    self.defect_bank.add_patch_feats(patch, source + "_crop")
+                    self.defect_bank.add_patch_feats(patch, source + "_crop", image_id=iid,
+                                                     defect_type=dt)
                     self.defect_bank.track_hits(item["feats"])
                 else:
-                    self.defect_bank.add(item["feats"], source)
+                    self.defect_bank.add(item["feats"], source, image_id=iid, defect_type=dt)
                     self.defect_bank.track_hits(item["feats"])
             else:
-                self.defect_bank.add(item["feats"], source)
+                self.defect_bank.add(item["feats"], source, image_id=iid, defect_type=dt)
                 self.defect_bank.track_hits(item["feats"])
         else:
             single = (len(box) == 4 and isinstance(box[0], (int, float)))
             boxes = [box] if single else list(box)
             added = 0
             for b in boxes:
-                if self.defect_bank.add_box(item["feats"], b, source):
+                if self.defect_bank.add_box(item["feats"], b, source, image_id=iid,
+                                            defect_type=dt):
                     added += 1
             if added == 0:                             # 框全部无效 → 整图兜底
-                self.defect_bank.add(item["feats"], source)
+                self.defect_bank.add(item["feats"], source, image_id=iid, defect_type=dt)
             self.defect_bank.track_hits(item["feats"])
             self.stats["defect_box"] = self.stats.get("defect_box", 0) + 1
+        return self._defect_bank_gate(source)
 
-        if self.gate.anchor_paths:
-            ok, drift, new_mean = self.gate.check(self.p, f"defect_bank_{source}")
-            signed = drift if new_mean >= self.gate.base_mean else -drift
-            if signed > self.gate.tol:
-                self.defect_bank.rollback()
-                self.stats["gate_reject"] += 1
-                self.stats["rollback"] += 1
-                self.rollback_log.append({
-                    "t": time.time(), "op": "defect_bank",
-                    "reason": "regress_gate", "drift": round(drift, 4),
-                    "source": source,
-                })
-                return False
+    def _defect_bank_gate(self, source):
+        """AC-031：缺陷样例入库后独立门控（调用方已 snapshot）。
+        ① 锚定均值上行 ≤ tol（原 regress_gate）；② 锚定 FPR（当前 τ）不得
+        比入库前高出 defect_fpr_tol（独立正常误报，复用本次门控锚定分零额外前向）。
+        缺陷侧：拦截加分只增不减，已反馈缺陷检出不会因入库下降，故不重复前向。
+        失败撤销本次入库。"""
+        if not self.gate.anchor_paths:
+            return True
+        ok, drift, new_mean = self.gate.check(self.p, f"defect_bank_{source}")
+        signed = drift if new_mean >= self.gate.base_mean else -drift
+        fpr = (self.gate.audit[-1].get("anchor_fpr") or {}) if self.gate.audit else {}
+        fb, fa = fpr.get("before"), fpr.get("after")
+        reason = None
+        if signed > self.gate.tol:
+            reason = "regress_gate"
+        elif fb is not None and fa is not None \
+                and fa > fb + getattr(self, "defect_fpr_tol", 0.0) + 1e-9:
+            reason = "anchor_fpr_up"
+        if reason is not None:
+            self.defect_bank.rollback()
+            self.stats["gate_reject"] += 1
+            self.stats["rollback"] += 1
+            self.rollback_log.append({
+                "t": time.time(), "op": "defect_bank", "reason": reason,
+                "drift": round(drift, 4), "source": source,
+                "anchor_fpr": {"before": fb, "after": fa},
+            })
+            self._audit_decide("rolled_back", reason)
+            return False
+        self._audit_decide("accepted")
+        self.gate._pending = None          # §78：本路径不 recenter，留存不跨调用
         return True
+
+    def _defect_scope(self, accepted):
+        """AC-031：缺陷入库结局 + 能力范围说明。纯 patch 独立图 < 孵育 min_samples
+        时只是近邻止血（仅对相似缺陷生效），不代表已学会该类缺陷。"""
+        _, ids = self.defect_bank.incubation_pool()
+        n_img = len(set(ids))
+        need = int(getattr(self, "defect_scope_min", 8))
+        return {"defect_gate": "accepted" if accepted is not False else "rolled_back",
+                "scope": "similar_only" if n_img < need else "incubation_ready",
+                "n_pure_images": n_img}
+
+    def seed_init_defect(self, patch_sets):
+        """AC-031：init_defect 框/掩码裁切预置缺陷样例库（fit 产物，非 test）。
+        patch_sets: list[(path, (K,D) 掩码内 patch 特征)]。整批 snapshot → 逐图
+        add_patch（纯 patch，可进孵育池）→ 同一独立门控，失败整批撤销。"""
+        if not patch_sets:
+            return {"action": "init_defect_seed_skip", "reason": "no_masked_patches"}
+        self.defect_bank.snapshot("init_defect_seed")
+        n = sum(bool(self.defect_bank.add_patch_feats(pf, "init_defect_box", image_id=p))
+                for p, pf in patch_sets)
+        if n == 0:
+            self.defect_bank.rollback()
+            return {"action": "init_defect_seed_skip", "reason": "patches_too_few"}
+        if not self._defect_bank_gate("init_defect_box"):
+            return {"action": "init_defect_seed_rolled_back", "n": n,
+                    "reason": self.rollback_log[-1]["reason"]}
+        self.stats["init_defect_seed"] = n
+        return {"action": "init_defect_seed_accepted", "n": n}
 
     def _blob_top_patches(self, item, ratio=0.25):
         """U119/U121（2026-08-26，M14 同步）：blob 响应图（域不变特征）降采样
@@ -790,7 +1140,7 @@ class FeedbackHandler:
     def _boosted_fused(self, item, rec):
         """与 feedback() 决策口径一致的 fused（拦截加分 + cap 规则）。"""
         f = float(rec["fused"])
-        if not self.p._ablate_intercept:
+        if not self.p._ablate_intercept and item.get("feats") is not None:
             boost = self.defect_bank.intercept_score(
                 item["feats"], normal_bank=self.normal_bank)
             if self.p.head_mgr is not None:
@@ -818,7 +1168,7 @@ class FeedbackHandler:
         cap = not self.p.cfg.get("decision", {}).get("no_cap_fused", False)
         out = []
         for r in self._preq:
-            f = fuse(r["ss"], w) + r["boost"]
+            f = fuse(r["ss"], w, r.get("confidence", {})) + r["boost"]
             out.append((min(f, 1.0) if cap else f, r["ss"], r["label"]))
         return out
 
@@ -841,6 +1191,11 @@ class FeedbackHandler:
         """临时从 sem.bank / normal_bank.core+ext / defect_bank.samples 剔除该样本
         自身 patch，得到"当前模型状态 + 样本外"分数；退出时原样恢复（对象引用
         不变，不影响快照/回滚链）。CDF 校准历史中自身 1 个点（N≫1）影响可忽略。"""
+        from .candidate_budget import charge
+        charge("loo", point="loo_query")
+        if item.get("feats") is None:
+            yield
+            return
         thr = self.loo_thr
         q = F.normalize(item["feats"].flatten(2).permute(0, 2, 1)
                         .reshape(-1, item["feats"].shape[1]).float(), dim=1)
@@ -864,19 +1219,22 @@ class FeedbackHandler:
 
     def _loo_records(self):
         """已反馈样本 + 锚定集在当前状态下的 LOO 记录：
-        (labeled=[(ss, boost, label)], anchor=[(ss, boost)])。权重变化可零前向重加权。"""
+        (labeled=[(ss, boost, label, confidence)], anchor=[(ss, boost, confidence)])。权重变化可零前向重加权。"""
         def one(it):
             with self._loo(it):
                 rec = self.p._record(it)
                 boost = self._boosted_fused(it, {"fused": 0.0}) \
                     if not self.p._ablate_intercept else 0.0
-            return dict(rec["slot_scores"]), float(boost)
-        lab = [(*one(it), int(y)) for it, y in self._labeled_items]
+            return (dict(rec["slot_scores"]), float(boost),
+                    dict(rec.get("slot_confidences", {})))
+        lab = [(ss, boost, int(y), conf)
+               for it, y in self._labeled_items
+               for ss, boost, conf in [one(it)]]
         anc = [one(it) for it in (getattr(self.p, "_anchor_items", None) or [])]
         return lab, anc
 
-    def _fuse_cached(self, ss, boost, weights):
-        f = fuse(ss, weights) + boost
+    def _fuse_cached(self, ss, boost, weights, confidence=None):
+        f = fuse(ss, weights, confidence or {}) + boost
         cap = not self.p.cfg.get("decision", {}).get("no_cap_fused", False)
         return min(f, 1.0) if cap else f
 
@@ -888,8 +1246,9 @@ class FeedbackHandler:
         if self.score_mode != "loo":
             return self._preq_scores(w), None
         lab, anc = recs if recs is not None else self._loo_records()
-        return ([(self._fuse_cached(ss, b, w), ss, y) for ss, b, y in lab],
-                [self._fuse_cached(ss, b, w) for ss, b in anc])
+        return ([(self._fuse_cached(ss, b, w, c), ss, y)
+                  for ss, b, y, c in lab],
+                [self._fuse_cached(ss, b, w, c) for ss, b, c in anc])
 
     def _labeled_defect_recall(self):
         """已反馈缺陷样本在当前模型下的检出率（回流门控用）。正常回流只改 sem/
@@ -1061,7 +1420,7 @@ class FeedbackHandler:
     def _reflow_labeled(self, item, source):
         """有真值正常样本回流：跳过成簇门/熔断（真值即证据），先用更新前 raw 做
         CDF 重估（避免 sem 自匹配 raw≈0 污染校准分布），再并入 sem/扩展库；
-        门控 = 已反馈样本 pairwise AUC 不下降 + 锚定集上行 ≤ gate.tol。"""
+        门控 = 缺陷反馈 LOO 召回不下降 + 锚定集上行 ≤ gate.tol。"""
         # 门控改为"已反馈缺陷检出率不下降"：原 pairwise AUC 判据重打分已吸收的
         # 正常样本会自匹配（raw≈0）恒为 1.0，失去区分力（2026-10-05 根因）
         auc_before = self._labeled_defect_recall()
@@ -1071,9 +1430,16 @@ class FeedbackHandler:
         if not self.p._ablate_cdf:
             self.p._recalibrate_on_reflow(item)
             cal_done = True
-        ext_ok = self.normal_bank.add_ext(item["feats"], source=source)
-        if not self.p._ablate_sem:
-            self.p._sem_add(item["feats"])
+        patch_available = item.get("feats") is not None
+        ext_ok = False
+        if not patch_available and not cal_done:
+            return {"action": "reflow_not_supported", "reason": "no_learning_channel",
+                    "patch_bank": "skipped", "traditional_learning": "not_applied"}
+        if patch_available:
+            ext_ok = self.normal_bank.add_ext(item["feats"], source=source,
+                                              image_id=item.get("path"))
+            if not self.p._ablate_sem:
+                self.p._sem_add(item["feats"])
         self._labeled_scores = None
         auc_after = self._labeled_defect_recall()
         signed, drift = 0.0, 0.0
@@ -1084,6 +1450,8 @@ class FeedbackHandler:
         ok_auc = (auc_before is None or auc_after is None
                   or auc_after >= auc_before - self.pair_auc_tol)
         info = {"drift": round(float(drift), 4), "ext_ok": bool(ext_ok),
+                "patch_bank": "updated" if ext_ok else ("skipped" if not patch_available else "no_op"),
+                "traditional_learning": "cdf_recalibrated" if cal_done else "not_applied",
                 "defect_recall_before": None if auc_before is None else round(auc_before, 4),
                 "defect_recall_after": None if auc_after is None else round(auc_after, 4)}
         if not (ok_gate and ok_auc):
@@ -1098,7 +1466,11 @@ class FeedbackHandler:
             reason = "regress_gate" if not ok_gate else "defect_recall_drop"
             self.rollback_log.append({"t": time.time(), "op": "reflow_labeled",
                                       "reason": reason, **info})
+            if self.gate.anchor_paths:
+                self._audit_decide("rolled_back", reason)
             return {"action": "reflow_rolled_back", "reason": reason, **info}
+        if self.gate.anchor_paths:
+            self._audit_decide("accepted")
         self.gate.recenter(self.p)
         self.stats["reflow"] += 1
         return {"action": "reflow_labeled_accepted", **info}
@@ -1115,7 +1487,13 @@ class FeedbackHandler:
         校准重估与扩展库同步、回归门控完整保护（漂移即回滚全部）。"""
         if labeled and self.labeled_reflow:
             return self._reflow_labeled(item, source)
-        cand = self.normal_bank.reflow_candidate(item["feats"])
+        if item.get("feats") is None:
+            return {"action": "reflow_not_supported", "reason": "dino_patch_features_unavailable",
+                    "traditional_learning": "handled_by_cdf"}
+        from ..common.image_identity import image_signature
+        cand = self.normal_bank.reflow_candidate(
+            item["feats"], image_id=item.get("path"),
+            signature=image_signature(item["img"]) if item.get("img") is not None else None)
         if cand != "accepted":
             self.stats["pending"] += 1
             return {"action": f"reflow_{cand}"}
@@ -1128,7 +1506,8 @@ class FeedbackHandler:
                     "defect_ratio": round(float(self.normal_bank.defect_ratio), 4)}
         self.normal_bank.snapshot(f"reflow_{source}")
         sem_snapshot = self.p._sem_snapshot() if not self.p._ablate_sem else None
-        ok = self.normal_bank.add_ext(item["feats"], source=source)
+        ok = self.normal_bank.add_ext(item["feats"], source=source,
+                                      image_id=item.get("path"))
         if not ok:
             self.normal_bank.rollback()
             return {"action": "reflow_rejected_small"}
@@ -1153,7 +1532,9 @@ class FeedbackHandler:
             self.stats["rollback"] += 1
             self.rollback_log.append({"t": time.time(), "op": "reflow",
                                       "reason": "regress_gate", "drift": round(drift, 4)})
+            self._audit_decide("rolled_back", "regress_gate")
             return {"action": "reflow_rolled_back", "drift": round(drift, 4)}
+        self._audit_decide("accepted")
         # 基准同步：合法域适应后门控基准跟随新分布（门控拦单次剧烈跳变，
         # 不拦累积合法演进；慢性污染由成簇机制/熔断/操作员真值联防）
         self.gate.recenter(self.p)
@@ -1220,7 +1601,7 @@ class FeedbackHandler:
         # 但 AUROC 掉 0.046），margin 判据直接对准"缺陷 vs 正常排序分离"。----
         if self.pair_thresh_on:
             return self._apply_weights_by_auc(old_w, new_w)
-        n_pos = sum(lab == 1 for _, lab in self._recent_fb)
+        n_pos = sum(row[1] == 1 for row in self._recent_fb)
         n_neg = len(self._recent_fb) - n_pos
         if min(n_pos, n_neg) < self.weight_min_each_side:
             # 双侧证据不足时等待后续反馈；不冷却，避免小批次错过有效窗口。
@@ -1271,7 +1652,9 @@ class FeedbackHandler:
         scores = [self.p._predict_final_fused(p) for p in self.gate.anchor_paths]
         new_mean = float(np.mean(scores))
         drift = abs(new_mean - self.gate.base_mean) / self.gate.base_std
+        self._audit_weight(scores, drift, old_w, new_w)
         if drift > self.weight_gate_tol:   # 极端跳变 → 回滚旧权重
+            self._audit_decide("rolled_back", "regress_gate")
             self.p.weights = old_w
             self._w_cooldown = self._n_labeled_fb
             self.stats["gate_reject"] += 1
@@ -1284,6 +1667,7 @@ class FeedbackHandler:
                   f"> {self.weight_gate_tol}，回滚旧权重（冷却 "
                   f"{self.weight_gate_cooldown} 反馈）", flush=True)
             return
+        self._audit_decide("accepted")
         self.stats["weight_apply"] += 1
         self._record_weight("apply", new_w)
         # 修复（2026-08-25）：m_old=None（最近反馈仅单侧样本，margin 判据不可用）
@@ -1325,9 +1709,13 @@ class FeedbackHandler:
         self.p.weights = dict(new_w)
         drift = 0.0
         if self.gate.anchor_paths:
-            af = [self.p._predict_final_fused(p) for p in self.gate.anchor_paths]
+            # §78：同 check 留存锚定分，accepted 后 recenter 指纹一致即复用
+            af = self.gate._anchor_scores(self.p, remember=True)
             drift = abs(float(np.mean(af)) - self.gate.base_mean) / self.gate.base_std
+            self._audit_weight(af, drift, old_w, new_w,
+                               auc={"before": round(a_old, 4), "after": round(a_new, 4)})
         if drift > self.weight_gate_tol:
+            self._audit_decide("rolled_back", "regress_gate")
             self.p.weights = old_w
             self._w_cooldown = self._n_labeled_fb
             self.stats["gate_reject"] += 1
@@ -1336,6 +1724,8 @@ class FeedbackHandler:
             self.rollback_log.append({"t": time.time(), "op": "weight_learn",
                                       "reason": "regress_gate", "drift": round(drift, 4)})
             return
+        if self.gate.anchor_paths:
+            self._audit_decide("accepted")
         self._w_snapshot = old_w
         self._labeled_scores = None
         if self.gate.anchor_paths:
@@ -1368,9 +1758,12 @@ class FeedbackHandler:
         # 混入会让搜索学成"缺陷 vs 训练域正常"，对部署域不迁移（gold_finger 根因）。
         # 锚定集只作护栏：新权重下锚定 AUC 不得比旧权重低 weight_anchor_tol。
         def score(w, use_anc=False):
-            pos = [self._fuse_cached(ss, b, w) for ss, b, y in lab if y == 1]
-            neg = ([self._fuse_cached(ss, b, w) for ss, b in anc] if use_anc else
-                   [self._fuse_cached(ss, b, w) for ss, b, y in lab if y == 0])
+            pos = [self._fuse_cached(ss, b, w, c)
+                   for ss, b, y, c in lab if y == 1]
+            neg = ([self._fuse_cached(ss, b, w, c) for ss, b, c in anc]
+                   if use_anc else
+                   [self._fuse_cached(ss, b, w, c)
+                    for ss, b, y, c in lab if y == 0])
             if not neg:
                 return 0.5, 0.0
             return self._pair_auc(pos, neg), float(np.mean(pos) - np.mean(neg))
@@ -1380,6 +1773,8 @@ class FeedbackHandler:
 
         def rec(i, left, cur):
             if i == len(slots) - 1:
+                from .candidate_budget import charge
+                charge("search", point="weight_search_candidate")
                 cands.append(cur + [left])
                 return
             for v in range(left + 1):
@@ -1432,9 +1827,11 @@ class FeedbackHandler:
     def _fb_broken_pairs(recent, old_w, new_w):
         """返回新权重破坏的旧权重正确排序对数；平局也视为破坏。"""
         old_pos, old_neg, new_pos, new_neg = [], [], [], []
-        for ss, lab in recent:
-            (old_pos if lab == 1 else old_neg).append(fuse(ss, old_w))
-            (new_pos if lab == 1 else new_neg).append(fuse(ss, new_w))
+        for row in recent:
+            ss, lab = row[:2]
+            confidence = row[2] if len(row) > 2 else {}
+            (old_pos if lab == 1 else old_neg).append(fuse(ss, old_w, confidence))
+            (new_pos if lab == 1 else new_neg).append(fuse(ss, new_w, confidence))
         return sum(old_p > old_n and new_p <= new_n
                    for old_p, new_p in zip(old_pos, new_pos)
                    for old_n, new_n in zip(old_neg, new_neg))
@@ -1444,8 +1841,10 @@ class FeedbackHandler:
         fused 均值）。任一侧样本缺失返回 None（判据不可用）。复用 feedback 时
         缓存的槽位校准分（slot_scores），零额外前向。"""
         ds, ns = [], []
-        for ss, lab in recent:
-            f = float(fuse(ss, weights))
+        for row in recent:
+            ss, lab = row[:2]
+            confidence = row[2] if len(row) > 2 else {}
+            f = float(fuse(ss, weights, confidence))
             (ds if lab == 1 else ns).append(f)
         if not ds or not ns:
             return None
@@ -1500,12 +1899,14 @@ class FeedbackHandler:
             self.stats["rollback"] += 1
             self.rollback_log.append({"t": time.time(), "op": "height_recal",
                                       "reason": "regress_gate", "drift": round(drift, 4)})
+            self._audit_decide("rolled_back", "regress_gate")
             print(f"[ssocl] U62 门控否决: 锚定集漂移 signed={signed:.3f} "
                   f"(上行限 {self.gate.tol} / 下行限 {self.hr_tol_down})，"
                   f"回滚虚高重估（冷却 10 反馈）", flush=True)
             return
         # 基准同步：重估是有意图的分布修正，门控基准跟随新分布（防后续门控
         # 以旧基准连锁误判漂移，学习通道锁死）
+        self._audit_decide("accepted")
         self.gate.recenter(self.p)
         self.stats["height_recal"] += 1
         for n, raw, _, height in targets:
@@ -1692,6 +2093,7 @@ class FeedbackHandler:
             return box_patch_feats(f[:, :, y0g:y1g, x0g:x1g],
                                    s.chan_stats, s.patch_stats)
 
+    @candidate_random
     def _maybe_head_ft(self):
         """U65：缓冲达标（pos≥min_pos 且 neg≥min_neg）→ 在线微调 shead 判别头。
 
@@ -1736,8 +2138,15 @@ class FeedbackHandler:
                                          slot.chan_stats, slot.patch_stats)
                     anchor_feats.append(ax)
                     anchor_ref.append(float(slot.head(ax.to(slot.device))[0]))
+        if anchor_feats:
+            anchor_feats = torch.cat(anchor_feats).to(slot.device)
+            anchor_ref = torch.tensor(anchor_ref, device=slot.device)
+        else:
+            anchor_feats = None
         # 均衡批采样（U65 实测调优：pos 主导的混合批会把正常侧也推高 → 锚定集
         # fused 漂移 0.28 > tol 被门控否决；均衡批让正常侧梯度每批都在场，微调局部化）
+        pos = pos.to(slot.device)
+        neg = neg.to(slot.device)
         torch_gen = torch.Generator(device="cpu")
         torch_gen.manual_seed(int(self.p.cfg.get("seed", 42)))
         k = min(pos.shape[0], neg.shape[0])
@@ -1745,18 +2154,18 @@ class FeedbackHandler:
         for ep in range(self.hf_epochs):
             pi = torch.randperm(pos.shape[0], generator=torch_gen)[:k]
             ni = torch.randperm(neg.shape[0], generator=torch_gen)[:k]
-            Xb = torch.cat([pos[pi], neg[ni]]).to(slot.device)   # (2k, Din)
+            Xb = torch.cat([pos[pi], neg[ni]])                  # (2k, Din)
             yb = torch.cat([torch.ones(k), torch.zeros(k)]).to(slot.device)
             perm = torch.randperm(2 * k, generator=torch_gen)
             for i in range(0, 2 * k, bs):
                 idx = perm[i:i + bs]
                 scores = slot.head(Xb[idx])
                 loss = loss_fn(scores, yb[idx])
-                if anchor_feats:
-                    A = torch.cat(anchor_feats).to(slot.device)
-                    ref = torch.tensor(anchor_ref, device=slot.device)
+                if anchor_feats is not None:
                     loss = loss + self.hf_anchor_lambda * \
-                        (slot.head(A) - ref).pow(2).mean()
+                        (slot.head(anchor_feats) - anchor_ref).pow(2).mean()
+                from algo.ssocl.candidate_budget import charge
+                charge("steps", point="shead_step")
                 opt.zero_grad(); loss.backward(); opt.step()
         slot.head.eval()                             # 恢复打分模式（score_tiles 无梯度）
         s_after = self._anchor_shead_mean()
@@ -1878,6 +2287,7 @@ class FeedbackHandler:
         if len(self.disc_pos_patch_feats) > 128:     # 内存护栏：滚动窗口
             self.disc_pos_patch_feats = self.disc_pos_patch_feats[-128:]
 
+    @candidate_random
     def _maybe_disc_ft(self):
         """U66：缓冲达标（pos≥min_pos 且 neg≥min_neg）→ 在线微调 disc 判别头。
 
@@ -1914,6 +2324,8 @@ class FeedbackHandler:
         slot.head.train()
         opt = torch.optim.Adam(slot.head.parameters(), lr=self.df_lr)
         # 均衡批采样（U65 实测调优）：正负各半，正常侧梯度每批在场，微调局部化
+        pos = pos.to(slot.device)
+        neg = neg.to(slot.device)
         torch_gen = torch.Generator(device="cpu")
         torch_gen.manual_seed(int(self.p.cfg.get("seed", 42)))
         k = min(pos.shape[0], neg.shape[0])
@@ -1921,13 +2333,15 @@ class FeedbackHandler:
         for ep in range(self.df_epochs):
             pi = torch.randperm(pos.shape[0], generator=torch_gen)[:k]
             ni = torch.randperm(neg.shape[0], generator=torch_gen)[:k]
-            Xb = torch.cat([pos[pi], neg[ni]]).to(slot.device)        # (2k, D)
+            Xb = torch.cat([pos[pi], neg[ni]])                  # (2k, D)
             yb = torch.cat([torch.ones(k), torch.zeros(k)]).to(slot.device)
             perm = torch.randperm(2 * k, generator=torch_gen)
             for i in range(0, 2 * k, bs):
                 idx = perm[i:i + bs]
                 logit = slot.head(Xb[idx])
                 loss = F.binary_cross_entropy_with_logits(logit, yb[idx])
+                from algo.ssocl.candidate_budget import charge
+                charge("steps", point="disc_step")
                 opt.zero_grad(); loss.backward(); opt.step()
         slot.head.eval()                             # 恢复打分模式（score_tiles 无梯度）
         # 定向回归门控（复用 U65 设计，锚定集 fused 基准复用 gate.base_mean/std）：
@@ -1980,8 +2394,24 @@ class FeedbackHandler:
         self._disc_ft_snapshot = None
         return True
 
+    @staticmethod
+    def route_of(verdict, label):
+        """AC-030 四类反馈分路：correct_normal / false_positive（误报正常）/
+        defect（判对缺陷、漏检、复核缺陷）/ review_normal / unlabeled。"""
+        if label is None:
+            return "unlabeled"
+        if int(label) == 1:
+            return "defect"
+        if verdict == "correct":
+            return "correct_normal"
+        if verdict == "wrong":
+            return "false_positive"
+        return "review_normal"
+
     def _unlabeled(self, item, rec):
-        """无反馈分流（§7.1）：高置信缺陷缓存待确认；灰区进主动选样队列。"""
+        """无反馈分流（§7.1 / AC-030）：高置信缺陷缓存待确认；灰区进主动选样队列；
+        低分默认跳过（不学习）。unlabeled_reflow.enabled 时，低分且域内（open 低）
+        的样本才尝试无标注回流，仍须过候选间成簇 + 熔断 + 锚定门控。"""
         hi = self.p.decider.tau_high
         lo = self.p.decider.tau_gray
         if rec["fused"] >= hi:
@@ -1991,7 +2421,25 @@ class FeedbackHandler:
         if lo <= rec["fused"] < hi:
             self.p.active_enqueue(rec, item)           # 灰区 → 主动选样（§7.5）
             return {"action": "active_queue"}
-        return {"action": "low_value_skip"}
+        if not getattr(self, "unlabeled_reflow", False):
+            return {"action": "low_value_skip"}
+        gate = {"fused": round(float(rec["fused"]), 4),
+                "open": rec.get("open_score")}
+        if rec["fused"] > getattr(self, "ua_max_fused", 0.2):
+            return {"action": "unlabeled_skip", "reason": "not_high_conf_normal",
+                    "ua_gate": gate}
+        op = rec.get("open_score")
+        if op is None or op > getattr(self, "ua_max_open", 0.5):
+            # 无 open 信号视为无法确认域内，保守不回流
+            return {"action": "unlabeled_skip", "reason": "domain_unverified",
+                    "ua_gate": gate}
+        if self.p._ablate_reflow or item.get("feats") is None:
+            return {"action": "unlabeled_skip", "reason": "reflow_unavailable"}
+        out = self._reflow(item, "unlabeled_auto", labeled=False)
+        out["ua_gate"] = gate
+        self.stats["unlabeled_reflow"] = self.stats.get("unlabeled_reflow", 0) + (
+            1 if out.get("action") == "reflow_accepted" else 0)
+        return out
 
     def _maybe_finetune_router(self):
         """批量级路由微调（§7.6）：难例≥trigger 才触发；lr≤1e-4、≤5ep、仅难例+锚定集。"""
@@ -2006,6 +2454,9 @@ class FeedbackHandler:
             self.stats["rollback"] += 1
             self.rollback_log.append({"t": time.time(), "op": "router_finetune",
                                       "reason": "regress_gate", "drift": round(drift, 4)})
+            self._audit_decide("rolled_back", "regress_gate")
             return
+        self._audit_decide("accepted")
+        self.gate._pending = None          # §78：本路径不 recenter，留存不跨调用
         self.stats["router_ft"] += 1
         self.difficult = []

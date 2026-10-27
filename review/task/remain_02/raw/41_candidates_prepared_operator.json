@@ -1,0 +1,12 @@
+{
+  "name": "candidates_prepared_operator",
+  "method": "GET",
+  "path": "/api/candidates/recovery/prepared",
+  "role": "operator",
+  "request_body": null,
+  "status_code": 403,
+  "response": {
+    "detail": "权限不足：该操作需要 engineer 及以上角色（当前 operator）"
+  },
+  "note": ""
+}

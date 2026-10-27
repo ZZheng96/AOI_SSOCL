@@ -17,6 +17,10 @@ class SlotOutput:
     heatmaps: list = field(default_factory=list)   # list[(G,G) float]，每 tile
     confidence: float = 1.0
 
+    def __iter__(self):
+        # 兼容现有三元组解包；推理同时读取 confidence 参与融合。
+        return iter((self.image_score, self.tile_scores, self.heatmaps))
+
 
 class Slot:
     name = "base"

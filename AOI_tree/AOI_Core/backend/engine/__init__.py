@@ -17,10 +17,13 @@ from __future__ import annotations
 
 import logging
 import os
+import contextlib
 import shutil
 import threading
 import time
 import json
+import sqlite3
+import threading
 from collections import OrderedDict
 from dataclasses import dataclass, field, asdict
 from typing import Any, Dict, List, Optional, Tuple
@@ -49,6 +52,7 @@ class DetectionResult:
 
     defect_boxes: List[Dict[str, Any]] = field(default_factory=list)  # [{bbox:[x0,y0,x1,y1], area, dominant_slot}]
     mask: Optional[Any] = None               # HxW uint8 热力图低分辨率掩码（内部用，外部渲染）
+    fused_heatmap: Optional[Any] = None      # AC-063 工作网格连续融合热图（渲染用，不落库）
     heatmap_paths: Dict[str, str] = field(default_factory=dict)  # 渲染后落盘的路径
     types: List[Dict[str, Any]] = field(default_factory=list)     # 规则化缺陷类型归因
 
@@ -58,6 +62,7 @@ class DetectionResult:
     open_alert: bool = False                # 不完备哨兵
     align_offset: Optional[List[float]] = None   # M11d 对位偏移 (dx,dy)（参考分辨率像素）
     align_warn: bool = False                # M11d 偏移超阈值预警
+    model_version: Optional[int] = None     # 本次推理实际使用的激活版本
     extra: Dict[str, Any] = field(default_factory=dict)           # 预留扩展
 
 
@@ -102,6 +107,10 @@ PROFILE_SLOTS = {
 # 拦截加分近乎失效）、cluster_k/sim_thresh 过严 → 在线学习两大分数级杠杆
 # 与拦截通道形同虚设，是「AOI_sys 达不到 算法基线学习水平」的主因。
 SSOCL_CFG_TEMPLATE = {
+    # 候选路径整轮累计预算；旧 submit_feedback 不读取此节。
+    "candidate_budget": {"max_events": 16, "max_loo": 8, "max_search": 16,
+                         "max_steps": 10000, "max_patch_bytes": 64 * 1024 * 1024,
+                         "max_input_pixels": 25_000_000},
     "banks": {"ext_max": 64, "cluster_k": 3, "sim_thresh": 0.75,
               "intercept_topk": 8, "intercept_boost": 0.25,
               "intercept_sim": 0.15},
@@ -121,6 +130,66 @@ SSOCL_CFG_TEMPLATE = {
     "thresh_recal": {"enabled": True, "min_n": 20, "max_fp_rate": 0.5,
                      "cooldown": 10},
 }
+
+
+def _weights_semantics() -> Dict[str, str]:
+    from algo.fusion.cde_report import WEIGHTS_SEMANTICS
+    return dict(WEIGHTS_SEMANTICS)
+
+
+def _lineage_summary(bank) -> Optional[Dict[str, Any]]:
+    """AC-028：bank 血缘摘要（按 op/source 计数、legacy 数、最近 3 条）。"""
+    if bank is None or not hasattr(bank, "lineage"):
+        return None
+    lin = bank.lineage()
+    items = lin.get("ext") if lin.get("kind") == "normal_bank" else lin.get("samples")
+    items = items or []
+    by_op: Dict[str, int] = {}
+    by_src: Dict[str, int] = {}
+    for m in items:
+        by_op[str(m.get("op"))] = by_op.get(str(m.get("op")), 0) + 1
+        by_src[str(m.get("source"))] = by_src.get(str(m.get("source")), 0) + 1
+    out = {"kind": lin.get("kind"), "memory_not_weights": True,
+           "version": lin.get("version"), "n": len(items),
+           "n_legacy": sum(1 for m in items if m.get("legacy")),
+           "by_op": by_op, "by_source": by_src,
+           "recent": [{k: m.get(k) for k in ("op", "source", "version", "ts",
+                                              "hash", "image_id")}
+                      for m in items[-3:]]}
+    if lin.get("kind") == "normal_bank":
+        out["core"] = lin.get("core")
+        out["pending_clusters"] = len(lin.get("pending_clusters") or {})
+    else:
+        out["n_pure_images"] = lin.get("n_pure_images")
+    return out
+
+
+def apply_governance_isolation(cfg: Dict[str, Any]) -> Dict[str, Any]:
+    """第三轮决策项：校准隔离模式由设置页决定，经 cfg["calibration"]["isolation"]
+    传给 offline.resolve_isolation（auto=不覆盖 yaml，保持原行为）。"""
+    try:
+        from ..core.config import get_settings
+        iso = get_settings().governance_decisions()["calibration_isolation"]
+    except Exception:  # noqa: BLE001 配置不可用时保持原行为
+        iso = "auto"
+    if iso != "auto":
+        cfg.setdefault("calibration", {})["isolation"] = iso
+    return cfg
+
+
+def governance_blob_gpu_enabled() -> bool:
+    """第三轮决策项：governance_decisions.blob_gpu_enabled（默认关）。
+    只读配置；BlobSlot 构造时经 set_gpu_override 调用（新建与快照加载同口径）。"""
+    from ..core.config import get_settings
+    return bool(get_settings().governance_decisions()["blob_gpu_enabled"])
+
+
+def _register_blob_gpu_override() -> None:
+    from algo.slots.blob import set_gpu_override
+    set_gpu_override(governance_blob_gpu_enabled)
+
+
+_register_blob_gpu_override()
 
 
 def apply_scenario_and_profile(cfg: Dict[str, Any], scenario: str, profile: str) -> Dict[str, Any]:
@@ -151,12 +220,41 @@ def apply_scenario_and_profile(cfg: Dict[str, Any], scenario: str, profile: str)
     # CPU profile → backbone 禁用
     if profile == "cpu":
         cfg["backbone"]["enabled"] = False
+        # 2026-10-11 修复：禁用主干后 DINO 特征为空，E_open（PCA on DINO patch
+        # tokens）fit 必崩（ValueError: expected 4, got 0）——随主干一并关闭。
+        if "open" in cfg["slots"]:
+            cfg["slots"]["open"]["enabled"] = False
     return cfg
+
+
+class LegacyOnlineLearningBlocked(PermissionError):
+    """AC-038：生产引擎拒绝未授权的 legacy 在线即学。"""
 
 
 # ---- 引擎主类 ----
 class DetectionEngine:
     """按品类管理 pipeline 实例（进程单例，线程锁）。"""
+    # 学习/推理并行开关（2026-10-12）：None=按 self_learning.learning_parallel
+    # 热读取（默认 False）。False 时后台学习在合作式检查点让行前台推理。
+    # 类级默认值：兼容测试中绕过 __init__ 构造的引擎。
+    learning_parallel: Optional[bool] = None
+    learning_idle_ms = 300       # 最近一次推理结束后多久视为空闲
+    # AC-069：在线即学（submit_feedback）锁外让行上界——持续前台负载下学习不饿死，
+    # 到点后照常进入（锁内临界区已只剩打分/状态更新，特征提取在锁外完成）。
+    feedback_yield_max_ms = 1500
+    # AC-038 引擎级守卫：True 时 submit_feedback（legacy 在线即学，直接改生产 pipe）
+    # 须显式 allow_legacy_online=True，否则抛 LegacyOnlineLearningBlocked。
+    # 类级默认 False 兼容直接构造的测试/bench 引擎；进程单例 get_engine() 置 True。
+    legacy_online_guard = False
+    # AC-069（前台锁粒度）：前台推理锁外预提取（读图/预处理/切块/DINO 前向移出品类锁，锁内只剩
+    # 打分/融合/判定/追溯），多前台请求并发时不再整段串行。False = 回退原整段持锁路径。
+    predict_prefetch = True
+    # 主干前向全局串行（进程共享冻结主干；6GB 卡多请求同时前向防显存叠加）
+    _gpu_sem = threading.BoundedSemaphore(1)
+    _fg_cond = threading.Condition()
+    _fg_active = 0
+    _fg_last = 0.0
+    _lock_stats: Dict[str, Dict[str, float]] = {}   # AC-069 学习侧持锁统计（类级兜底）
 
     def __init__(self, storage_dir: str, base_cfg_path: str, ssocl_cfg: Optional[Dict] = None,
                  max_cached_categories: int = 8):
@@ -189,6 +287,9 @@ class DetectionEngine:
         self._pipe_locks: Dict[str, threading.RLock] = {}    # category -> 推理/反馈锁
         self._prepare_locks: Dict[str, threading.Lock] = {}  # category -> prepare 防重锁
         self._locks_guard = threading.Lock()                 # 护上面两个字典的惰性创建
+        self._fg_cond = threading.Condition()
+        self._lock_stats = {}
+        self._last_journal_replay_audit: List[Dict[str, Any]] = []
 
     def _load_base_cfg(self) -> None:
         """从 base_cfg_path 读取基础配置并修正 init_from 相对路径。"""
@@ -223,6 +324,87 @@ class DetectionEngine:
             with self._locks_guard:
                 lock = self._pipe_locks.setdefault(category, threading.RLock())
         return lock
+
+    # ----- 学习让行前台推理（2026-10-12） -----
+    @contextlib.contextmanager
+    def _foreground(self):
+        """标记一次前台推理；串行模式下后台学习在检查点等待其结束。"""
+        with self._fg_cond:
+            self._fg_active += 1
+        try:
+            yield
+        finally:
+            with self._fg_cond:
+                self._fg_active -= 1
+                self._fg_last = time.monotonic()
+                self._fg_cond.notify_all()
+
+    def _learning_parallel(self) -> bool:
+        if self.learning_parallel is not None:
+            return bool(self.learning_parallel)
+        try:
+            from ..core.config import get_settings
+            return bool(get_settings().get("self_learning", "learning_parallel", False))
+        except Exception:
+            return False
+
+    @contextlib.contextmanager
+    def _timed_lock(self, lock, op: str, out: Optional[Dict[str, Any]] = None):
+        """AC-069：取锁并记录等锁/持锁时长（ms）。out 收本次值，
+        self._lock_stats[op] 累计 n/最大等锁/最大持锁/最近持锁，供 lock_stats() 观测。"""
+        t0 = time.perf_counter()
+        with lock:
+            t1 = time.perf_counter()
+            try:
+                yield
+            finally:
+                t2 = time.perf_counter()
+                wait_ms, hold_ms = (t1 - t0) * 1000, (t2 - t1) * 1000
+                if out is not None:
+                    out["lock_wait_ms"] = round(wait_ms, 3)
+                    out["lock_hold_ms"] = round(hold_ms, 3)
+                st = self._lock_stats.setdefault(op, {"n": 0, "max_wait_ms": 0.0,
+                                                      "max_hold_ms": 0.0, "last_hold_ms": 0.0})
+                st["n"] += 1
+                st["max_wait_ms"] = round(max(st["max_wait_ms"], wait_ms), 3)
+                st["max_hold_ms"] = round(max(st["max_hold_ms"], hold_ms), 3)
+                st["last_hold_ms"] = round(hold_ms, 3)
+
+    def lock_stats(self) -> Dict[str, Dict[str, float]]:
+        """AC-069：学习/巩固持锁统计快照（op -> n/max_wait_ms/max_hold_ms/last_hold_ms）。"""
+        return {k: dict(v) for k, v in self._lock_stats.items()}
+
+    def _learning_yield(self, cancel_event=None, max_wait_s: Optional[float] = None) -> float:
+        """串行模式：前台推理进行中或刚结束 learning_idle_ms 内则阻塞等待。
+        返回等待秒数（候选墙钟预算扣除该段，避免持续推理负载误判超时）。
+        单步（一次前向/保存）不可中断，故让行粒度为合作式检查点。
+        max_wait_s（AC-069）：让行上界，None=不限（候选/巩固后台）；到点即返回防饿死。"""
+        if self._learning_parallel():
+            return 0.0
+        # 持品类锁/写锁时不得等待前台（前台推理可能正等这把锁 → 死锁）。
+        locks = [getattr(self, "_write_lock", None),
+                 *list(getattr(self, "_pipe_locks", {}).values())]
+        if any(getattr(lock, "_is_owned", lambda: False)() for lock in locks):
+            return 0.0
+        t0 = time.monotonic()
+        idle = self.learning_idle_ms / 1000.0
+        deadline = None if max_wait_s is None else t0 + max(0.0, float(max_wait_s))
+        with self._fg_cond:
+            while True:
+                if cancel_event is not None and cancel_event.is_set():
+                    break
+                now = time.monotonic()
+                if deadline is not None and now >= deadline:
+                    break
+                remain = (0.0 if self._fg_active else
+                          self._fg_last + idle - now)
+                if not self._fg_active and remain <= 0:
+                    break
+                wait = min(0.5, remain) if remain > 0 else 0.5
+                if deadline is not None:
+                    wait = min(wait, deadline - now)
+                self._fg_cond.wait(timeout=wait)
+        return time.monotonic() - t0
 
     def _prepare_lock(self, category: str) -> threading.Lock:
         """取品类 prepare 防重锁（惰性创建）：同品类并发 prepare 串行，
@@ -267,6 +449,7 @@ class DetectionEngine:
                 scenario: str = "L1a", profile: str = "fast",
                 trigger: str = "prepare", note: str = "",
                 force: bool = False, activate: bool = True,
+                parent_version: Optional[int] = None,
                 progress_cb=None) -> int:
         """准备新品类：fit + 存快照 + 激活。返回新版本号。
 
@@ -296,6 +479,7 @@ class DetectionEngine:
             # 昂贵部分（build/fit/enable_ssocl）在 _write_lock 外进行：
             # 不阻塞其它已加载品类的实时检测（只持本品类 prepare 锁）。
             cfg = apply_scenario_and_profile(self.base_cfg, scenario, profile)
+            apply_governance_isolation(cfg)
             backbone, slots = build(cfg, self.device)
             pipe = Pipeline(cfg, backbone, slots)
 
@@ -321,9 +505,11 @@ class DetectionEngine:
                 if os.path.exists(snap_dir):
                     shutil.rmtree(snap_dir)
                 save_snapshot(pipe, snap_dir, version=new_v,
-                              parent_version=None, trigger=trigger,
+                              parent_version=parent_version, trigger=trigger,
                               note=f"scenario={scenario}, profile={profile}. {note}",
                               ssocl_cfg=self.ssocl_cfg)
+                with open(os.path.join(snap_dir, "meta.json"), encoding="utf-8") as f:
+                    pipe.production_feature_metadata = json.load(f)["production_feature_metadata"]
                 if activate:
                     set_current_version(cat_dir, new_v)
                     self._clear_journal(category)   # 新品准备：旧版本线学习日志作废
@@ -374,12 +560,61 @@ class DetectionEngine:
             if cv is None:
                 raise RuntimeError(f"品类 {category} 尚未准备模型。")
             snap = self._v_dir(category, cv)
+            t0 = time.perf_counter()
             pipe = load_snapshot(snap, self.device)
+            t1 = time.perf_counter()
             # 崩溃恢复（2026-08-31 评审修复）：重放上次快照之后、进程崩溃
             # 之前的未巩固在线学习（此前 consumed=True 的反馈随进程死亡
             # 永久丢失，无重放机制）。LRU 驱逐后的重载同走此路径。
             self._replay_journal(category, pipe, cv)
+            t2 = time.perf_counter()
             self._cache_put(category, pipe, cv)
+            # AC-071：冷载分段计时（失败抛出时不入缓存、不记录，激活态不变）
+            self._cold_record(category, version=cv, load_ms=(t1 - t0) * 1000,
+                              replay_ms=(t2 - t1) * 1000)
+
+    # ----- AC-071 冷启动预算（冷载/首图/预热/热态分开统计） -----
+    COLD_START_BUDGET_DEFAULTS = {"max_load_ms": 30_000, "max_replay_ms": 10_000,
+                                  "max_first_infer_ms": 5_000, "max_warm_ms": 1_000}
+
+    def _cold_budget(self) -> Dict[str, Any]:
+        cfg = dict(self.ssocl_cfg.get("cold_start_budget") or {})
+        unknown = set(cfg) - set(self.COLD_START_BUDGET_DEFAULTS)
+        if unknown:
+            raise ValueError("未知冷启动预算配置：" + ",".join(sorted(unknown)))
+        return {**self.COLD_START_BUDGET_DEFAULTS, **cfg}
+
+    def _cold_record(self, category: str, **fields) -> Dict[str, Any]:
+        stats = self.__dict__.setdefault("_cold_stats", {})
+        # 每次冷载开新记录，避免上一轮的首图/热态数字挂到新冷载上
+        entry = stats[category] = {} if "load_ms" in fields else stats.setdefault(category, {})
+        entry.update({k: (round(v, 2) if isinstance(v, float) else v) for k, v in fields.items()})
+        budget = self._cold_budget()
+        entry["budget"] = budget
+        entry["violations"] = [k for k in ("load_ms", "replay_ms", "first_infer_ms", "warm_ms")
+                               if entry.get(k) is not None and entry[k] > budget["max_" + k]]
+        entry["within_budget"] = not entry["violations"]
+        return dict(entry)
+
+    def cold_start_stats(self, category: Optional[str] = None) -> Dict[str, Any]:
+        stats = self.__dict__.get("_cold_stats", {})
+        return dict(stats.get(category, {})) if category is not None else {k: dict(v) for k, v in stats.items()}
+
+    def warmup(self, category: str, rgb: Optional[np.ndarray] = None, *, warm_runs: int = 3) -> Dict[str, Any]:
+        """冷载→首图→预热→热态 分段计时；首图/热态走真实 predict_ndarray（含锁与预提取）。"""
+        self._ensure_loaded(category)
+        if rgb is None:
+            rgb = np.full((512, 512, 3), 128, np.uint8)
+        t0 = time.perf_counter()
+        self.predict_ndarray(category, rgb)
+        first_ms = (time.perf_counter() - t0) * 1000
+        warm = []
+        for _ in range(max(1, warm_runs)):
+            t0 = time.perf_counter()
+            self.predict_ndarray(category, rgb)
+            warm.append((time.perf_counter() - t0) * 1000)
+        return self._cold_record(category, first_infer_ms=first_ms, warmup_runs=len(warm),
+                                 warm_ms=float(np.median(warm)), warm_samples_ms=[round(w, 2) for w in warm])
 
     # ----- 学习日志（WAL：未巩固的在线学习崩溃不丢） -----
     def _journal_path(self, category: str) -> str:
@@ -387,12 +622,30 @@ class DetectionEngine:
 
     def _append_journal(self, category: str, rec: Dict[str, Any]) -> None:
         """即学成功后追加一条学习日志（base=学习时激活版本）。"""
-        try:
-            os.makedirs(self._cat_dir(category), exist_ok=True)
-            with open(self._journal_path(category), "a", encoding="utf-8") as f:
-                f.write(json.dumps(rec, ensure_ascii=False) + "\n")
-        except Exception as e:  # noqa: BLE001 日志失败不影响学习本身，但必须留痕
-            print(f"[engine][警告] 学习日志写入失败（{category}）：{e}", flush=True)
+        os.makedirs(self._cat_dir(category), exist_ok=True)
+        with open(self._journal_path(category), "a", encoding="utf-8") as f:
+            f.write(json.dumps(rec, ensure_ascii=False) + "\n")
+            f.flush()
+            os.fsync(f.fileno())
+
+    def _feedback_receipts(self):
+        # 独立于可清空的品类 WAL，巩固/重启后仍保留已完成事件身份。
+        conn = sqlite3.connect(os.path.join(self.storage_dir, "feedback_receipts.sqlite3"),
+                               timeout=30)
+        conn.execute("CREATE TABLE IF NOT EXISTS receipts "
+                     "(event_key TEXT PRIMARY KEY, payload TEXT NOT NULL)")
+        conn.execute("CREATE TABLE IF NOT EXISTS candidate_events "
+                     "(event_key TEXT PRIMARY KEY, payload TEXT NOT NULL, "
+                     "parent INTEGER NOT NULL, state TEXT NOT NULL, result TEXT)")
+        return conn
+
+    @staticmethod
+    def _feedback_identity(category, image_path, verdict, label, box, feedback_id, event_id=None):
+        key = (f"feedback:{feedback_id}" if feedback_id is not None
+               else f"event:{event_id}" if event_id is not None else None)
+        payload = json.dumps([category, image_path, verdict, label, box],
+                             sort_keys=True, ensure_ascii=False)
+        return key, payload
 
     def _replay_journal(self, category: str, pipe, version: int) -> int:
         """装载快照后重放未巩固的反馈学习（仅 base == 当前版本的条目）。
@@ -401,33 +654,73 @@ class DetectionEngine:
         到其它版本时该版本线上的条目自然被 base 过滤，不会误重放。
         """
         path = self._journal_path(category)
+        audit = []
+        self._last_journal_replay_audit = audit
         if not os.path.exists(path):
             return 0
         n_ok = n_skip = 0
         with open(path, "r", encoding="utf-8") as f:
             lines = f.readlines()
-        for ln in lines:
+        seen = {}
+        for line_no, ln in enumerate(lines, 1):
             try:
                 rec = json.loads(ln)
-            except Exception:  # noqa: BLE001 坏行跳过
+            except Exception as exc:  # noqa: BLE001 坏行不可静默丢失
+                n_skip += 1
+                audit.append({"line": line_no, "status": "invalid_json",
+                              "error": str(exc)})
+                continue
+            if not isinstance(rec, dict):
+                n_skip += 1
+                audit.append({"line": line_no, "status": "invalid_record",
+                              "error": "WAL记录必须是JSON对象"})
                 continue
             if rec.get("base") != version:
+                continue
+            key, payload = self._feedback_identity(
+                category, rec.get("path"), rec.get("verdict"), rec.get("label"),
+                rec.get("box"), rec.get("feedback_id"), rec.get("event_id"))
+            if key in seen:
+                if seen[key] != payload:
+                    audit.append({"line": line_no, "status": "conflict"})
+                    raise ValueError("WAL反馈事件ID对应不同payload")
                 continue
             p = rec.get("path")
             if not p or not os.path.exists(p):
                 n_skip += 1
+                audit.append({"line": line_no, "status": "missing_image", "path": p})
                 continue
             try:
                 pipe.feedback(p, verdict=rec.get("verdict"),
                               label=rec.get("label"), box=rec.get("box"))
                 n_ok += 1
-            except Exception:  # noqa: BLE001 单条重放失败不阻塞装载
+                audit.append({"line": line_no, "status": "replayed"})
+                if key is not None:
+                    seen[key] = payload
+                    if hasattr(self, "storage_dir"):
+                        conn = self._feedback_receipts()
+                        try:
+                            conn.execute("INSERT OR IGNORE INTO receipts VALUES (?, ?)", (key, payload))
+                            conn.commit()
+                        finally:
+                            conn.close()
+            except Exception as exc:  # noqa: BLE001 单条失败不可静默丢失
                 n_skip += 1
+                audit.append({"line": line_no, "status": "replay_failed",
+                              "error": str(exc)})
         if n_ok or n_skip:
             print(f"[engine] {category}: 重放未巩固学习 {n_ok} 条"
-                  + (f"（跳过 {n_skip} 条：图像缺失/重放失败）" if n_skip else ""),
+                  + (f"（跳过 {n_skip} 条：图像缺失/重放失败，详见内存审计）" if n_skip else ""),
                   flush=True)
         return n_ok
+
+    def _journal_mark(self, category: str) -> Optional[Tuple[int, int]]:
+        """WAL 水位（size, mtime_ns）；仅追加写，变化即说明有新学习。"""
+        try:
+            st = os.stat(self._journal_path(category))
+        except FileNotFoundError:
+            return None
+        return (st.st_size, st.st_mtime_ns)
 
     def _clear_journal(self, category: str) -> None:
         try:
@@ -474,13 +767,23 @@ class DetectionEngine:
             n_def = len(getattr(db, "samples", []) or [])
             out["defect_bank"] = {"samples": n_def,
                                   "intercept_min_hit": getattr(db, "min_hit", 1)}
+            # AC-028：库血缘摘要（记忆资产≠训练权重；逐条清单走 bank.lineage()）
+            out["lineage"] = {k: _lineage_summary(b) for k, b in
+                              (("normal_bank", nb), ("defect_bank", db))}
             hm = getattr(pipe, "head_mgr", None)
             min_samples = int(hm.cfg.get("min_samples", 8)) if hm else 8
+            # AC-032：进度按纯 patch 独立图计数（整图 add / legacy 不计）
+            hs = hm.status(db) if (hm is not None and hasattr(hm, "status")) else {}
+            n_img = hs.get("n_pure_images")
+            n_img = n_def if n_img is None else n_img
             out["incubate"] = {
                 "trained": bool(hm is not None and hm.head is not None),
                 "min_samples": min_samples,
                 "n_pos": int(hm.head.n_pos) if (hm and hm.head) else 0,
-                "progress": round(min(1.0, n_def / max(min_samples, 1)), 2),
+                "n_pure_images": int(n_img),
+                "progress": round(min(1.0, n_img / max(min_samples, 1)), 2),
+                "separation": hs.get("separation"),
+                "last_decision": hs.get("last_decision"),
                 "log_tail": list(hm.log[-3:]) if hm else [],
             }
             sel = getattr(pipe, "selector", None)
@@ -491,6 +794,59 @@ class DetectionEngine:
             out["stats"] = {k: int(v) for k, v in st.items()
                             if isinstance(v, (int, float))}
             return out
+
+    def feature_set(self, category: str) -> Dict[str, Any]:
+        """AC-016：当前生产槽位及 trad 特征组只读快照。
+
+        未准备品类 enabled=False；无 trad 时传统组 status=not_applicable，仍列真实槽位。纯读取，
+        不触发提取、不改变生产配置。"""
+        from algo.features import registry as freg
+        try:
+            self._ensure_loaded(category)
+        except Exception:
+            return {"category": category, "enabled": False}
+        with self._pipe_lock(category):
+            pipe, version = self._pipe_entry(category)
+            slots = getattr(pipe, "slots", None) or {}
+            trad = slots.get("trad")
+            out: Dict[str, Any] = {"category": category, "enabled": True,
+                                   "version": int(version)}
+            out["production_slots"] = [{
+                "key": key,
+                "dim": getattr(getattr(slot, "backbone", None), "dim", None),
+                "enabled": True,
+                "params": {"version": getattr(slot, "version", None),
+                           "needs_dino": getattr(slot, "needs_dino", None)},
+            } for key, slot in slots.items() if slot is not None]
+            if trad is None:
+                out["status"] = "not_applicable"
+                return out
+            enabled = set(trad.groups)
+            weight = dict(getattr(trad, "group_weight", {}) or {})
+            scale = dict(getattr(trad, "group_scale", {}) or {})
+            out["status"] = "available"
+            out["groups"] = [{
+                "key": g["key"], "name": g["name"], "category": g["category"],
+                "dim": int(g["dim"]), "enabled": g["key"] in enabled,
+                "weight": (round(float(weight[g["key"]]), 4)
+                           if g["key"] in weight else None),
+                "scale": (round(float(scale[g["key"]]), 6)
+                          if g["key"] in scale else None),
+            } for g in freg.TRAD_GROUPS]
+            out["enabled_groups"] = list(trad.groups)
+            out["enabled_dim"] = int(sum(g["dim"] for g in freg.TRAD_GROUPS
+                                         if g["key"] in enabled))
+            out["total_dim"] = int(freg.TRAD_DIM)
+            out["scoring"] = trad.scoring
+            out["group_spec"] = trad.group_spec
+            out["signature"] = trad.signature()
+            out["feature_representation"] = dict(
+                getattr(pipe, "feature_representation", None) or {})
+            out["rebuild_required"] = out["feature_representation"].get("status") == "stale"
+            out["selection_report"] = getattr(trad, "selection_report", None)
+            pfm = getattr(pipe, "production_feature_metadata", None) or {}
+            out["snapshot_signature"] = pfm.get("feature_signature")
+            return json.loads(json.dumps(out, ensure_ascii=False, default=str))
 
     def active_suggestions(self, category: str, top_n: int = 10) -> List[Dict[str, Any]]:
         """M15b：主动选样清单透出（引擎设计 §6 赛题点名"主动学习"）。
@@ -522,18 +878,79 @@ class DetectionEngine:
         return [{**p, "image_path": p.get("path"),
                  "detection_id": det_map.get(p.get("path"))} for p in picked]
 
+    @staticmethod
+    def _require_current_representation(pipe, op: str) -> None:
+        """AC-015：特征表示过期（代码/注册表/预处理与快照签名不一致）时，
+        禁止在线学习/巩固写入——否则新表示向量混入旧库，或巩固把旧库盖上新签名“洗白”。"""
+        rep = getattr(pipe, "feature_representation", None) or {}
+        if rep.get("status") == "stale":
+            raise ValueError(f"特征表示已过期（{','.join(rep.get('drift') or [])}），"
+                             f"禁止{op}；须先表示重建（重提特征→重建库→重校准→过 G2）后再激活")
+
     # ----- 激活 / 回滚 / 变体 -----
-    def activate(self, category: str, version: int) -> None:
+    def activate(self, category: str, version: int, *, allow_stale: bool = False,
+                 recovery_authorization: Optional[Dict[str, Any]] = None) -> None:
         from algo.persist import load_snapshot, set_current_version, list_versions
-        with self._write_lock:
+        from ..self_learning.candidate_release import CandidateRelease, check_recovery_authorization
+        # AC-073：领域层 allow_stale 必须绑定可审计恢复授权（actor/reason/ticket/范围/时效）。
+        authorization = check_recovery_authorization(recovery_authorization, category, version) if allow_stale else None
+        candidate_meta = os.path.join(self._v_dir(category, version), "meta.json")
+        if os.path.exists(candidate_meta):
+            with open(candidate_meta, encoding="utf-8") as f:
+                if json.load(f).get("trigger") == "isolated_candidate":
+                    from ..self_learning.candidate_release import CandidateRelease
+                    return CandidateRelease(self).switch(category, version)
+        with self._pipe_lock(category), self._write_lock:
             if version not in list_versions(self._cat_dir(category)):
                 raise ValueError(f"版本 v{version} 不存在")
+            meta = {}
+            meta_path = os.path.join(self._v_dir(category, version), "meta.json")
+            if os.path.exists(meta_path):
+                with open(meta_path, encoding="utf-8") as f:
+                    meta = json.load(f)
+            if meta.get("trigger") == "isolated_candidate":
+                if meta.get("parent_version") != self.current_version(category):
+                    raise ValueError("候选父版本已过期")
+                if meta.get("candidate_state") != "completed":
+                    raise ValueError("候选尚未完成")
+                from ..self_learning.candidate_release import CandidateRelease
+                return CandidateRelease(self).switch(category, version)
             pipe = load_snapshot(self._v_dir(category, version), self.device)
-            self._cache_put(category, pipe, version)
+            rep = getattr(pipe, "feature_representation", None) or {}
+            if rep.get("status") == "stale" and not allow_stale:
+                raise ValueError(f"v{version} 特征表示已过期（{','.join(rep.get('drift') or [])}），"
+                                 "拒绝激活；须表示重建后激活新版本（或 allow_stale 强制）")
+            # AC-074：普通快照激活也走发布账本 prepared→committed + 同事务审计链，崩溃可 recover。
+            release = CandidateRelease(self)
+            event = release.snapshot_prepare(category, self.current_version(category), version,
+                                             {**authorization, "stale": rep.get("status") == "stale"} if authorization else None)
             set_current_version(self._cat_dir(category), version)
+            self._cache_put(category, pipe, version)
+            release.snapshot_commit(category, event)
 
-    def rollback(self, category: str, target_version: Optional[int] = None) -> int:
+    def rollback(self, category: str, target_version: Optional[int] = None,
+                 *, allow_stale: bool = False,
+                 recovery_authorization: Optional[Dict[str, Any]] = None) -> int:
         """回滚：target_version 给定时直接指；否则取次新版本。"""
+        current = self.current_version(category)
+        if target_version is not None and target_version == current:
+            from ..self_learning.candidate_release import CandidateRelease
+            release = CandidateRelease(self)
+            with release.connection() as c:
+                event = c.execute("SELECT action,state,payload FROM release_events WHERE category=? AND action IN ('activate','rollback') AND state!='aborted' ORDER BY id DESC LIMIT 1", (category,)).fetchone()
+            if event and event[:2] == ("rollback", "committed") and json.loads(event[2])["target_version"] == current:
+                release.switch(category, current, rollback=True)
+                return current
+        if current is not None:
+            meta_path = os.path.join(self._v_dir(category, current), "meta.json")
+            if os.path.exists(meta_path):
+                with open(meta_path, encoding="utf-8") as f:
+                    meta = json.load(f)
+                if meta.get("trigger") == "isolated_candidate":
+                    from ..self_learning.candidate_release import CandidateRelease
+                    target = target_version if target_version is not None else meta["parent_version"]
+                    CandidateRelease(self).switch(category, target, rollback=True)
+                    return target
         vs = self.list_versions(category)
         if not vs:
             raise RuntimeError(f"品类 {category} 无快照可回滚")
@@ -543,7 +960,8 @@ class DetectionEngine:
             target = vs[max(0, idx - 1)]
         else:
             target = target_version
-        self.activate(category, target)
+        self.activate(category, target, allow_stale=allow_stale,
+                      recovery_authorization=recovery_authorization)
         return target
 
     def build_variant(self, category: str, version: int):
@@ -552,43 +970,124 @@ class DetectionEngine:
         return load_snapshot(self._v_dir(category, version), self.device)
 
     # ----- 推理 -----
-    def predict_image_path(self, category: str, path: str) -> DetectionResult:
+    def predict_image_path(self, category: str, path: str,
+                           pair_template: Optional[str] = None) -> DetectionResult:
         import cv2
         from algo.common.io import load_image
         self._ensure_loaded(category)
         # 品类锁：与同品类 feedback 即学/consolidate 串行（不同品类并行不互斥）
-        with self._pipe_lock(category):
-            pipe, _ = self._pipe_entry(category)
-            t0 = time.perf_counter()
-            rec = pipe.predict(path)
-            dt_ms = (time.perf_counter() - t0) * 1000
-            return self._to_result(pipe, rec, dt_ms)
+        # AC-069：lock_wait_ms = 真实等品类锁时间（不含推理本身），与 latency_ms 分开
+        # AC-069（前台锁粒度）：读图/切块/DINO 前向在锁外预提取（_foreground 内，学习照常让行）
+        with self._foreground():
+            pre, pre_ms = self._predict_prefetch(category, path=path)
+            tw = time.perf_counter()
+            with self._pipe_lock(category):
+                wait_ms = (time.perf_counter() - tw) * 1000
+                pipe, active_version = self._pipe_entry(category)
+                t0 = time.perf_counter()
+                prep = self._prefetch_valid(pipe, pre)
+                # round5 L3 配对：仅显式给定时透传（兼容不支持该参数的 pipe）
+                kw = {"pair_template": pair_template} if pair_template is not None else {}
+                rec = (pipe.predict(path, prepared=prep, **kw) if prep is not None
+                       else pipe.predict(path, **kw))
+                dt_ms = (time.perf_counter() - t0) * 1000 + (pre_ms if prep is not None else 0.0)
+                return self._to_result(pipe, rec, dt_ms, active_version, lock_wait_ms=wait_ms)
 
-    def predict_ndarray(self, category: str, rgb: np.ndarray, path_hint: Optional[str] = None) -> DetectionResult:
+    def predict_ndarray(self, category: str, rgb: np.ndarray, path_hint: Optional[str] = None,
+                        pair_template: Optional[str] = None) -> DetectionResult:
         self._ensure_loaded(category)
         # 品类锁：与同品类 feedback 即学/consolidate 串行（不同品类并行不互斥）
-        with self._pipe_lock(category):
-            pipe, _ = self._pipe_entry(category)
-            t0 = time.perf_counter()
-            rec = pipe.predict_frame(rgb, path=path_hint)
-            dt_ms = (time.perf_counter() - t0) * 1000
-            return self._to_result(pipe, rec, dt_ms)
+        with self._foreground():
+            pre, pre_ms = self._predict_prefetch(category, rgb=rgb)
+            tw = time.perf_counter()
+            with self._pipe_lock(category):
+                wait_ms = (time.perf_counter() - tw) * 1000
+                pipe, active_version = self._pipe_entry(category)
+                t0 = time.perf_counter()
+                prep = self._prefetch_valid(pipe, pre)
+                kw = {"pair_template": pair_template} if pair_template is not None else {}
+                rec = (pipe.predict_frame(rgb, path=path_hint, prepared=prep, **kw) if prep is not None
+                       else pipe.predict_frame(rgb, path=path_hint, **kw))
+                dt_ms = (time.perf_counter() - t0) * 1000 + (pre_ms if prep is not None else 0.0)
+                return self._to_result(pipe, rec, dt_ms, active_version, lock_wait_ms=wait_ms)
 
-    def _to_result(self, pipe, rec: Dict[str, Any], dt_ms: float) -> DetectionResult:
+    @staticmethod
+    def _prefetch_key(pipe) -> Tuple[Any, ...]:
+        """预提取结果的有效性指纹：同一 pipe 实例 + 同一主干 + 同一预处理配置 + 同切块参数。"""
+        tl = getattr(pipe, "tiling", None) or {}
+        return (id(pipe), id(getattr(pipe, "backbone", None)), id(getattr(pipe, "_pre_cfg", None)),
+                tl.get("mode"), tl.get("tile_size"), tl.get("stride"))
+
+    def _predict_prefetch(self, category: str, path: Optional[str] = None,
+                          rgb: Optional[np.ndarray] = None) -> Tuple[Any, float]:
+        """AC-069（前台锁粒度）：品类锁外预提取（纯函数：读图/预处理/切块/冻结主干前向，不碰缓存与
+        可变模型状态）。返回 ((pipe0, key, prep) | None, 耗时 ms)。
+        不可用（关开关/桩 pipe/已缓存/失败）→ None，锁内照原路径现算。"""
+        t0 = time.perf_counter()
+        if not self.predict_prefetch:
+            return None, 0.0
+        try:
+            entry = self._pipes.get(category)
+            pipe0 = entry[0] if entry else None
+            if (pipe0 is None or not callable(getattr(type(pipe0), "prepare_input", None))
+                    or not isinstance(getattr(pipe0, "_item_cache", None), dict)
+                    or (path is not None and path in pipe0._item_cache)):
+                return None, 0.0
+            key = self._prefetch_key(pipe0)
+            prep = pipe0.prepare_input(path=path, rgb=rgb, gpu_lock=self._gpu_sem)
+            return (pipe0, key, prep), (time.perf_counter() - t0) * 1000
+        except Exception:  # noqa: BLE001 预提取只是提速，失败回落锁内原路径
+            logger.debug("[engine] 推理锁外预提取失败，回落锁内", exc_info=True)
+            return None, 0.0
+
+    def _prefetch_valid(self, pipe, pre) -> Optional[Dict[str, Any]]:
+        """锁内校验：预提取期间 pipe 未被替换（consolidate/rollback/LRU 重载）且主干/
+        预处理/切块未变才复用，否则返回 None 由锁内现算（结果与串行逐位一致）。"""
+        if pre is None or pre[0] is not pipe or self._prefetch_key(pipe) != pre[1]:
+            return None
+        return pre[2]
+
+    def explain_image(self, category: str, path: str) -> Dict[str, Any]:
+        """AC-014：按需图像解释（trad 测量值/正常范围/近邻/组距离），不写追溯、不进热路径。"""
+        self._ensure_loaded(category)
+        with self._foreground(), self._pipe_lock(category):
+            pipe, active_version = self._pipe_entry(category)
+            trad = pipe.explain_trad(path=path)
+        return {"model_version": active_version, "trad": trad}
+
+    def _to_result(self, pipe, rec: Dict[str, Any], dt_ms: float,
+                   model_version: Optional[int] = None,
+                   lock_wait_ms: Optional[float] = None) -> DetectionResult:
         slot_scores = dict(rec.get("slot_scores", {}))
         raw_scores = dict(rec.get("raw_scores", {}))
-        weights = dict(getattr(pipe, "weights", {}) or {})
+        # AC-027：weights = 本次判定实际生效的融合权重（trace fusion 段），非 pipe 当前值
+        fusion_tr = next((t for t in (rec.get("decision_trace") or [])
+                          if t.get("stage") == "fusion"), None) or {}
+        weights = dict(fusion_tr.get("effective_weights")
+                       or getattr(pipe, "weights", {}) or {})
         router_w = dict(rec.get("router_w", {}) or {})
 
         decision = rec.get("decision", "normal")
         is_anomaly = (decision == "anomaly")  # gray 不直接当异常，UI 可另显橙
+        triggered_slot = self._dominant_slot(slot_scores, weights)
         boxes = []
         for b in rec.get("boxes", []) or []:
-            boxes.append({"bbox": list(b.get("bbox", [0, 0, 0, 0])),
-                          "area": int(b.get("area", 0)),
-                          "dominant_slot": self._dominant_slot(slot_scores, weights)})
-
-        triggered_slot = self._dominant_slot(slot_scores, weights)
+            # AC-014：框级主导槽位来自区域证据；无区域证据时明示回退整图口径
+            ev = b.get("evidence")
+            if ev and b.get("dominant_slot"):
+                dom = b["dominant_slot"]
+            else:
+                dom = triggered_slot
+                ev = {**(ev or {}), "level": "image_fallback",
+                      "semantics": "无框内区域证据，主导槽位取整图口径"}
+            box = {"bbox": list(b.get("bbox", [0, 0, 0, 0])),
+                   "area": int(b.get("area", 0)), "dominant_slot": dom, "evidence": ev}
+            # AC-063：区域记录字段（来源/分数/后处理版本/候选状态）原样透出
+            for k in ("source", "region_id", "score_peak", "score_mean", "area_work",
+                      "method", "postproc", "status", "confirmed"):
+                if b.get(k) is not None:
+                    box[k] = b[k]
+            boxes.append(box)
 
         r = DetectionResult(
             score=float(rec.get("fused", 0.0)),
@@ -602,6 +1101,7 @@ class DetectionEngine:
             router_w=router_w,
             defect_boxes=boxes,
             mask=rec.get("mask"),
+            fused_heatmap=rec.get("fused_heatmap"),
             types=list(rec.get("types", []) or []),
             latency_ms=float(dt_ms),
             n_tiles=int(rec.get("n_tiles", 0)),
@@ -609,7 +1109,21 @@ class DetectionEngine:
             open_alert=bool(rec.get("open_alert", False)),
             align_offset=(list(rec["align_offset"]) if rec.get("align_offset") else None),
             align_warn=bool(rec.get("align_warn", False)),
-            extra={"decision_trace": list(rec.get("decision_trace", []) or [])},
+            model_version=model_version,
+            extra={"e_open_score": rec.get("open_score"),
+                   "e_open_threshold": getattr(pipe, "open_thresh", None) if "open_score" in rec else None,
+                   "decision_trace": list(rec.get("decision_trace", []) or []),
+                   "candidate_router": {**(getattr(pipe, "router_gate", None) or {}),
+                                        "applied": False,
+                                        "candidate_weights": fusion_tr.get(
+                                            "router_candidate_weights")}
+                   if getattr(pipe, "router_gate", None) else None,
+                   "weights_semantics": _weights_semantics(),
+                   "localization": rec.get("localization") or {"status": "legacy_unknown"},
+                   "feature_metadata": getattr(pipe, "production_feature_metadata",
+                                                {"status": "legacy_unknown"}),
+                   "lock_wait_ms": (round(float(lock_wait_ms), 3)
+                                    if lock_wait_ms is not None else None)},
         )
         return r
 
@@ -634,26 +1148,105 @@ class DetectionEngine:
                         box: Optional[List[float]] = None,
                         timeout_ms: Optional[int] = None,
                         on_complete=None,
-                        feedback_id: Optional[int] = None) -> Dict[str, Any]:
-        """verdict ∈ {correct, wrong, none}; label ∈ {0=正常, 1=缺陷, None}。"""
+                        feedback_id: Optional[int] = None,
+                        event_id: Optional[str] = None,
+                        on_result=None,
+                        allow_legacy_online: bool = False) -> Dict[str, Any]:
+        """on_result(result, error) 回传最终结果；on_complete 保留成功无参契约。"""
+        if self.legacy_online_guard and not allow_legacy_online:
+            # AC-038：生产单例拒绝未授权的在线即学（走 learn_candidate 候选隔离）
+            raise LegacyOnlineLearningBlocked(
+                "生产引擎禁止未授权的在线即学：请走候选隔离（learn_candidate），"
+                "或显式 allow_legacy_online=True")
         self._ensure_loaded(category)
         timeout_s = (timeout_ms or self.feedback_timeout_ms) / 1000.0
         done: Dict[str, Any] = {}
 
+        def result_info():
+            info = {"path": image_path, "verdict": verdict, "label": label,
+                    "feedback_ms": round(done.get("dt_ms", 0.0), 2)}
+            if done.get("idempotent"):
+                info["idempotent"] = True
+            entry = done.get("entry")
+            if isinstance(entry, dict):
+                for k in ("action", "drift", "boost", "defect_ratio", "attribution", "evidence"):
+                    if k in entry:
+                        info[k] = entry[k]
+            if done.get("fuse_blocked") is not None:
+                info["fuse_blocked"] = done["fuse_blocked"]
+            # AC-069 学习侧锁观测：让行/锁外预提取/等锁/持锁（ms）
+            info["lock"] = {k: done.get(k) for k in (
+                "yield_ms", "prefetch_ms", "lock_wait_ms", "lock_hold_ms")}
+            info["lock"]["prefetched"] = bool(done.get("prefetched"))
+            return info
+
+        def _prefetch():
+            """AC-069：锁外读图/切块/DINO 前向（只读冻结主干，不改 pipe 状态）。
+            返回 (pipe, backbone, pre_cfg, item)；不可用/已缓存/失败 → None，锁内照旧现算。"""
+            try:
+                entry = self._pipes.get(category)
+                pipe0 = entry[0] if entry else None
+                # 按类型判定（Mock/桩 pipe 无真实 build_item 时不预提取）
+                if (pipe0 is None or not callable(getattr(type(pipe0), "build_item", None))
+                        or not isinstance(getattr(pipe0, "_item_cache", None), dict)
+                        or image_path in pipe0._item_cache):
+                    return None
+                bb, pre = getattr(pipe0, "backbone", None), getattr(pipe0, "_pre_cfg", None)
+                return pipe0, bb, pre, pipe0.build_item(image_path)
+            except Exception:  # noqa: BLE001 预提取只是提速，失败回落锁内原路径
+                logger.debug("[engine] 反馈特征锁外预提取失败，回落锁内", exc_info=True)
+                return None
+
         def _learn():
             # 品类锁：feedback 即学会改 NormalBank/融合权重/缺陷样例库，
-            # 必须与同品类 predict 串行，否则 predict 读到撕裂的中间态
+            # 必须与同品类 predict 串行，否则 predict 读到撕裂的中间态。
+            # AC-069：锁外先让行前台（有上界防饿死），再锁外预提取特征；
+            # 锁内只剩打分 + 状态更新 + WAL/回执写入，缩短前台等锁。
             try:
-                with self._pipe_lock(category):
+                done["yield_ms"] = round(self._learning_yield(
+                    max_wait_s=self.feedback_yield_max_ms / 1000.0) * 1000, 3)
+                tp = time.perf_counter()
+                pre = _prefetch()
+                done["prefetch_ms"] = round((time.perf_counter() - tp) * 1000, 3)
+                with self._timed_lock(self._pipe_lock(category), "feedback", done):
                     pipe, active_v = self._pipe_entry(category)
-                    t0 = time.perf_counter()
-                    entry = pipe.feedback(image_path, verdict=verdict, label=label, box=box)
-                    done["dt_ms"] = (time.perf_counter() - t0) * 1000
-                    # WAL：学习成功才记日志（崩溃/重启可重放，见 _replay_journal）
-                    self._append_journal(category, {
-                        "t": time.time(), "base": active_v, "path": image_path,
-                        "verdict": verdict, "label": label, "box": box,
-                        "feedback_id": feedback_id, "category": category})
+                    if (pre is not None and pre[0] is pipe
+                            and getattr(pipe, "backbone", None) is pre[1]
+                            and getattr(pipe, "_pre_cfg", None) is pre[2]):
+                        pipe.adopt_item(pre[3])   # 同一 pipe/主干/预处理才复用，否则锁内现算
+                        done["prefetched"] = True
+                    key, payload = self._feedback_identity(
+                        category, image_path, verdict, label, box, feedback_id, event_id)
+                    conn = self._feedback_receipts() if key else None
+                    try:
+                        if conn is not None:
+                            conn.execute("BEGIN IMMEDIATE")
+                            previous = conn.execute(
+                                "SELECT payload FROM receipts WHERE event_key=?", (key,)).fetchone()
+                            if previous and previous[0] != payload:
+                                raise ValueError("反馈事件ID对应不同payload")
+                        else:
+                            previous = None
+                        t0 = time.perf_counter()
+                        if previous:
+                            entry = {}
+                            done["idempotent"] = True
+                        else:
+                            self._require_current_representation(pipe, "在线学习")
+                            entry = pipe.feedback(image_path, verdict=verdict, label=label, box=box)
+                            self._append_journal(category, {
+                                "t": time.time(), "base": active_v, "path": image_path,
+                                "verdict": verdict, "label": label, "box": box,
+                                "feedback_id": feedback_id, "event_id": event_id,
+                                "category": category})
+                            if conn is not None:
+                                conn.execute("INSERT INTO receipts VALUES (?, ?)", (key, payload))
+                        if conn is not None:
+                            conn.commit()
+                        done["dt_ms"] = (time.perf_counter() - t0) * 1000
+                    finally:
+                        if conn is not None:
+                            conn.close()
                     h = getattr(pipe, "handler", None)
                     done["fuse_blocked"] = (bool(h.normal_bank.fuse_blocked)
                                             if h is not None else None)
@@ -665,6 +1258,12 @@ class DetectionEngine:
                         logger.exception("反馈学习完成，但消费状态回写失败")
             except Exception as e:  # noqa: BLE001 线程内异常回传主线程抛出
                 done["error"] = e
+            finally:
+                if on_result is not None:
+                    try:
+                        on_result(None if "error" in done else result_info(), done.get("error"))
+                    except Exception:
+                        logger.exception("反馈最终结果回写失败")
 
         th = threading.Thread(target=_learn, daemon=True,
                               name=f"feedback-learn-{category}")
@@ -677,25 +1276,351 @@ class DetectionEngine:
                             "（同品类检测经品类锁排队，不会读撕裂态）"}
         if "error" in done:
             raise done["error"]
-        entry = done.get("entry")
-        info = {"path": image_path, "verdict": verdict, "label": label,
-                "feedback_ms": round(done.get("dt_ms", 0.0), 2)}
-        if isinstance(entry, dict):
-            # 2026-08-30：透出 handler 真实动作键（action/drift/boost）——
-            # 原透传的 triggered_* 键在 handler entry 中从不存在（死键），
-            # 导致 UI 恒显"已学习"，熔断拦截/待成簇等状态静默（MPDD 评测
-            # 静默失败根因之一）。
-            for k in ("action", "drift", "boost", "defect_ratio"):
-                if k in entry:
-                    info[k] = entry[k]
-        if done.get("fuse_blocked") is not None:
-            info["fuse_blocked"] = done["fuse_blocked"]
-        return info
+        return result_info()
+
+    @staticmethod
+    def _candidate_files(path, *, sync=False, cached=False):
+        # cached=True 用 (abspath,size,mtime_ns) 缓存哈希：只用于不可变的已发布父快照，
+        # 作为并发变更守卫而非防篡改边界；暂存区与恢复完整性校验仍读全文。
+        import hashlib
+        from algo.persist import _sha256_file_cached
+        files = {}
+        for root, dirs, names in os.walk(path):
+            dirs.sort()
+            if any(os.path.islink(os.path.join(root, name)) for name in dirs):
+                raise ValueError("候选快照不允许符号链接")
+            for name in sorted(names):
+                full = os.path.join(root, name)
+                if os.path.islink(full):
+                    raise ValueError("候选快照不允许符号链接")
+                if cached and not sync:
+                    files[os.path.relpath(full, path)] = _sha256_file_cached(full)
+                    continue
+                with open(full, "r+b" if sync else "rb") as f:
+                    files[os.path.relpath(full, path)] = hashlib.sha256(f.read()).hexdigest()
+                    if sync:
+                        os.fsync(f.fileno())
+        if not files:
+            raise ValueError("候选快照缺失")
+        return files
+
+    def _candidate_checkpoint(self, point):
+        pass  # TEMP故障注入接缝，不参与生产状态决策
+
+    from algo.ssocl.candidate_budget import CandidateBudget, CandidateDeferred
+
+    @staticmethod
+    def _candidate_load(path, device, budget):
+        budget.add("reloads", point="snapshot_reload")
+        size = sum(os.path.getsize(os.path.join(root, name))
+                   for root, _, names in os.walk(path) for name in names)
+        budget.add("snapshot_bytes", size, "snapshot_work")
+        from algo.persist import load_snapshot
+        pipe = load_snapshot(path, device, candidate=True)
+        try:
+            budget.check("after_reload")
+        except BaseException:
+            pipe._cpu_exec.shutdown()
+            raise
+        return pipe
+
+    def learn_candidate(self, category: str, image_path: str, *, verdict: str,
+                        label: Optional[int], box=None, event_id: str,
+                        parent_version: int, recover: bool = False,
+                        cancel_event=None, defect_type: Optional[str] = None) -> Dict[str, Any]:
+        # recover=True 是显式恢复/拒绝请求；启动和普通重试不猜测任务死亡。
+        # OS持有锁随进程退出释放；不能根据training或PID猜测持有者已死。
+        from contextlib import ExitStack
+        os.makedirs(self._cat_dir(category), exist_ok=True)
+        with ExitStack() as stack:
+            lock = stack.enter_context(open(os.path.join(self._cat_dir(category),
+                                                        ".candidate.lock"), "a+b"))
+            if os.path.getsize(lock.name) == 0:
+                lock.write(b"0")
+                lock.flush()
+            lock.seek(0)
+            try:
+                if os.name == "nt":
+                    import msvcrt
+                    msvcrt.locking(lock.fileno(), msvcrt.LK_NBLCK, 1)
+                    stack.callback(lambda: (lock.seek(0), msvcrt.locking(
+                        lock.fileno(), msvcrt.LK_UNLCK, 1)))
+                else:
+                    import fcntl
+                    fcntl.flock(lock, fcntl.LOCK_EX | fcntl.LOCK_NB)
+                    stack.callback(lambda: fcntl.flock(lock, fcntl.LOCK_UN))
+            except OSError as e:
+                raise ValueError("品类候选任务仍由其他执行者持锁") from e
+            from algo.ssocl.candidate_budget import candidate_scope
+            budget = self.CandidateBudget(self, category=category, event_id=event_id,
+                                          cancel_event=cancel_event)
+            with candidate_scope(budget):
+                return self._learn_candidate_locked(category, image_path, verdict=verdict,
+                    label=label, box=box, event_id=event_id, parent_version=parent_version,
+                    recover=recover, cancel_event=cancel_event, budget=budget,
+                    defect_type=defect_type)
+
+    def _sweep_candidate_stages(self, category: str, conn) -> List[str]:
+        """清理崩溃残留的 .candidate-* 暂存；调用方须已持本品类候选 OS 锁。
+
+        只有 prepared 意图的暂存可被显式 recover 补记，必须保留；training 意图
+        恢复时只能拒绝、failed/rejected/deferred 不再使用，均可安全删除。
+        """
+        import glob
+        norm = lambda p: os.path.normcase(os.path.abspath(p))
+        keep = set()
+        for (result,) in conn.execute(
+                "SELECT result FROM candidate_events WHERE state='prepared'"):
+            try:
+                stage = json.loads(result).get("stage")
+            except (TypeError, ValueError, AttributeError):
+                continue
+            if stage:
+                keep.add(norm(stage))
+        removed = []
+        for path in glob.glob(os.path.join(self._cat_dir(category), ".candidate-*")):
+            if os.path.isdir(path) and norm(path) not in keep:
+                shutil.rmtree(path, ignore_errors=True)
+                removed.append(path)
+        return removed
+
+    def _learn_candidate_locked(self, category: str, image_path: str, *, verdict: str,
+                        label: Optional[int], box=None, event_id: str,
+                        parent_version: int, recover: bool = False,
+                        cancel_event=None, budget=None,
+                        defect_type: Optional[str] = None) -> Dict[str, Any]:
+        """显式单事件候选：持久意图先于学习，不触碰生产实例/生产 WAL。"""
+        import tempfile
+        from algo.persist import load_snapshot, save_snapshot
+
+        if not event_id or verdict not in ("correct", "wrong", "none") or label not in (0, 1, None):
+            raise ValueError("候选事件ID/verdict/label无效")
+        key = "candidate:" + event_id
+        _, payload = self._feedback_identity(
+            category, image_path, verdict, label, box, None, event_id)
+        conn = self._feedback_receipts()
+        conn.execute("PRAGMA busy_timeout=0")
+        stage = None
+        claimed = False
+        preserve_stage = False
+        pipe = None
+        try:
+            self._sweep_candidate_stages(category, conn)
+            # 锁外预热父快照哈希缓存（已发布快照不可变；锁内仍按 size/mtime 复核），
+            # 避免首个候选在推理锁内做数百毫秒冷哈希。
+            if not recover and os.path.isdir(self._v_dir(category, parent_version)):
+                self._candidate_files(self._v_dir(category, parent_version), cached=True)
+            # 仅持锁冻结父版本和WAL边界；装载、重放、训练与保存均在推理锁外。
+            with self._timed_lock(self._pipe_lock(category), "candidate_freeze"), self._write_lock:
+                conn.execute("BEGIN IMMEDIATE")
+                previous = conn.execute(
+                    "SELECT payload,parent,state,result FROM candidate_events WHERE event_key=?",
+                    (key,)).fetchone()
+                if previous:
+                    if previous[0] != payload or previous[1] != parent_version:
+                        raise ValueError("候选事件ID对应不同payload/父版本")
+                    if previous[2] in ("prepared", "completed"):
+                        if previous[2] == "prepared" and not recover:
+                            raise ValueError("候选待显式recover，禁止普通重试补记")
+                        intent = json.loads(previous[3])
+                        if "result" not in intent:
+                            raise ValueError("旧候选缺恢复完整性证据，明确拒绝")
+                        result = intent["result"]
+                        target = self._v_dir(category, result["version_num"])
+                        source = target if os.path.isdir(target) else intent["stage"]
+                        try:
+                            wal_now = b""
+                            if os.path.exists(self._journal_path(category)):
+                                with open(self._journal_path(category), "rb") as f:
+                                    wal_now = f.read(65537)
+                            import hashlib
+                            if self.current_version(category) != parent_version:
+                                raise ValueError("候选父版本已变化")
+                            if hashlib.sha256(wal_now).hexdigest() != intent["wal_sha256"]:
+                                raise ValueError("候选父WAL已变化")
+                            if self._candidate_files(self._v_dir(category, parent_version)) != intent["parent_files"]:
+                                raise ValueError("候选父快照已变化")
+                            if self._candidate_files(source) != intent["files"]:
+                                raise ValueError("候选快照完整性校验失败")
+                            restored = self._candidate_load(source, self.device, budget)
+                            restored._cpu_exec.shutdown()
+                            if source != target:
+                                os.rename(source, target)
+                            conn.execute("UPDATE candidate_events SET state='completed' WHERE event_key=?", (key,))
+                            conn.commit()
+                        except self.CandidateDeferred:
+                            conn.rollback()
+                            raise  # prepared 工件保留，后续仍只能显式 recover
+                        except Exception:
+                            conn.execute("UPDATE candidate_events SET state='rejected' WHERE event_key=?", (key,))
+                            conn.commit()
+                            raise
+                        result["idempotent"] = True
+                        return result
+                    if previous[2] == "training" and recover:
+                        # 已取得本品类OS锁，才允许显式拒绝不完整意图；不猜测PID。
+                        conn.execute("UPDATE candidate_events SET state='rejected' WHERE event_key=?", (key,))
+                        conn.commit()
+                    raise ValueError("候选事件未完成或失败，需显式recover拒绝后新事件重新构建")
+                if recover:
+                    raise ValueError("候选恢复意图不存在，拒绝创建新训练")
+                if self.current_version(category) != parent_version:
+                    raise ValueError("候选父版本已变化")
+                pending = conn.execute("SELECT payload FROM candidate_events WHERE state IN ('training','prepared')").fetchall()
+                if any(json.loads(row[0])[0] == category for row in pending):
+                    raise ValueError("品类存在未恢复候选，请先用原事件ID恢复或明确拒绝")
+                records = []
+                wal = self._journal_path(category)
+                wal_bytes = b""
+                if os.path.exists(wal):
+                    if os.path.getsize(wal) > 65536:
+                        raise ValueError("父WAL超过候选底座64KiB预算，需后续微批协议")
+                    with open(wal, "rb") as f:
+                        wal_bytes = f.read()
+                    for line in wal_bytes.decode("utf-8").splitlines():
+                        rec = json.loads(line)
+                        if rec.get("base") == parent_version:
+                            records.append(rec)
+                parent_files = self._candidate_files(self._v_dir(category, parent_version),
+                                                     cached=True)
+                stage = tempfile.mkdtemp(prefix=".candidate-", dir=self._cat_dir(category))
+                conn.execute("INSERT INTO candidate_events VALUES (?,?,?,'training',?)",
+                             (key, payload, parent_version, json.dumps(
+                                 {"stage": stage, "candidate_budget": budget.snapshot()})))
+                conn.commit()  # 持久预写意图；失败/重启不误报消费完成
+                claimed = True
+            budget.add("events", len(records), "parent_events")
+            budget.add("events", 1, "new_event")
+            budget.add("patch_bytes", sum(os.path.getsize(p) for p in
+                       [r.get("path") for r in records] + [image_path]
+                       if p and os.path.isfile(p)), "asset_bytes")
+            pipe = self._candidate_load(self._v_dir(category, parent_version), self.device, budget)
+            seen = {}
+            for rec in records:
+                identity, rec_payload = self._feedback_identity(
+                    category, rec.get("path"), rec.get("verdict"), rec.get("label"),
+                    rec.get("box"), rec.get("feedback_id"), rec.get("event_id"))
+                if identity in seen:
+                    if seen[identity] != rec_payload:
+                        raise ValueError("父WAL事件payload冲突")
+                    continue
+                if not rec.get("path") or not os.path.isfile(rec["path"]):
+                    raise ValueError("父WAL资产缺失，拒绝不完整候选")
+                budget.check("parent_feedback")
+                pipe.feedback(rec["path"], verdict=rec.get("verdict"),
+                              label=rec.get("label"), box=rec.get("box"))
+                if identity is not None:
+                    seen[identity] = rec_payload
+            budget.check("new_feedback")
+            # 按类型孵育：缺陷类型血缘仅非空时透传（旧 pipe/mock 签名不变）
+            fb_kw = {"defect_type": defect_type} if defect_type else {}
+            entry = pipe.feedback(image_path, verdict=verdict, label=label, box=box, **fb_kw)
+            budget.check("after_feedback")
+            self._candidate_checkpoint("before_save")
+            save_snapshot(pipe, stage, version=0, parent_version=parent_version,
+                          trigger="isolated_candidate", note="独立验收未实现，禁止激活",
+                          ssocl_cfg=self.ssocl_cfg)
+            # 保存产物必须真实可重新装载，否则不发完成凭据。
+            self._candidate_checkpoint("after_save")
+            restored = self._candidate_load(stage, self.device, budget)
+            restored._cpu_exec.shutdown()
+            # 暂存区私有：全文哈希+fsync 在锁外完成，锁内只重写/重哈希 meta.json。
+            stage_files = self._candidate_files(stage, sync=True)
+            import hashlib
+            with self._timed_lock(self._pipe_lock(category), "candidate_publish"), self._write_lock:
+                if self.current_version(category) != parent_version:
+                    raise ValueError("训练期间父版本已变化，拒绝候选")
+                current_wal = b""
+                if os.path.exists(wal):
+                    with open(wal, "rb") as f:
+                        current_wal = f.read(65537)
+                if current_wal != wal_bytes:
+                    raise ValueError("训练期间父WAL已变化，拒绝过期候选")
+                versions = self.list_versions(category)
+                version = max(versions) + 1 if versions else 1
+                meta_path = os.path.join(stage, "meta.json")
+                with open(meta_path, encoding="utf-8") as f:
+                    meta = json.load(f)
+                meta.update(version=version, candidate_state="completed",
+                            candidate_event=key, acceptance="unavailable",
+                            parent_wal_records=len(records), candidate_budget=budget.snapshot())
+                with open(meta_path, "w", encoding="utf-8") as f:
+                    json.dump(meta, f, ensure_ascii=False, allow_nan=False)
+                    f.flush()
+                    os.fsync(f.fileno())
+                if self._candidate_files(self._v_dir(category, parent_version),
+                                         cached=True) != parent_files:
+                    raise ValueError("候选父快照已变化")
+                with open(meta_path, "rb") as f:
+                    stage_files[os.path.relpath(meta_path, stage)] = \
+                        hashlib.sha256(f.read()).hexdigest()
+                result = {"category": category, "version_num": version,
+                          "parent_version": parent_version, "event_id": event_id,
+                          "learning_status": "candidate", "activated": False,
+                          "candidate_state": "completed", "acceptance": "unavailable",
+                          "entry": entry, "candidate_budget": budget.snapshot()}
+                intent = {"result": result, "stage": stage,
+                          "files": stage_files,
+                          "parent_files": parent_files,
+                          "wal_sha256": hashlib.sha256(wal_bytes).hexdigest()}
+                self._candidate_checkpoint("before_prepared")
+                budget.check("before_prepared")
+                conn.execute("UPDATE candidate_events SET state='prepared',result=? WHERE event_key=?",
+                             (json.dumps(intent, ensure_ascii=False, allow_nan=False), key))
+                conn.commit()
+                claimed = False  # prepared后保留工件，重试验证补记，不回退failed
+                preserve_stage = True
+                self._candidate_checkpoint("after_prepared")
+                self._candidate_checkpoint("before_rename")
+                os.rename(stage, self._v_dir(category, version))
+                stage = None
+                self._candidate_checkpoint("after_rename")
+                self._candidate_checkpoint("before_completed")
+                conn.execute("UPDATE candidate_events SET state='completed' WHERE event_key=?", (key,))
+                conn.commit()
+                self._candidate_checkpoint("after_completed")
+            return result
+        except (self.CandidateDeferred, torch.cuda.OutOfMemoryError) as exc:
+            if not isinstance(exc, self.CandidateDeferred):
+                # AC-070：候选独立 pipe 真实 OOM → 释放缓存并按 deferred 记录（可重试），工作态不受影响
+                torch.cuda.empty_cache()
+                exc = self.CandidateDeferred("候选显存 OOM：%s" % str(exc)[:200])
+            conn.rollback()
+            if claimed:
+                evidence = {"candidate_state": exc.state, "reason": str(exc),
+                            "reason_code": "CANDIDATE_BUILD_DEFERRED",
+                            "violations": [{"code": "CANDIDATE_BUILD_DEFERRED",
+                                            "message": str(exc)}],
+                            "retryable": True,
+                            "candidate_budget": budget.snapshot(), "retry": "new_event_id"}
+                conn.execute("UPDATE candidate_events SET state=?,result=? WHERE event_key=?",
+                             (exc.state, json.dumps(evidence, ensure_ascii=False), key))
+                conn.commit()
+            raise exc
+        except Exception as exc:
+            conn.rollback()
+            if claimed:
+                conn.execute("UPDATE candidate_events SET state='failed',result=? WHERE event_key=?",
+                             (json.dumps({"reason": str(exc),
+                                          "reason_code": "CANDIDATE_BUILD_FAILED",
+                                          "violations": [{"code": "CANDIDATE_BUILD_FAILED",
+                                                          "message": str(exc)}],
+                                          "retryable": False,
+                                          "candidate_budget": budget.snapshot()},
+                                         ensure_ascii=False), key))
+                conn.commit()
+            raise
+        finally:
+            conn.close()
+            if pipe is not None:
+                pipe._cpu_exec.shutdown()
+            if stage is not None and not preserve_stage:
+                shutil.rmtree(stage)
 
     # ----- 巩固（落盘新版） -----
-    def consolidate(self, category: str, *, note: str = "") -> int:
-        """把当前内存态（已在线更新）固化为新版本。用于 A-B 对比与回滚。"""
-        from algo.persist import save_snapshot, set_current_version, list_versions
+    def consolidate(self, category: str, *, note: str = "", activate: bool = True) -> int:
+        """把当前内存态固化为新版本；候选巩固可暂不切换激活指针。"""
+        from algo.persist import save_snapshot, set_current_version, list_versions, load_snapshot
         # 2026-08-30 并发修复：
         # 1) _ensure_loaded 移出 _write_lock（已加载品类快路径不抢锁）；
         # 2) save_snapshot 读取 pipe 内存态（NormalBank/融合权重可能正被
@@ -704,21 +1629,83 @@ class DetectionEngine:
         # 3) 耗时 IO 不持全局 _write_lock 阻塞推理——其它品类实时检测不受影响
         #    （_write_lock 仅剩版本号分配/指针切换等管理操作的互斥）。
         self._ensure_loaded(category)
-        with self._pipe_lock(category):
-            pipe, active = self._pipe_entry(category)
-            cat_dir = self._cat_dir(category)
+        if activate:
+            # 激活路径：写快照、切指针、清 WAL 必须与同品类 feedback 原子串行。
+            with self._timed_lock(self._pipe_lock(category), "consolidate_activate"):
+                pipe, active = self._pipe_entry(category)
+                self._require_current_representation(pipe, "巩固")
+                cat_dir = self._cat_dir(category)
+                with self._write_lock:
+                    vs = list_versions(cat_dir)
+                    new_v = max(vs) + 1 if vs else 1
+                    snap = self._v_dir(category, new_v)
+                    save_snapshot(pipe, snap, version=new_v,
+                                  parent_version=active, trigger="consolidate",
+                                  note=note, ssocl_cfg=self.ssocl_cfg)
+                    with open(os.path.join(snap, "meta.json"), encoding="utf-8") as f:
+                        pipe.production_feature_metadata = json.load(f)["production_feature_metadata"]
+                    set_current_version(cat_dir, new_v)
+                    self._clear_journal(category)
+                    self._cache_put(category, pipe, new_v)
+                    return new_v
+        # 候选路径（2026-10-12）：品类锁内只把 pipe 状态写入私有暂存目录；
+        # 全文哈希 + meta 写入（~340ms）移到锁外；_write_lock 只护版本号分配 + rename。
+        # 暂存目录以 "." 开头，list_versions 不可见，失败即删除。
+        import tempfile
+        from algo.persist import write_snapshot_state, finalize_snapshot, set_snapshot_version
+        cat_dir = self._cat_dir(category)
+        # 崩溃残留的巩固暂存（不可见、不可恢复，仅占盘）；正常存活仅数秒，
+        # 按 10 分钟陈旧阈值清理，避免误删同目录另一引擎正在写的暂存。
+        import glob
+        for old in glob.glob(os.path.join(cat_dir, ".consolidate-*")):
+            try:
+                if time.time() - os.path.getmtime(old) > 600:
+                    shutil.rmtree(old, ignore_errors=True)
+            except OSError:
+                pass
+        stage = tempfile.mkdtemp(prefix=".consolidate-", dir=cat_dir)
+        try:
+            with self._timed_lock(self._pipe_lock(category), "consolidate_state"):
+                pipe, active = self._pipe_entry(category)
+                self._require_current_representation(pipe, "巩固")
+                meta = write_snapshot_state(pipe, stage, parent_version=active,
+                                            trigger="consolidate", note=note,
+                                            ssocl_cfg=self.ssocl_cfg)
+                pipe.production_feature_metadata = json.loads(
+                    json.dumps(meta["production_feature_metadata"], ensure_ascii=False))
+                wal_mark = self._journal_mark(category)
+            finalize_snapshot(stage, meta, version=0)
             with self._write_lock:
                 vs = list_versions(cat_dir)
                 new_v = max(vs) + 1 if vs else 1
-                snap = self._v_dir(category, new_v)
-                save_snapshot(pipe, snap, version=new_v,
-                              parent_version=active, trigger="consolidate",
-                              note=note, ssocl_cfg=self.ssocl_cfg)
-                set_current_version(cat_dir, new_v)
-                # 学习已固化进新版本 → 清空 WAL（重放只对新版本之后的条目有意义）
-                self._clear_journal(category)
-                self._cache_put(category, pipe, new_v)
-                return new_v
+                set_snapshot_version(stage, new_v)  # meta.json 不参与 artifact 哈希
+                os.rename(stage, self._v_dir(category, new_v))
+                stage = None
+        finally:
+            if stage is not None and os.path.isdir(stage):
+                shutil.rmtree(stage, ignore_errors=True)
+        # 候选快照不得进入生产推理缓存；保留 WAL，避免候选未激活前的在线反馈
+        # 在重启/驱逐后丢失。与冷装载一致：先恢复同版本 WAL 再发布缓存，否则
+        # 巩固后暂时丢失反馈、LRU/重启又恢复，同版本预测随缓存变化。
+        # 2026-10-12：load_snapshot+重放（秒级）移出品类锁，避免阻塞同品类推理；
+        # 锁内只复查“缓存条目与 WAL 均未变化”后原子发布，变化则保留现缓存
+        # （现缓存已含全部在线学习，下次冷装载自然按 WAL 重建）。
+        # 串行模式：锁外重装载/重放前让行前台推理。AC-069：与即学同一上界——巩固是
+        # API/工单同步调用，持续前台负载下 _fg_last 不断刷新，无上界会无限饿死。
+        yield_max_s = self.feedback_yield_max_ms / 1000.0
+        self._learning_yield(max_wait_s=yield_max_s)
+        active_pipe = load_snapshot(self._v_dir(category, active), self.device)
+        self._learning_yield(max_wait_s=yield_max_s)
+        self._replay_journal(category, active_pipe, active)
+        with self._timed_lock(self._pipe_lock(category), "consolidate_publish"):
+            with self._write_lock:
+                entry = self._pipes.get(category)
+                if (entry is not None and entry[0] is pipe and entry[1] == active
+                        and self._journal_mark(category) == wal_mark):
+                    self._cache_put(category, active_pipe, active)
+                else:
+                    logger.info("[engine] %s 巩固期间缓存/WAL 已变化，保留现缓存", category)
+        return new_v
 
     # ----- 评估 / 贡献档案 / 学习曲线 -----
     # 注（2026-08-30 并发修复）：evaluate/contribution_report 是手动触发的
@@ -757,12 +1744,17 @@ class DetectionEngine:
         # 用独立 pipe 回放，避免串改线上态（锁外：快照目录只读、副本独立）
         tmp = load_snapshot(self._v_dir(category, cv), self.device)
         from algo.ssocl.learning_curve import simulate_learning
-        return simulate_learning(
+        result = simulate_learning(
             tmp, stream_items, eval_items,
             feedback_ratio=feedback_ratio, eval_every=eval_every,
             max_feedback=max_feedback, box_map=box_map,
             progress_cb=progress_cb,
         )
+        result["replay_evidence"] = self._replay_evidence(
+            category, cv, {"mode": "stream", "feedback_ratio": feedback_ratio,
+                           "eval_every": eval_every, "max_feedback": max_feedback,
+                           "box_map": bool(box_map)}, stream_items, eval_items)
+        return result
 
     def simulate_learning_rounds(self, category: str, pool_items, eval_items,
                                  *, round_size: int = 30, n_rounds: int = 10,
@@ -778,12 +1770,41 @@ class DetectionEngine:
             raise RuntimeError(f"品类 {category} 未准备")
         tmp = load_snapshot(self._v_dir(category, cv), self.device)
         from algo.ssocl.learning_curve import simulate_learning_rounds
-        return simulate_learning_rounds(
+        result = simulate_learning_rounds(
             tmp, pool_items, eval_items,
             round_size=round_size, n_rounds=n_rounds,
             box_map=box_map, relearn_every=relearn_every,
             eval_per_sample=eval_per_sample, progress_cb=progress_cb,
         )
+        result["replay_evidence"] = self._replay_evidence(
+            category, cv, {"mode": "rounds", "round_size": round_size,
+                           "n_rounds": n_rounds, "relearn_every": relearn_every,
+                           "eval_per_sample": eval_per_sample, "box_map": bool(box_map)},
+            pool_items, eval_items)
+        return result
+
+    def _replay_evidence(self, category, parent_version, config, *datasets):
+        """生成独立回放证据；仅内存返回，不写生产 DB/快照。"""
+        import hashlib
+        import uuid
+        from algo.persist import current_version
+        with self._write_lock:
+            actual = current_version(self._cat_dir(category))
+        if actual != parent_version:
+            raise ValueError("回放父版本已变化")
+        items = []
+        for dataset in datasets:
+            items.extend(dataset)
+        summary = [{"path": item[0], "label": item[1]} if isinstance(item, tuple) else item
+                   for item in items]
+        config_hash = hashlib.sha256(json.dumps(config, sort_keys=True, default=str).encode()).hexdigest()
+        payload = {"category": category, "parent_version": parent_version,
+                   "wal_watermark": self._journal_mark(category),
+                   "input_summary": {"count": len(summary), "sha256": hashlib.sha256(
+                       json.dumps(summary, sort_keys=True, default=str).encode()).hexdigest()},
+                   "config_hash": config_hash}
+        payload["replay_run_id"] = "replay-" + uuid.uuid4().hex
+        return payload
 
     def weight_history(self, category: str) -> Dict[str, Any]:
         """融合权重演化历史（学习效果页「权重随反馈演化」曲线数据源）。
@@ -804,6 +1825,29 @@ class DetectionEngine:
                     "current": {k: float(v) for k, v in
                                 (getattr(pipe, "weights", {}) or {}).items()},
                     "n_labeled_fb": int(getattr(h, "_n_labeled_fb", 0)) if h else 0}
+
+    def slot_health(self, category: str) -> Dict[str, Any]:
+        """AC-025/026 槽位健康页：能力清单+运行时状态+cde_report 摘要+更新准入审计。
+        只读、零前向；未准备品类返回 enabled=False（UI 空态）。"""
+        from algo.fusion.cde_report import slot_health
+        try:
+            self._ensure_loaded(category)
+        except Exception:
+            return {"category": category, "enabled": False}
+        with self._pipe_lock(category):
+            pipe, version = self._pipe_entry(category)
+            out = slot_health(pipe)
+            rep = getattr(pipe, "cde_report", None) or {}
+            out["router_admission"] = rep.get("router_admission")
+            out["domain_shift"] = rep.get("domain_shift")
+            out["fusion_baselines"] = rep.get("fusion_baselines")
+            h = getattr(pipe, "handler", None)
+            out["update_audit"] = (h.update_audit_report()
+                                   if h is not None and hasattr(h, "update_audit_report")
+                                   else None)
+            out.update({"category": category, "enabled": True, "version": f"v{version}"})
+            from algo.api.trace import _jsonable
+            return _jsonable(out)
 
 
 # ---- 进程级单例（线程安全，仿 demo1_adapter.get_registry 模式） ----
@@ -828,4 +1872,5 @@ def get_engine() -> DetectionEngine:
                                       str(base_cfg),
                                       max_cached_categories=settings.get(
                                           "system", "engine_max_cached_categories", 8))
+                _engine.legacy_online_guard = True   # AC-038
     return _engine

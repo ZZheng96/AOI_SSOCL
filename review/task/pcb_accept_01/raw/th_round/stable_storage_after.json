@@ -1,0 +1,452 @@
+﻿[
+    {
+        "FullName":  "D:\\CGAIC\\AOI_SSOCL\\stable_AOI_tree\\PCB_Dual\\storage\\core_stage",
+        "Length":  null,
+        "LastWriteTime":  "\/Date(1791855031445)\/"
+    },
+    {
+        "FullName":  "D:\\CGAIC\\AOI_SSOCL\\stable_AOI_tree\\PCB_Dual\\storage\\locks",
+        "Length":  null,
+        "LastWriteTime":  "\/Date(1791855031578)\/"
+    },
+    {
+        "FullName":  "D:\\CGAIC\\AOI_SSOCL\\stable_AOI_tree\\PCB_Dual\\storage\\logs",
+        "Length":  null,
+        "LastWriteTime":  "\/Date(1791855031582)\/"
+    },
+    {
+        "FullName":  "D:\\CGAIC\\AOI_SSOCL\\stable_AOI_tree\\PCB_Dual\\storage\\outputs",
+        "Length":  null,
+        "LastWriteTime":  "\/Date(1791855031585)\/"
+    },
+    {
+        "FullName":  "D:\\CGAIC\\AOI_SSOCL\\stable_AOI_tree\\PCB_Dual\\storage\\recipes",
+        "Length":  null,
+        "LastWriteTime":  "\/Date(1791855033755)\/"
+    },
+    {
+        "FullName":  "D:\\CGAIC\\AOI_SSOCL\\stable_AOI_tree\\PCB_Dual\\storage\\template_calib",
+        "Length":  null,
+        "LastWriteTime":  "\/Date(1791855033759)\/"
+    },
+    {
+        "FullName":  "D:\\CGAIC\\AOI_SSOCL\\stable_AOI_tree\\PCB_Dual\\storage\\settings.json",
+        "Length":  167,
+        "LastWriteTime":  "\/Date(1791730405449)\/"
+    },
+    {
+        "FullName":  "D:\\CGAIC\\AOI_SSOCL\\stable_AOI_tree\\PCB_Dual\\storage\\core_stage\\gold_finger",
+        "Length":  null,
+        "LastWriteTime":  "\/Date(1791855031165)\/"
+    },
+    {
+        "FullName":  "D:\\CGAIC\\AOI_SSOCL\\stable_AOI_tree\\PCB_Dual\\storage\\core_stage\\smt_solder",
+        "Length":  null,
+        "LastWriteTime":  "\/Date(1791855031491)\/"
+    },
+    {
+        "FullName":  "D:\\CGAIC\\AOI_SSOCL\\stable_AOI_tree\\PCB_Dual\\storage\\core_stage\\gold_finger\\train",
+        "Length":  null,
+        "LastWriteTime":  "\/Date(1791855031166)\/"
+    },
+    {
+        "FullName":  "D:\\CGAIC\\AOI_SSOCL\\stable_AOI_tree\\PCB_Dual\\storage\\core_stage\\gold_finger\\train\\good",
+        "Length":  null,
+        "LastWriteTime":  "\/Date(1791855031423)\/"
+    },
+    {
+        "FullName":  "D:\\CGAIC\\AOI_SSOCL\\stable_AOI_tree\\PCB_Dual\\storage\\core_stage\\gold_finger\\train\\good\\225b94a33fb65fa0.jpg",
+        "Length":  2481374,
+        "LastWriteTime":  "\/Date(1791622656000)\/"
+    },
+    {
+        "FullName":  "D:\\CGAIC\\AOI_SSOCL\\stable_AOI_tree\\PCB_Dual\\storage\\core_stage\\gold_finger\\train\\good\\2ba89bb11f7297f7.png",
+        "Length":  1212467,
+        "LastWriteTime":  "\/Date(1791622656000)\/"
+    },
+    {
+        "FullName":  "D:\\CGAIC\\AOI_SSOCL\\stable_AOI_tree\\PCB_Dual\\storage\\core_stage\\gold_finger\\train\\good\\3066f25adf34adac.png",
+        "Length":  201217,
+        "LastWriteTime":  "\/Date(1791622656000)\/"
+    },
+    {
+        "FullName":  "D:\\CGAIC\\AOI_SSOCL\\stable_AOI_tree\\PCB_Dual\\storage\\core_stage\\gold_finger\\train\\good\\3257e4cbffc1a902.jpg",
+        "Length":  2728909,
+        "LastWriteTime":  "\/Date(1791622656000)\/"
+    },
+    {
+        "FullName":  "D:\\CGAIC\\AOI_SSOCL\\stable_AOI_tree\\PCB_Dual\\storage\\core_stage\\gold_finger\\train\\good\\3a769d47bfcbde5a.png",
+        "Length":  1204672,
+        "LastWriteTime":  "\/Date(1791622656000)\/"
+    },
+    {
+        "FullName":  "D:\\CGAIC\\AOI_SSOCL\\stable_AOI_tree\\PCB_Dual\\storage\\core_stage\\gold_finger\\train\\good\\3aabeb166e34dd80.png",
+        "Length":  192577,
+        "LastWriteTime":  "\/Date(1791622656000)\/"
+    },
+    {
+        "FullName":  "D:\\CGAIC\\AOI_SSOCL\\stable_AOI_tree\\PCB_Dual\\storage\\core_stage\\gold_finger\\train\\good\\3c9a98307321a106.jpg",
+        "Length":  2188569,
+        "LastWriteTime":  "\/Date(1791622656000)\/"
+    },
+    {
+        "FullName":  "D:\\CGAIC\\AOI_SSOCL\\stable_AOI_tree\\PCB_Dual\\storage\\core_stage\\gold_finger\\train\\good\\3eb044b7dd60ed0f.png",
+        "Length":  1062010,
+        "LastWriteTime":  "\/Date(1791622656000)\/"
+    },
+    {
+        "FullName":  "D:\\CGAIC\\AOI_SSOCL\\stable_AOI_tree\\PCB_Dual\\storage\\core_stage\\gold_finger\\train\\good\\578de177120d6ced.png",
+        "Length":  1216935,
+        "LastWriteTime":  "\/Date(1791622656000)\/"
+    },
+    {
+        "FullName":  "D:\\CGAIC\\AOI_SSOCL\\stable_AOI_tree\\PCB_Dual\\storage\\core_stage\\gold_finger\\train\\good\\5aadae895b4f3035.png",
+        "Length":  1165393,
+        "LastWriteTime":  "\/Date(1791622656000)\/"
+    },
+    {
+        "FullName":  "D:\\CGAIC\\AOI_SSOCL\\stable_AOI_tree\\PCB_Dual\\storage\\core_stage\\gold_finger\\train\\good\\5c8e1391478b6cae.jpg",
+        "Length":  2951792,
+        "LastWriteTime":  "\/Date(1791622656000)\/"
+    },
+    {
+        "FullName":  "D:\\CGAIC\\AOI_SSOCL\\stable_AOI_tree\\PCB_Dual\\storage\\core_stage\\gold_finger\\train\\good\\655f61171f721f4c.png",
+        "Length":  1213755,
+        "LastWriteTime":  "\/Date(1791622656000)\/"
+    },
+    {
+        "FullName":  "D:\\CGAIC\\AOI_SSOCL\\stable_AOI_tree\\PCB_Dual\\storage\\core_stage\\gold_finger\\train\\good\\67a6fddcf541f160.png",
+        "Length":  1239402,
+        "LastWriteTime":  "\/Date(1791622656000)\/"
+    },
+    {
+        "FullName":  "D:\\CGAIC\\AOI_SSOCL\\stable_AOI_tree\\PCB_Dual\\storage\\core_stage\\gold_finger\\train\\good\\8616fac228d532d6.png",
+        "Length":  1208337,
+        "LastWriteTime":  "\/Date(1791622656000)\/"
+    },
+    {
+        "FullName":  "D:\\CGAIC\\AOI_SSOCL\\stable_AOI_tree\\PCB_Dual\\storage\\core_stage\\gold_finger\\train\\good\\91940b19fa3ba96d.png",
+        "Length":  230693,
+        "LastWriteTime":  "\/Date(1791622656000)\/"
+    },
+    {
+        "FullName":  "D:\\CGAIC\\AOI_SSOCL\\stable_AOI_tree\\PCB_Dual\\storage\\core_stage\\gold_finger\\train\\good\\aa5b131c4a0e1c18.png",
+        "Length":  1207845,
+        "LastWriteTime":  "\/Date(1791622656000)\/"
+    },
+    {
+        "FullName":  "D:\\CGAIC\\AOI_SSOCL\\stable_AOI_tree\\PCB_Dual\\storage\\core_stage\\gold_finger\\train\\good\\b82200d925c9cbbd.png",
+        "Length":  1183988,
+        "LastWriteTime":  "\/Date(1791622656000)\/"
+    },
+    {
+        "FullName":  "D:\\CGAIC\\AOI_SSOCL\\stable_AOI_tree\\PCB_Dual\\storage\\core_stage\\gold_finger\\train\\good\\cd917648b3af1ede.jpg",
+        "Length":  2706973,
+        "LastWriteTime":  "\/Date(1791622656000)\/"
+    },
+    {
+        "FullName":  "D:\\CGAIC\\AOI_SSOCL\\stable_AOI_tree\\PCB_Dual\\storage\\core_stage\\gold_finger\\train\\good\\f38146f330ae3371.png",
+        "Length":  1202086,
+        "LastWriteTime":  "\/Date(1791622656000)\/"
+    },
+    {
+        "FullName":  "D:\\CGAIC\\AOI_SSOCL\\stable_AOI_tree\\PCB_Dual\\storage\\core_stage\\gold_finger\\train\\good\\fede589a58fc5dc9.jpg",
+        "Length":  2475610,
+        "LastWriteTime":  "\/Date(1791622656000)\/"
+    },
+    {
+        "FullName":  "D:\\CGAIC\\AOI_SSOCL\\stable_AOI_tree\\PCB_Dual\\storage\\core_stage\\smt_solder\\train",
+        "Length":  null,
+        "LastWriteTime":  "\/Date(1791855031448)\/"
+    },
+    {
+        "FullName":  "D:\\CGAIC\\AOI_SSOCL\\stable_AOI_tree\\PCB_Dual\\storage\\core_stage\\smt_solder\\train_anomaly",
+        "Length":  null,
+        "LastWriteTime":  "\/Date(1791855031492)\/"
+    },
+    {
+        "FullName":  "D:\\CGAIC\\AOI_SSOCL\\stable_AOI_tree\\PCB_Dual\\storage\\core_stage\\smt_solder\\train\\good",
+        "Length":  null,
+        "LastWriteTime":  "\/Date(1791855031479)\/"
+    },
+    {
+        "FullName":  "D:\\CGAIC\\AOI_SSOCL\\stable_AOI_tree\\PCB_Dual\\storage\\core_stage\\smt_solder\\train\\good\\2de7dd0f234b5922.png",
+        "Length":  293594,
+        "LastWriteTime":  "\/Date(1791622656000)\/"
+    },
+    {
+        "FullName":  "D:\\CGAIC\\AOI_SSOCL\\stable_AOI_tree\\PCB_Dual\\storage\\core_stage\\smt_solder\\train\\good\\70bd33c957e01772.png",
+        "Length":  534511,
+        "LastWriteTime":  "\/Date(1791622656000)\/"
+    },
+    {
+        "FullName":  "D:\\CGAIC\\AOI_SSOCL\\stable_AOI_tree\\PCB_Dual\\storage\\core_stage\\smt_solder\\train\\good\\8c28b2311df9f0ba.png",
+        "Length":  673903,
+        "LastWriteTime":  "\/Date(1791622656000)\/"
+    },
+    {
+        "FullName":  "D:\\CGAIC\\AOI_SSOCL\\stable_AOI_tree\\PCB_Dual\\storage\\core_stage\\smt_solder\\train\\good\\9fa4d1f54480592a.png",
+        "Length":  620718,
+        "LastWriteTime":  "\/Date(1791622656000)\/"
+    },
+    {
+        "FullName":  "D:\\CGAIC\\AOI_SSOCL\\stable_AOI_tree\\PCB_Dual\\storage\\core_stage\\smt_solder\\train_anomaly\\defect",
+        "Length":  null,
+        "LastWriteTime":  "\/Date(1791855031558)\/"
+    },
+    {
+        "FullName":  "D:\\CGAIC\\AOI_SSOCL\\stable_AOI_tree\\PCB_Dual\\storage\\core_stage\\smt_solder\\train_anomaly\\defect\\2db4bdf4999c307a.png",
+        "Length":  669548,
+        "LastWriteTime":  "\/Date(1791622656000)\/"
+    },
+    {
+        "FullName":  "D:\\CGAIC\\AOI_SSOCL\\stable_AOI_tree\\PCB_Dual\\storage\\core_stage\\smt_solder\\train_anomaly\\defect\\55fdc5ef447723e7.png",
+        "Length":  286576,
+        "LastWriteTime":  "\/Date(1791622656000)\/"
+    },
+    {
+        "FullName":  "D:\\CGAIC\\AOI_SSOCL\\stable_AOI_tree\\PCB_Dual\\storage\\core_stage\\smt_solder\\train_anomaly\\defect\\5dd972ebf62cd53d.png",
+        "Length":  547505,
+        "LastWriteTime":  "\/Date(1791622656000)\/"
+    },
+    {
+        "FullName":  "D:\\CGAIC\\AOI_SSOCL\\stable_AOI_tree\\PCB_Dual\\storage\\core_stage\\smt_solder\\train_anomaly\\defect\\d6b14199e5c6e6f3.png",
+        "Length":  785248,
+        "LastWriteTime":  "\/Date(1791622656000)\/"
+    },
+    {
+        "FullName":  "D:\\CGAIC\\AOI_SSOCL\\stable_AOI_tree\\PCB_Dual\\storage\\core_stage\\smt_solder\\train_anomaly\\defect\\df5875fd89ad3b0e.png",
+        "Length":  677184,
+        "LastWriteTime":  "\/Date(1791622656000)\/"
+    },
+    {
+        "FullName":  "D:\\CGAIC\\AOI_SSOCL\\stable_AOI_tree\\PCB_Dual\\storage\\core_stage\\smt_solder\\train_anomaly\\defect\\eb0935b3bbae5fa3.png",
+        "Length":  612377,
+        "LastWriteTime":  "\/Date(1791622656000)\/"
+    },
+    {
+        "FullName":  "D:\\CGAIC\\AOI_SSOCL\\stable_AOI_tree\\PCB_Dual\\storage\\locks\\pcbins_ui.lock",
+        "Length":  0,
+        "LastWriteTime":  "\/Date(1791622656000)\/"
+    },
+    {
+        "FullName":  "D:\\CGAIC\\AOI_SSOCL\\stable_AOI_tree\\PCB_Dual\\storage\\logs\\aoi_core_child.log",
+        "Length":  1276690,
+        "LastWriteTime":  "\/Date(1791916740036)\/"
+    },
+    {
+        "FullName":  "D:\\CGAIC\\AOI_SSOCL\\stable_AOI_tree\\PCB_Dual\\storage\\logs\\server.log",
+        "Length":  211997,
+        "LastWriteTime":  "\/Date(1791916736162)\/"
+    },
+    {
+        "FullName":  "D:\\CGAIC\\AOI_SSOCL\\stable_AOI_tree\\PCB_Dual\\storage\\outputs\\2026-10-07",
+        "Length":  null,
+        "LastWriteTime":  "\/Date(1791855033747)\/"
+    },
+    {
+        "FullName":  "D:\\CGAIC\\AOI_SSOCL\\stable_AOI_tree\\PCB_Dual\\storage\\outputs\\2026-10-07\\173234_591_26_352_1010_img",
+        "Length":  null,
+        "LastWriteTime":  "\/Date(1791855031589)\/"
+    },
+    {
+        "FullName":  "D:\\CGAIC\\AOI_SSOCL\\stable_AOI_tree\\PCB_Dual\\storage\\outputs\\2026-10-07\\173235_465_26_352_1010_temp",
+        "Length":  null,
+        "LastWriteTime":  "\/Date(1791855031711)\/"
+    },
+    {
+        "FullName":  "D:\\CGAIC\\AOI_SSOCL\\stable_AOI_tree\\PCB_Dual\\storage\\outputs\\2026-10-07\\173236_327_26_352_1010_temp__jpeg95",
+        "Length":  null,
+        "LastWriteTime":  "\/Date(1791855032021)\/"
+    },
+    {
+        "FullName":  "D:\\CGAIC\\AOI_SSOCL\\stable_AOI_tree\\PCB_Dual\\storage\\outputs\\2026-10-07\\173237_209_26_352_1010_temp__noise2",
+        "Length":  null,
+        "LastWriteTime":  "\/Date(1791855032740)\/"
+    },
+    {
+        "FullName":  "D:\\CGAIC\\AOI_SSOCL\\stable_AOI_tree\\PCB_Dual\\storage\\outputs\\2026-10-07\\173238_177_26_352_1010_temp__shift2_noise2",
+        "Length":  null,
+        "LastWriteTime":  "\/Date(1791855032854)\/"
+    },
+    {
+        "FullName":  "D:\\CGAIC\\AOI_SSOCL\\stable_AOI_tree\\PCB_Dual\\storage\\outputs\\2026-10-07\\173239_088_26_352_1010_temp__bright5",
+        "Length":  null,
+        "LastWriteTime":  "\/Date(1791855033063)\/"
+    },
+    {
+        "FullName":  "D:\\CGAIC\\AOI_SSOCL\\stable_AOI_tree\\PCB_Dual\\storage\\outputs\\2026-10-07\\173432_611_26_352_1010_img",
+        "Length":  null,
+        "LastWriteTime":  "\/Date(1791855033315)\/"
+    },
+    {
+        "FullName":  "D:\\CGAIC\\AOI_SSOCL\\stable_AOI_tree\\PCB_Dual\\storage\\outputs\\2026-10-07\\173433_504_26_352_1010_temp",
+        "Length":  null,
+        "LastWriteTime":  "\/Date(1791855033586)\/"
+    },
+    {
+        "FullName":  "D:\\CGAIC\\AOI_SSOCL\\stable_AOI_tree\\PCB_Dual\\storage\\outputs\\2026-10-07\\batch_173239_26_352_1010_temp",
+        "Length":  null,
+        "LastWriteTime":  "\/Date(1791855033740)\/"
+    },
+    {
+        "FullName":  "D:\\CGAIC\\AOI_SSOCL\\stable_AOI_tree\\PCB_Dual\\storage\\outputs\\2026-10-07\\batch_173248_26_352_1010_temp",
+        "Length":  null,
+        "LastWriteTime":  "\/Date(1791855033745)\/"
+    },
+    {
+        "FullName":  "D:\\CGAIC\\AOI_SSOCL\\stable_AOI_tree\\PCB_Dual\\storage\\outputs\\2026-10-07\\batch_173434_26_352_1010_temp__UI测试_dual",
+        "Length":  null,
+        "LastWriteTime":  "\/Date(1791855033750)\/"
+    },
+    {
+        "FullName":  "D:\\CGAIC\\AOI_SSOCL\\stable_AOI_tree\\PCB_Dual\\storage\\outputs\\2026-10-07\\173234_591_26_352_1010_img\\result.json",
+        "Length":  8741,
+        "LastWriteTime":  "\/Date(1791622656000)\/"
+    },
+    {
+        "FullName":  "D:\\CGAIC\\AOI_SSOCL\\stable_AOI_tree\\PCB_Dual\\storage\\outputs\\2026-10-07\\173234_591_26_352_1010_img\\result_vis.png",
+        "Length":  21756069,
+        "LastWriteTime":  "\/Date(1791622656000)\/"
+    },
+    {
+        "FullName":  "D:\\CGAIC\\AOI_SSOCL\\stable_AOI_tree\\PCB_Dual\\storage\\outputs\\2026-10-07\\173235_465_26_352_1010_temp\\result.json",
+        "Length":  6135,
+        "LastWriteTime":  "\/Date(1791622656000)\/"
+    },
+    {
+        "FullName":  "D:\\CGAIC\\AOI_SSOCL\\stable_AOI_tree\\PCB_Dual\\storage\\outputs\\2026-10-07\\173235_465_26_352_1010_temp\\result_vis.png",
+        "Length":  19479990,
+        "LastWriteTime":  "\/Date(1791622656000)\/"
+    },
+    {
+        "FullName":  "D:\\CGAIC\\AOI_SSOCL\\stable_AOI_tree\\PCB_Dual\\storage\\outputs\\2026-10-07\\173236_327_26_352_1010_temp__jpeg95\\result.json",
+        "Length":  6144,
+        "LastWriteTime":  "\/Date(1791622656000)\/"
+    },
+    {
+        "FullName":  "D:\\CGAIC\\AOI_SSOCL\\stable_AOI_tree\\PCB_Dual\\storage\\outputs\\2026-10-07\\173236_327_26_352_1010_temp__jpeg95\\result_vis.png",
+        "Length":  19448444,
+        "LastWriteTime":  "\/Date(1791622656000)\/"
+    },
+    {
+        "FullName":  "D:\\CGAIC\\AOI_SSOCL\\stable_AOI_tree\\PCB_Dual\\storage\\outputs\\2026-10-07\\173237_209_26_352_1010_temp__noise2\\result.json",
+        "Length":  6143,
+        "LastWriteTime":  "\/Date(1791622656000)\/"
+    },
+    {
+        "FullName":  "D:\\CGAIC\\AOI_SSOCL\\stable_AOI_tree\\PCB_Dual\\storage\\outputs\\2026-10-07\\173237_209_26_352_1010_temp__noise2\\result_vis.png",
+        "Length":  21090139,
+        "LastWriteTime":  "\/Date(1791622656000)\/"
+    },
+    {
+        "FullName":  "D:\\CGAIC\\AOI_SSOCL\\stable_AOI_tree\\PCB_Dual\\storage\\outputs\\2026-10-07\\173238_177_26_352_1010_temp__shift2_noise2\\result.json",
+        "Length":  6151,
+        "LastWriteTime":  "\/Date(1791622656000)\/"
+    },
+    {
+        "FullName":  "D:\\CGAIC\\AOI_SSOCL\\stable_AOI_tree\\PCB_Dual\\storage\\outputs\\2026-10-07\\173238_177_26_352_1010_temp__shift2_noise2\\result_vis.png",
+        "Length":  21089619,
+        "LastWriteTime":  "\/Date(1791622656000)\/"
+    },
+    {
+        "FullName":  "D:\\CGAIC\\AOI_SSOCL\\stable_AOI_tree\\PCB_Dual\\storage\\outputs\\2026-10-07\\173239_088_26_352_1010_temp__bright5\\result.json",
+        "Length":  6144,
+        "LastWriteTime":  "\/Date(1791622656000)\/"
+    },
+    {
+        "FullName":  "D:\\CGAIC\\AOI_SSOCL\\stable_AOI_tree\\PCB_Dual\\storage\\outputs\\2026-10-07\\173239_088_26_352_1010_temp__bright5\\result_vis.png",
+        "Length":  19533575,
+        "LastWriteTime":  "\/Date(1791622656000)\/"
+    },
+    {
+        "FullName":  "D:\\CGAIC\\AOI_SSOCL\\stable_AOI_tree\\PCB_Dual\\storage\\outputs\\2026-10-07\\173432_611_26_352_1010_img\\result.json",
+        "Length":  9341,
+        "LastWriteTime":  "\/Date(1791622656000)\/"
+    },
+    {
+        "FullName":  "D:\\CGAIC\\AOI_SSOCL\\stable_AOI_tree\\PCB_Dual\\storage\\outputs\\2026-10-07\\173432_611_26_352_1010_img\\result_vis.png",
+        "Length":  21756069,
+        "LastWriteTime":  "\/Date(1791622656000)\/"
+    },
+    {
+        "FullName":  "D:\\CGAIC\\AOI_SSOCL\\stable_AOI_tree\\PCB_Dual\\storage\\outputs\\2026-10-07\\173433_504_26_352_1010_temp\\result.json",
+        "Length":  6772,
+        "LastWriteTime":  "\/Date(1791622656000)\/"
+    },
+    {
+        "FullName":  "D:\\CGAIC\\AOI_SSOCL\\stable_AOI_tree\\PCB_Dual\\storage\\outputs\\2026-10-07\\173433_504_26_352_1010_temp\\result_vis.png",
+        "Length":  19479990,
+        "LastWriteTime":  "\/Date(1791622656000)\/"
+    },
+    {
+        "FullName":  "D:\\CGAIC\\AOI_SSOCL\\stable_AOI_tree\\PCB_Dual\\storage\\outputs\\2026-10-07\\batch_173239_26_352_1010_temp\\batch_summary.csv",
+        "Length":  1222,
+        "LastWriteTime":  "\/Date(1791622656000)\/"
+    },
+    {
+        "FullName":  "D:\\CGAIC\\AOI_SSOCL\\stable_AOI_tree\\PCB_Dual\\storage\\outputs\\2026-10-07\\batch_173239_26_352_1010_temp\\batch_summary.json",
+        "Length":  2504,
+        "LastWriteTime":  "\/Date(1791622656000)\/"
+    },
+    {
+        "FullName":  "D:\\CGAIC\\AOI_SSOCL\\stable_AOI_tree\\PCB_Dual\\storage\\outputs\\2026-10-07\\batch_173248_26_352_1010_temp\\batch_summary.csv",
+        "Length":  298,
+        "LastWriteTime":  "\/Date(1791622656000)\/"
+    },
+    {
+        "FullName":  "D:\\CGAIC\\AOI_SSOCL\\stable_AOI_tree\\PCB_Dual\\storage\\outputs\\2026-10-07\\batch_173248_26_352_1010_temp\\batch_summary.json",
+        "Length":  645,
+        "LastWriteTime":  "\/Date(1791622656000)\/"
+    },
+    {
+        "FullName":  "D:\\CGAIC\\AOI_SSOCL\\stable_AOI_tree\\PCB_Dual\\storage\\outputs\\2026-10-07\\batch_173434_26_352_1010_temp__UI测试_dual\\batch_summary.csv",
+        "Length":  701,
+        "LastWriteTime":  "\/Date(1791622656000)\/"
+    },
+    {
+        "FullName":  "D:\\CGAIC\\AOI_SSOCL\\stable_AOI_tree\\PCB_Dual\\storage\\outputs\\2026-10-07\\batch_173434_26_352_1010_temp__UI测试_dual\\batch_summary.json",
+        "Length":  1423,
+        "LastWriteTime":  "\/Date(1791622656000)\/"
+    },
+    {
+        "FullName":  "D:\\CGAIC\\AOI_SSOCL\\stable_AOI_tree\\PCB_Dual\\storage\\recipes\\params",
+        "Length":  null,
+        "LastWriteTime":  "\/Date(1791917365849)\/"
+    },
+    {
+        "FullName":  "D:\\CGAIC\\AOI_SSOCL\\stable_AOI_tree\\PCB_Dual\\storage\\recipes\\global_default.json",
+        "Length":  215,
+        "LastWriteTime":  "\/Date(1791622656000)\/"
+    },
+    {
+        "FullName":  "D:\\CGAIC\\AOI_SSOCL\\stable_AOI_tree\\PCB_Dual\\storage\\recipes\\params\\template_algorithm",
+        "Length":  null,
+        "LastWriteTime":  "\/Date(1791917365852)\/"
+    },
+    {
+        "FullName":  "D:\\CGAIC\\AOI_SSOCL\\stable_AOI_tree\\PCB_Dual\\storage\\recipes\\params\\template_algorithm\\PixPin_2026-07-01_11-21-15_OK__solder_多锡.json",
+        "Length":  819,
+        "LastWriteTime":  "\/Date(1791917365850)\/"
+    },
+    {
+        "FullName":  "D:\\CGAIC\\AOI_SSOCL\\stable_AOI_tree\\PCB_Dual\\storage\\recipes\\params\\template_algorithm\\PixPin_2026-07-01_11-21-15_OK__solder_少锡.json",
+        "Length":  819,
+        "LastWriteTime":  "\/Date(1791917365850)\/"
+    },
+    {
+        "FullName":  "D:\\CGAIC\\AOI_SSOCL\\stable_AOI_tree\\PCB_Dual\\storage\\recipes\\params\\template_algorithm\\PixPin_2026-07-01_11-21-15_OK__solder_虚焊.json",
+        "Length":  819,
+        "LastWriteTime":  "\/Date(1791917365852)\/"
+    },
+    {
+        "FullName":  "D:\\CGAIC\\AOI_SSOCL\\stable_AOI_tree\\PCB_Dual\\storage\\recipes\\params\\template_algorithm\\PixPin_2026-07-01_11-21-15_OK__solder_连锡.json",
+        "Length":  819,
+        "LastWriteTime":  "\/Date(1791917365851)\/"
+    },
+    {
+        "FullName":  "D:\\CGAIC\\AOI_SSOCL\\stable_AOI_tree\\PCB_Dual\\storage\\template_calib\\PixPin_2026-07-01_11-21-15_OK.json",
+        "Length":  266,
+        "LastWriteTime":  "\/Date(1791918106999)\/"
+    }
+]

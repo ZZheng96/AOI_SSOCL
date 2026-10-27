@@ -1,0 +1,5 @@
+# cwd d:\CGAIC\AOI_SSOCL\AOI_tree\PCB_Dual
+$env:QT_QPA_PLATFORM='offscreen'; py -3.11 -m unittest tests.test_adapter_batch tests.test_shift_batch tests.test_tuner_preview -v
+# 19/19 PASS; 2.405s suite time, not performance evidence; SMT extract 4->1, TH inspect 4->2 default configs
+$env:QT_QPA_PLATFORM='offscreen'; py -3.11 -m tests.tuner02_real_cases --output "d:\CGAIC\AOI_SSOCL\review\task\pcbdual03"
+# exit 0; fixed seed 20261013; 3 SMT + 1 Shift + 2 TH; TEMP execution; progress per case

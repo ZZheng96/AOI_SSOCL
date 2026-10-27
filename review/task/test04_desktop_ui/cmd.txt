@@ -1,0 +1,9 @@
+# TEST-04 复跑
+
+cd /d d:\CGAIC\AOI_SSOCL\stable_AOI_tree\AOI_Core
+py -3.11 main.py
+:: 待"后端已就绪"后，UI 操作路径：
+:: 工作台（口径卡）→ 实时监控（Gauge 空态）→ 标注反馈（不完备预警横幅/开放告警样本 tab/双击行看详情）
+:: API 配对：GET /api/review/open_alerts、/api/review/stats、/api/eval/runs
+:: 评估场景：POST /api/eval/accuracy {"category":"gold_finger","split":"test","name":"TEST04桌面联调","limit":100}
+::   → 轮询 GET /api/tasks/{id} → UI 评估看板"刷新"→ 选中记录看派生指标与预算达标线

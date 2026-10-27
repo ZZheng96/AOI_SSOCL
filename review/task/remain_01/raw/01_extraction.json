@@ -1,0 +1,46 @@
+{
+  "task_check": "特征提取",
+  "tree": "stable",
+  "candidate_mode": "legacy_u27",
+  "harness_check_key": "extraction",
+  "pass": false,
+  "evidence": {
+    "per_probe": [
+      {
+        "probe": 0,
+        "shape": [
+          300,
+          280,
+          3
+        ],
+        "candidate_finite": true,
+        "production_finite": true,
+        "max_abs_diff": 14.665191650390625
+      },
+      {
+        "probe": 1,
+        "shape": [
+          20,
+          40,
+          3
+        ],
+        "candidate_finite": true,
+        "production_finite": true,
+        "max_abs_diff": 2.900970458984375
+      },
+      {
+        "probe": 2,
+        "shape": [
+          64,
+          64,
+          3
+        ],
+        "candidate_finite": true,
+        "production_finite": true,
+        "max_abs_diff": 9.513031005859375
+      }
+    ],
+    "all_vector_max_abs_diff": 14.665191650390625,
+    "atol": 1e-06
+  }
+}

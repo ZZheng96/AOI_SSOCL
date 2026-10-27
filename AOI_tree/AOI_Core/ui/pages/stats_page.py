@@ -4,8 +4,10 @@
 - 左侧工单档案列表：进行中 / 已存档 两组；选中工单驱动右侧全部统计
 - 存档管理：存档（数据保留转历史）/ 还原 / 删除（级联清检测与反馈）
 - 右侧统计（复核后口径）：KPI（检测数/复核覆盖率/真实不良率/误报率/
-  漏检率/平均延迟）+ 误判率趋势 + 缺陷帕累托 + 批次对比 + 产线健康 +
-  延迟趋势；固定「全部」时间范围（工单本身就是时间边界，不再用 7d/30d）
+  检出率/推理耗时/端到端耗时）+ 口径行 + 误判率趋势 + 缺陷帕累托 + 批次对比 +
+  产线健康 + 推理耗时趋势；固定「全部」时间范围（工单本身就是时间边界）
+- AC-058（2026-10-13）：耗时与口径行取 overview.scope_stats，复用
+  dashboard_page.scope_caliber_texts / CALIBER_TIP；缺数据显示“—/不可用”不补 0
 - 未选工单时右侧为空态提示
 
 操作日志在「系统设置」页。全部数据为纯 DB 聚合，零模型前向。
@@ -29,9 +31,12 @@ from PySide6.QtWidgets import (
 
 from ui.api_client import ApiClient
 from ui.pages.common import (attach_level_badge, make_banner, make_card,
-                             notify, run_async, warn)
+                             make_card_title, make_scroll_area, notify,
+                             run_async, wrap_card_heads, warn)
+# AC-058：统计口径文案与工作台共用一份（不复制）
+from ui.pages.dashboard_page import CALIBER_TIP, NA, scope_caliber_texts
 from ui.theme import DANGER, PRIMARY, SUCCESS, WARNING
-from ui.widgets.charts import BarChart, LatencyChart, LineChart
+from ui.widgets.charts import BarChart, LatencyChart, LineChart, num_or_nan
 from ui.widgets.kpi_card import KpiCard
 
 
@@ -39,18 +44,65 @@ def _pct(v) -> str:
     try:
         return f"{float(v) * 100:.1f}%"
     except (TypeError, ValueError):
-        return "-"
+        return NA
+
+
+def _pct_if(v, denom) -> str:
+    """分母为 0 时后端返回 0.0：显示“—”而不是 0.0%。"""
+    return _pct(v) if int(denom or 0) > 0 else NA
+
+
+def _recall_value(item: dict):
+    """读取真实检出率；兼容旧响应中的 fn_rate（同一缺陷分母）。"""
+    value = item.get("recall_defect")
+    if value is not None:
+        return value
+    fn_rate = item.get("fn_rate")
+    return (1.0 - float(fn_rate)) if fn_rate is not None else None
+
+
+def _ms_pos(v) -> str:
+    """后端对全缺 e2e 的批次用 avg or 0.0 补 0：≤0 视为缺失。"""
+    try:
+        f = float(v)
+    except (TypeError, ValueError):
+        return NA
+    return f"{f:.0f} ms" if f > 0 else NA
+
+
+# AC-072：业务预算达标线 UI 侧兜底（与 backend BUSINESS_BUDGET_SPEC 默认一致；
+# 正常运行时由 /system/info.business_budget 注入）
+BIZ_BUDGET_DEFAULTS = {"g2_max_fpr_pct": 5.0, "g2_min_recall_pct": 95.0,
+                       "g6_max_old_recall_drop_pt": 2.0,
+                       "max_gray_ratio_pct": 15.0}
+
+
+def biz_budget_value(get_biz_budget, key: str) -> float:
+    """取业务预算阈值（%）；注入缺项/非法时回落 UI 默认。"""
+    try:
+        b = (get_biz_budget() if get_biz_budget else None) or {}
+        return float(b.get(key, BIZ_BUDGET_DEFAULTS[key]))
+    except (TypeError, ValueError, AttributeError):
+        return float(BIZ_BUDGET_DEFAULTS[key])
+
+
+def _csv_num(v, denom, nd: int = 4):
+    """导出：分母为 0 / 值缺失时留空，不写 0。"""
+    if v is None or int(denom or 0) <= 0:
+        return ""
+    return round(float(v), nd)
 
 
 class StatsPage(QWidget):
     """存档统计页：工单档案管理 + 按工单统计（复核后口径）。"""
 
     def __init__(self, client: ApiClient, get_category, get_budget=None,
-                 parent: QWidget | None = None):
+                 parent: QWidget | None = None, get_biz_budget=None):
         super().__init__(parent)
         self._client = client
         self._get_category = get_category   # 兼容旧注入（统计已按工单）
         self._get_budget = get_budget or (lambda: 200.0)
+        self._get_biz_budget = get_biz_budget
         self._wo_items: list[dict] = []     # 进行中 + 已存档工单合并缓存
 
         root = QVBoxLayout(self)
@@ -123,59 +175,44 @@ class StatsPage(QWidget):
         self.kpi_true_rate.setToolTip("复核确认缺陷 / 复核数（区别于系统判定口径）")
         self.kpi_fp = KpiCard("误报率", "-", accent=DANGER)
         self.kpi_fp.setToolTip("过杀：系统判异常而实为正常 / (误报+确认正常)")
-        self.kpi_fn = KpiCard("漏检率", "-", accent=DANGER)
-        self.kpi_fn.setToolTip("逃逸：系统判正常而实为缺陷 / (漏检+确认缺陷)")
-        self.kpi_latency = KpiCard("平均延迟", "-", accent=PRIMARY)
+        self.kpi_fn = KpiCard("检出率", "-", accent=SUCCESS)
+        self.kpi_fn.setToolTip("真实缺陷被系统检出的比例：TP/(TP+FN)；FN 为漏检样本数，缺标签或零分母显示未知")
+        # 工作台与统计页统一使用面向用户的耗时名称
+        self.kpi_latency = KpiCard("模型判断耗时（均值）", NA, accent=PRIMARY)
+        self.kpi_latency_e2e = KpiCard("检测处理耗时（均值）", NA, accent=PRIMARY)
+        self.kpi_latency.setToolTip(CALIBER_TIP)
+        self.kpi_latency_e2e.setToolTip(CALIBER_TIP)
         for k in (self.kpi_det, self.kpi_coverage, self.kpi_true_rate,
-                  self.kpi_fp, self.kpi_fn, self.kpi_latency):
+                  self.kpi_fp, self.kpi_fn, self.kpi_latency,
+                  self.kpi_latency_e2e):
             kpi_row.addWidget(k)
         r_root.addWidget(kpi_card)
 
-        row1 = QHBoxLayout()
-        trend_card = make_card()
-        t_lay = QVBoxLayout(trend_card)
-        t_head = QLabel("误判率趋势（按日；学习生效应持续下降）")
-        t_head.setProperty("heading", True)
-        t_lay.addWidget(t_head)
-        self.trend_chart = LineChart()
-        t_lay.addWidget(self.trend_chart, 1)
-        row1.addWidget(trend_card, 3)
+        self.lbl_caliber = QLabel("统计对象：未选工单｜共 0 条已保存检测结果｜来源：暂无检测记录")
+        self.lbl_caliber.setProperty("subtext", True)
+        self.lbl_caliber.setWordWrap(True)
+        self.lbl_caliber.setToolTip(CALIBER_TIP)
+        r_root.addWidget(self.lbl_caliber)
 
-        pareto_card = make_card()
-        p_lay = QVBoxLayout(pareto_card)
-        p_head = QLabel("缺陷类型帕累托（复核确认缺陷分布）")
-        p_head.setProperty("heading", True)
-        p_lay.addWidget(p_head)
-        self.pareto_chart = BarChart()
-        p_lay.addWidget(self.pareto_chart, 1)
-        row1.addWidget(pareto_card, 2)
-        r_root.addLayout(row1, 1)
-
-        split2 = QSplitter(Qt.Horizontal)
+        # 2026-10-14（前端反馈）：改为**左右两列**——左列「批次对比 + 产线健康信号」
+        # 上下叠放，右列三张图（误判率趋势 / 缺陷类型帕累托 / 推理耗时趋势）上下叠放。
+        # 图不需要很大，缩小后整屏即可看全。
         batch_card = make_card()
         b_lay = QVBoxLayout(batch_card)
-        b_head = QLabel("批次对比（哪个批次不良/误判集中）")
-        b_head.setProperty("heading", True)
-        b_lay.addWidget(b_head)
-        self.table_batch = QTableWidget(0, 7)
+        b_lay.addWidget(make_card_title("批次对比（哪个批次不良/误判集中）"))
+        self.table_batch = QTableWidget(0, 8)
         self.table_batch.setHorizontalHeaderLabels(
-            ["批次", "检测数", "系统不良", "复核数", "误报率", "漏检率",
-             "平均延迟"])
+            ["批次", "检测数", "系统不良", "复核数", "误报率", "检出率",
+             "模型判断耗时", "检测处理耗时"])
+        self.table_batch.setToolTip(CALIBER_TIP)
         self.table_batch.setEditTriggers(QTableWidget.NoEditTriggers)
         self.table_batch.setAlternatingRowColors(True)
         self.table_batch.horizontalHeader().setStretchLastSection(True)
         b_lay.addWidget(self.table_batch, 1)
-        split2.addWidget(batch_card)
 
-        right2 = QWidget()
-        r2_lay = QVBoxLayout(right2)
-        r2_lay.setContentsMargins(0, 0, 0, 0)
-        r2_lay.setSpacing(8)
         health_card = make_card()
         h_lay = QVBoxLayout(health_card)
-        h_head = QLabel("产线健康信号（近 7 天检测聚合）")
-        h_head.setProperty("heading", True)
-        h_lay.addWidget(h_head)
+        h_lay.addWidget(make_card_title("产线健康信号（当前工单全部检测）"))
         h_row = QHBoxLayout()
         self.kpi_gray = KpiCard("灰区率", "-", accent=WARNING)
         self.kpi_gray.setToolTip("模型不确定判定占比→复判工作量信号")
@@ -189,21 +226,56 @@ class StatsPage(QWidget):
         self.lbl_health_hint = QLabel("")
         self.lbl_health_hint.setProperty("subtext", True)
         h_lay.addWidget(self.lbl_health_hint)
-        r2_lay.addWidget(health_card)
+
+        trend_card = make_card()
+        t_lay = QVBoxLayout(trend_card)
+        t_lay.addWidget(make_card_title("误报率与检出率趋势（按批次）"))
+        self.trend_chart = LineChart()
+        t_lay.addWidget(self.trend_chart)
+
+        pareto_card = make_card()
+        p_lay = QVBoxLayout(pareto_card)
+        p_lay.addWidget(make_card_title("缺陷类型帕累托（复核确认缺陷分布）"))
+        self.pareto_chart = BarChart()
+        p_lay.addWidget(self.pareto_chart)
 
         lat_card = make_card()
         l2_lay = QVBoxLayout(lat_card)
-        l_head = QLabel("平均延迟趋势")
+        l_head = QLabel("推理耗时趋势（当前工单全部记录）")
+        self.lbl_latency_head = l_head
         l_head.setProperty("heading", True)
+        l_head.setToolTip("严格按检测记录的工单归属统计，仅模型推理耗时。"
+                          "优先按导入批次均值（首次检测顺序）；有无批次记录时按检测顺序。"
+                          "不混入同品类其他工单，缺失耗时断线，不补 0。")
         l2_lay.addWidget(l_head)
         self.latency_chart = LatencyChart(budget_ms=float(self._get_budget()))
-        l2_lay.addWidget(self.latency_chart, 1)
-        r2_lay.addWidget(lat_card, 1)
-        split2.addWidget(right2)
-        split2.setSizes([620, 420])
-        r_root.addWidget(split2, 1)
+        l2_lay.addWidget(self.latency_chart)
 
-        splitter.addWidget(right)
+        cols = QHBoxLayout()
+        cols.setSpacing(8)
+        lcol = QVBoxLayout()
+        lcol.setSpacing(8)
+        lcol.addWidget(batch_card, 3)
+        lcol.addWidget(health_card, 2)
+        rcol = QVBoxLayout()
+        rcol.setSpacing(8)
+        for _c in (trend_card, pareto_card, lat_card):
+            rcol.addWidget(_c, 1)
+        cols.addLayout(lcol, 5)
+        cols.addLayout(rcol, 6)
+        r_root.addLayout(cols)
+        r_root.addStretch(1)
+
+        # 图不需要很大：三张图各固定 150px，配两行图题后右列与左列高度接近
+        for ch in (self.trend_chart, self.pareto_chart, self.latency_chart):
+            ch.setFixedHeight(150)
+        self.table_batch.setMinimumHeight(150)
+        health_card.setMinimumHeight(170)
+        wrap_card_heads(self)
+        left.setFixedWidth(300)
+
+        splitter.addWidget(make_scroll_area(right))
+        splitter.setStretchFactor(1, 1)
         splitter.setSizes([300, 900])
         root.addWidget(splitter, 1)
 
@@ -352,8 +424,10 @@ class StatsPage(QWidget):
     def _clear_stats(self) -> None:
         for k in (self.kpi_det, self.kpi_coverage, self.kpi_true_rate,
                   self.kpi_fp, self.kpi_fn, self.kpi_latency,
+                  self.kpi_latency_e2e,
                   self.kpi_gray, self.kpi_open, self.kpi_align):
-            k.set_value("-")
+            k.set_value(NA, "")
+        self.lbl_caliber.setText(f"口径：{NA}")
         self.trend_chart.clear()
         self.trend_chart.set_labels([], "比率")
         self.pareto_chart.set_data([], {})
@@ -362,47 +436,81 @@ class StatsPage(QWidget):
         self.lbl_health_hint.setText("")
 
     def _load_stats(self, wid: int, wo: dict) -> None:
+        self._clear_stats()
+        self._stats_request = request = object()
+
+        def current(callback):
+            return lambda data: (callback(data) if self._stats_request is request
+                                 and self._selected_wo_id() == wid else None)
+
         run_async(self, lambda: self._client.stats_quality(
-            workorder_id=wid, range_name="all"), self._fill_quality)
+            workorder_id=wid, range_name="all"), current(self._fill_quality))
+        # AC-058：耗时/口径行取 overview.scope_stats（推理/e2e 分列、窗口/分母/来源）
+        run_async(self, lambda: self._client.stats_overview(
+            workorder_id=wid, range_name="all"), current(self._fill_caliber))
         run_async(self, lambda: self._client.stats_mistake_trend(
-            workorder_id=wid, range_name="all"), self._fill_trend)
+            workorder_id=wid, range_name="all"), current(self._fill_trend))
         run_async(self, lambda: self._client.stats_defect_types(
-            workorder_id=wid, range_name="all"), self._fill_pareto)
+            workorder_id=wid, range_name="all"), current(self._fill_pareto))
         run_async(self, lambda: self._client.stats_batch_summary(
-            workorder_id=wid, range_name="all"), self._fill_batch)
+            workorder_id=wid, range_name="all"), current(self._fill_batch))
         run_async(self, lambda: self._client.stats_health(
-            workorder_id=wid, range_name="7d"), self._fill_health)
-        # 延迟趋势端点基于 StatsDaily 聚合表、无法按工单拆解——
-        # 用工单首个品类近似（无品类则全局近 30 天）
-        cats = [str(c) for c in (wo.get("categories") or []) if c]
-        cat = cats[0] if len(cats) == 1 else ""
-        run_async(self, lambda: self._client.stats_timeseries(
-            days=30, category=cat), self._fill_latency)
+            workorder_id=wid, range_name="all"), current(self._fill_health))
+        run_async(self, lambda: self._client.stats_latency_trend(
+            workorder_id=wid), current(self._fill_latency))
 
     def _fill_quality(self, data) -> None:
         if not isinstance(data, dict):
             return
-        self.kpi_det.set_value(str(data.get("n_detections", 0)))
+        n_det = int(data.get("n_detections", 0) or 0)
+        self.kpi_det.set_value(str(n_det), "已保存的检测结果；不是相机帧数")
         n_rev = int(data.get("n_reviewed", 0) or 0)
-        self.kpi_coverage.set_value(_pct(data.get("coverage")),
-                                    f"复核 {n_rev} 条")
+        self.kpi_coverage.set_value(_pct_if(data.get("coverage"), n_det),
+                                    f"复核 {n_rev} / {n_det} 条" if n_det
+                                    else "该工单暂无检测")
         if n_rev > 0:
-            self.kpi_true_rate.set_value(_pct(data.get("true_defect_rate")))
-            self.kpi_fp.set_value(
-                _pct(data.get("fp_rate")), f"误报 {data.get('fp', 0)} 条")
-            self.kpi_fn.set_value(
-                _pct(data.get("fn_rate")), f"漏检 {data.get('fn', 0)} 条")
+            fp, fn = int(data.get("fp", 0) or 0), int(data.get("fn", 0) or 0)
+            tp, tn = int(data.get("tp", 0) or 0), int(data.get("tn", 0) or 0)
+            self.kpi_true_rate.set_value(_pct(data.get("true_defect_rate")),
+                                         f"分母 复核 {n_rev} 条")
+            lim = biz_budget_value(self._get_biz_budget, "g2_max_fpr_pct")
+            sub = f"误报 {fp} / {fp + tn} 条；上限 {lim:g}%"
+            over = False
+            if fp + tn > 0:
+                try:
+                    over = float(data.get("fp_rate")) * 100 > lim
+                except (TypeError, ValueError):
+                    over = False
+            if over:
+                sub += "（超限）"
+            self.kpi_fp.set_value(_pct_if(data.get("fp_rate"), fp + tn), sub)
+            self.kpi_fp.set_accent(DANGER if over else
+                                   (SUCCESS if fp + tn > 0 else DANGER))
+            self.kpi_fn.set_value(_pct_if(_recall_value(data), fn + tp),
+                                  f"检出 {tp} / {fn + tp} 条；漏检样本 {fn} 条")
         else:
-            self.kpi_true_rate.set_value("-", "暂无复核")
-            self.kpi_fp.set_value("-", "暂无复核")
-            self.kpi_fn.set_value("-", "暂无复核")
-        lat = data.get("avg_latency_ms")
+            self.kpi_true_rate.set_value(NA, "暂无复核")
+            self.kpi_fp.set_value(NA, "暂无复核")
+            self.kpi_fp.set_accent(DANGER)
+            self.kpi_fn.set_value(NA, "暂无复核")
+
+    def _fill_caliber(self, data) -> None:
+        """AC-058：推理耗时 / 端到端耗时分列 + 口径行（复用工作台口径函数）。
+
+        quality_overview 的 avg_latency_ms 只是推理耗时（空范围返回 None），
+        故耗时一律取 overview.scope_stats；缺数据显示“—/不可用”。"""
+        scope = (data or {}).get("scope_stats") if isinstance(data, dict) else None
+        t = scope_caliber_texts(scope or {})
         budget = float(self._get_budget() or 200.0)
-        self.kpi_latency.set_value(
-            f"{float(lat):.0f} ms" if lat is not None else "-",
-            f"预算 <{budget:.0f} ms")
+        self.kpi_latency.set_value(t["infer"],
+                                   f"{t['infer_sub']}；参考上限 <{budget:.0f} ms")
+        lat = (scope or {}).get("avg_latency_ms") if t["infer"] != NA else None
         self.kpi_latency.set_accent(
-            SUCCESS if (lat is not None and float(lat) < budget) else DANGER)
+            PRIMARY if lat is None else
+            (SUCCESS if float(lat) < budget else DANGER))
+        self.kpi_latency_e2e.set_value(t["e2e"], t["e2e_sub"])
+        self.lbl_caliber.setText(
+            f"{t['basis']}｜接收→落库率 {t['receipt']}（{t['receipt_sub']}）")
 
     def _fill_trend(self, data) -> None:
         items = (data or {}).get("items", []) if isinstance(data, dict) else []
@@ -411,13 +519,23 @@ class StatsPage(QWidget):
             self.trend_chart.set_labels([], "比率")
             return
         xs = list(range(len(items)))
+
+        # 后端对无复核日返回 0.0：按 reviewed==0 置 NaN，图上留空不按 0 计
+        def _rate(it, k):
+            if "reviewed" in it and not int(it.get("reviewed") or 0):
+                return float("nan")
+            return num_or_nan(it.get(k))
         self.trend_chart.add_series(
-            "误报率", xs, [float(it.get("fp_rate", 0) or 0) for it in items],
+            "误报率", xs, [_rate(it, "fp_rate") for it in items],
             color=WARNING)
         self.trend_chart.add_series(
-            "漏检率", xs, [float(it.get("fn_rate", 0) or 0) for it in items],
-            color=DANGER)
-        labels = [str(it.get("date", ""))[5:] for it in items]
+            "检出率", xs, [_rate(it, "recall_defect") if it.get("recall_defect") is not None
+                               else (1.0 - num_or_nan(it.get("fn_rate")))
+                               if it.get("fn_rate") is not None else float("nan")
+                               for it in items],
+            color=SUCCESS)
+        self.trend_chart.setToolTip("检出率=TP/(TP+FN)，TP 为检出的真实缺陷，FN 为漏检样本；缺标签或零分母显示空白")
+        labels = [str(it.get("batch_name") or it.get("date", "")) for it in items]
         self.trend_chart.set_labels(labels, "比率")
 
     def _fill_pareto(self, data) -> None:
@@ -434,13 +552,16 @@ class StatsPage(QWidget):
         items = (data or {}).get("items", []) if isinstance(data, dict) else []
         self.table_batch.setRowCount(len(items))
         for r, it in enumerate(items):
+            n_det = int(it.get("n_detections", 0) or 0)
             vals = [str(it.get("name", "-")),
-                    str(it.get("n_detections", 0)),
+                    str(n_det),
                     str(it.get("n_anomaly", 0)),
                     str(it.get("n_reviewed", 0)),
-                    _pct(it.get("fp_rate")) if it.get("n_reviewed") else "-",
-                    _pct(it.get("fn_rate")) if it.get("n_reviewed") else "-",
-                    f"{float(it.get('avg_latency_ms') or 0):.0f} ms"]
+                    _pct(it.get("fp_rate")) if it.get("n_reviewed") else NA,
+                    _pct(_recall_value(it)) if it.get("n_reviewed") else NA,
+                    # 推理耗时：批次有检测才显示；e2e：后端全缺时补 0.0，≤0 视为缺失
+                    _ms_pos(it.get("avg_latency_ms")) if n_det else NA,
+                    _ms_pos(it.get("avg_latency_e2e_ms")) if n_det else NA]
             for c, v in enumerate(vals):
                 cell = QTableWidgetItem(v)
                 if c > 0:
@@ -453,19 +574,38 @@ class StatsPage(QWidget):
         if not isinstance(data, dict):
             return
         n = int(data.get("scanned", 0) or 0)
-        self.kpi_gray.set_value(_pct(data.get("gray_rate")),
-                                f"{data.get('gray_count', 0)} 帧")
+        if not n:
+            for k in (self.kpi_gray, self.kpi_open, self.kpi_align):
+                k.set_value(NA, "该工单无检测")
+            self.lbl_health_hint.setText("该工单暂无检测记录")
+            return
+        lim = biz_budget_value(self._get_biz_budget, "max_gray_ratio_pct")
+        try:
+            over = float(data.get("gray_rate")) * 100 > lim
+        except (TypeError, ValueError):
+            over = False
+        self.kpi_gray.set_value(
+            _pct(data.get("gray_rate")),
+            f"{data.get('gray_count', 0)} / {n} 条；上限 {lim:g}%"
+            + ("（超限）" if over else ""))
+        self.kpi_gray.set_accent(DANGER if over else WARNING)
         self.kpi_open.set_value(str(data.get("open_alerts", 0)),
                                 _pct(data.get("open_rate")))
         self.kpi_align.set_value(str(data.get("align_warns", 0)),
                                  _pct(data.get("align_rate")))
         self.lbl_health_hint.setText(
-            f"扫描最近 {n} 条检测记录" if n else "暂无检测记录")
+            f"分母：当前工单全部 {n} 条已落库检测记录（非相机帧）")
 
     def _fill_latency(self, data) -> None:
-        items = (data or {}).get("items", [])
-        labels = [str(i.get("date", ""))[5:] for i in items]
-        latencies = [float(i.get("avg_latency_ms", 0) or 0) for i in items]
+        items = (data or {}).get("items", []) if isinstance(data, dict) else []
+        if hasattr(self, "lbl_latency_head"):
+            basis = "按检测顺序" if (data or {}).get("basis") == "detection_order" else "按批次均值"
+            self.lbl_latency_head.setText(f"推理耗时趋势（当前工单全部记录，{basis}）")
+        labels = [str(i.get("label", "")) for i in items]
+        # 无检测或缺失耗时置 NaN 断线，不画成 0 ms
+        latencies = [float("nan") if ("n_inspected" in i
+                                      and not int(i.get("n_inspected") or 0))
+                     else num_or_nan(i.get("avg_latency_ms")) for i in items]
         self.latency_chart.set_budget(float(self._get_budget() or 200.0))
         self.latency_chart.set_series(latencies, labels)
 
@@ -498,29 +638,43 @@ class StatsPage(QWidget):
         w.writerow(["# 工单质检报表（复核后口径）",
                     f"工单={wo.get('name')}",
                     f"状态={'已存档' if wo.get('archived') else '进行中'}"])
+        # AC-058：分母为 0 的比率 / 缺失耗时留空，不写 0；分母=已落库检测记录（非相机帧）
+        n_rev = q.get("n_reviewed", 0)
+        qfp = int(q.get("fp", 0) or 0) + int(q.get("tn", 0) or 0)
+        qfn = int(q.get("fn", 0) or 0) + int(q.get("tp", 0) or 0)
+        w.writerow(["# 口径：分母=已落库检测记录（非相机帧）；空值=无数据/分母为 0"])
         w.writerow(["检测数", q.get("n_detections", 0),
-                    "复核数", q.get("n_reviewed", 0),
-                    "真实不良率", round(float(q.get("true_defect_rate") or 0), 4),
-                    "误报率", round(float(q.get("fp_rate") or 0), 4),
-                    "漏检率", round(float(q.get("fn_rate") or 0), 4)])
+                    "复核数", n_rev,
+                    "真实不良率", _csv_num(q.get("true_defect_rate"), n_rev),
+                    "误报率", _csv_num(q.get("fp_rate"), qfp),
+                    "检出率", _csv_num(q.get("recall_defect"), qfn)])
         w.writerow([])
         w.writerow(["## 误判率趋势"])
-        w.writerow(["date", "reviewed", "fp_rate", "fn_rate", "mistake_rate"])
+        w.writerow(["date", "reviewed", "fp_rate", "recall_defect", "mistake_rate"])
         for it in (trend or {}).get("items", []):
-            w.writerow([it.get("date"), it.get("reviewed"),
-                        round(float(it.get("fp_rate") or 0), 4),
-                        round(float(it.get("fn_rate") or 0), 4),
-                        round(float(it.get("mistake_rate") or 0), 4)])
+            rv = it.get("reviewed")
+            w.writerow([it.get("date"), rv,
+                        _csv_num(it.get("fp_rate"), rv),
+                        _csv_num(it.get("recall_defect"),
+                                 int(it.get("tp", 0) or 0) + int(it.get("fn", 0) or 0)
+                                 if it.get("tp") is not None or it.get("fn") is not None else rv),
+                        _csv_num(it.get("mistake_rate"), rv)])
         w.writerow([])
         w.writerow(["## 批次对比"])
         w.writerow(["batch", "n_detections", "n_anomaly", "n_reviewed",
-                    "fp_rate", "fn_rate", "avg_latency_ms"])
+                    "fp_rate", "recall_defect", "avg_latency_infer_ms",
+                    "avg_latency_e2e_ms"])
         for it in (batch or {}).get("items", []):
-            w.writerow([it.get("name"), it.get("n_detections"),
-                        it.get("n_anomaly"), it.get("n_reviewed"),
-                        round(float(it.get("fp_rate") or 0), 4),
-                        round(float(it.get("fn_rate") or 0), 4),
-                        round(float(it.get("avg_latency_ms") or 0), 1)])
+            nd, rv = it.get("n_detections"), it.get("n_reviewed")
+            e2e = it.get("avg_latency_e2e_ms")
+            w.writerow([it.get("name"), nd,
+                        it.get("n_anomaly"), rv,
+                        _csv_num(it.get("fp_rate"), rv),
+                        _csv_num(_recall_value(it),
+                                 int(it.get("tp", 0) or 0) + int(it.get("fn", 0) or 0)
+                                 if it.get("tp") is not None or it.get("fn") is not None else rv),
+                        _csv_num(it.get("avg_latency_ms"), nd, 1),
+                        _csv_num(e2e, nd, 1) if e2e and float(e2e) > 0 else ""])
         with open(save_path, "w", encoding="utf-8-sig", newline="") as f:
             f.write(buf.getvalue())
         notify(self, f"已保存：{save_path}")

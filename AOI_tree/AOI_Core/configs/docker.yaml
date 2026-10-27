@@ -36,6 +36,7 @@ self_learning:
   lr: 0.00001
   epochs: 10
   auto_activate: false
+  learning_parallel: false
 
 evaluation:
   default_split: test

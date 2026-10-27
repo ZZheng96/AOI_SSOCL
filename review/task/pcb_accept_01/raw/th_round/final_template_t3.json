@@ -1,0 +1,184 @@
+{
+  "id": "TH_templ3_dual",
+  "display_name": "TH 双焊点(多框连锡)",
+  "version": 1,
+  "status": "draft",
+  "created_at": "2026-10-14T08:48:23+08:00",
+  "updated_at": "2026-10-14T09:35:44+08:00",
+  "standard_image": {
+    "path": "d:\\CGAIC\\AOI_SSOCL\\review\\task\\pcb_accept_01\\temp_tree\\PCB_Dual\\templates\\TH_templ3_dual\\standard.png",
+    "sha1": "0ce26df6a78110ec7adc06c4fa60011104494097",
+    "width": 262,
+    "height": 124,
+    "source_name": "templ_3.png"
+  },
+  "category": "插件器件",
+  "detection_items": [
+    {
+      "algorithm_id": "tht_孔洞",
+      "enabled": true,
+      "params": {
+        "void_preset": "MED",
+        "void_decide_area_frac": 0.0035,
+        "void_decide_min_dark": 0.9
+      },
+      "preprocess_recipe": null,
+      "region_kind": "th"
+    },
+    {
+      "algorithm_id": "tht_少锡",
+      "enabled": true,
+      "params": {
+        "insuf_preset": "MED",
+        "insuf_area_ratio_max": 0.85,
+        "insuf_exposed_hard_min": 0.06
+      },
+      "preprocess_recipe": null,
+      "region_kind": "th"
+    },
+    {
+      "algorithm_id": "tht_多锡包锡",
+      "enabled": true,
+      "params": {
+        "excess_area_ratio_min": 1.15,
+        "excess_highlight_ratio_min": 0.035
+      },
+      "preprocess_recipe": null,
+      "region_kind": "th"
+    },
+    {
+      "algorithm_id": "tht_连锡",
+      "enabled": true,
+      "params": {
+        "bridge_min_bridge_pixels": 6,
+        "bridge_min_clearance_ratio": 0.35,
+        "bridge_min_clearance_px": 2
+      },
+      "preprocess_recipe": null,
+      "region_kind": "th"
+    },
+    {
+      "algorithm_id": "tht_不出脚",
+      "enabled": true,
+      "params": {
+        "nolead_center_diff_min": 1.0,
+        "nolead_ring_v_delta_min": 30.0
+      },
+      "preprocess_recipe": null,
+      "region_kind": "th"
+    }
+  ],
+  "algorithms": [
+    {
+      "algorithm_id": "tht_孔洞",
+      "enabled": true,
+      "params": {
+        "void_preset": "MED",
+        "void_decide_area_frac": 0.0035,
+        "void_decide_min_dark": 0.9
+      },
+      "preprocess_recipe": null,
+      "region_kind": "th"
+    },
+    {
+      "algorithm_id": "tht_少锡",
+      "enabled": true,
+      "params": {
+        "insuf_preset": "MED",
+        "insuf_area_ratio_max": 0.85,
+        "insuf_exposed_hard_min": 0.06
+      },
+      "preprocess_recipe": null,
+      "region_kind": "th"
+    },
+    {
+      "algorithm_id": "tht_多锡包锡",
+      "enabled": true,
+      "params": {
+        "excess_area_ratio_min": 1.15,
+        "excess_highlight_ratio_min": 0.035
+      },
+      "preprocess_recipe": null,
+      "region_kind": "th"
+    },
+    {
+      "algorithm_id": "tht_连锡",
+      "enabled": true,
+      "params": {
+        "bridge_min_bridge_pixels": 6,
+        "bridge_min_clearance_ratio": 0.35,
+        "bridge_min_clearance_px": 2
+      },
+      "preprocess_recipe": null,
+      "region_kind": "th"
+    },
+    {
+      "algorithm_id": "tht_不出脚",
+      "enabled": true,
+      "params": {
+        "nolead_center_diff_min": 1.0,
+        "nolead_ring_v_delta_min": 30.0
+      },
+      "preprocess_recipe": null,
+      "region_kind": "th"
+    }
+  ],
+  "region_sets": {
+    "th": [
+      {
+        "shape": "rect",
+        "x": 2.4572098475967175,
+        "y": 10.245017584994137,
+        "w": 62.35169988276671,
+        "h": 117.33177022274324
+      },
+      {
+        "shape": "rect",
+        "x": 196.2696365767878,
+        "y": 10.245017584994137,
+        "w": 63.27315357561545,
+        "h": 117.33177022274324
+      }
+    ]
+  },
+  "calibration": {
+    "th_roi": {
+      "pads": [
+        {
+          "shape": "rect",
+          "x": 2.4572098475967175,
+          "y": 10.245017584994137,
+          "w": 62.35169988276671,
+          "h": 117.33177022274324
+        },
+        {
+          "shape": "rect",
+          "x": 196.2696365767878,
+          "y": 10.245017584994137,
+          "w": 63.27315357561545,
+          "h": 117.33177022274324
+        }
+      ],
+      "roi": {
+        "shape": "rect",
+        "x": 2.4572098475967175,
+        "y": 10.245017584994137,
+        "w": 62.35169988276671,
+        "h": 117.33177022274324
+      },
+      "shape_choice": "rect"
+    }
+  },
+  "gate": {
+    "size_gate_enabled": false,
+    "size_gate_max_diff_px": 10
+  },
+  "notes": "PCB-ACCEPT-01 TH 交互验收 TEMP 模板；尺寸门禁关闭（真实 paired 尺寸有差异，由配准处理）",
+  "calib_key": "TH_templ3_dual",
+  "engine_mode": "traditional",
+  "model_category": "插件器件",
+  "px_calibration": {},
+  "cad_items": [],
+  "panels": {},
+  "fov_grid": []
+}

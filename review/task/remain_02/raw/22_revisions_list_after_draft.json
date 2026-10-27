@@ -1,0 +1,303 @@
+{
+  "name": "revisions_list_after_draft",
+  "method": "GET",
+  "path": "/api/models/feature-revisions",
+  "role": "operator",
+  "request_body": null,
+  "status_code": 200,
+  "response": {
+    "items": {
+      "ba47d05c566a175eb8728a6aeece4c23d130dbd1af396f56e2b5866ae4ac8df8": {
+        "manifest": {
+          "schema_version": 1,
+          "groups": [
+            {
+              "key": "glcm",
+              "dim": 4,
+              "slice": [
+                0,
+                4
+              ],
+              "params": {
+                "distances": [
+                  1
+                ],
+                "angles": 4,
+                "levels": 256
+              }
+            },
+            {
+              "key": "selfsim",
+              "dim": 5,
+              "slice": [
+                4,
+                9
+              ],
+              "params": {
+                "scales": [
+                  4,
+                  8,
+                  16
+                ],
+                "max_blocks": 100
+              }
+            },
+            {
+              "key": "edge",
+              "dim": 28,
+              "slice": [
+                9,
+                37
+              ],
+              "params": {
+                "canny_sigma": [
+                  1,
+                  2,
+                  3
+                ],
+                "ang_bins": 16,
+                "lbp": [
+                  8,
+                  1,
+                  6
+                ]
+              }
+            },
+            {
+              "key": "hog",
+              "dim": 11,
+              "slice": [
+                37,
+                48
+              ],
+              "params": {
+                "orient": 9,
+                "cell": 16,
+                "block": 2,
+                "keep": 11
+              }
+            },
+            {
+              "key": "shape",
+              "dim": 11,
+              "slice": [
+                48,
+                59
+              ],
+              "params": {
+                "hu": 7,
+                "contour": 4,
+                "thresh": "otsu"
+              }
+            },
+            {
+              "key": "gray",
+              "dim": 12,
+              "slice": [
+                59,
+                71
+              ],
+              "params": {}
+            },
+            {
+              "key": "gloss",
+              "dim": 4,
+              "slice": [
+                71,
+                75
+              ],
+              "params": {
+                "k_sigma": 2,
+                "min_obj": 50
+              }
+            },
+            {
+              "key": "color",
+              "dim": 36,
+              "slice": [
+                75,
+                111
+              ],
+              "params": {
+                "bins": 8
+              }
+            },
+            {
+              "key": "fft",
+              "dim": 13,
+              "slice": [
+                111,
+                124
+              ],
+              "params": {
+                "low_radius": "min/4",
+                "radial_bins": 10
+              }
+            },
+            {
+              "key": "wavelet",
+              "dim": 40,
+              "slice": [
+                124,
+                164
+              ],
+              "params": {
+                "wavelet": "haar",
+                "level": 3
+              }
+            },
+            {
+              "key": "logic",
+              "dim": 6,
+              "slice": [
+                164,
+                170
+              ],
+              "params": {
+                "thresh": "otsu(shape)"
+              }
+            },
+            {
+              "key": "gabor",
+              "dim": 8,
+              "slice": [
+                170,
+                178
+              ],
+              "params": {
+                "thetas": 4,
+                "freqs": [
+                  0.1,
+                  0.3
+                ],
+                "ksize": 21
+              }
+            },
+            {
+              "key": "log",
+              "dim": 5,
+              "slice": [
+                178,
+                183
+              ],
+              "params": {
+                "sigmas": [
+                  1,
+                  2,
+                  4,
+                  8,
+                  16
+                ]
+              }
+            },
+            {
+              "key": "pc",
+              "dim": 3,
+              "slice": [
+                183,
+                186
+              ],
+              "params": {
+                "nscale": 4,
+                "norient": 4
+              }
+            },
+            {
+              "key": "surf",
+              "dim": 14,
+              "slice": [
+                186,
+                200
+              ],
+              "params": {
+                "octaves": 3,
+                "scales": 3
+              }
+            }
+          ],
+          "dimension": 200,
+          "enabled_groups": [
+            "glcm"
+          ],
+          "scoring": "grouped",
+          "category": "gold_finger",
+          "implementation_hashes": {
+            "vendor/traditional.py": "8b74188c777ccee9745b1e0d62d4cb045dfd0e2ea6c26f84c6c2350cdc23f8a2",
+            "slots/trad.py": "d3caf552b2e5a467552f4353cc7b94d69877ae3c0232aa5872816e3a94e7bbdd"
+          },
+          "preprocess": {
+            "max_side": 256,
+            "min_side": 32,
+            "color": "RGB",
+            "nan_policy": "zero",
+            "selfsim_rng": "default_rng(42)",
+            "global_seed": 0
+          },
+          "seed": 0,
+          "dataset_split": {
+            "category": "gold_finger",
+            "split": "test",
+            "normal": 4,
+            "anomaly": 4
+          },
+          "model_snapshot": {
+            "category": "gold_finger",
+            "version": 2,
+            "artifact_hashes": {
+              "align_ref.npy": "f92eefdddb47abb9888b46f9218d488a54d56d2b2809abbe15de003ecf6ebfe3",
+              "calibrators.npz": "44dd963cc9349e6d99ebba0a988b8acbe59dfa38234fb5dce14f67c7ba39dfb8",
+              "cfg.yaml": "b220b228e8b592baf4897a6e8457da0b90106c98e66513a11795f26669e9502f",
+              "consensus.json": "3b2b8a80eedd7640851b2811f6c32f6e5d5c27ab006880c8354c4198e147873a",
+              "decider.json": "633331a5ac5e5c8566f2fdc50491538bf84ab3f694f6f452def85ce7f50141b0",
+              "open.npz": "8739c76e681f900923b900c9df0ef75cf421d39cabb54650c4b9ad19b6a76d85",
+              "open_meta.json": "7c48fcc111c77b0109af0c9ac8973a3dae2babe4ca425f994c8cc6cf260f96ba",
+              "router.pt": "b73c6a4fe08e25da461605c2492073ba3367ec4458d2890a762f57dc38f273db",
+              "router_gate.json": "443c241561e7d60e6e7470d985dc757b382904d09be56708e80a9a0f94fa9605",
+              "sanity.json": "b2c1d093350bd52fc6b9c0c2e1bf899f6f6ea5fb1dc18c2b2273ef9fcf65b46b",
+              "slot_state.pkl": "22c8cf1d80ca5de01c9baf2d596f922efac984396f30fcd4c03683ba6412b9fa",
+              "weights.json": "6708521990bbbd16035f8996fca7844788461c79fcfc89d566af36792f5a1d0d",
+              "ssocl/cal_hist.npz": "0142ea4cb0de60e7701ad79375e09e3994182f42773ea0b4403c0cde9588d016",
+              "ssocl/defect_bank.pkl": "dad5d63a23897ecf023a8aacb4ae0336d35aa409ecb81faa28da6e59beedec48",
+              "ssocl/handler.json": "f4e49cbcef27c2e0bb1d0ba9d0fefd42d12cbe8b6e7eb651115ef2c55ab58f88",
+              "ssocl/normal_bank.pkl": "b8c0ed32a86982dad47343149ee324fb29be66e15433c50eb9ae34f54aad4797",
+              "ssocl/regress_gate.json": "be8ab393226e2234ca2eb46e38abef13a3a22c35b759cceb2c5c7c864b85b112",
+              "ssocl/ssocl_cfg.json": "25259d7e66b47b4613c4efb2c7e3f00febb35ff79a0267506786b954cbff0425",
+              "ssocl/weight_learner.json": "2d5d56e87103da401f0dd7b57a2f341c91c2fb7eaaec85356580f503d8f14caa"
+            }
+          },
+          "base_signature": {
+            "registry_sha256": "e372b79cddf47ffb2a131a55ea6b67a6e6d4553122b09c4e8fb134af5528f9e4",
+            "groups": [
+              "glcm",
+              "selfsim",
+              "edge",
+              "hog",
+              "shape",
+              "gray",
+              "gloss",
+              "color",
+              "fft",
+              "wavelet",
+              "logic",
+              "gabor",
+              "log",
+              "pc",
+              "surf"
+            ],
+            "group_spec": "all",
+            "scoring": "legacy",
+            "dimension": 200
+          },
+          "admission_required": true,
+          "note": "REMAIN-02 联调"
+        },
+        "state": "draft",
+        "history": [],
+        "created_at": "2026-10-14T05:00:41.668463+00:00"
+      }
+    },
+    "production_binding": "unknown",
+    "changes_production_extractor": false
+  },
+  "note": "draft 已登记；production_binding 保持 unknown"
+}

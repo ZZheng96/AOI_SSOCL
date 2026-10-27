@@ -1,0 +1,9 @@
+# AC-069 开发版小测（2026-10-13，开发对话）
+# 在 d:\CGAIC\AOI_SSOCL\AOI_tree\AOI_Core 下执行
+& "C:\Program Files\Python311\python.exe" -u -m tests.bench.learning_yield_bench --fg 10 --fb 10 --reqs 30 --out d:\CGAIC\AOI_SSOCL\review\task\test02_gpu_concurrency\dev_opt
+
+# 定向单测
+& "C:\Program Files\Python311\python.exe" -m unittest tests.smoke.test_learning_yield tests.smoke.test_candidate_isolation tests.smoke.test_isolated_candidate_path
+
+# 全量 smoke
+$env:QT_QPA_PLATFORM="offscreen"; & "C:\Program Files\Python311\python.exe" -m unittest discover -s tests\smoke -v

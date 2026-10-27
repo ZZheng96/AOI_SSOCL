@@ -1,0 +1,43 @@
+# PCB-ACCEPT-01 复跑
+
+cd /d d:\CGAIC\AOI_SSOCL\stable_AOI_tree\PCB_Dual
+py -3.11 main.py
+:: 路径：算法调试 → 引用模板选「SMT 焊点示例」→ 打开测试图
+::   1) 941x620 图 → 验证尺寸门禁 ERROR（已拦截，未执行检测）
+::   2) 1317x545 图 → 验证 NG 缺陷表（类型/位置/算法来源/耗时/ROI 未提供/分数不可用）
+::   3) 展开 多锡→参数 → 多锡阈值 0.01→0.50 → 验证防抖预览重跑 NG→OK
+::   4) 不点保存；GET http://127.0.0.1:8022/api/templates/{id} 核对模板未被污染
+
+# 第三轮：TH 交互模式（2026-10-14）
+
+cd d:\CGAIC\AOI_SSOCL\review\task\pcb_accept_01\temp_tree\PCB_Dual
+$env:PCBDUAL_PORT="8023"; py -3.11 main.py
+:: GET  http://127.0.0.1:8023/api/templates  → 确认 TH_templ2_single / TH_templ3_dual
+:: UI：设置→系统设置 → 取消「启用尺寸门禁」→ 保存（写 TEMP storage\settings.json）
+:: 算法调试：引用模板 TH 单焊点 → 打开测试图 th_assets\test_2-1_OK.png → 对照跑图 → OK
+:: 算法调试：打开 test_2-8_NG.png → 对照跑图 → NG 1 项（少锡）
+:: 模板建模：选 TH 单焊点 → 检测类别=插件焊点检测 → 全选 → 区域=插件锡面/焊点 → 框选 → 画布拖 1 矩形
+::   → template_calib\TH_templ2_single.json pads=1 → 回调试页重跑 → 仍为 NG（少锡），连锡禁用
+:: 模板建模：清空 → 回调试页重跑 → 结果同单框（场景 D FAIL：legacy roi 复活）
+:: 模板建模：选 TH 双焊点 → 框选 → 画布拖 2 矩形（左右焊点柱）→ 保存模板（必须，否则调试页重载清空 legacy 标定）
+:: 算法调试：选 TH 双焊点 → 连锡启用/其余 4 项禁用 → test_3-1_NG.png、test_3-2_NG.png → 连锡 NG
+:: POST http://127.0.0.1:8023/api/detect/traditional  body={"template_id","image_path","allow_stub":true} → 逐项 status/SKIP 原因 JSON
+:: 探针：py -3.11 -c "from app.calibration.th_roi import ...; from app.detect.adapters.through_hole_adapter import ThroughHoleAdapter; is_ready(...)" → F_readiness_probe.json
+:: 关停：UI 关窗 → pid 5428 退出、8023 释放；稳定版 storage/templates 前后快照比对一致
+
+# 第四轮：压力与健壮性场景（2026-10-14）
+
+cd d:\CGAIC\AOI_SSOCL\review\task\pcb_accept_01\temp_tree\PCB_Dual
+$env:PCBDUAL_PORT="8023"; py -3.11 main.py
+cd d:\CGAIC\AOI_SSOCL\stable_AOI_tree\AOI_Core; py -3.11 server.py   :: 8017（autostart=false 需手动拉起，只读复用 smt_solder v4）
+:: GET http://127.0.0.1:8023/api/templates/{id} → tpl_before_s1.json（SHA256 基准）
+:: 场景1：调试页滑块 set_range_value 快速三连（阈值 1→20、面积 5→50、阈值→8）→ 防抖后 OK 无缺陷 39ms
+::   GET /api/templates/{id} → tpl_after_s1.json（哈希一致，模板未污染）
+:: 场景2：快速切检测项勾选（少锡 off→on、连锡 off）+ 快速切图 NG→OK→NG → 无残留缺陷框
+::   疑点复核：手动对照跑图 / 「恢复默认」（→0.15 算法默认）/ 重启后基准恢复 NG 1 项
+:: 场景3：Ctrl+Enter 整批后立即切算法调试页 → 无跨页回填；切回看整批结果（直通率 50%）
+:: 场景4：点「开始检测」后立即关窗 → Get-Process 确认退出码 0；Test-NetConnection 8023=False；
+::   storage 最新 LastWriteTime 6 秒不增长（无残留写盘）
+:: 场景5：全程 UI 响应观察（无 >5s 卡死）
+:: GET /api/templates/{id} → tpl_final_check.json（三次哈希一致）
+:: 关停：应用 PID 3252/10532 退出，8023 释放；Stop-Process AOI_Core PID 17676，8017 释放

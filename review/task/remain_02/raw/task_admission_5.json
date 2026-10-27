@@ -1,0 +1,88 @@
+{
+  "task_id": 5,
+  "final": {
+    "id": 5,
+    "task_type": "feature_admission",
+    "status": "done",
+    "progress": 1.0,
+    "message": "完成",
+    "payload": {
+      "category": "gold_finger",
+      "revision_id": "ba47d05c566a175eb8728a6aeece4c23d130dbd1af396f56e2b5866ae4ac8df8",
+      "limit": 8
+    },
+    "result": {
+      "eval_run_id": 3,
+      "evidence_path": "admission_ba47d05c566a175e_3.json",
+      "acceptance": "insufficient_evidence",
+      "admission": {
+        "base_groups": [
+          "glcm",
+          "selfsim",
+          "edge",
+          "hog",
+          "shape",
+          "gray",
+          "gloss",
+          "color",
+          "fft",
+          "wavelet",
+          "logic",
+          "gabor",
+          "log",
+          "pc",
+          "surf"
+        ],
+        "candidate_groups": [
+          "glcm"
+        ],
+        "added": [],
+        "removed": [
+          "selfsim",
+          "edge",
+          "hog",
+          "shape",
+          "gray",
+          "gloss",
+          "color",
+          "fft",
+          "wavelet",
+          "logic",
+          "gabor",
+          "log",
+          "pc",
+          "surf"
+        ],
+        "base_scoring": "legacy",
+        "candidate_scoring": "grouped",
+        "notes": [],
+        "acceptance": "insufficient_evidence",
+        "reason": "当前快照未拟合组权重，grouped 候选需先重建表示后试算",
+        "hard_pool_sha256": "c29bf3fae5a8af57f0fa1c214b3619afe5e620eda415b45398484728f06e3f5c",
+        "sources": {
+          "miss": 0,
+          "open_defect": 0,
+          "confirmed_defect": 0,
+          "fp": 0,
+          "open_normal": 0,
+          "train_normal": 8,
+          "pos": 0,
+          "neg": 8,
+          "conflict": 0,
+          "drift": 0,
+          "open_causes": {}
+        },
+        "conflicts": 0,
+        "missing_images": {
+          "pool": 0,
+          "anchor": 0
+        }
+      }
+    },
+    "final_status": null,
+    "is_defect": false,
+    "requires_review": false,
+    "is_system_error": false
+  },
+  "elapsed_s": 16.1
+}

@@ -1,0 +1,281 @@
+
+============================================================
+[run_all] 引擎层冒烟 m01
+============================================================
+[testdata] 未找到可用数据集，已生成合成数据（MVTec-like 结构）：C:\Users\imia\AppData\Local\Temp\aoi_synth_v_hyhhkg\synth
+[data] n_good=10, n_defect=3, test_good=3
+[storage] C:\Users\imia\AppData\Local\Temp\aoi_m1_953ckv6z
+[dino] 使用随包 vendor 权重: D:\CGAIC\AOI_SSOCL\AOI_tree\assets\dinov2\dinov2_vits14_pretrain.pth
+[disc] 加载预训练头 D:\CGAIC\AOI_SSOCL\AOI_tree\AOI_Core\assets\disc_pretrain.pt
+  [fit] init_normal 提取 10 张完成 (0s)
+  [fit] init_defect 提取 3 张完成 (1s)
+  [fit] 加载全局类型判别器（D:\CGAIC\AOI_SSOCL\AOI_tree\assets\defect_clf.pkl）
+  [fit] 槽位 sem 完成 (1s)
+  [fit] 槽位 disc 完成 (1s)
+[shead] epoch 10/50 loss_n=5.6976 loss_a=6.3713
+[shead] epoch 20/50 loss_n=7.2295 loss_a=5.4647
+[shead] epoch 30/50 loss_n=5.8385 loss_a=6.7526
+[shead] epoch 40/50 loss_n=5.9830 loss_a=6.4236
+[shead] epoch 50/50 loss_n=6.2552 loss_a=6.3022
+[shead] fit 完成: normal=10 pseudo=30 real_defect=3 pos_total=33 X=43 batch=32 lr=0.001
+  [fit] 槽位 shead 完成 (3s)
+[fusion] sanity 加权: sem=0.469 disc=0.469 shead=0.063
+[fusion] train 域 fused AUROC=1.0（初始权重质量，协议内）
+[route] base=1.0000 router=1.0000 enabled=False (margin=0.005)
+[route] 准入=trace_only（样本不足（每集正/负 <3），只做追溯）
+  [fit] 视图模式 profile_missing（min_defect_px 未提供，保持整图） 局部分支=关（auto_profile）
+[prepare] version=1
+[disc] 加载预训练头 D:\CGAIC\AOI_SSOCL\AOI_tree\AOI_Core\assets\disc_pretrain.pt
+[save-load sanity] A.fused=1.246684  B.fused=1.246684  diff=0.000e+00
+  A.slot_scores={'sem': 1.9747, 'disc': 0.5781, 'shead': 0.8008}
+  B.slot_scores={'sem': 1.9747, 'disc': 0.5781, 'shead': 0.8008}
+[assert] save/load 持久化一致性 ✅ (pre-feedback snapshot)
+[predict] score1=1.246684  latency=49.1ms  decision=anomaly  slots=['disc', 'sem', 'shead']  triggered=sem
+[feedback OK] {'path': 'C:\\Users\\imia\\AppData\\Local\\Temp\\aoi_synth_v_hyhhkg\\synth\\train\\good\\syn_00.png', 'verdict': 'correct', 'label': 0, 'feedback_ms': 290.22, 'action': 'reflow_labeled_accepted', 'drift': 1.0621, 'fuse_blocked': False, 'lock': {'yield_ms': 312.0, 'prefetch_ms': 0.037, 'lock_wait_ms': 0.003, 'lock_hold_ms': 290.291, 'prefetched': False}}
+
+============================================================
+[run_all] 后端端到端 m02
+============================================================
+[testdata] 未找到可用数据集，已生成合成数据（MVTec-like 结构）：C:\Users\imia\AppData\Local\Temp\aoi_synth_6qg0mahb\synth
+[data] good=10 defect=4 test_good=2
+[env] TMP=C:\Users\imia\AppData\Local\Temp\aoi_m2_1io6hzz2
+[db] 样本登记完成（10 normal train / 3 defect / 3 test）
+[prepare] task_id=1，等待完成...
+  [task 1]   0.0% 读取数据库样本...
+[dino] 使用随包 vendor 权重: D:\CGAIC\AOI_SSOCL\AOI_tree\assets\dinov2\dinov2_vits14_pretrain.pth
+[disc] 加载预训练头 D:\CGAIC\AOI_SSOCL\AOI_tree\AOI_Core\assets\disc_pretrain.pt
+  [fit] init_normal 提取 10 张完成 (0s)
+  [fit] init_defect 提取 2 张完成 (1s)
+  [fit] 加载全局类型判别器（D:\CGAIC\AOI_SSOCL\AOI_tree\assets\defect_clf.pkl）
+  [fit] 槽位 sem 完成 (1s)
+  [fit] 槽位 disc 完成 (1s)
+  [task 1]  47.0% 槽位 shead 拟合
+[shead] epoch 10/50 loss_n=5.1955 loss_a=6.6185
+[shead] epoch 20/50 loss_n=8.3958 loss_a=4.7772
+[shead] epoch 30/50 loss_n=5.4922 loss_a=6.9833
+[shead] epoch 40/50 loss_n=5.5594 loss_a=6.5391
+[shead] epoch 50/50 loss_n=6.8894 loss_a=5.9473
+[shead] fit 完成: normal=10 pseudo=30 real_defect=2 pos_total=32 X=42 batch=32 lr=0.001
+  [fit] 槽位 shead 完成 (3s)
+[fusion] sanity 加权: sem=0.500 disc=0.500 shead=0.000
+[fusion] train 域 fused AUROC=1.0（初始权重质量，协议内）
+[route] base=1.0000 router=1.0000 enabled=False (margin=0.005)
+[route] 准入=trace_only（样本不足（每集正/负 <3），只做追溯）
+  [fit] 视图模式 profile_missing（min_defect_px 未提供，保持整图） 局部分支=关（auto_profile）
+  [task 1]  86.0% 模型落盘并激活
+[prepare] ✅ version=v1 n_normal=10 n_defect=2
+[detect bad] score=1.9940 decision=anomaly is_anomaly=True latency=146.0ms slots={'sem': 1.999, 'disc': 1.989, 'shead': 0.328} triggered=sem
+[detect good] score=1.2764 decision=anomaly latency=132.3ms
+[detect] 未准备品类 400 + 提示 ✅
+[feedback] engine_update=None note=已排队候选；未应用、未激活，等待候选任务消费
+
+============================================================
+[run_all] 产线安全集成 m10
+============================================================
+[testdata] 未找到可用数据集，已生成合成数据（MVTec-like 结构）：C:\Users\imia\AppData\Local\Temp\aoi_synth_q3h2of9g\synth
+[M10-1] API Key 鉴权
+  ✅ 无 Key 被拒（status=401）
+  ✅ 错 Key 被拒
+  ✅ 对 Key 放行
+  ✅ health 豁免
+  ✅ docs 无 Key 被拒
+  ✅ openapi 正确 Key 放行
+  ✅ WebSocket 无 Key 被拒
+  ✅ WebSocket 正确 Key 放行
+[M10-2] /file 白名单
+  ✅ 白名单外 403（status=403）
+  ✅ storage 内放行（status=200）
+[M10-3] 数据登记 + prepare
+  ✅ DB 登记路径放行（status=200）
+[dino] 使用随包 vendor 权重: D:\CGAIC\AOI_SSOCL\AOI_tree\assets\dinov2\dinov2_vits14_pretrain.pth
+[disc] 加载预训练头 D:\CGAIC\AOI_SSOCL\AOI_tree\AOI_Core\assets\disc_pretrain.pt
+  [fit] init_normal 提取 10 张完成 (0s)
+  [fit] init_defect 提取 3 张完成 (1s)
+  [fit] 加载全局类型判别器（D:\CGAIC\AOI_SSOCL\AOI_tree\assets\defect_clf.pkl）
+  [fit] 槽位 sem 完成 (1s)
+  [fit] 槽位 disc 完成 (1s)
+[shead] epoch 10/50 loss_n=5.6976 loss_a=6.3713
+[shead] epoch 20/50 loss_n=7.2295 loss_a=5.4647
+[shead] epoch 30/50 loss_n=5.8385 loss_a=6.7526
+[shead] epoch 40/50 loss_n=5.9830 loss_a=6.4236
+[shead] epoch 50/50 loss_n=6.2552 loss_a=6.3022
+[shead] fit 完成: normal=10 pseudo=30 real_defect=3 pos_total=33 X=43 batch=32 lr=0.001
+  [fit] 槽位 shead 完成 (3s)
+[fusion] sanity 加权: sem=0.469 disc=0.469 shead=0.063
+[fusion] train 域 fused AUROC=1.0（初始权重质量，协议内）
+[route] base=1.0000 router=1.0000 enabled=False (margin=0.005)
+[route] 准入=trace_only（样本不足（每集正/负 <3），只做追溯）
+  [fit] 视图模式 profile_missing（min_defect_px 未提供，保持整图） 局部分支=关（auto_profile）
+  ✅ prepare 完成（完成）
+[M10-4] PLC 触发
+  ✅ 触发检测 200（status=200 ）
+  ✅ 返回判定（decision=anomaly latency=174ms）
+  ✅ FIFO 后移入 processed
+  ✅ 空目录 404
+  ✅ plc_trigger 审计日志
+[M10-5] 缺陷自动归档
+  ✅ 归档目录落盘（decision=anomaly）
+  ✅ 归档 Image 登记
+  ✅ 自动归档批次（datasets=['自动归档-20261014']）
+[M10-6] 产线日报/审计导出
+  ✅ 日报导出 CSV
+  ✅ 审计导出 CSV
+  ✅ 品类过滤日报
+
+✅ M10 冒烟通过（23 项断言）
+
+============================================================
+[run_all] 评审改进 m11
+============================================================
+[testdata] 未找到可用数据集，已生成合成数据（MVTec-like 结构）：C:\Users\imia\AppData\Local\Temp\aoi_synth_4q4cg35j\synth
+[M11-1] 多角色权限
+  ✅ operator 只读放行（status=200）
+  ✅ operator scan 被拒 403（status=403）
+  ✅ operator prepare 被拒 403
+  ✅ operator activate 被拒 403
+  ✅ operator 巩固落盘被拒 403
+  ✅ operator 删图被拒 403
+  ✅ engineer 删批次被拒 403
+  ✅ engineer scan 放行（status=200）
+  ✅ engineer 删图放行（status=200）
+  ✅ admin 删批次放行（status=200）
+[M11-2] 数据登记 + prepare
+[dino] 使用随包 vendor 权重: D:\CGAIC\AOI_SSOCL\AOI_tree\assets\dinov2\dinov2_vits14_pretrain.pth
+[disc] 加载预训练头 D:\CGAIC\AOI_SSOCL\AOI_tree\AOI_Core\assets\disc_pretrain.pt
+  [fit] init_normal 提取 10 张完成 (1s)
+  [fit] init_defect 提取 3 张完成 (1s)
+  [fit] 加载全局类型判别器（D:\CGAIC\AOI_SSOCL\AOI_tree\assets\defect_clf.pkl）
+  [fit] 槽位 sem 完成 (2s)
+  [fit] 槽位 disc 完成 (2s)
+[shead] epoch 10/50 loss_n=5.6976 loss_a=6.3713
+[shead] epoch 20/50 loss_n=7.2295 loss_a=5.4647
+[shead] epoch 30/50 loss_n=5.8385 loss_a=6.7526
+[shead] epoch 40/50 loss_n=5.9830 loss_a=6.4236
+[shead] epoch 50/50 loss_n=6.2552 loss_a=6.3022
+[shead] fit 完成: normal=10 pseudo=30 real_defect=3 pos_total=33 X=43 batch=32 lr=0.001
+  [fit] 槽位 shead 完成 (4s)
+[fusion] sanity 加权: sem=0.469 disc=0.469 shead=0.063
+[fusion] train 域 fused AUROC=1.0（初始权重质量，协议内）
+[route] base=1.0000 router=1.0000 enabled=False (margin=0.005)
+[route] 准入=trace_only（样本不足（每集正/负 <3），只做追溯）
+  [fit] 视图模式 profile_missing（min_defect_px 未提供，保持整图） 局部分支=关（auto_profile）
+  ✅ prepare 完成（完成）
+  ✅ 快照版本存在（versions=['v1']）
+  ✅ align_ref.npy 持久化
+[M11-3] 归因透出 + 对位预警
+  ✅ 响应含 defect_types（types=[{'type': '常见外观缺陷', 'confidence': 0.527, 'evidence': '有监督类型判别器 top-1 (conf=0.527)'}]）
+  ✅ 响应含对位字段（align_offset=[117.51, 31.28]）
+  ✅ 非正常判定归因非空（decision=anomaly top=常见外观缺陷）
+  ✅ 平移图触发 align_warn（offset=[40.0, 0.0] warn=True）
+  ✅ 偏移量量级正确（offset=[40.0, 0.0]）
+  ✅ 正常对位图不预警（offset=[0.0, 0.0]）
+[M11-4] 日志轮转
+  ✅ RotatingFileHandler 挂载且幂等（n=1）
+  ✅ server.log 落盘
+
+✅ M11 冒烟通过（21 项断言）
+
+============================================================
+[run_all] 分层契约补全 m14
+============================================================
+[testdata] 未找到可用数据集，已生成合成数据（MVTec-like 结构）：C:\Users\imia\AppData\Local\Temp\aoi_synth_a5bldmps\synth
+[M14-0] 数据登记
+[M14-1] 无 init_defect 合法空指标
+  [task 1]   0.0% 读取数据库样本...
+[dino] 使用随包 vendor 权重: D:\CGAIC\AOI_SSOCL\AOI_tree\assets\dinov2\dinov2_vits14_pretrain.pth
+[disc] 加载预训练头 D:\CGAIC\AOI_SSOCL\AOI_tree\AOI_Core\assets\disc_pretrain.pt
+  [fit] init_normal 提取 10 张完成 (0s)
+  [fit] 槽位 sem 完成 (1s)
+  [fit] 槽位 disc 完成 (1s)
+  [task 1]  47.0% 槽位 shead 拟合
+[shead] epoch 10/50 loss_n=5.7017 loss_a=6.0974
+[shead] epoch 20/50 loss_n=7.0684 loss_a=5.6079
+[shead] epoch 30/50 loss_n=6.1519 loss_a=5.9886
+[shead] epoch 40/50 loss_n=6.3820 loss_a=6.0376
+[shead] epoch 50/50 loss_n=5.8817 loss_a=6.6324
+[shead] fit 完成: normal=10 pseudo=30 real_defect=0 pos_total=30 X=40 batch=32 lr=0.001
+  [fit] 槽位 shead 完成 (3s)
+  [fit] 视图模式 profile_missing（min_defect_px 未提供，保持整图） 局部分支=关（auto_profile）
+  ✅ 无缺陷 prepare 完成（完成）
+  ✅ 无 init_defect 时 train_auroc 合法 None（train_auroc=None）
+  ✅ train_anomaly 与 test 图资产不重叠（train=['C:\\Users\\imia\\AppData\\Local\\Temp\\aoi_synth_a5bldmps\\synth\\test\\scratch\\syn_d00.png'], test=['C:\\Users\\imia\\AppData\\Local\\Temp\\aoi_synth_a5bldmps\\synth\\test\\scratch\\syn_d01.png', 'C:\\Users\\imia\\AppData\\Local\\Temp\\aoi_synth_a5bldmps\\synth\\test\\stain\\syn_d00.png', 'C:\\Users\\imia\\AppData\\Local\\Temp\\aoi_synth_a5bldmps\\synth\\test\\stain\\syn_d01.png']）
+[M14-2] L3 模板链路
+  ✅ 标记模板图 #1（200）
+  ✅ 标记模板图 #2（200）
+  ✅ precheck 模板计数（counts={'train_normal': 8, 'train_anomaly': 1, 'test_normal': 2, 'test_anomaly': 3, 'feedback': 0, 'template': 2}）
+  ✅ precheck 模板存在性
+  ✅ precheck L3 提示
+  [task 3]   0.0% 
+[disc] 加载预训练头 D:\CGAIC\AOI_SSOCL\AOI_tree\AOI_Core\assets\disc_pretrain.pt
+  [fit] init_normal 提取 8 张完成 (0s)
+  [fit] init_defect 提取 1 张完成 (0s)
+  [fit] 加载全局类型判别器（D:\CGAIC\AOI_SSOCL\AOI_tree\assets\defect_clf.pkl）
+  [fit] 槽位 sem 完成 (1s)
+  [fit] 槽位 disc 完成 (1s)
+[shead] epoch 10/50 loss_n=11.0279 loss_a=3.4608
+[shead] epoch 20/50 loss_n=6.8964 loss_a=6.0415
+[shead] epoch 30/50 loss_n=5.5916 loss_a=6.5670
+[shead] epoch 40/50 loss_n=6.3241 loss_a=6.9467
+[shead] epoch 50/50 loss_n=5.9636 loss_a=6.2293
+[shead] fit 完成: normal=8 pseudo=24 real_defect=1 pos_total=25 X=33 batch=32 lr=0.001
+  [fit] 槽位 shead 完成 (1s)
+  [fit] 槽位 tpl 完成 (1s)
+[fusion] sanity 加权: sem=0.333 disc=0.333 shead=0.000 tpl=0.333
+[fusion] L3 tpl 权重提升: sem=0.250 disc=0.250 shead=0.000 tpl=0.500
+[fusion] train 域 fused AUROC=1.0（初始权重质量，协议内）
+[route] base=1.0000 router=1.0000 enabled=False (margin=0.005)
+[route] 准入=trace_only（样本不足（每集正/负 <3），只做追溯）
+  [fit] 视图模式 profile_missing（min_defect_px 未提供，保持整图） 局部分支=关（auto_profile）
+  [task 3]  86.0% 模型落盘并激活
+  ✅ L3 prepare 完成（完成）
+  ✅ prepare 携带模板数（n_templates=2）
+  执行真实 detect 响应及严格 JSON 契约
+  ✅ 检测响应严格 JSON 可序列化
+  ✅ L3 激活 tpl 槽位（slots=['sem', 'disc', 'shead', 'tpl']）
+[M14-2] 引擎内部状态透出
+  ✅ insight enabled（keys=['category', 'enabled', 'version', 'train_auroc', 'normal_bank', 'defect_bank', 'lineage', 'incubate', 'active_queue', 'weight_gate', 'stats']）
+  ✅ insight 双库字段（core=4096）
+  ✅ insight 孵育/门控字段
+  ✅ insight train_auroc 有定义（train_auroc=1.0）
+  ✅ 未准备品类空态
+[M14-3] 不完备报告
+  ✅ incomplete_report 结构（reports=1）
+  ✅ 报告含本品类窗口统计（[{'category': 'smoke_m14', 'window_n': 1, 'open_hits': 0, 'ratio': 0.0, 'sample_detection_ids': [], 'queue_url': '/api/review/open_alerts', 'note': '未知信号不等于缺陷；报告不使用当前模型补推', 'alert': False}]）
+  ✅ 检测记录含 open_alert 落库
+[M14-4] 数据集分层徽章
+  ✅ 批次含 layers 字段
+  ✅ 层级推断 L0/L1a/L2/L3（layers=['L0', 'L1a', 'L2', 'L3']）
+
+✅ M14 冒烟通过（22 项断言）
+
+============================================================
+[run_all] 操作流对账 m15
+============================================================
+[testdata] 未找到可用数据集，已生成合成数据（MVTec-like 结构）：C:\Users\imia\AppData\Local\Temp\aoi_synth_oqkjvgna\synth
+[M15-1] 无法确认反馈类型
+  ✅ uncertain 反馈落库（200）
+  ✅ 引擎未就绪不中断（已排队候选；未应用、未激活，等待候选任务消费）
+  ✅ Feedback 类型记录
+  ✅ 反馈图登记 label=unknown（label=unknown）
+  ✅ 判对率曲线剔除 uncertain（points=0）
+[M15-2] 主动选样清单
+  ✅ active_suggestions 空态（200 {"category":"m15_cat","items":[]}）
+[M15-3] 角色透出
+  ✅ system/info 含 role（role=admin）
+[M15-4] 产线导出端点
+  ✅ 日报 CSV（200）
+  ✅ 审计 CSV
+
+✅ M15 冒烟通过（9 项断言）
+
+============================================================
+[run_all] UI 离屏冒烟 ui
+============================================================
+
+============================================================
+[t15] UI 离屏冒烟
+============================================================
+  [PASS] UI 当前导航页面全部实例化并切换（含特征工程）
+
+============================================================
+✗ 失败: 引擎层冒烟 m01, 后端端到端 m02

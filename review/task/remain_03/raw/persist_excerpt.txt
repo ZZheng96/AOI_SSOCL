@@ -1,0 +1,23 @@
+# 摘录自 algo/persist.py（快照 meta 落盘，L633-654）
+
+meta = { ...
+    "rng": {"policy": "fit/训练期固定种子；推理确定性；在线学习按样本顺序确定",
+            "seed": (pipe.cfg.get("seed") if isinstance(pipe.cfg, dict) else None),
+            "feature_random_seed": 0},
+    "production_feature_metadata": _production_feature_metadata(pipe),
+    "feature_revision_binding": {"status": "unknown", "revision_id": None,
+                                 "reason": "production_trad_not_revision_managed"}}
+                                            # L652-653 硬编码 unknown，reason 自述「生产 trad 不受 revision 管理」
+
+# 摘录自 algo/release_ops.py（L191-198，唯一消费 detection_stamp 的函数——仅测试引用）
+def revision_binding(store, model_snapshot):
+    """AC-061：快照 meta.feature_revision_binding ← 生产指针（只读）；含血缘链。"""
+    st = store.detection_stamp(model_snapshot)
+    rid = st.get("feature_revision")
+    return {"status": st["status"], "revision_id": rid,
+            "lineage": store.lineage(rid) if rid else [],
+            "reason": None if st["status"] == "bound" else
+            "production_pointer_unbound" if rid is None else "model_snapshot_mismatch"}
+
+# 调用方盘点（全库 grep）：release_ops.py 定义处 + tests/smoke/test_round2_release.py L195-207
+# → 生产快照落盘路径（persist.py）不调用 revision_binding。

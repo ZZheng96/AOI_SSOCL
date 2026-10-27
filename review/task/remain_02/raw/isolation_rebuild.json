@@ -1,0 +1,10 @@
+{
+  "current_pointer_unchanged": true,
+  "task_activated": false,
+  "task_auto_report": {
+    "status": "skipped_rebuild"
+  },
+  "feature_set_version": 2,
+  "pending_rebuild_version": 3,
+  "production_pointer_status": "missing"
+}

@@ -198,13 +198,18 @@ def _n_pending_requeue_by_ids(s, image_ids: list, t_req) -> int:
     return n
 
 
-def _batch_stats_by_ids(s, image_ids: list) -> dict:
-    """检测批次统计（按图片 id 列表，而非导入批次 Dataset）。"""
+def _batch_stats_by_ids(s, image_ids: list, workorder_id: int | None = None,
+                        target_types: tuple = ("pipeline",)) -> dict:
+    """检测批次统计，按当前工单和产线检测类型对齐消费者口径。"""
     if not image_ids:
         return {"n_images": 0, "n_detected": 0, "n_anomaly": 0,
-                "n_feedback": 0, "bad_rate": 0.0}
-    dets = (s.query(Detection)
-            .filter(Detection.image_id.in_(image_ids)).all())
+                "n_feedback": 0, "bad_rate": None}
+    det_q = s.query(Detection).filter(
+        Detection.image_id.in_(image_ids),
+        Detection.target_type.in_(target_types))
+    if workorder_id is not None:
+        det_q = det_q.filter(Detection.workorder_id == workorder_id)
+    dets = det_q.all()
     det_ids = [d.id for d in dets]
     n_fb = 0
     if det_ids:
@@ -214,7 +219,8 @@ def _batch_stats_by_ids(s, image_ids: list) -> dict:
     n_det = len(dets)
     return {"n_images": len(image_ids), "n_detected": n_det,
             "n_anomaly": n_an, "n_feedback": n_fb,
-            "bad_rate": round(n_an / n_det, 3) if n_det else 0.0}
+            # 未检测时为 None（不以 0.0 冒充缺失）
+            "bad_rate": round(n_an / n_det, 3) if n_det else None}
 
 
 def _workorder_detect_batches(s, wo: WorkOrder) -> list:
@@ -238,6 +244,26 @@ def _workorder_detect_batches(s, wo: WorkOrder) -> list:
                             "category": cat, "batch_index": bi,
                             "image_ids": list(ids)})
     return out
+
+
+def _pipeline_pending_query(s, wo_id: int, image_ids: list,
+                            requeued: bool = False, marker=None):
+    done = s.query(Detection.id).filter(
+        Detection.image_id == ImageRow.id,
+        Detection.workorder_id == wo_id,
+        Detection.target_type == "pipeline")
+    if requeued:
+        done = done.filter(Detection.claim_requeued_at == marker)
+    return s.query(ImageRow).filter(ImageRow.id.in_(image_ids), ~done.exists())
+
+
+def _release_pipeline_claims(s, workorder_id: int) -> None:
+    s.query(ImageRow).filter(
+        ImageRow.claim_workorder_id == workorder_id,
+        ImageRow.processing_status == "claiming").update({
+            ImageRow.processing_status: "pending", ImageRow.claim_token: None,
+            ImageRow.claim_workorder_id: None, ImageRow.claim_requeued_at: None,
+            ImageRow.claimed_at: None}, synchronize_session=False)
 
 
 def _pipeline_summary(s, wo: WorkOrder) -> dict:
@@ -271,14 +297,10 @@ def _pipeline_summary(s, wo: WorkOrder) -> dict:
             out["n_images_blocked"] += len(b["image_ids"])
             continue
         key = b["batch_key"]
-        if key in requeued_ids:
-            try:
-                t_req = datetime.fromisoformat(str(requeued_at.get(key)))
-            except (TypeError, ValueError):
-                t_req = None
-            n_pending += _n_pending_requeue_by_ids(b["image_ids"], t_req)
-        else:
-            n_pending += _n_undetected_by_ids(s, b["image_ids"])
+        ids = requeued_ids.get(key, b["image_ids"])
+        n_pending += _pipeline_pending_query(
+            s, wo.id, ids, key in requeued_ids, requeued_at.get(key)).filter(
+                ImageRow.processing_status.in_(("pending", "succeeded"))).count()
     out["n_pending"] = n_pending
     return out
 
@@ -289,13 +311,18 @@ def _n_pending_review(s, workorder_id: int) -> int:
     与 pipeline_service._apply_review_backpressure 口径一致，
     供监控页实时显示复判积压。
     """
-    fb_ids = {r[0] for r in s.query(Feedback.detection_id)
-              .filter(Feedback.invalidated == False).all()}  # noqa: E712
-    rows = (s.query(Detection.id)
-            .filter(Detection.workorder_id == workorder_id,
-                    Detection.target_type.in_(("pipeline", "stream", "plc")))
-            .all())
-    return sum(1 for (did,) in rows if did not in fb_ids)
+    wo = s.get(WorkOrder, workorder_id)
+    if wo is None or wo.archived:
+        return 0
+    fb_exists = s.query(Feedback.id).filter(
+        Feedback.detection_id == Detection.id,
+        Feedback.invalidated.is_(False), Feedback.feedback_type != "open_alert").exists()
+    rows = s.query(Detection).filter(
+        Detection.workorder_id == workorder_id,
+        Detection.target_type.in_(("pipeline", "stream", "plc")), ~fb_exists).all()
+    return sum(1 for d in rows
+               if (d.n_tiles or {}).get("review_stage", "queued") == "queued"
+               and (wo.review_enabled or (d.n_tiles or {}).get("decision") == "gray"))
 
 
 def _workorder_item(s, wo: WorkOrder, range_days: Optional[int] = None) -> dict:
@@ -322,12 +349,8 @@ def _workorder_item(s, wo: WorkOrder, range_days: Optional[int] = None) -> dict:
         an_q = an_q.filter(
             s.query(Feedback.id).filter(
                 Feedback.detection_id == Detection.id).exists())
-    if cats:
-        det_q = det_q.filter(Detection.category.in_(cats))
-        an_q = an_q.filter(Detection.category.in_(cats))
-    else:
-        det_q = det_q.filter(Detection.id < 0)   # 无品类工单恒为 0
-        an_q = an_q.filter(Detection.id < 0)
+    det_q = det_q.filter(Detection.workorder_id == wo.id)
+    an_q = an_q.filter(Detection.workorder_id == wo.id)
     if range_days == 0:
         day_start = datetime.combine(date.today(), dtime.min)
         det_q = det_q.filter(Detection.created_at >= day_start)
@@ -352,7 +375,7 @@ def _workorder_item(s, wo: WorkOrder, range_days: Optional[int] = None) -> dict:
                         for x in sources],
         "categories": cats, "n_images": n_images,
         "stats": {"inspected": n_ins, "anomaly": n_an,
-                  "rate": round(n_an / n_ins, 4) if n_ins else 0.0},
+                  "rate": round(n_an / n_ins, 4) if n_ins else None},
         "check": check,
         "template_id": wo.template_id,
         "created_at": wo.created_at,

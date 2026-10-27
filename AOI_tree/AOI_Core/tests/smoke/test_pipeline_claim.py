@@ -106,8 +106,81 @@ class PipelineClaimTest(unittest.TestCase):
             self.assertEqual(s.query(Detection).count(), 1)
             self.assertEqual(s.get(Image, self.image_id).processing_status, "succeeded")
 
+    def test_lifecycle_revokes_inflight_and_rejects_late_stream(self):
+        from fastapi import HTTPException
+        from backend.api.routes_wo_order import api_archive_workorder, api_unarchive_workorder
+        from backend.api.routes_wo_stats import api_pipeline_control
+        from backend.pipeline.service import DetectionService
+        with database.session_scope() as s:
+            img = s.get(Image, self.image_id)
+            img.processing_status = "claiming"
+            img.claim_token = "late"
+            img.claim_workorder_id = self.wo1
+            s.get(WorkOrder, self.wo1).pipeline_status = "auto_paused"
+        with patch("backend.api.routes_wo_order.log_action"):
+            api_archive_workorder(self.wo1)
+        with database.session_scope() as s:
+            self.assertEqual(s.get(Image, self.image_id).processing_status, "pending")
+            self.assertIsNone(s.get(Image, self.image_id).claim_token)
+            self.assertEqual(s.get(WorkOrder, self.wo1).pipeline_status, "stopped")
+        with self.assertRaises(HTTPException):
+            api_pipeline_control(self.wo1, "resume")
+        with self.assertRaises(ValueError):
+            DetectionService._persist(Mock(), {}, None, "stream", self.wo1)
+        with patch("backend.api.routes_wo_order.log_action"):
+            api_unarchive_workorder(self.wo1)
+        with self.assertRaises(ValueError):
+            DetectionService._persist(Mock(), {}, self.image_id, "pipeline", self.wo1, "late")
+
+    def test_queue_summary_and_consumer_share_detect_group(self):
+        from backend.api._wo_shared import _pipeline_summary
+        from backend.api.routes_wo_stats import api_workorder_queue
+        with database.session_scope() as s:
+            img = s.get(Image, self.image_id)
+            img.split, img.label = "train", "normal"
+            template = Image(path="template.jpg", category="test", split="template",
+                             dataset_id=img.dataset_id)
+            test = Image(path="test.jpg", category="test", split="test",
+                         dataset_id=img.dataset_id)
+            s.add_all([template, test])
+            s.flush()
+            test_id = test.id
+            s.get(WorkOrder, self.wo2).pipeline_status = "paused"
+        queue = api_workorder_queue(self.wo1)
+        self.assertEqual(sum(b["n_images"] for b in queue["items"]), 1)
+        self.assertEqual(sum(b["n_pending"] for b in queue["items"]), 1)
+        self.pipeline._consume_one()
+        with database.session_scope() as s:
+            self.assertEqual([d.image_id for d in s.query(Detection)], [test_id])
+            self.assertEqual(_pipeline_summary(s, s.get(WorkOrder, self.wo1))["n_pending"], 0)
+            self.assertEqual(_pipeline_summary(s, s.get(WorkOrder, self.wo2))["n_pending"], 1)
+
+    def test_review_counts_match_queue_stage_and_open_alert(self):
+        from backend.db.models import Feedback
+        from backend.api._wo_shared import _n_pending_review
+        from backend.api.routes_review import api_review_queue, api_review_stats
+        with database.session_scope() as s:
+            s.get(WorkOrder, self.wo1).review_enabled = True
+            rows = [Detection(target_type="pipeline", category="test", image_path=f"review-{stage}.jpg",
+                              final_score=0.0, is_anomaly=False, latency_ms=0.0,
+                              workorder_id=self.wo1,
+                              n_tiles={"decision": "normal", "review_stage": stage})
+                    for stage in ("queued", "submitted", "invalid")]
+            s.add_all(rows)
+            s.flush()
+            s.add(Feedback(detection_id=rows[0].id, feedback_type="open_alert",
+                           operator_label="ignored"))
+        queue, stats = api_review_queue(), api_review_stats()
+        self.assertEqual(queue["total"], 1)
+        self.assertEqual(stats["pending_total"], queue["total"])
+        with database.session_scope() as s:
+            self.assertEqual(_n_pending_review(s, self.wo1), 1)
+
 
 class FakeEngine:
+    def current_version(self, category):
+        return 1
+
     def get_pipeline(self, category):
         return object()
 

@@ -1,0 +1,15 @@
+{
+  "task_check": "显式default_rng(42)行为",
+  "tree": "stable",
+  "candidate_mode": "legacy_u27",
+  "harness_check_key": "rng",
+  "pass": true,
+  "evidence": {
+    "harness_repeat_max_abs_diff": 0.0,
+    "harness_global_rng_mutated": false,
+    "candidate_rng_semantics": "全局 RandomState + np.random.seed(0) 包裹（非 default_rng(42)）",
+    "production_rng_semantics": "extractor 显式 default_rng(42)",
+    "semantics_match_production": false,
+    "rng_snapshots_file": "rng_snapshots.json"
+  }
+}

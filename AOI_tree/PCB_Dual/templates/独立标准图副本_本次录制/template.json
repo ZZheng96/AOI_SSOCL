@@ -1,0 +1,200 @@
+{
+  "id": "独立标准图副本_本次录制",
+  "display_name": "实录_双引擎_连锡_202915",
+  "version": 1,
+  "status": "published",
+  "created_at": "2026-10-19T20:21:55+08:00",
+  "updated_at": "2026-10-19T20:29:21+08:00",
+  "standard_image": {
+    "path": "D:\\CGAIC\\AOI_SSOCL\\AOI_tree\\PCB_Dual\\templates\\独立标准图副本_本次录制\\standard.png",
+    "sha1": "4754d13da49a2885746e5d6b2d51fc4aec60ca99",
+    "width": 964,
+    "height": 653,
+    "source_name": "独立标准图副本_本次录制.png"
+  },
+  "category": "",
+  "detection_items": [
+    {
+      "algorithm_id": "solder_连锡",
+      "enabled": true,
+      "params": {
+        "bridge_min_area": 20
+      },
+      "preprocess_recipe": null,
+      "region_kind": "smt"
+    },
+    {
+      "algorithm_id": "solder_共用参数",
+      "enabled": false,
+      "params": {
+        "solder_blue_h_low": 85,
+        "solder_blue_h_high": 115,
+        "solder_blue_s_min": 60,
+        "solder_blue_v_min": 150,
+        "pad_expand_ratio": 0.3,
+        "pad_expand_short_ratio": 0.3,
+        "min_pad_area": 20,
+        "min_interference_area": 30,
+        "enable_auto_resize": "true",
+        "auto_resize_max_size": 400,
+        "auto_resize_threshold": 450
+      },
+      "preprocess_recipe": null,
+      "region_kind": "smt"
+    }
+  ],
+  "algorithms": [
+    {
+      "algorithm_id": "solder_连锡",
+      "enabled": true,
+      "params": {
+        "bridge_min_area": 20
+      },
+      "preprocess_recipe": null,
+      "region_kind": "smt"
+    },
+    {
+      "algorithm_id": "solder_共用参数",
+      "enabled": false,
+      "params": {
+        "solder_blue_h_low": 85,
+        "solder_blue_h_high": 115,
+        "solder_blue_s_min": 60,
+        "solder_blue_v_min": 150,
+        "pad_expand_ratio": 0.3,
+        "pad_expand_short_ratio": 0.3,
+        "min_pad_area": 20,
+        "min_interference_area": 30,
+        "enable_auto_resize": "true",
+        "auto_resize_max_size": 400,
+        "auto_resize_threshold": 450
+      },
+      "preprocess_recipe": null,
+      "region_kind": "smt"
+    }
+  ],
+  "region_sets": {
+    "smt_pads": [
+      {
+        "shape": "rect",
+        "x": 23.732708089097304,
+        "y": 43.9677608440797,
+        "w": 258.799531066823,
+        "h": 124.31418522860494
+      },
+      {
+        "shape": "rect",
+        "x": 23.732708089097304,
+        "y": 203.31594372801874,
+        "w": 258.799531066823,
+        "h": 99.45134818288398
+      },
+      {
+        "shape": "rect",
+        "x": 29.38335287221571,
+        "y": 350.2327080890973,
+        "w": 257.6694021101993,
+        "h": 102.84173505275498
+      },
+      {
+        "shape": "rect",
+        "x": 30.513481828839392,
+        "y": 497.14947245017584,
+        "w": 257.66940211019926,
+        "h": 120.92379835873385
+      },
+      {
+        "shape": "rect",
+        "x": 695.0293083235639,
+        "y": 41.70750293083234,
+        "w": 258.79953106682296,
+        "h": 123.18405627198126
+      },
+      {
+        "shape": "rect",
+        "x": 697.2895662368113,
+        "y": 203.31594372801874,
+        "w": 258.79953106682296,
+        "h": 106.23212192262605
+      },
+      {
+        "shape": "rect",
+        "x": 701.810082063306,
+        "y": 351.362837045721,
+        "w": 256.53927315357555,
+        "h": 105.10199296600234
+      },
+      {
+        "shape": "rect",
+        "x": 704.0703399765533,
+        "y": 475.6770222743259,
+        "w": 256.53927315357566,
+        "h": 132.22508792497075
+      }
+    ]
+  },
+  "calibration": {
+    "smt_pads": [
+      [
+        23.732708089097304,
+        43.9677608440797,
+        258.799531066823,
+        124.31418522860494
+      ],
+      [
+        23.732708089097304,
+        203.31594372801874,
+        258.799531066823,
+        99.45134818288398
+      ],
+      [
+        29.38335287221571,
+        350.2327080890973,
+        257.6694021101993,
+        102.84173505275498
+      ],
+      [
+        30.513481828839392,
+        497.14947245017584,
+        257.66940211019926,
+        120.92379835873385
+      ],
+      [
+        695.0293083235639,
+        41.70750293083234,
+        258.79953106682296,
+        123.18405627198126
+      ],
+      [
+        697.2895662368113,
+        203.31594372801874,
+        258.79953106682296,
+        106.23212192262605
+      ],
+      [
+        701.810082063306,
+        351.362837045721,
+        256.53927315357555,
+        105.10199296600234
+      ],
+      [
+        704.0703399765533,
+        475.6770222743259,
+        256.53927315357566,
+        132.22508792497075
+      ]
+    ]
+  },
+  "gate": {
+    "size_gate_enabled": true,
+    "size_gate_max_diff_px": 10
+  },
+  "notes": "",
+  "calib_key": "独立标准图副本_本次录制",
+  "engine_mode": "dual",
+  "model_category": "solder_smt",
+  "px_calibration": {},
+  "cad_items": [],
+  "panels": {},
+  "fov_grid": []
+}

@@ -1,13 +1,13 @@
-"""标注反馈页：反馈摘要（工单口径）+ 各品类在线学习状态 + 反馈记录 + 待复核队列。
+"""标注反馈页：反馈摘要（工单口径）+ 候选学习状态 + 反馈记录 + 待复核队列。
 
 上：左右结构——左 KPI 卡片 2x2（反馈数/错检占比/待复核/已复核，当前工单口径），
-   右各品类在线学习状态（当前版本 / 未巩固反馈数 / 引擎内部；巩固统一在监控页执行）
+   右各品类候选反馈状态（当前版本 / 未消费反馈数 / 候选状态；固化统一在监控页执行）
 下：Tab（反馈记录 | 待复核 | 错检追溯）
     反馈记录：类型/品类筛选的反馈流水（服务端分页，统一 PagerBar；双击行追溯）
     待复核（M5 灰区闭环 + v4 复判工单全量复核）：仅产线路径检测进队列
-    （试检旁路不进），表格含系统判定列 + 判正常/判缺陷一键复核（即学）
+    （试检旁路不进），表格含系统判定列 + 判正常/判缺陷一键复核（进入候选反馈）
     错检追溯（M7a）：被判错（误检/漏检/新缺陷）的检测清单，
-    双击行查看单帧追溯（判定现场→学习后重判定，体现错检对学习的提升）
+    双击行查看单帧追溯（判定现场→候选/当前重判定；效果需独立评估）
 """
 from __future__ import annotations
 
@@ -21,8 +21,10 @@ from PySide6.QtWidgets import (
     QDialog,
     QDialogButtonBox,
     QFormLayout,
+    QLineEdit,
     QGridLayout,
     QHBoxLayout,
+    QHeaderView,
     QLabel,
     QPushButton,
     QSplitter,
@@ -40,6 +42,7 @@ from ui.pages.common import (
     load_thumb_async,
     make_banner,
     make_card,
+    make_card_title,
     make_thumb_cell,
     notify,
     run_async,
@@ -50,7 +53,7 @@ from ui.pages.common import (
 from ui.pages.model_page import ORIGIN_NAMES
 from ui.theme import DANGER, PRIMARY, SUCCESS, TEXT_SUB, WARNING
 from ui.widgets.charts import DonutChart
-from ui.widgets.feedback_dialog import FeedbackDialog
+from ui.widgets.feedback_dialog import FeedbackDialog, FeedbackEvidenceDialog
 from ui.widgets.image_viewer import ImageViewer
 from ui.widgets.kpi_card import KpiCard
 from ui.widgets.task_progress import TaskMonitor, TaskProgressBar
@@ -204,6 +207,188 @@ class TraceDialog(QDialog):
         return "未翻案 ✗（仍与人工结论不一致）", DANGER
 
 
+class CandidateLearningDialog(QDialog):
+    """候选构建与独立验收入口；不自动批准或激活。"""
+
+    POLICY_FIELDS = ("max_fpr", "min_recall", "max_gray", "old_recall_drop",
+                     "max_predict_ms", "valid_seconds")
+
+    def __init__(self, client: ApiClient, category: str, parent_version,
+                 parent: QWidget | None = None):
+        super().__init__(parent)
+        self._client = client
+        self._category = str(category)
+        self._parent_version = parent_version
+        self._feedback_items: list[dict] = []
+        self._test_items: list[dict] = []
+        self.setWindowTitle(f"候选学习与独立验收 · {self._category}")
+        self.resize(900, 620)
+        lay = QVBoxLayout(self)
+        lay.addWidget(QLabel(
+            "仅从真实 candidate_queued 反馈构建未激活候选；验收须使用同品类 test 图，"
+            "新旧样本不能重叠且两侧都要有正常/缺陷。批准/激活均需管理员，页面不会自动执行。"))
+
+        form = QFormLayout()
+        self.combo_feedback = QComboBox()
+        form.addRow("候选反馈", self.combo_feedback)
+        self.edit_parent = QLineEdit(str(parent_version or ""))
+        form.addRow("父版本", self.edit_parent)
+        self.edit_version = QLineEdit()
+        self.edit_version.setPlaceholderText("构建完成后填写候选版本")
+        form.addRow("候选版本", self.edit_version)
+        lay.addLayout(form)
+
+        buttons = QHBoxLayout()
+        self.btn_build = QPushButton("构建候选（工程师）")
+        self.btn_build.setProperty("primary", True)
+        self.btn_build.clicked.connect(self._build)
+        self.btn_status = QPushButton("刷新候选状态")
+        self.btn_status.clicked.connect(self._status)
+        buttons.addWidget(self.btn_build)
+        buttons.addWidget(self.btn_status)
+        buttons.addStretch(1)
+        lay.addLayout(buttons)
+        self.lbl_status = QLabel("正在读取真实候选反馈…")
+        self.lbl_status.setWordWrap(True)
+        lay.addWidget(self.lbl_status)
+
+        lay.addWidget(QLabel("独立验收 test 小样本（勾选新旧两侧；每侧须含正常与缺陷）"))
+        self.table_images = QTableWidget(0, 4)
+        self.table_images.setHorizontalHeaderLabels(["验收域", "图像ID", "标签", "路径"])
+        self.table_images.horizontalHeader().setStretchLastSection(True)
+        self.table_images.setEditTriggers(QTableWidget.NoEditTriggers)
+        lay.addWidget(self.table_images, 1)
+
+        policy_form = QFormLayout()
+        self._policy_edits: dict[str, QLineEdit] = {}
+        for key in self.POLICY_FIELDS:
+            edit = QLineEdit()
+            edit.setPlaceholderText("按后端业务政策填写")
+            self._policy_edits[key] = edit
+            policy_form.addRow(key, edit)
+        lay.addWidget(QLabel("验收政策：必须完整填写后端要求的六个字段，不使用前端默认值"))
+        lay.addLayout(policy_form)
+        self.lbl_result = QLabel("")
+        self.lbl_result.setWordWrap(True)
+        lay.addWidget(self.lbl_result)
+        self.btn_accept = QPushButton("提交独立验收（工程师）")
+        self.btn_accept.clicked.connect(self._acceptance)
+        self.btn_accept.setEnabled(False)
+        lay.addWidget(self.btn_accept, 0, Qt.AlignRight)
+        close = QDialogButtonBox(QDialogButtonBox.Close)
+        close.rejected.connect(self.reject)
+        lay.addWidget(close)
+        run_async(self, lambda: self._client.list_feedback(
+            consumed=False, category=self._category, page_size=200),
+            self._fill_feedback)
+        run_async(self, lambda: self._client.list_images(
+            category=self._category, split="test", page_size=64),
+            self._fill_images)
+
+    def _fill_feedback(self, data) -> None:
+        items = (data or {}).get("items", []) if isinstance(data, dict) else []
+        self._feedback_items = [it for it in items if isinstance(it, dict)
+                                and not it.get("invalidated")
+                                and (it.get("learning_trace") or {}).get(
+                                    "learning_status") == "candidate_queued"]
+        self.combo_feedback.clear()
+        for it in self._feedback_items:
+            self.combo_feedback.addItem(
+                f"#{it.get('id')} · {it.get('feedback_type', '')} · "
+                f"{it.get('created_at', '')[:19]}", it.get("id"))
+        self.lbl_status.setText("请选择真实 candidate_queued 反馈后构建候选"
+                                if self._feedback_items else
+                                "暂无可构建的 candidate_queued 反馈")
+
+    def _fill_images(self, data) -> None:
+        items = (data or {}).get("items", []) if isinstance(data, dict) else []
+        self._test_items = [it for it in items if isinstance(it, dict)
+                            and it.get("id") is not None
+                            and it.get("label") in ("normal", "anomaly")]
+        self.table_images.setRowCount(len(self._test_items))
+        for r, it in enumerate(self._test_items):
+            cb = QComboBox()
+            cb.addItem("不选", "")
+            cb.addItem("旧版本", "old")
+            cb.addItem("新版本", "new")
+            cb.setProperty("image_id", int(it["id"]))
+            self.table_images.setCellWidget(r, 0, cb)
+            self.table_images.setItem(r, 1, QTableWidgetItem(str(it["id"])))
+            self.table_images.setItem(r, 2, QTableWidgetItem(str(it.get("label"))))
+            self.table_images.setItem(r, 3, QTableWidgetItem(str(it.get("path") or it.get("image_path") or "")))
+
+    def _build(self) -> None:
+        fid = self.combo_feedback.currentData()
+        try:
+            parent_version = int(self.edit_parent.text().strip())
+        except ValueError:
+            warn(self, "父版本必须是整数")
+            return
+        if fid is None:
+            warn(self, "请先选择真实 candidate_queued 反馈")
+            return
+        self.btn_build.setEnabled(False)
+        run_async(self, lambda: self._client.build_feedback_candidate(
+            int(fid), parent_version), self._built)
+
+    def _built(self, data) -> None:
+        self.btn_build.setEnabled(True)
+        if not isinstance(data, dict) or not data.get("task_id"):
+            return
+        self.lbl_status.setText(
+            f"候选构建任务已提交：{data['task_id']}。仅登记未激活候选，等待任务完成后刷新状态。")
+
+    def _status(self) -> None:
+        try:
+            version = int(self.edit_version.text().strip())
+        except ValueError:
+            warn(self, "请输入候选版本整数")
+            return
+        run_async(self, lambda: self._client.candidate_status(
+            self._category, version), self._fill_status)
+
+    def _fill_status(self, data) -> None:
+        if not isinstance(data, dict):
+            self.lbl_status.setText("候选状态读取失败：请检查后端连接或权限")
+            return
+        report = data.get("report") if isinstance(data.get("report"), dict) else {}
+        self.lbl_status.setText(
+            f"候选状态：{data.get('state', 'unknown')}；验收："
+            f"{report.get('acceptance', '未验收')}；report_hash："
+            f"{report.get('report_hash', '无')}。批准/激活需管理员。")
+        self.btn_accept.setEnabled(bool(self.edit_version.text().strip()))
+
+    def _acceptance(self) -> None:
+        try:
+            version = int(self.edit_version.text().strip())
+            policy = {k: float(v.text().strip()) for k, v in self._policy_edits.items()}
+        except ValueError:
+            warn(self, "候选版本和六个验收政策字段都必须填写为数字")
+            return
+        old_ids, new_ids = [], []
+        for r, it in enumerate(self._test_items):
+            cb = self.table_images.cellWidget(r, 0)
+            if cb is None:
+                continue
+            domain = cb.currentData()
+            if domain == "old":
+                old_ids.append(int(it["id"]))
+            elif domain == "new":
+                new_ids.append(int(it["id"]))
+        if not old_ids or not new_ids:
+            warn(self, "旧版本和新版本都必须选择真实 test 图；两侧均须含正常与缺陷")
+            return
+        self.lbl_result.setText("已提交真实 test 小样本；后端将校验不重叠、品类、标签、训练集重叠和业务政策。")
+        run_async(self, lambda: self._client.candidate_acceptance(
+            self._category, version, old_ids, new_ids, policy), self._acceptance_done)
+
+    def _acceptance_done(self, data) -> None:
+        if isinstance(data, dict) and data.get("task_id"):
+            self.lbl_result.setText(f"独立验收任务已提交：{data['task_id']}；等待真实报告，未批准/未激活。")
+        elif isinstance(data, dict):
+            self.lbl_result.setText(f"独立验收返回：{data.get('acceptance', data)}；失败报告不得批准。")
+
+
 class FeedbackPage(QWidget):
     """标注反馈页。"""
 
@@ -220,7 +405,7 @@ class FeedbackPage(QWidget):
         root.setSpacing(8)
 
         top = QHBoxLayout()
-        top.addWidget(make_banner("反馈驱动：操作员标注 -> 引擎在线即学 -> 巩固生成新版本"))
+        top.addWidget(make_banner("反馈闭环：操作员标注 -> 记录候选 -> 验收后更新生产"))
         attach_level_badge(self, top)   # U-workorder：数据条件徽标
         top.addStretch(1)
         btn_refresh = QPushButton("刷新")
@@ -229,13 +414,14 @@ class FeedbackPage(QWidget):
         root.addLayout(top)
 
         # M14c：不完备报告横幅（open 哨兵持续偏高 → 体系外缺陷预警）
-        self.banner_incomplete = make_banner("")
+        # 长告警横幅：允许折行（其余页面标题横幅默认单行，见 make_banner）
+        self.banner_incomplete = make_banner("", wrap=True)
         self.banner_incomplete.setStyleSheet(
             "background:#7F1D1D; color:white; padding:6px 10px; border-radius:4px;")
         self.banner_incomplete.hide()
         root.addWidget(self.banner_incomplete)
 
-        # ── 上：KPI 卡片 + 各品类在线学习状态（左右结构，2026-08-29 调整：
+        # ── 上：KPI 卡片 + 各品类候选反馈状态（左右结构，2026-08-29 调整：
         #    原为上下堆叠，状态表偏挤；KPI 改 2x2 栅格让出横向空间）──
         upper_row = QHBoxLayout()
         kpi_card = make_card()
@@ -268,18 +454,23 @@ class FeedbackPage(QWidget):
         d_lay.addWidget(self.donut, 0, Qt.AlignHCenter)
         upper_row.addWidget(donut_card, 1)
 
-        # 右：各品类在线学习状态
+        # 右：各品类候选反馈状态
         pending_card = make_card()
         p_lay = QVBoxLayout(pending_card)
-        p_head = QLabel("各品类在线学习状态（反馈即学即生效；巩固固化为新版本"
-                        "请在监控页「学习提升」执行，避免与产线统计口径混用）")
-        p_head.setProperty("heading", True)
-        p_lay.addWidget(p_head)
+        p_lay.addWidget(make_card_title(
+            "各品类候选反馈状态（反馈先记录为候选；固化快照请在监控页"
+            "「学习提升」执行，避免与产线统计口径混用）"))
         self.table_pending = QTableWidget(0, 4)
         self.table_pending.setHorizontalHeaderLabels(
-            ["品类", "当前版本", "未巩固反馈数", "引擎内部"])
-        self.table_pending.horizontalHeader().setStretchLastSection(True)
-        self.table_pending.setColumnWidth(2, 220)
+            ["品类", "当前版本", "未消费候选反馈", "候选内部状态"])
+        # 列宽（前端反馈 2026-10-14：原最后一列 stretch 把「内部状态」按钮
+        # 拉成长条、其余列挤成一团）。改为「品类」列拉伸，操作列给固定宽度。
+        _ph = self.table_pending.horizontalHeader()
+        self.table_pending.setColumnWidth(1, 110)
+        self.table_pending.setColumnWidth(2, 130)
+        self.table_pending.setColumnWidth(3, 118)
+        _ph.setSectionResizeMode(0, QHeaderView.Stretch)
+        _ph.setStretchLastSection(False)
         self.table_pending.setEditTriggers(QTableWidget.NoEditTriggers)
         self.table_pending.setMaximumHeight(190)
         p_lay.addWidget(self.table_pending)
@@ -317,7 +508,7 @@ class FeedbackPage(QWidget):
         self.table.verticalHeader().setDefaultSectionSize(66)
         self.table.setEditTriggers(QTableWidget.NoEditTriggers)
         self.table.setAlternatingRowColors(True)
-        self.table.setToolTip("双击行查看单帧追溯（判定现场→学习后重判定）")
+        self.table.setToolTip("双击行查看该反馈的持久归因与完整结果（不重推历史）")
         self.table.itemDoubleClicked.connect(self._on_record_trace)
         r_lay.addWidget(self.table, 1)
         # 统一分页条：服务端分页，避免反馈堆积后一次加载几百条缩略图
@@ -327,6 +518,9 @@ class FeedbackPage(QWidget):
         tabs.addTab(rec_card, "反馈记录")
         tabs.addTab(self._build_review_tab(), "待复核")
         tabs.addTab(self._build_misjudged_tab(), "错检追溯")
+        from ui.widgets.open_alert_queue import OpenAlertQueue
+        self.open_queue = OpenAlertQueue(client, self._workorder_id, self)
+        tabs.addTab(self.open_queue, "开放告警样本")
         root.addWidget(tabs, 1)
 
         self.progress = TaskProgressBar("巩固任务")
@@ -345,7 +539,7 @@ class FeedbackPage(QWidget):
         card = make_card()
         lay = QVBoxLayout(card)
         bar = QHBoxLayout()
-        head = QLabel("灰区待复核队列（复核结论自动作为反馈即学，价值最高的边界样本）")
+        head = QLabel("待复核队列（灰区独立入队；结论记录为候选反馈，不代表生产已更新）")
         head.setProperty("heading", True)
         bar.addWidget(head)
         bar.addStretch(1)
@@ -694,6 +888,7 @@ class FeedbackPage(QWidget):
             "/api/review/incomplete_report"), self._fill_incomplete)
         self.reload_review()
         self.reload_misjudged()
+        self.open_queue.reload()
         run_async(self, self._client.list_categories, self._fill_fb_cats)
 
     def _fill_fb_cats(self, cats) -> None:
@@ -721,7 +916,7 @@ class FeedbackPage(QWidget):
             f"{r['open_hits']} 次（{r['ratio'] * 100:.0f}%）" for r in alerts)
         self.banner_incomplete.setText(
             f"不完备预警：{text}——疑似体系外缺陷信号持续出现，现有特征组无法解释；"
-            f"建议复核这些样本（确认后反馈学习），或考虑补充模板图/联系工艺扩充缺陷定义")
+            f"未知不等于缺陷，请在「开放告警样本」查看并处置；模板候选不自动发布，确认反馈不自动学习")
         self.banner_incomplete.show()
 
     def _fill_summary(self, data) -> None:
@@ -741,13 +936,13 @@ class FeedbackPage(QWidget):
         }, colors={"误检": WARNING, "漏检": DANGER,
                    "确认": SUCCESS, "新缺陷": PRIMARY})
 
-        # 各品类在线学习状态（pending_update_status 新契约）
+        # 各品类候选反馈状态（pending_update_status 新契约）
         pending = data.get("pending", {})
         cats = pending.get("categories", [])
         self.table_pending.clearSpans()
         if not cats:
             self.table_pending.setRowCount(1)
-            self.table_pending.setSpan(0, 0, 1, 4)   # 4 列：品类/版本/未巩固/内部
+            self.table_pending.setSpan(0, 0, 1, 4)   # 4 列：品类/版本/未消费反馈/内部
             self.table_pending.setItem(
                 0, 0, QTableWidgetItem("暂无已准备品类（准备模型并产生反馈后出现）"))
             return
@@ -762,12 +957,26 @@ class FeedbackPage(QWidget):
             self.table_pending.setItem(r, 1, QTableWidgetItem(
                 version_text(cur) if cur is not None else "未准备"))
             self.table_pending.setItem(r, 2, QTableWidgetItem(pending_n))
-            btn_insight = QPushButton("内部状态…")
+            action = QWidget()
+            action_lay = QHBoxLayout(action)
+            action_lay.setContentsMargins(2, 0, 2, 0)
+            btn_candidate = QPushButton("候选学习…")
+            btn_candidate.setProperty("compact", True)
+            btn_candidate.setToolTip("从真实 candidate_queued 反馈构建未激活候选，随后独立验收")
+            btn_candidate.clicked.connect(
+                lambda _c=False, name=cat, ver=cur: self._open_candidate_learning(name, ver))
+            action_lay.addWidget(btn_candidate)
+            btn_insight = QPushButton("内部状态")
+            btn_insight.setProperty("compact", True)
             btn_insight.setToolTip("查看在线学习引擎内部：样本库规模 / 缺陷样例库 / "
                                    "专属判别头进度 / 权重更新审核")
             btn_insight.clicked.connect(
                 lambda _c=False, name=cat: self._show_insight(name))
-            self.table_pending.setCellWidget(r, 3, btn_insight)
+            action_lay.addWidget(btn_insight)
+            self.table_pending.setCellWidget(r, 3, action)
+
+    def _open_candidate_learning(self, category: str, parent_version) -> None:
+        CandidateLearningDialog(self._client, category, parent_version, self).exec()
 
     def _show_insight(self, category: str) -> None:
         """M14b：在线学习引擎内部状态对话框。"""
@@ -853,14 +1062,17 @@ class FeedbackPage(QWidget):
             if invalidated:
                 c_item = QTableWidgetItem("已作废")
                 c_item.setForeground(Qt.gray)
-                c_item.setToolTip("该反馈已被作废（标错撤回）：不计入统计/曲线，"
-                                  "对应检测重新进入复核队列")
+                c_item.setToolTip("该反馈已被作废（标错撤回）：不计入统计/曲线；"
+                                  "是否再次入队取决于检测阶段及其他入队条件")
             else:
                 consumed = bool(fb.get("consumed"))
-                c_item = QTableWidgetItem("已学习" if consumed else "仅记录")
+                status = (fb.get("learning_trace") or {}).get("learning_status")
+                c_item = QTableWidgetItem({"applied": "已应用反馈（非激活）",
+                    "pending": "后台结果未记录", "unavailable": "学习不可用",
+                    "candidate_queued": "候选排队", "candidate_failed": "候选失败",
+                    "candidate": "候选生成（非激活）"}.get(status, "未知" if consumed else "仅记录"))
                 c_item.setForeground(Qt.darkGreen if consumed else Qt.darkRed)
-                c_item.setToolTip("已学习：该反馈已用于更新模型判断\n"
-                                  "仅记录：已保存，尚未进入模型学习")
+                c_item.setToolTip("应用反馈不代表批准或激活；后台最终证据未回写时显示未知。\n双击查看持久归因，不用当前模型补推历史。")
             self.table.setItem(r, 5, c_item)
             self.table.setItem(r, 6, QTableWidgetItem(str(fb.get("created_at", ""))))
             if invalidated:
@@ -870,9 +1082,9 @@ class FeedbackPage(QWidget):
             else:
                 btn_inv = QPushButton("作废")
                 btn_inv.setProperty("flat", True)
-                btn_inv.setToolTip("标错了？作废该反馈：不计入统计/曲线，"
-                                   "对应检测重新进入复核队列；"
-                                   "已学进模型的影响需回滚版本消除")
+                btn_inv.setToolTip("标错了？作废该反馈：不计入统计/曲线；"
+                                  "是否再次入队取决于检测阶段及其他入队条件；"
+                                  "已进入候选/模型的影响需重新验收或回滚版本")
                 fb_id = fb.get("id")
                 btn_inv.clicked.connect(
                     lambda _c=False, fid=fb_id: self._on_invalidate(fid))
@@ -885,9 +1097,9 @@ class FeedbackPage(QWidget):
         from PySide6.QtWidgets import QMessageBox
         ret = QMessageBox.question(
             self, "作废反馈",
-            "确定作废这条反馈吗？\n\n作废后：不再计入统计/翻案曲线，对应检测"
-            "重新进入复核队列。\n若反馈已被引擎学习，模型内的影响需到"
-            "「模型管理」回滚到反馈前版本才能消除。",
+            "确定作废这条反馈吗？\n\n作废后：不再计入统计/翻案曲线；是否再次进入复核队列，"
+            "取决于检测当前阶段及其他入队条件。\n若反馈已进入候选或模型，"
+            "需要重新验收或到「模型管理」回滚版本才能消除影响。",
             QMessageBox.Yes | QMessageBox.No, QMessageBox.No)
         if ret != QMessageBox.Yes:
             return
@@ -906,26 +1118,26 @@ class FeedbackPage(QWidget):
         items = getattr(self, "_record_items", [])
         if not (0 <= row < len(items)):
             return
-        det_id = items[row].get("detection_id")
-        if det_id is None:
+        feedback_id = items[row].get("id")
+        if feedback_id is None:
             return
-        run_async(self, lambda: self._client.detection_trace(int(det_id)),
-                  self._show_trace)
+        run_async(self, lambda: self._client.feedback_details(int(feedback_id)),
+                  lambda data: FeedbackEvidenceDialog(data, self).exec())
 
     # ══════════════════ 错检追溯 Tab（M7a，前端反馈 v7-5）══════════════
     def _build_misjudged_tab(self) -> QWidget:
         """错检集清单：被反馈判错（误检/漏检/新缺陷）的检测记录。
 
-        错检是在线学习价值最高的样本——每条错检反馈即时进入引擎学习，
-        双击行可打开单帧追溯，对照「当时判定 → 学习后重判定」看提升效果。
+        错检是候选学习价值较高的样本；反馈先记录并按候选流程处理，
+        双击行可打开单帧追溯，对照当时判定与当前重判定；效果需独立评估。
         """
         self._misjudged_items: list[dict] = []
 
         card = make_card()
         lay = QVBoxLayout(card)
         bar = QHBoxLayout()
-        head = QLabel("错检集（被判错的检测：误检/漏检/新缺陷；"
-                      "这些样本的反馈已即时学习，双击行看学习后是否翻案）")
+        head = QLabel("错检集（误检/漏检/新缺陷；反馈先进入候选流程，"
+                      "双击行看当前重判定是否翻案）")
         head.setProperty("heading", True)
         bar.addWidget(head)
         bar.addStretch(1)
@@ -951,7 +1163,7 @@ class FeedbackPage(QWidget):
         self.table_misjudged.setSelectionBehavior(QTableWidget.SelectRows)
         self.table_misjudged.setAlternatingRowColors(True)
         self.table_misjudged.setToolTip(
-            "双击行查看单帧追溯（判定现场→学习后重判定）")
+            "双击行查看单帧追溯（判定现场→当前重判定；效果需独立评估）")
         self.table_misjudged.itemDoubleClicked.connect(
             self._on_misjudged_trace)
         lay.addWidget(self.table_misjudged, 1)
@@ -1040,7 +1252,8 @@ class FeedbackPage(QWidget):
         # 任务），本页不再消费，避免调用不存在的方法
         if ttype == "flip_curve":
             return
-        if ttype and "self_learning" not in ttype and "update" not in ttype:
+        if ttype not in ("candidate_feedback", "candidate_acceptance") \
+                and ttype and "self_learning" not in ttype and "update" not in ttype:
             return
         self.progress.update_task(task)
         if str(task.get("status")) in ("done", "success", "failed", "error"):

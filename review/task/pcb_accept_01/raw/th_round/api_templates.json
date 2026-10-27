@@ -1,0 +1,599 @@
+﻿{
+    "total":  3,
+    "items":  [
+                  {
+                      "id":  "PixPin_2026-07-01_11-21-15_OK",
+                      "display_name":  "SMT çç¹ç¤ºä¾",
+                      "version":  1,
+                      "status":  "published",
+                      "created_at":  "2026-10-11T22:47:47+08:00",
+                      "updated_at":  "2026-10-14T04:37:52+08:00",
+                      "standard_image":  {
+                                             "path":  "D:\\CGAIC\\AOI_SSOCL\\AOI_tree\\PCB_Dual\\templates\\PixPin_2026-07-01_11-21-15_OK\\standard.png",
+                                             "sha1":  "8c28b2311df9f0ba0da6722b7f2d52166fbe3495",
+                                             "width":  1317,
+                                             "height":  545,
+                                             "source_name":  "PixPin_2026-07-01_11-21-15_OK.png"
+                                         },
+                      "category":  "æä»¶å¨ä»¶",
+                      "detection_items":  [
+                                              {
+                                                  "algorithm_id":  "solder_å¤é¡",
+                                                  "enabled":  true,
+                                                  "params":  {
+                                                                 "template_mode":  "diff_grow_ROI",
+                                                                 "pin_type":  "terminal",
+                                                                 "mask_h_low":  57,
+                                                                 "mask_h_high":  93,
+                                                                 "mask_s_min":  61,
+                                                                 "mask_v_min":  15,
+                                                                 "silk_h_low":  81,
+                                                                 "silk_h_high":  106,
+                                                                 "silk_s_low":  61,
+                                                                 "silk_s_high":  121,
+                                                                 "silk_v_low":  90,
+                                                                 "silk_v_high":  131,
+                                                                 "insufficient_thresh":  0.08,
+                                                                 "excess_thresh":  0.005,
+                                                                 "RB_thresh_exc":  10,
+                                                                 "diff_thresh_exc":  5,
+                                                                 "bridge_min_area":  20,
+                                                                 "cold_solder_dark_ratio":  0.3,
+                                                                 "cold_solder_v_dark":  80,
+                                                                 "solder_blue_h_low":  85,
+                                                                 "solder_blue_h_high":  179,
+                                                                 "solder_blue_s_min":  78,
+                                                                 "solder_blue_v_min":  70
+                                                             },
+                                                  "preprocess_recipe":  null,
+                                                  "region_kind":  "smt"
+                                              },
+                                              {
+                                                  "algorithm_id":  "solder_å°é¡",
+                                                  "enabled":  true,
+                                                  "params":  {
+                                                                 "template_mode":  "diff_grow_ROI",
+                                                                 "pin_type":  "terminal",
+                                                                 "mask_h_low":  57,
+                                                                 "mask_h_high":  93,
+                                                                 "mask_s_min":  61,
+                                                                 "mask_v_min":  15,
+                                                                 "silk_h_low":  81,
+                                                                 "silk_h_high":  106,
+                                                                 "silk_s_low":  61,
+                                                                 "silk_s_high":  121,
+                                                                 "silk_v_low":  90,
+                                                                 "silk_v_high":  131,
+                                                                 "insufficient_thresh":  0.08,
+                                                                 "excess_thresh":  0.005,
+                                                                 "RB_thresh_exc":  10,
+                                                                 "diff_thresh_exc":  5,
+                                                                 "bridge_min_area":  20,
+                                                                 "cold_solder_dark_ratio":  0.3,
+                                                                 "cold_solder_v_dark":  80,
+                                                                 "solder_blue_h_low":  85,
+                                                                 "solder_blue_h_high":  179,
+                                                                 "solder_blue_s_min":  78,
+                                                                 "solder_blue_v_min":  70
+                                                             },
+                                                  "preprocess_recipe":  null,
+                                                  "region_kind":  "smt"
+                                              },
+                                              {
+                                                  "algorithm_id":  "solder_è¿é¡",
+                                                  "enabled":  true,
+                                                  "params":  {
+                                                                 "template_mode":  "diff_grow_ROI",
+                                                                 "pin_type":  "terminal",
+                                                                 "mask_h_low":  57,
+                                                                 "mask_h_high":  93,
+                                                                 "mask_s_min":  61,
+                                                                 "mask_v_min":  15,
+                                                                 "silk_h_low":  81,
+                                                                 "silk_h_high":  106,
+                                                                 "silk_s_low":  61,
+                                                                 "silk_s_high":  121,
+                                                                 "silk_v_low":  90,
+                                                                 "silk_v_high":  131,
+                                                                 "insufficient_thresh":  0.08,
+                                                                 "excess_thresh":  0.005,
+                                                                 "RB_thresh_exc":  10,
+                                                                 "diff_thresh_exc":  5,
+                                                                 "bridge_min_area":  20,
+                                                                 "cold_solder_dark_ratio":  0.3,
+                                                                 "cold_solder_v_dark":  80,
+                                                                 "solder_blue_h_low":  85,
+                                                                 "solder_blue_h_high":  179,
+                                                                 "solder_blue_s_min":  78,
+                                                                 "solder_blue_v_min":  70
+                                                             },
+                                                  "preprocess_recipe":  null,
+                                                  "region_kind":  "smt"
+                                              },
+                                              {
+                                                  "algorithm_id":  "solder_èç",
+                                                  "enabled":  true,
+                                                  "params":  {
+                                                                 "template_mode":  "diff_grow_ROI",
+                                                                 "pin_type":  "terminal",
+                                                                 "mask_h_low":  57,
+                                                                 "mask_h_high":  93,
+                                                                 "mask_s_min":  61,
+                                                                 "mask_v_min":  15,
+                                                                 "silk_h_low":  81,
+                                                                 "silk_h_high":  106,
+                                                                 "silk_s_low":  61,
+                                                                 "silk_s_high":  121,
+                                                                 "silk_v_low":  90,
+                                                                 "silk_v_high":  131,
+                                                                 "insufficient_thresh":  0.08,
+                                                                 "excess_thresh":  0.005,
+                                                                 "RB_thresh_exc":  10,
+                                                                 "diff_thresh_exc":  5,
+                                                                 "bridge_min_area":  20,
+                                                                 "cold_solder_dark_ratio":  0.3,
+                                                                 "cold_solder_v_dark":  80,
+                                                                 "solder_blue_h_low":  85,
+                                                                 "solder_blue_h_high":  179,
+                                                                 "solder_blue_s_min":  78,
+                                                                 "solder_blue_v_min":  70
+                                                             },
+                                                  "preprocess_recipe":  null,
+                                                  "region_kind":  "smt"
+                                              }
+                                          ],
+                      "algorithms":  [
+                                         {
+                                             "algorithm_id":  "solder_å¤é¡",
+                                             "enabled":  true,
+                                             "params":  {
+                                                            "template_mode":  "diff_grow_ROI",
+                                                            "pin_type":  "terminal",
+                                                            "mask_h_low":  57,
+                                                            "mask_h_high":  93,
+                                                            "mask_s_min":  61,
+                                                            "mask_v_min":  15,
+                                                            "silk_h_low":  81,
+                                                            "silk_h_high":  106,
+                                                            "silk_s_low":  61,
+                                                            "silk_s_high":  121,
+                                                            "silk_v_low":  90,
+                                                            "silk_v_high":  131,
+                                                            "insufficient_thresh":  0.08,
+                                                            "excess_thresh":  0.005,
+                                                            "RB_thresh_exc":  10,
+                                                            "diff_thresh_exc":  5,
+                                                            "bridge_min_area":  20,
+                                                            "cold_solder_dark_ratio":  0.3,
+                                                            "cold_solder_v_dark":  80,
+                                                            "solder_blue_h_low":  85,
+                                                            "solder_blue_h_high":  179,
+                                                            "solder_blue_s_min":  78,
+                                                            "solder_blue_v_min":  70
+                                                        },
+                                             "preprocess_recipe":  null,
+                                             "region_kind":  "smt"
+                                         },
+                                         {
+                                             "algorithm_id":  "solder_å°é¡",
+                                             "enabled":  true,
+                                             "params":  {
+                                                            "template_mode":  "diff_grow_ROI",
+                                                            "pin_type":  "terminal",
+                                                            "mask_h_low":  57,
+                                                            "mask_h_high":  93,
+                                                            "mask_s_min":  61,
+                                                            "mask_v_min":  15,
+                                                            "silk_h_low":  81,
+                                                            "silk_h_high":  106,
+                                                            "silk_s_low":  61,
+                                                            "silk_s_high":  121,
+                                                            "silk_v_low":  90,
+                                                            "silk_v_high":  131,
+                                                            "insufficient_thresh":  0.08,
+                                                            "excess_thresh":  0.005,
+                                                            "RB_thresh_exc":  10,
+                                                            "diff_thresh_exc":  5,
+                                                            "bridge_min_area":  20,
+                                                            "cold_solder_dark_ratio":  0.3,
+                                                            "cold_solder_v_dark":  80,
+                                                            "solder_blue_h_low":  85,
+                                                            "solder_blue_h_high":  179,
+                                                            "solder_blue_s_min":  78,
+                                                            "solder_blue_v_min":  70
+                                                        },
+                                             "preprocess_recipe":  null,
+                                             "region_kind":  "smt"
+                                         },
+                                         {
+                                             "algorithm_id":  "solder_è¿é¡",
+                                             "enabled":  true,
+                                             "params":  {
+                                                            "template_mode":  "diff_grow_ROI",
+                                                            "pin_type":  "terminal",
+                                                            "mask_h_low":  57,
+                                                            "mask_h_high":  93,
+                                                            "mask_s_min":  61,
+                                                            "mask_v_min":  15,
+                                                            "silk_h_low":  81,
+                                                            "silk_h_high":  106,
+                                                            "silk_s_low":  61,
+                                                            "silk_s_high":  121,
+                                                            "silk_v_low":  90,
+                                                            "silk_v_high":  131,
+                                                            "insufficient_thresh":  0.08,
+                                                            "excess_thresh":  0.005,
+                                                            "RB_thresh_exc":  10,
+                                                            "diff_thresh_exc":  5,
+                                                            "bridge_min_area":  20,
+                                                            "cold_solder_dark_ratio":  0.3,
+                                                            "cold_solder_v_dark":  80,
+                                                            "solder_blue_h_low":  85,
+                                                            "solder_blue_h_high":  179,
+                                                            "solder_blue_s_min":  78,
+                                                            "solder_blue_v_min":  70
+                                                        },
+                                             "preprocess_recipe":  null,
+                                             "region_kind":  "smt"
+                                         },
+                                         {
+                                             "algorithm_id":  "solder_èç",
+                                             "enabled":  true,
+                                             "params":  {
+                                                            "template_mode":  "diff_grow_ROI",
+                                                            "pin_type":  "terminal",
+                                                            "mask_h_low":  57,
+                                                            "mask_h_high":  93,
+                                                            "mask_s_min":  61,
+                                                            "mask_v_min":  15,
+                                                            "silk_h_low":  81,
+                                                            "silk_h_high":  106,
+                                                            "silk_s_low":  61,
+                                                            "silk_s_high":  121,
+                                                            "silk_v_low":  90,
+                                                            "silk_v_high":  131,
+                                                            "insufficient_thresh":  0.08,
+                                                            "excess_thresh":  0.005,
+                                                            "RB_thresh_exc":  10,
+                                                            "diff_thresh_exc":  5,
+                                                            "bridge_min_area":  20,
+                                                            "cold_solder_dark_ratio":  0.3,
+                                                            "cold_solder_v_dark":  80,
+                                                            "solder_blue_h_low":  85,
+                                                            "solder_blue_h_high":  179,
+                                                            "solder_blue_s_min":  78,
+                                                            "solder_blue_v_min":  70
+                                                        },
+                                             "preprocess_recipe":  null,
+                                             "region_kind":  "smt"
+                                         }
+                                     ],
+                      "region_sets":  {
+                                          "smt_pads":  [
+                                                           {
+                                                               "shape":  "rect",
+                                                               "x":  81.77586206896542,
+                                                               "y":  78.53448275862067,
+                                                               "w":  237.93103448275866,
+                                                               "h":  393.1034482758621
+                                                           },
+                                                           {
+                                                               "shape":  "rect",
+                                                               "x":  1050.7413793103449,
+                                                               "y":  43.189655172413765,
+                                                               "w":  222.41379310344814,
+                                                               "h":  445.68965517241384
+                                                           }
+                                                       ]
+                                      },
+                      "calibration":  {
+                                          "smt_pads":  [
+                                                           [
+                                                               81.77586206896542,
+                                                               78.53448275862067,
+                                                               237.93103448275866,
+                                                               393.1034482758621
+                                                           ],
+                                                           [
+                                                               1050.7413793103449,
+                                                               43.189655172413765,
+                                                               222.41379310344814,
+                                                               445.68965517241384
+                                                           ]
+                                                       ]
+                                      },
+                      "gate":  {
+                                   "size_gate_enabled":  true,
+                                   "size_gate_max_diff_px":  10
+                               },
+                      "notes":  "",
+                      "calib_key":  "PixPin_2026-07-01_11-21-15_OK",
+                      "engine_mode":  "dual",
+                      "model_category":  "smt_solder",
+                      "px_calibration":  {
+
+                                         },
+                      "cad_items":  [
+
+                                    ],
+                      "panels":  {
+
+                                 },
+                      "fov_grid":  [
+
+                                   ]
+                  },
+                  {
+                      "id":  "TH_templ2_single",
+                      "display_name":  "TH åçç¹(èªå¨/åæ¡)",
+                      "version":  1,
+                      "status":  "draft",
+                      "created_at":  "2026-10-14T08:48:23+08:00",
+                      "updated_at":  "2026-10-14T08:48:23+08:00",
+                      "standard_image":  {
+                                             "path":  "d:\\CGAIC\\AOI_SSOCL\\review\\task\\pcb_accept_01\\temp_tree\\PCB_Dual\\templates\\TH_templ2_single\\standard.png",
+                                             "sha1":  "b80af7280753e0ae440ec67ba1a8b115372eda7e",
+                                             "width":  100,
+                                             "height":  100,
+                                             "source_name":  "templ_2.png"
+                                         },
+                      "category":  "æä»¶å¨ä»¶",
+                      "detection_items":  [
+                                              {
+                                                  "algorithm_id":  "tht_å­æ´",
+                                                  "enabled":  true,
+                                                  "params":  {
+
+                                                             },
+                                                  "preprocess_recipe":  null,
+                                                  "region_kind":  "th"
+                                              },
+                                              {
+                                                  "algorithm_id":  "tht_å°é¡",
+                                                  "enabled":  true,
+                                                  "params":  {
+
+                                                             },
+                                                  "preprocess_recipe":  null,
+                                                  "region_kind":  "th"
+                                              },
+                                              {
+                                                  "algorithm_id":  "tht_å¤é¡å\u0085é¡",
+                                                  "enabled":  true,
+                                                  "params":  {
+
+                                                             },
+                                                  "preprocess_recipe":  null,
+                                                  "region_kind":  "th"
+                                              },
+                                              {
+                                                  "algorithm_id":  "tht_è¿é¡",
+                                                  "enabled":  true,
+                                                  "params":  {
+
+                                                             },
+                                                  "preprocess_recipe":  null,
+                                                  "region_kind":  "th"
+                                              },
+                                              {
+                                                  "algorithm_id":  "tht_ä¸åºè",
+                                                  "enabled":  true,
+                                                  "params":  {
+
+                                                             },
+                                                  "preprocess_recipe":  null,
+                                                  "region_kind":  "th"
+                                              }
+                                          ],
+                      "algorithms":  [
+                                         {
+                                             "algorithm_id":  "tht_å­æ´",
+                                             "enabled":  true,
+                                             "params":  {
+
+                                                        },
+                                             "preprocess_recipe":  null,
+                                             "region_kind":  "th"
+                                         },
+                                         {
+                                             "algorithm_id":  "tht_å°é¡",
+                                             "enabled":  true,
+                                             "params":  {
+
+                                                        },
+                                             "preprocess_recipe":  null,
+                                             "region_kind":  "th"
+                                         },
+                                         {
+                                             "algorithm_id":  "tht_å¤é¡å\u0085é¡",
+                                             "enabled":  true,
+                                             "params":  {
+
+                                                        },
+                                             "preprocess_recipe":  null,
+                                             "region_kind":  "th"
+                                         },
+                                         {
+                                             "algorithm_id":  "tht_è¿é¡",
+                                             "enabled":  true,
+                                             "params":  {
+
+                                                        },
+                                             "preprocess_recipe":  null,
+                                             "region_kind":  "th"
+                                         },
+                                         {
+                                             "algorithm_id":  "tht_ä¸åºè",
+                                             "enabled":  true,
+                                             "params":  {
+
+                                                        },
+                                             "preprocess_recipe":  null,
+                                             "region_kind":  "th"
+                                         }
+                                     ],
+                      "region_sets":  {
+
+                                      },
+                      "calibration":  {
+
+                                      },
+                      "gate":  {
+                                   "size_gate_enabled":  false,
+                                   "size_gate_max_diff_px":  10
+                               },
+                      "notes":  "PCB-ACCEPT-01 TH äº¤äºéªæ¶ TEMP æ¨¡æ¿ï¼å°ºå¯¸é¨ç¦å\u0085³é­ï¼çå® paired å°ºå¯¸æå·®å¼ï¼ç±é\u0085åå¤çï¼",
+                      "calib_key":  "TH_templ2_single",
+                      "engine_mode":  "traditional",
+                      "model_category":  "",
+                      "px_calibration":  {
+
+                                         },
+                      "cad_items":  [
+
+                                    ],
+                      "panels":  {
+
+                                 },
+                      "fov_grid":  [
+
+                                   ]
+                  },
+                  {
+                      "id":  "TH_templ3_dual",
+                      "display_name":  "TH åçç¹(å¤æ¡è¿é¡)",
+                      "version":  1,
+                      "status":  "draft",
+                      "created_at":  "2026-10-14T08:48:23+08:00",
+                      "updated_at":  "2026-10-14T08:48:23+08:00",
+                      "standard_image":  {
+                                             "path":  "d:\\CGAIC\\AOI_SSOCL\\review\\task\\pcb_accept_01\\temp_tree\\PCB_Dual\\templates\\TH_templ3_dual\\standard.png",
+                                             "sha1":  "0ce26df6a78110ec7adc06c4fa60011104494097",
+                                             "width":  262,
+                                             "height":  124,
+                                             "source_name":  "templ_3.png"
+                                         },
+                      "category":  "æä»¶å¨ä»¶",
+                      "detection_items":  [
+                                              {
+                                                  "algorithm_id":  "tht_å­æ´",
+                                                  "enabled":  true,
+                                                  "params":  {
+
+                                                             },
+                                                  "preprocess_recipe":  null,
+                                                  "region_kind":  "th"
+                                              },
+                                              {
+                                                  "algorithm_id":  "tht_å°é¡",
+                                                  "enabled":  true,
+                                                  "params":  {
+
+                                                             },
+                                                  "preprocess_recipe":  null,
+                                                  "region_kind":  "th"
+                                              },
+                                              {
+                                                  "algorithm_id":  "tht_å¤é¡å\u0085é¡",
+                                                  "enabled":  true,
+                                                  "params":  {
+
+                                                             },
+                                                  "preprocess_recipe":  null,
+                                                  "region_kind":  "th"
+                                              },
+                                              {
+                                                  "algorithm_id":  "tht_è¿é¡",
+                                                  "enabled":  true,
+                                                  "params":  {
+
+                                                             },
+                                                  "preprocess_recipe":  null,
+                                                  "region_kind":  "th"
+                                              },
+                                              {
+                                                  "algorithm_id":  "tht_ä¸åºè",
+                                                  "enabled":  true,
+                                                  "params":  {
+
+                                                             },
+                                                  "preprocess_recipe":  null,
+                                                  "region_kind":  "th"
+                                              }
+                                          ],
+                      "algorithms":  [
+                                         {
+                                             "algorithm_id":  "tht_å­æ´",
+                                             "enabled":  true,
+                                             "params":  {
+
+                                                        },
+                                             "preprocess_recipe":  null,
+                                             "region_kind":  "th"
+                                         },
+                                         {
+                                             "algorithm_id":  "tht_å°é¡",
+                                             "enabled":  true,
+                                             "params":  {
+
+                                                        },
+                                             "preprocess_recipe":  null,
+                                             "region_kind":  "th"
+                                         },
+                                         {
+                                             "algorithm_id":  "tht_å¤é¡å\u0085é¡",
+                                             "enabled":  true,
+                                             "params":  {
+
+                                                        },
+                                             "preprocess_recipe":  null,
+                                             "region_kind":  "th"
+                                         },
+                                         {
+                                             "algorithm_id":  "tht_è¿é¡",
+                                             "enabled":  true,
+                                             "params":  {
+
+                                                        },
+                                             "preprocess_recipe":  null,
+                                             "region_kind":  "th"
+                                         },
+                                         {
+                                             "algorithm_id":  "tht_ä¸åºè",
+                                             "enabled":  true,
+                                             "params":  {
+
+                                                        },
+                                             "preprocess_recipe":  null,
+                                             "region_kind":  "th"
+                                         }
+                                     ],
+                      "region_sets":  {
+
+                                      },
+                      "calibration":  {
+
+                                      },
+                      "gate":  {
+                                   "size_gate_enabled":  false,
+                                   "size_gate_max_diff_px":  10
+                               },
+                      "notes":  "PCB-ACCEPT-01 TH äº¤äºéªæ¶ TEMP æ¨¡æ¿ï¼å°ºå¯¸é¨ç¦å\u0085³é­ï¼çå® paired å°ºå¯¸æå·®å¼ï¼ç±é\u0085åå¤çï¼",
+                      "calib_key":  "TH_templ3_dual",
+                      "engine_mode":  "traditional",
+                      "model_category":  "",
+                      "px_calibration":  {
+
+                                         },
+                      "cad_items":  [
+
+                                    ],
+                      "panels":  {
+
+                                 },
+                      "fov_grid":  [
+
+                                   ]
+                  }
+              ]
+}

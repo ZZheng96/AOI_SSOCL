@@ -1,0 +1,92 @@
+{
+  "mode": "baseline",
+  "n": 20,
+  "tau_high": 0.8281202498726222,
+  "weights": {
+    "sem": 0.36118659420289856,
+    "disc": 0.2776268115942029,
+    "shead": 0.36118659420289856
+  },
+  "system": {
+    "auroc_fused": 0.935,
+    "fpr": 1.0,
+    "recall": 1.0,
+    "op": {
+      "max_recall_at_fpr5": [
+        0.0,
+        null
+      ],
+      "min_fpr_at_recall95": [
+        0.2,
+        1.715866310009058
+      ]
+    }
+  },
+  "slots": {
+    "sem": {
+      "auroc_raw": 0.3,
+      "auroc_cal": 0.5,
+      "sat_rate": 1.0,
+      "train_hi": 0.43010665662586683,
+      "test_normal_raw_min": 0.6095,
+      "test_defect_raw_min": 0.5929,
+      "op_raw": {
+        "max_recall_at_fpr5": [
+          0.0,
+          null
+        ],
+        "min_fpr_at_recall95": [
+          1.0,
+          null
+        ]
+      }
+    },
+    "disc": {
+      "auroc_raw": 0.97,
+      "auroc_cal": 0.935,
+      "sat_rate": 0.5,
+      "train_hi": 0.9956438284367324,
+      "test_normal_raw_min": 0.9875,
+      "test_defect_raw_min": 0.9955,
+      "op_raw": {
+        "max_recall_at_fpr5": [
+          0.8,
+          0.996737702563405
+        ],
+        "min_fpr_at_recall95": [
+          0.2,
+          0.9954552441835404
+        ]
+      }
+    },
+    "shead": {
+      "auroc_raw": 1.0,
+      "auroc_cal": 0.5,
+      "sat_rate": 1.0,
+      "train_hi": 2.490168809890747,
+      "test_normal_raw_min": 2.9082,
+      "test_defect_raw_min": 4.8051,
+      "op_raw": {
+        "max_recall_at_fpr5": [
+          1.0,
+          4.805141925811768
+        ],
+        "min_fpr_at_recall95": [
+          0.0,
+          4.805141925811768
+        ]
+      }
+    }
+  },
+  "fused_unclipped_auroc": 1.0,
+  "fused_unclipped_op": {
+    "max_recall_at_fpr5": [
+      1.0,
+      3.5226901282418943
+    ],
+    "min_fpr_at_recall95": [
+      0.0,
+      3.5226901282418943
+    ]
+  }
+}

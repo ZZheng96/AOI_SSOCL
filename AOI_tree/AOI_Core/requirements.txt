@@ -19,6 +19,9 @@ albumentations>=1.4
 
 # 图表（UI 内嵌）
 pyqtgraph>=0.13
+matplotlib>=3.8
+scikit-image>=0.22
+PyWavelets>=1.5
 
 # 深度学习（与 demo1 环境一致，按 CUDA 版本安装 torch）
 torch>=2.0

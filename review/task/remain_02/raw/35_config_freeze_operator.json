@@ -1,0 +1,14 @@
+{
+  "name": "config_freeze_operator",
+  "method": "POST",
+  "path": "/api/system/config",
+  "role": "operator",
+  "request_body": {
+    "governance_decisions.gt_threshold_frozen": true
+  },
+  "status_code": 403,
+  "response": {
+    "detail": "权限不足：该操作需要 admin 及以上角色（当前 operator）"
+  },
+  "note": ""
+}

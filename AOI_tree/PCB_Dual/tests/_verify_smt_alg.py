@@ -29,9 +29,9 @@ def pad_json_to_frames(pad_json: dict) -> list[list[int]]:
 
 def main() -> None:
     alg = SolderSmtAllAlg()
-    pair = SMT / "test_images" / "excess_pair" / "pair4"
-    test_ng = cv2.imread(str(pair / "PixPin_2026-07-01_11-21-15.png"))
-    test_ok = cv2.imread(str(pair / "PixPin_2026-07-01_11-21-15_OK.png"))
+    pair = SMT / "test_images" / "bridge_pair" / "pair4"
+    test_ng = cv2.imread(str(pair / "PixPin_2026-07-01_09-28-28.png"))
+    test_ok = cv2.imread(str(pair / "PixPin_2026-07-01_09-22-58_OK.png"))
     assert test_ng is not None and test_ok is not None, "测试图缺失"
     pad_frames = pad_json_to_frames(json.loads((pair / "pad.json").read_text(encoding="utf-8")))
     params = json.loads((pair / "params.json").read_text(encoding="utf-8"))

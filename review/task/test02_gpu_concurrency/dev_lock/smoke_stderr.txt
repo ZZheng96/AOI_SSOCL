@@ -1,0 +1,481 @@
+C:\Users\imia\AppData\Roaming\Python\Python311\site-packages\fastapi\testclient.py:1: StarletteDeprecationWarning: Using `httpx` with `starlette.testclient` is deprecated; install `httpx2` instead.
+  from starlette.testclient import TestClient as TestClient  # noqa
+test_duplicate_submission_is_rejected (test_ac042_review_stage.ReviewStageTest.test_duplicate_submission_is_rejected) ... ok
+test_legacy_queue_submit_transition (test_ac042_review_stage.ReviewStageTest.test_legacy_queue_submit_transition) ... ok
+test_submit_stage_must_be_queued_when_explicit (test_ac042_review_stage.ReviewStageTest.test_submit_stage_must_be_queued_when_explicit) ... ok
+test_unknown_stage_fails_closed (test_ac042_review_stage.ReviewStageTest.test_unknown_stage_fails_closed) ... ok
+test_alarm_commit_before_notify_and_cooldown (test_audit_contract.AuditContractTest.test_alarm_commit_before_notify_and_cooldown) ... ok
+test_cold_audit_does_not_import_web_stack (test_audit_contract.AuditContractTest.test_cold_audit_does_not_import_web_stack) ... ok
+test_commit_failure_rolls_back_and_does_not_notify (test_audit_contract.AuditContractTest.test_commit_failure_rolls_back_and_does_not_notify) ... ok
+test_exact_fields_and_shared_actor (test_audit_contract.AuditContractTest.test_exact_fields_and_shared_actor) ... ok
+test_middleware_permissions_context_and_thread_default (test_audit_contract.AuditContractTest.test_middleware_permissions_context_and_thread_default) ... ok
+test_legacy_samples_excluded (test_bank_lineage_incubate.TestDefectBankPool.test_legacy_samples_excluded) ... ok
+test_whole_image_not_in_pool_and_boxes_count_by_image (test_bank_lineage_incubate.TestDefectBankPool.test_whole_image_not_in_pool_and_boxes_count_by_image) ... ok
+test_approved_with_4d_core (test_bank_lineage_incubate.TestIncubateApproval.test_approved_with_4d_core) ... ok
+test_counts_images_not_boxes (test_bank_lineage_incubate.TestIncubateApproval.test_counts_images_not_boxes) ... ok
+test_rejected_keeps_old_head_and_waits (test_bank_lineage_incubate.TestIncubateApproval.test_rejected_keeps_old_head_and_waits) ... ok
+test_worse_than_current_rejected (test_bank_lineage_incubate.TestIncubateApproval.test_worse_than_current_rejected) ... ok
+test_dissimilar_candidates_stay_pending (test_bank_lineage_incubate.TestNormalBankCluster.test_dissimilar_candidates_stay_pending) ... ok
+test_legacy_object_without_meta (test_bank_lineage_incubate.TestNormalBankCluster.test_legacy_object_without_meta) ... ok
+test_lineage_and_rollback (test_bank_lineage_incubate.TestNormalBankCluster.test_lineage_and_rollback) ... ok
+test_similar_candidates_accept_after_k (test_bank_lineage_incubate.TestNormalBankCluster.test_similar_candidates_accept_after_k) ... ok
+test_window_expiry_breaks_continuity (test_bank_lineage_incubate.TestNormalBankCluster.test_window_expiry_breaks_continuity) ... ok
+test_roles_and_runtime (test_bank_lineage_incubate.TestPostFusionRoles.test_roles_and_runtime) ... ok
+test_audit_failure_does_not_mask_result (test_candidate_audit_log.CandidateAuditLogTest.test_audit_failure_does_not_mask_result) ... 候选审计日志写入失败 action=candidate_activate
+Traceback (most recent call last):
+  File "D:\CGAIC\AOI_SSOCL\AOI_tree\AOI_Core\backend\api\routes_candidates.py", line 101, in _log
+    log_action(action, " ".join(f"{k}={extra[k]}" for k in ("category", "version") if k in extra),
+  File "C:\Program Files\Python311\Lib\unittest\mock.py", line 1124, in __call__
+    return self._mock_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Program Files\Python311\Lib\unittest\mock.py", line 1128, in _mock_call
+    return self._execute_mock_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Program Files\Python311\Lib\unittest\mock.py", line 1183, in _execute_mock_call
+    raise effect
+RuntimeError: db down
+ok
+test_rejected_logged_with_reason_code (test_candidate_audit_log.CandidateAuditLogTest.test_rejected_logged_with_reason_code) ... ok
+test_success_paths (test_candidate_audit_log.CandidateAuditLogTest.test_success_paths) ... ok
+test_activated_consolidate_keeps_existing_commit_semantics (test_candidate_isolation.CandidateIsolationTest.test_activated_consolidate_keeps_existing_commit_semantics) ... ok
+test_candidate_consolidate_restores_active_cache (test_candidate_isolation.CandidateIsolationTest.test_candidate_consolidate_restores_active_cache) ... ok
+test_candidate_hash_finalize_runs_outside_category_lock (test_candidate_isolation.CandidateIsolationTest.test_candidate_hash_finalize_runs_outside_category_lock) ... ok
+test_candidate_load_replay_runs_outside_category_lock (test_candidate_isolation.CandidateIsolationTest.test_candidate_load_replay_runs_outside_category_lock) ... ok
+test_candidate_replays_real_wal_without_appending_or_clearing (test_candidate_isolation.CandidateIsolationTest.test_candidate_replays_real_wal_without_appending_or_clearing) ... ok
+test_candidate_stage_removed_on_failure (test_candidate_isolation.CandidateIsolationTest.test_candidate_stage_removed_on_failure) ... ok
+test_concurrent_learning_during_replay_keeps_live_cache (test_candidate_isolation.CandidateIsolationTest.test_concurrent_learning_during_replay_keeps_live_cache) ... ok
+test_evicted_or_replaced_cache_is_not_overwritten (test_candidate_isolation.CandidateIsolationTest.test_evicted_or_replaced_cache_is_not_overwritten) ... ok
+test_replay_failure_does_not_replace_live_cache (test_candidate_isolation.CandidateIsolationTest.test_replay_failure_does_not_replace_live_cache) ... ok
+test_stale_consolidate_stage_swept_fresh_kept (test_candidate_isolation.CandidateIsolationTest.test_stale_consolidate_stage_swept_fresh_kept) ... ok
+test_continuous_save_load_next_optimizer_and_reservoir (test_candidate_learning_state.LearningStateTest.test_continuous_save_load_next_optimizer_and_reservoir) ... C:\Users\imia\AppData\Roaming\Python\Python311\site-packages\sklearn\base.py:525: InconsistentVersionWarning: Trying to unpickle estimator DecisionTreeClassifier from version 1.9.1 when using version 1.9.0. This might lead to breaking code or invalid results. Use at your own risk. For more info please refer to:
+https://scikit-learn.org/stable/model_persistence.html#security-maintainability-limitations
+  warnings.warn(
+C:\Users\imia\AppData\Roaming\Python\Python311\site-packages\sklearn\base.py:525: InconsistentVersionWarning: Trying to unpickle estimator RandomForestClassifier from version 1.9.1 when using version 1.9.0. This might lead to breaking code or invalid results. Use at your own risk. For more info please refer to:
+https://scikit-learn.org/stable/model_persistence.html#security-maintainability-limitations
+  warnings.warn(
+C:\Users\imia\AppData\Roaming\Python\Python311\site-packages\sklearn\base.py:525: InconsistentVersionWarning: Trying to unpickle estimator DecisionTreeClassifier from version 1.9.1 when using version 1.9.0. This might lead to breaking code or invalid results. Use at your own risk. For more info please refer to:
+https://scikit-learn.org/stable/model_persistence.html#security-maintainability-limitations
+  warnings.warn(
+C:\Users\imia\AppData\Roaming\Python\Python311\site-packages\sklearn\base.py:525: InconsistentVersionWarning: Trying to unpickle estimator RandomForestClassifier from version 1.9.1 when using version 1.9.0. This might lead to breaking code or invalid results. Use at your own risk. For more info please refer to:
+https://scikit-learn.org/stable/model_persistence.html#security-maintainability-limitations
+  warnings.warn(
+ok
+test_corrupt_process_rng_snapshot_fail_closed (test_candidate_learning_state.LearningStateTest.test_corrupt_process_rng_snapshot_fail_closed) ... ok
+test_cuda_rng_device_count_fail_closed (test_candidate_learning_state.LearningStateTest.test_cuda_rng_device_count_fail_closed) ... ok
+test_default_restore_does_not_rewind_process_rng (test_candidate_learning_state.LearningStateTest.test_default_restore_does_not_rewind_process_rng) ... ok
+test_gate_reject_cooldown_resume (test_candidate_learning_state.LearningStateTest.test_gate_reject_cooldown_resume) ... ok
+test_global_rng_continuation_and_isolated_default (test_candidate_learning_state.LearningStateTest.test_global_rng_continuation_and_isolated_default) ... ok
+test_invalid_process_rng_rejected_before_restore (test_candidate_learning_state.LearningStateTest.test_invalid_process_rng_rejected_before_restore) ... ok
+test_missing_malicious_field_and_wrong_shape (test_candidate_learning_state.LearningStateTest.test_missing_malicious_field_and_wrong_shape) ... ok
+test_missing_required_artifact_and_pickle_whitelist (test_candidate_learning_state.LearningStateTest.test_missing_required_artifact_and_pickle_whitelist) ... [safe_pickle] 拒绝加载白名单外 pickle：C:\Users\imia\AppData\Local\Temp\untrusted_learning_ufa92b8w\state.pkl
+ok
+test_real_feedback_continuation (test_candidate_learning_state.LearningStateTest.test_real_feedback_continuation) ... ok
+test_router_candidate_does_not_seed_global_rng (test_candidate_learning_state.LearningStateTest.test_router_candidate_does_not_seed_global_rng) ... ok
+test_unknown_and_legacy_fail_closed (test_candidate_learning_state.LearningStateTest.test_unknown_and_legacy_fail_closed) ... ok
+test_acceptance_report_keeps_stable_failure_details (test_candidate_release.CandidateReleaseTest.test_acceptance_report_keeps_stable_failure_details) ... ok
+test_candidate_build_failure_details_are_persisted (test_candidate_release.CandidateReleaseTest.test_candidate_build_failure_details_are_persisted) ... ok
+test_candidate_detection_revision_after_approval_blocks_activation (test_candidate_release.CandidateReleaseTest.test_candidate_detection_revision_after_approval_blocks_activation) ... ok
+test_candidate_detection_revision_after_training_blocks_approval (test_candidate_release.CandidateReleaseTest.test_candidate_detection_revision_after_training_blocks_approval) ... ok
+test_candidate_feedback_invalidated_after_approval_blocks_activation (test_candidate_release.CandidateReleaseTest.test_candidate_feedback_invalidated_after_approval_blocks_activation) ... ok
+test_candidate_feedback_invalidated_after_training_blocks_approval_and_activation (test_candidate_release.CandidateReleaseTest.test_candidate_feedback_invalidated_after_training_blocks_approval_and_activation) ... ok
+test_committed_crash_and_missing_historical_model_rows (test_candidate_release.CandidateReleaseTest.test_committed_crash_and_missing_historical_model_rows) ... ok
+test_data_wal_and_snapshot_changes_fail_closed (test_candidate_release.CandidateReleaseTest.test_data_wal_and_snapshot_changes_fail_closed) ... ok
+test_duplicate_conflict_and_restart (test_candidate_release.CandidateReleaseTest.test_duplicate_conflict_and_restart) ... ok
+test_duplicate_model_rows_service_does_not_override_unique_mirror (test_candidate_release.CandidateReleaseTest.test_duplicate_model_rows_service_does_not_override_unique_mirror) ... ok
+test_minimal_http_role_boundary (test_candidate_release.CandidateReleaseTest.test_minimal_http_role_boundary) ... ok
+test_mirror_not_written_before_release_commit_or_on_foreign_pointer (test_candidate_release.CandidateReleaseTest.test_mirror_not_written_before_release_commit_or_on_foreign_pointer) ... C:\Users\imia\AppData\Roaming\Python\Python311\site-packages\sklearn\base.py:525: InconsistentVersionWarning: Trying to unpickle estimator DecisionTreeClassifier from version 1.9.1 when using version 1.9.0. This might lead to breaking code or invalid results. Use at your own risk. For more info please refer to:
+https://scikit-learn.org/stable/model_persistence.html#security-maintainability-limitations
+  warnings.warn(
+C:\Users\imia\AppData\Roaming\Python\Python311\site-packages\sklearn\base.py:525: InconsistentVersionWarning: Trying to unpickle estimator RandomForestClassifier from version 1.9.1 when using version 1.9.0. This might lead to breaking code or invalid results. Use at your own risk. For more info please refer to:
+https://scikit-learn.org/stable/model_persistence.html#security-maintainability-limitations
+  warnings.warn(
+ok
+test_model_commit_failure_explicit_recovery_and_retry (test_candidate_release.CandidateReleaseTest.test_model_commit_failure_explicit_recovery_and_retry) ... ok
+test_model_rollback_sync_failure_and_idempotent_recovery (test_candidate_release.CandidateReleaseTest.test_model_rollback_sync_failure_and_idempotent_recovery) ... ok
+test_model_sync_does_not_hold_inference_lock (test_candidate_release.CandidateReleaseTest.test_model_sync_does_not_hold_inference_lock) ... ok
+test_parent_change_and_expiration_fail_closed (test_candidate_release.CandidateReleaseTest.test_parent_change_and_expiration_fail_closed) ... ok
+test_prepared_abort_and_rollback_recovery (test_candidate_release.CandidateReleaseTest.test_prepared_abort_and_rollback_recovery) ... ok
+test_prepared_discovery_handles_missing_historical_database (test_candidate_release.CandidateReleaseTest.test_prepared_discovery_handles_missing_historical_database) ... ok
+test_prepared_discovery_http_engineer_only (test_candidate_release.CandidateReleaseTest.test_prepared_discovery_http_engineer_only) ... ok
+test_prepared_discovery_is_read_only_and_reports_consistency (test_candidate_release.CandidateReleaseTest.test_prepared_discovery_is_read_only_and_reports_consistency) ... C:\Users\imia\AppData\Roaming\Python\Python311\site-packages\sklearn\base.py:525: InconsistentVersionWarning: Trying to unpickle estimator DecisionTreeClassifier from version 1.9.1 when using version 1.9.0. This might lead to breaking code or invalid results. Use at your own risk. For more info please refer to:
+https://scikit-learn.org/stable/model_persistence.html#security-maintainability-limitations
+  warnings.warn(
+C:\Users\imia\AppData\Roaming\Python\Python311\site-packages\sklearn\base.py:525: InconsistentVersionWarning: Trying to unpickle estimator RandomForestClassifier from version 1.9.1 when using version 1.9.0. This might lead to breaking code or invalid results. Use at your own risk. For more info please refer to:
+https://scikit-learn.org/stable/model_persistence.html#security-maintainability-limitations
+  warnings.warn(
+ok
+test_release_pointer_crash_restart_recovery (test_candidate_release.CandidateReleaseTest.test_release_pointer_crash_restart_recovery) ... ok
+test_release_requires_explicit_approval (test_candidate_release.CandidateReleaseTest.test_release_requires_explicit_approval) ... ok
+test_release_sqlite_commit_failure_recovery_only_then_mirror (test_candidate_release.CandidateReleaseTest.test_release_sqlite_commit_failure_recovery_only_then_mirror) ... ok
+test_replay_evidence_is_traceable_and_memory_only (test_candidate_release.CandidateReleaseTest.test_replay_evidence_is_traceable_and_memory_only) ... ok
+test_replay_evidence_rejects_parent_or_wal_mismatch (test_candidate_release.CandidateReleaseTest.test_replay_evidence_rejects_parent_or_wal_mismatch) ... ok
+test_status_historical_missing_candidate_id_fails_closed (test_candidate_release.CandidateReleaseTest.test_status_historical_missing_candidate_id_fails_closed) ... ok
+test_status_release_events_are_isolated_between_candidates (test_candidate_release.CandidateReleaseTest.test_status_release_events_are_isolated_between_candidates) ... ok
+test_unavailable_and_rejection_do_not_touch_production (test_candidate_release.CandidateReleaseTest.test_unavailable_and_rejection_do_not_touch_production) ... ok
+test_budget_limits_fail_closed (tests.smoke.test_isolated_candidate_path.IsolatedCandidateTest.test_budget_limits_fail_closed) ... ok
+test_budget_shared_round_and_retry (tests.smoke.test_isolated_candidate_path.IsolatedCandidateTest.test_budget_shared_round_and_retry) ... ok
+test_budget_wall_clock (tests.smoke.test_isolated_candidate_path.IsolatedCandidateTest.test_budget_wall_clock) ... ok
+test_cooperative_cancel_commit_boundary (tests.smoke.test_isolated_candidate_path.IsolatedCandidateTest.test_cooperative_cancel_commit_boundary) ... ok
+test_failure_after_mutation_no_production_pollution (tests.smoke.test_isolated_candidate_path.IsolatedCandidateTest.test_failure_after_mutation_no_production_pollution) ... ok
+test_fault_checkpoints_and_explicit_restart_recovery (tests.smoke.test_isolated_candidate_path.IsolatedCandidateTest.test_fault_checkpoints_and_explicit_restart_recovery) ... ok
+test_learning_yields_to_foreground (tests.smoke.test_isolated_candidate_path.IsolatedCandidateTest.test_learning_yields_to_foreground) ... ok
+test_parent_changes_during_training_rejected (tests.smoke.test_isolated_candidate_path.IsolatedCandidateTest.test_parent_changes_during_training_rejected) ... ok
+test_prediction_does_not_wait_for_candidate_training (tests.smoke.test_isolated_candidate_path.IsolatedCandidateTest.test_prediction_does_not_wait_for_candidate_training) ... ok
+test_prepared_integrity_parent_and_wal_rejection (tests.smoke.test_isolated_candidate_path.IsolatedCandidateTest.test_prepared_integrity_parent_and_wal_rejection) ... ok
+test_real_router_and_loo_propagate_budget (tests.smoke.test_isolated_candidate_path.IsolatedCandidateTest.test_real_router_and_loo_propagate_budget) ... ok
+test_real_service_candidate_queue_and_trace (tests.smoke.test_isolated_candidate_path.IsolatedCandidateTest.test_real_service_candidate_queue_and_trace) ... C:\Users\imia\AppData\Roaming\Python\Python311\site-packages\sklearn\base.py:525: InconsistentVersionWarning: Trying to unpickle estimator DecisionTreeClassifier from version 1.9.1 when using version 1.9.0. This might lead to breaking code or invalid results. Use at your own risk. For more info please refer to:
+https://scikit-learn.org/stable/model_persistence.html#security-maintainability-limitations
+  warnings.warn(
+C:\Users\imia\AppData\Roaming\Python\Python311\site-packages\sklearn\base.py:525: InconsistentVersionWarning: Trying to unpickle estimator RandomForestClassifier from version 1.9.1 when using version 1.9.0. This might lead to breaking code or invalid results. Use at your own risk. For more info please refer to:
+https://scikit-learn.org/stable/model_persistence.html#security-maintainability-limitations
+  warnings.warn(
+ok
+test_save_failure_and_event_conflict (tests.smoke.test_isolated_candidate_path.IsolatedCandidateTest.test_save_failure_and_event_conflict) ... ok
+test_save_reload_duplicate_wal_and_activation_block (tests.smoke.test_isolated_candidate_path.IsolatedCandidateTest.test_save_reload_duplicate_wal_and_activation_block) ... ok
+test_second_engine_cannot_reject_live_training (tests.smoke.test_isolated_candidate_path.IsolatedCandidateTest.test_second_engine_cannot_reject_live_training) ... ok
+test_sweep_orphan_candidate_stages (tests.smoke.test_isolated_candidate_path.IsolatedCandidateTest.test_sweep_orphan_candidate_stages) ... ok
+test_training_intent_not_guessed_failed (tests.smoke.test_isolated_candidate_path.IsolatedCandidateTest.test_training_intent_not_guessed_failed) ... ok
+test_wal_changes_during_training_rejected (tests.smoke.test_isolated_candidate_path.IsolatedCandidateTest.test_wal_changes_during_training_rejected) ... ok
+test_wal_missing_asset_fails_closed (tests.smoke.test_isolated_candidate_path.IsolatedCandidateTest.test_wal_missing_asset_fails_closed) ... ok
+test_record_decide_report (test_cde_report.AuditTest.test_record_decide_report) ... ok
+test_trace_update_log (test_cde_report.AuditTest.test_trace_update_log) ... ok
+test_disclosure_and_guard (test_cde_report.MechanismGainTest.test_disclosure_and_guard) ... ok
+test_variants_ablation_verdicts (test_cde_report.MechanismGainTest.test_variants_ablation_verdicts) ... ok
+test_persist_roundtrip_and_legacy (test_cde_report.PersistAndRouterTest.test_persist_roundtrip_and_legacy) ... C:\Users\imia\AppData\Roaming\Python\Python311\site-packages\sklearn\base.py:525: InconsistentVersionWarning: Trying to unpickle estimator DecisionTreeClassifier from version 1.9.1 when using version 1.9.0. This might lead to breaking code or invalid results. Use at your own risk. For more info please refer to:
+https://scikit-learn.org/stable/model_persistence.html#security-maintainability-limitations
+  warnings.warn(
+C:\Users\imia\AppData\Roaming\Python\Python311\site-packages\sklearn\base.py:525: InconsistentVersionWarning: Trying to unpickle estimator RandomForestClassifier from version 1.9.1 when using version 1.9.0. This might lead to breaking code or invalid results. Use at your own risk. For more info please refer to:
+https://scikit-learn.org/stable/model_persistence.html#security-maintainability-limitations
+  warnings.warn(
+ok
+test_retrain_router_dims_and_effective_weights (test_cde_report.PersistAndRouterTest.test_retrain_router_dims_and_effective_weights) ... ok
+test_contract_baselines_split (test_cde_report.PureFunctionsTest.test_contract_baselines_split) ... ok
+test_domain_shift (test_cde_report.PureFunctionsTest.test_domain_shift) ... ok
+test_router_admission (test_cde_report.PureFunctionsTest.test_router_admission) ... ok
+test_slot_health_pure (test_cde_report.PureFunctionsTest.test_slot_health_pure) ... ok
+test_route_roles_and_disabled (test_cde_report.SlotHealthRouteTest.test_route_roles_and_disabled) ... ok
+test_explicit_overrides_setting (test_consolidate_auto_activate.ConsolidateAutoActivateTest.test_explicit_overrides_setting) ... ok
+test_none_follows_setting (test_consolidate_auto_activate.ConsolidateAutoActivateTest.test_none_follows_setting) ... ok
+test_constant_scores_are_none_with_insufficient_reason (test_contribution.ContributionBoundaryTest.test_constant_scores_are_none_with_insufficient_reason) ... D:\CGAIC\AOI_SSOCL\AOI_tree\AOI_Core\algo\eval\contribution.py:66: ConstantInputWarning: An input array is constant; the correlation coefficient is not defined.
+  c = spearmanr(M[i], M[j]).statistic
+ok
+test_guard_rejects_cross_split_content_duplicates (test_dataset_isolation.DatasetIsolationTest.test_guard_rejects_cross_split_content_duplicates) ... ok
+test_unknown_import_requires_explicit_label (test_dataset_isolation.DatasetIsolationTest.test_unknown_import_requires_explicit_label) ... ok
+test_apng_multiframe_fallback (test_decode_fastpath.DecodeFastpath.test_apng_multiframe_fallback) ... ok
+test_bmp_fast (test_decode_fastpath.DecodeFastpath.test_bmp_fast) ... ok
+test_chinese_dir_and_name (test_decode_fastpath.DecodeFastpath.test_chinese_dir_and_name) ... ok
+test_cmyk_jpeg_fallback (test_decode_fastpath.DecodeFastpath.test_cmyk_jpeg_fallback) ... ok
+test_cv2_failure_falls_back (test_decode_fastpath.DecodeFastpath.test_cv2_failure_falls_back) ... ok
+test_jpeg_exif_orientation_ignored (test_decode_fastpath.DecodeFastpath.test_jpeg_exif_orientation_ignored) ... ok
+test_jpeg_gray_fast (test_decode_fastpath.DecodeFastpath.test_jpeg_gray_fast) ... ok
+test_jpeg_rgb_fast (test_decode_fastpath.DecodeFastpath.test_jpeg_rgb_fast) ... ok
+test_png_16bit_gray_fallback (test_decode_fastpath.DecodeFastpath.test_png_16bit_gray_fallback) ... ok
+test_png_16bit_rgb_fallback (test_decode_fastpath.DecodeFastpath.test_png_16bit_rgb_fallback) ... ok
+test_png_1bit_fallback (test_decode_fastpath.DecodeFastpath.test_png_1bit_fallback) ... ok
+test_png_exif_orientation_ignored (test_decode_fastpath.DecodeFastpath.test_png_exif_orientation_ignored) ... ok
+test_png_gamma_chunk_ignored_both (test_decode_fastpath.DecodeFastpath.test_png_gamma_chunk_ignored_both) ... ok
+test_png_gray8_fast (test_decode_fastpath.DecodeFastpath.test_png_gray8_fast) ... ok
+test_png_gray_trns_fallback (test_decode_fastpath.DecodeFastpath.test_png_gray_trns_fallback) ... ok
+test_png_optimize_fast (test_decode_fastpath.DecodeFastpath.test_png_optimize_fast) ... ok
+test_png_palette_fallback (test_decode_fastpath.DecodeFastpath.test_png_palette_fallback) ... ok
+test_png_rgb8_fast (test_decode_fastpath.DecodeFastpath.test_png_rgb8_fast) ... ok
+test_png_rgb8_max_compress_fast (test_decode_fastpath.DecodeFastpath.test_png_rgb8_max_compress_fast) ... ok
+test_png_rgb_trns_fallback (test_decode_fastpath.DecodeFastpath.test_png_rgb_trns_fallback) ... ok
+test_png_rgba_fallback (test_decode_fastpath.DecodeFastpath.test_png_rgba_fallback) ... ok
+test_size_mismatch_falls_back (test_decode_fastpath.DecodeFastpath.test_size_mismatch_falls_back) ... ok
+test_webp_tiff_fallback (test_decode_fastpath.DecodeFastpath.test_webp_tiff_fallback) ... ok
+test_frame_keeps_inference_version (test_detection_version.EngineVersionTest.test_frame_keeps_inference_version) ... ok
+test_path_keeps_inference_version (test_detection_version.EngineVersionTest.test_path_keeps_inference_version) ... ok
+test_service_response_keeps_version_without_persistence (test_detection_version.EngineVersionTest.test_service_response_keeps_version_without_persistence) ... ok
+test_alert_contract_and_clear_tooltip (test_detection_version.IncompleteReportTest.test_alert_contract_and_clear_tooltip) ... ok
+test_missing_model_keeps_actual_version (test_detection_version.PersistenceVersionTest.test_missing_model_keeps_actual_version) ... ok
+test_persist_links_actual_not_active_model (test_detection_version.PersistenceVersionTest.test_persist_links_actual_not_active_model) ... ok
+test_unknown_and_legacy_versions_remain_unknown (test_detection_version.PersistenceVersionTest.test_unknown_and_legacy_versions_remain_unknown) ... ok
+test_config_keys_and_fixed_dimension (test_detection_version.ProductionFeatureMetadataTest.test_config_keys_and_fixed_dimension) ... ok
+test_detection_metadata_contract (test_detection_version.ProductionFeatureMetadataTest.test_detection_metadata_contract) ... ok
+test_legacy_missing_metadata_and_meta_file (test_detection_version.ProductionFeatureMetadataTest.test_legacy_missing_metadata_and_meta_file) ... C:\Users\imia\AppData\Roaming\Python\Python311\site-packages\sklearn\base.py:525: InconsistentVersionWarning: Trying to unpickle estimator DecisionTreeClassifier from version 1.9.1 when using version 1.9.0. This might lead to breaking code or invalid results. Use at your own risk. For more info please refer to:
+https://scikit-learn.org/stable/model_persistence.html#security-maintainability-limitations
+  warnings.warn(
+C:\Users\imia\AppData\Roaming\Python\Python311\site-packages\sklearn\base.py:525: InconsistentVersionWarning: Trying to unpickle estimator RandomForestClassifier from version 1.9.1 when using version 1.9.0. This might lead to breaking code or invalid results. Use at your own risk. For more info please refer to:
+https://scikit-learn.org/stable/model_persistence.html#security-maintainability-limitations
+  warnings.warn(
+ok
+test_save_load_metadata_and_unknown_fields (test_detection_version.ProductionFeatureMetadataTest.test_save_load_metadata_and_unknown_fields) ... C:\Users\imia\AppData\Roaming\Python\Python311\site-packages\sklearn\base.py:525: InconsistentVersionWarning: Trying to unpickle estimator DecisionTreeClassifier from version 1.9.1 when using version 1.9.0. This might lead to breaking code or invalid results. Use at your own risk. For more info please refer to:
+https://scikit-learn.org/stable/model_persistence.html#security-maintainability-limitations
+  warnings.warn(
+C:\Users\imia\AppData\Roaming\Python\Python311\site-packages\sklearn\base.py:525: InconsistentVersionWarning: Trying to unpickle estimator RandomForestClassifier from version 1.9.1 when using version 1.9.0. This might lead to breaking code or invalid results. Use at your own risk. For more info please refer to:
+https://scikit-learn.org/stable/model_persistence.html#security-maintainability-limitations
+  warnings.warn(
+ok
+test_channel_permutation_is_exact (test_display_order_equivalence.DisplayOrderEquivalenceTest.test_channel_permutation_is_exact) ... ok
+test_complete_output_and_database_contract (test_display_order_equivalence.DisplayOrderEquivalenceTest.test_complete_output_and_database_contract) ... 对位偏移预警 detection_id=1 category=test offset=[1.25, -2.0]
+对位偏移预警 detection_id=2 category=test offset=[1.25, -2.0]
+对位偏移预警 detection_id=3 category=test offset=[1.25, -2.0]
+对位偏移预警 detection_id=4 category=test offset=[1.25, -2.0]
+对位偏移预警 detection_id=5 category=test offset=[1.25, -2.0]
+对位偏移预警 detection_id=6 category=test offset=[1.25, -2.0]
+ok
+test_backbone_changed_discards_prefetch (test_engine_concurrency.EngineConcurrencyTest.test_backbone_changed_discards_prefetch) ... ok
+test_cached_path_skips_prefetch (test_engine_concurrency.EngineConcurrencyTest.test_cached_path_skips_prefetch) ... ok
+test_concurrent_equals_serial (test_engine_concurrency.EngineConcurrencyTest.test_concurrent_equals_serial) ... ok
+test_critical_section_shrinks (test_engine_concurrency.EngineConcurrencyTest.test_critical_section_shrinks) ... ok
+test_foreground_marked_during_prefetch (test_engine_concurrency.EngineConcurrencyTest.test_foreground_marked_during_prefetch) ... ok
+test_learning_yield_waits_for_prefetch (test_engine_concurrency.EngineConcurrencyTest.test_learning_yield_waits_for_prefetch) ... ok
+test_pipe_swapped_discards_prefetch (test_engine_concurrency.EngineConcurrencyTest.test_pipe_swapped_discards_prefetch) ... ok
+test_region_dominant_and_image_only (test_explain.BoxEvidenceTest.test_region_dominant_and_image_only) ... ok
+test_weight_changes_dominant (test_explain.BoxEvidenceTest.test_weight_changes_dominant) ... ok
+test_route (test_explain.ExplainRouteTest.test_route) ... ok
+test_not_applicable_without_trad (test_explain.ExplainTradTest.test_not_applicable_without_trad) ... ok
+test_format_and_dialog (test_explain.ExplainUiTest.test_format_and_dialog) ... ok
+test_image_fallback_keeps_source (test_explain.ToResultFallbackTest.test_image_fallback_keeps_source) ... ok
+test_cache_hits_and_invalidates_on_change (test_ext_hash_cache.ExtHashCacheTest.test_cache_hits_and_invalidates_on_change) ... ok
+test_slices_categories_and_trace (test_feature_registry.RegistryTest.test_slices_categories_and_trace) ... D:\CGAIC\AOI_SSOCL\AOI_tree\AOI_Core\algo\vendor\traditional.py:264: FutureWarning: Parameter `min_size` is deprecated since version 0.26.0 and will be removed in 2.0.0 (or later). To avoid this warning, please use the parameter `max_size` instead. For more details, see the documentation of `remove_small_objects`. Note that the new threshold removes objects smaller than **or equal to** its value, while the previous parameter only removed smaller ones.
+  bw = morphology.remove_small_objects(bw.astype(bool), min_size=50)
+ok
+test_auto_dev_only (test_feature_registry.TradGroupTest.test_auto_dev_only) ... ok
+test_explain (test_feature_registry.TradGroupTest.test_explain) ... ok
+test_group_profile (test_feature_registry.TradGroupTest.test_group_profile)
+AC-012：组级档案字段齐全；legacy 全组分数与生产 score_image 一致。 ... D:\CGAIC\AOI_SSOCL\AOI_tree\AOI_Core\algo\vendor\traditional.py:264: FutureWarning: Parameter `min_size` is deprecated since version 0.26.0 and will be removed in 2.0.0 (or later). To avoid this warning, please use the parameter `max_size` instead. For more details, see the documentation of `remove_small_objects`. Note that the new threshold removes objects smaller than **or equal to** its value, while the previous parameter only removed smaller ones.
+  bw = morphology.remove_small_objects(bw.astype(bool), min_size=50)
+D:\CGAIC\AOI_SSOCL\AOI_tree\AOI_Core\algo\vendor\traditional.py:264: FutureWarning: Parameter `min_size` is deprecated since version 0.26.0 and will be removed in 2.0.0 (or later). To avoid this warning, please use the parameter `max_size` instead. For more details, see the documentation of `remove_small_objects`. Note that the new threshold removes objects smaller than **or equal to** its value, while the previous parameter only removed smaller ones.
+  bw = morphology.remove_small_objects(bw.astype(bool), min_size=50)
+D:\CGAIC\AOI_SSOCL\AOI_tree\AOI_Core\algo\vendor\traditional.py:264: FutureWarning: Parameter `min_size` is deprecated since version 0.26.0 and will be removed in 2.0.0 (or later). To avoid this warning, please use the parameter `max_size` instead. For more details, see the documentation of `remove_small_objects`. Note that the new threshold removes objects smaller than **or equal to** its value, while the previous parameter only removed smaller ones.
+  bw = morphology.remove_small_objects(bw.astype(bool), min_size=50)
+ok
+test_legacy_numeric_unchanged (test_feature_registry.TradGroupTest.test_legacy_numeric_unchanged) ... D:\CGAIC\AOI_SSOCL\AOI_tree\AOI_Core\algo\vendor\traditional.py:264: FutureWarning: Parameter `min_size` is deprecated since version 0.26.0 and will be removed in 2.0.0 (or later). To avoid this warning, please use the parameter `max_size` instead. For more details, see the documentation of `remove_small_objects`. Note that the new threshold removes objects smaller than **or equal to** its value, while the previous parameter only removed smaller ones.
+  bw = morphology.remove_small_objects(bw.astype(bool), min_size=50)
+ok
+test_persist_roundtrip_and_stale (test_feature_registry.TradGroupTest.test_persist_roundtrip_and_stale) ... C:\Users\imia\AppData\Roaming\Python\Python311\site-packages\sklearn\base.py:525: InconsistentVersionWarning: Trying to unpickle estimator DecisionTreeClassifier from version 1.9.1 when using version 1.9.0. This might lead to breaking code or invalid results. Use at your own risk. For more info please refer to:
+https://scikit-learn.org/stable/model_persistence.html#security-maintainability-limitations
+  warnings.warn(
+C:\Users\imia\AppData\Roaming\Python\Python311\site-packages\sklearn\base.py:525: InconsistentVersionWarning: Trying to unpickle estimator RandomForestClassifier from version 1.9.1 when using version 1.9.0. This might lead to breaking code or invalid results. Use at your own risk. For more info please refer to:
+https://scikit-learn.org/stable/model_persistence.html#security-maintainability-limitations
+  warnings.warn(
+D:\CGAIC\AOI_SSOCL\AOI_tree\AOI_Core\algo\persist.py:864: UserWarning: trad 表示签名与快照不一致: registry_sha256
+  warnings.warn("trad 表示签名与快照不一致: " + ",".join(drift))
+ok
+test_subset_and_grouped (test_feature_registry.TradGroupTest.test_subset_and_grouped) ... ok
+test_active_evidence_change_and_lock (test_feature_revision.RevisionTests.test_active_evidence_change_and_lock) ... ok
+test_evaluation_lineage (test_feature_revision.RevisionTests.test_evaluation_lineage) ... ok
+test_full_chain_and_model_binding (test_feature_revision.RevisionTests.test_full_chain_and_model_binding) ... ok
+test_identity_immutability_and_validation (test_feature_revision.RevisionTests.test_identity_immutability_and_validation) ... ok
+test_independent_evaluation_and_frozen_evidence (test_feature_revision.RevisionTests.test_independent_evaluation_and_frozen_evidence) ... ok
+test_no_jump_missing_evidence_and_state_tamper (test_feature_revision.RevisionTests.test_no_jump_missing_evidence_and_state_tamper) ... ok
+test_parity_fail_closed (test_feature_revision.RevisionTests.test_parity_fail_closed) ... ok
+test_production_and_frontdoor_contract_static (test_feature_revision.RevisionTests.test_production_and_frontdoor_contract_static) ... ok
+test_snapshot (test_feature_set.EngineFeatureSetTest.test_snapshot) ... ok
+test_auto_hook (test_feature_set.FeatureSetRouteTest.test_auto_hook) ... ok
+test_draft_and_report (test_feature_set.FeatureSetRouteTest.test_draft_and_report) ... ok
+test_get_roles_and_report_status (test_feature_set.FeatureSetRouteTest.test_get_roles_and_report_status) ... ok
+test_hard_pool_and_admission_routes (test_feature_set.FeatureSetRouteTest.test_hard_pool_and_admission_routes) ... ok
+test_card (test_feature_set.FeatureSetUiTest.test_card) ... ok
+test_candidate_queued_extra_and_version (test_feedback_audit_extra.FeedbackAuditExtraTest.test_candidate_queued_extra_and_version) ... ok
+test_idempotent_retry_adds_no_log (test_feedback_audit_extra.FeedbackAuditExtraTest.test_idempotent_retry_adds_no_log) ... ok
+test_invalidate_consumed_feedback (test_feedback_audit_extra.FeedbackAuditExtraTest.test_invalidate_consumed_feedback) ... ok
+test_invalidate_then_refeedback (test_feedback_audit_extra.FeedbackAuditExtraTest.test_invalidate_then_refeedback) ... ok
+test_review_submit_links_feedback_id (test_feedback_audit_extra.FeedbackAuditExtraTest.test_review_submit_links_feedback_id) ... ok
+test_callback_before_pending_return_and_duplicate (test_feedback_evidence.FeedbackEvidenceTest.test_callback_before_pending_return_and_duplicate) ... ok
+test_failure_and_async_do_not_claim_complete (test_feedback_evidence.FeedbackEvidenceTest.test_failure_and_async_do_not_claim_complete) ... ok
+test_finite_json_preserves_fields (test_feedback_evidence.FeedbackEvidenceTest.test_finite_json_preserves_fields) ... ok
+test_late_result_success_and_failure (test_feedback_evidence.FeedbackEvidenceTest.test_late_result_success_and_failure) ... ok
+test_legacy_unknown_no_inference (test_feedback_evidence.FeedbackEvidenceTest.test_legacy_unknown_no_inference) ... ok
+test_live_history_duplicate_and_offscreen (test_feedback_evidence.FeedbackEvidenceTest.test_live_history_duplicate_and_offscreen) ... ok
+test_production_feedback_is_candidate_only (test_feedback_evidence.FeedbackEvidenceTest.test_production_feedback_is_candidate_only) ... ok
+test_real_engine_timeout_final_writeback (test_feedback_evidence.FeedbackEvidenceTest.test_real_engine_timeout_final_writeback) ... ok
+test_real_handler_engine_attribution_and_optional_evidence (test_feedback_evidence.FeedbackEvidenceTest.test_real_handler_engine_attribution_and_optional_evidence) ... ok
+test_disc_loss_gradient_transfers_and_both_gates (test_feedback_ft_equivalence.FeedbackFineTuneEquivalence.test_disc_loss_gradient_transfers_and_both_gates) ... ok
+test_shead_batchnorm_and_original_first_output_broadcast (test_feedback_ft_equivalence.FeedbackFineTuneEquivalence.test_shead_batchnorm_and_original_first_output_broadcast) ... ok
+test_shead_dropout_loss_gradient_transfers_and_gate (test_feedback_ft_equivalence.FeedbackFineTuneEquivalence.test_shead_dropout_loss_gradient_transfers_and_gate) ... ok
+test_shead_empty_anchors (test_feedback_ft_equivalence.FeedbackFineTuneEquivalence.test_shead_empty_anchors) ... ok
+test_async_duplicate_waits_for_success (test_feedback_idempotency.FeedbackIdempotencyTest.test_async_duplicate_waits_for_success) ... ok
+test_callback_failure_retry_does_not_relearn (test_feedback_idempotency.FeedbackIdempotencyTest.test_callback_failure_retry_does_not_relearn) ... ok
+test_concurrent (test_feedback_idempotency.FeedbackIdempotencyTest.test_concurrent) ... ok
+test_duplicate_and_payload_conflict (test_feedback_idempotency.FeedbackIdempotencyTest.test_duplicate_and_payload_conflict) ... ok
+test_duplicate_wal_and_failure_receipt_gap_recovery (test_feedback_idempotency.FeedbackIdempotencyTest.test_duplicate_wal_and_failure_receipt_gap_recovery) ... ok
+test_failure_retry_and_no_id_legacy (test_feedback_idempotency.FeedbackIdempotencyTest.test_failure_retry_and_no_id_legacy) ... ok
+test_migration_duplicate_history_fails_without_deleting (test_feedback_idempotency.FeedbackIdempotencyTest.test_migration_duplicate_history_fails_without_deleting) ... ok
+test_replay_audit_reports_invalid_json_and_single_failure (test_feedback_idempotency.FeedbackIdempotencyTest.test_replay_audit_reports_invalid_json_and_single_failure) ... ok
+test_restart_replay_and_clear_receipt_survives (test_feedback_idempotency.FeedbackIdempotencyTest.test_restart_replay_and_clear_receipt_survives) ... ok
+test_service_duplicate_conflict_retry_concurrency (test_feedback_idempotency.FeedbackIdempotencyTest.test_service_duplicate_conflict_retry_concurrency) ... ok
+test_wal_failure_does_not_complete (test_feedback_idempotency.FeedbackIdempotencyTest.test_wal_failure_does_not_complete) ... ok
+test_fpr_up_rolls_back (test_feedback_routes.TestDefectGate.test_fpr_up_rolls_back) ... ok
+test_scope_similar_only (test_feedback_routes.TestDefectGate.test_scope_similar_only) ... ok
+test_tolerance_and_drift (test_feedback_routes.TestDefectGate.test_tolerance_and_drift) ... ok
+test_mask_to_patches (test_feedback_routes.TestMaskedPatches.test_mask_to_patches) ... ok
+test_route_of (test_feedback_routes.TestRoutes.test_route_of) ... ok
+test_accept_rollback_skip (test_feedback_routes.TestSeedInitDefect.test_accept_rollback_skip) ... ok
+test_default_no_reflow (test_feedback_routes.TestUnlabeled.test_default_no_reflow) ... ok
+test_enabled_gates (test_feedback_routes.TestUnlabeled.test_enabled_gates) ... ok
+test_bmp (test_g1_decode_equivalence.DecodeEquivalence.test_bmp) ... ok
+test_cmyk_jpeg_fallback (test_g1_decode_equivalence.DecodeEquivalence.test_cmyk_jpeg_fallback) ... ok
+test_jpeg_exif_orientation_ignored (test_g1_decode_equivalence.DecodeEquivalence.test_jpeg_exif_orientation_ignored) ... ok
+test_jpeg_gray (test_g1_decode_equivalence.DecodeEquivalence.test_jpeg_gray) ... ok
+test_jpeg_rgb (test_g1_decode_equivalence.DecodeEquivalence.test_jpeg_rgb) ... ok
+test_palette_png_fallback (test_g1_decode_equivalence.DecodeEquivalence.test_palette_png_fallback) ... ok
+test_png_rgba_fallback (test_g1_decode_equivalence.DecodeEquivalence.test_png_rgba_fallback) ... ok
+test_all_classes (test_g1_latency_equivalence.FastForestEquivalenceTest.test_all_classes) ... ok
+test_missing_classes_maps_label (test_g1_latency_equivalence.FastForestEquivalenceTest.test_missing_classes_maps_label) ... ok
+test_pickle_drops_cache (test_g1_latency_equivalence.FastForestEquivalenceTest.test_pickle_drops_cache) ... ok
+test_grouped_matches_trad_dist (test_hard_admission.AdmissionMetricsTest.test_grouped_matches_trad_dist) ... ok
+test_pass_and_fail_paths (test_hard_admission.AdmissionMetricsTest.test_pass_and_fail_paths) ... ok
+test_evaluate_and_revision_gate (test_hard_admission.HardPoolAndGateTest.test_evaluate_and_revision_gate) ... ok
+test_open_cause_counted (test_hard_admission.HardPoolAndGateTest.test_open_cause_counted) ... ok
+test_pool_sources_conflict_drift (test_hard_admission.HardPoolAndGateTest.test_pool_sources_conflict_drift) ... ok
+test_morph_kernel_and_min_area_effect (test_heatmap_postproc_version.HeatmapPostprocVersionTest.test_morph_kernel_and_min_area_effect) ... ok
+test_orphan_scan_keeps_mask_sibling (test_heatmap_postproc_version.HeatmapPostprocVersionTest.test_orphan_scan_keeps_mask_sibling) ... ok
+test_return_mask_binary_matches_boxes (test_heatmap_postproc_version.HeatmapPostprocVersionTest.test_return_mask_binary_matches_boxes) ... ok
+test_version_deterministic_and_param_sensitive (test_heatmap_postproc_version.HeatmapPostprocVersionTest.test_version_deterministic_and_param_sensitive) ... ok
+test_budget_limits_fail_closed (test_isolated_candidate_path.IsolatedCandidateTest.test_budget_limits_fail_closed) ... C:\Users\imia\AppData\Roaming\Python\Python311\site-packages\sklearn\base.py:525: InconsistentVersionWarning: Trying to unpickle estimator DecisionTreeClassifier from version 1.9.1 when using version 1.9.0. This might lead to breaking code or invalid results. Use at your own risk. For more info please refer to:
+https://scikit-learn.org/stable/model_persistence.html#security-maintainability-limitations
+  warnings.warn(
+C:\Users\imia\AppData\Roaming\Python\Python311\site-packages\sklearn\base.py:525: InconsistentVersionWarning: Trying to unpickle estimator RandomForestClassifier from version 1.9.1 when using version 1.9.0. This might lead to breaking code or invalid results. Use at your own risk. For more info please refer to:
+https://scikit-learn.org/stable/model_persistence.html#security-maintainability-limitations
+  warnings.warn(
+ok
+test_budget_shared_round_and_retry (test_isolated_candidate_path.IsolatedCandidateTest.test_budget_shared_round_and_retry) ... ok
+test_budget_wall_clock (test_isolated_candidate_path.IsolatedCandidateTest.test_budget_wall_clock) ... ok
+test_cooperative_cancel_commit_boundary (test_isolated_candidate_path.IsolatedCandidateTest.test_cooperative_cancel_commit_boundary) ... ok
+test_failure_after_mutation_no_production_pollution (test_isolated_candidate_path.IsolatedCandidateTest.test_failure_after_mutation_no_production_pollution) ... ok
+test_fault_checkpoints_and_explicit_restart_recovery (test_isolated_candidate_path.IsolatedCandidateTest.test_fault_checkpoints_and_explicit_restart_recovery) ... ok
+test_learning_yields_to_foreground (test_isolated_candidate_path.IsolatedCandidateTest.test_learning_yields_to_foreground) ... ok
+test_parent_changes_during_training_rejected (test_isolated_candidate_path.IsolatedCandidateTest.test_parent_changes_during_training_rejected) ... ok
+test_prediction_does_not_wait_for_candidate_training (test_isolated_candidate_path.IsolatedCandidateTest.test_prediction_does_not_wait_for_candidate_training) ... ok
+test_prepared_integrity_parent_and_wal_rejection (test_isolated_candidate_path.IsolatedCandidateTest.test_prepared_integrity_parent_and_wal_rejection) ... ok
+test_real_router_and_loo_propagate_budget (test_isolated_candidate_path.IsolatedCandidateTest.test_real_router_and_loo_propagate_budget) ... ok
+test_real_service_candidate_queue_and_trace (test_isolated_candidate_path.IsolatedCandidateTest.test_real_service_candidate_queue_and_trace) ... ok
+test_save_failure_and_event_conflict (test_isolated_candidate_path.IsolatedCandidateTest.test_save_failure_and_event_conflict) ... ok
+test_save_reload_duplicate_wal_and_activation_block (test_isolated_candidate_path.IsolatedCandidateTest.test_save_reload_duplicate_wal_and_activation_block) ... ok
+test_second_engine_cannot_reject_live_training (test_isolated_candidate_path.IsolatedCandidateTest.test_second_engine_cannot_reject_live_training) ... ok
+test_sweep_orphan_candidate_stages (test_isolated_candidate_path.IsolatedCandidateTest.test_sweep_orphan_candidate_stages) ... ok
+test_training_intent_not_guessed_failed (test_isolated_candidate_path.IsolatedCandidateTest.test_training_intent_not_guessed_failed) ... ok
+test_wal_changes_during_training_rejected (test_isolated_candidate_path.IsolatedCandidateTest.test_wal_changes_during_training_rejected) ... ok
+test_wal_missing_asset_fails_closed (test_isolated_candidate_path.IsolatedCandidateTest.test_wal_missing_asset_fails_closed) ... ok
+test_consolidate_yield_bounded_under_continuous_foreground (test_learning_yield.LearningYieldTest.test_consolidate_yield_bounded_under_continuous_foreground)
+持续前台负载下巩固（API 同步调用）的锁外让行有上界，不被无限饿死。 ... ok
+test_foreground_lock_wait_bounded_and_prefetched (test_learning_yield.LearningYieldTest.test_foreground_lock_wait_bounded_and_prefetched) ... ok
+test_learning_parallel_default_false (test_learning_yield.LearningYieldTest.test_learning_parallel_default_false) ... ok
+test_no_torn_read_and_matches_serial (test_learning_yield.LearningYieldTest.test_no_torn_read_and_matches_serial) ... ok
+test_offline_build_adopt_split (test_learning_yield.LearningYieldTest.test_offline_build_adopt_split) ... ok
+test_pipe_swapped_discards_prefetch (test_learning_yield.LearningYieldTest.test_pipe_swapped_discards_prefetch) ... ok
+test_yield_bounded_under_continuous_foreground (test_learning_yield.LearningYieldTest.test_yield_bounded_under_continuous_foreground) ... ok
+test_cursor_beyond_max_requires_reset (test_live_cursor_gap.LiveCursorGapTest.test_cursor_beyond_max_requires_reset) ... ok
+test_deleted_rows_count_as_gap (test_live_cursor_gap.LiveCursorGapTest.test_deleted_rows_count_as_gap) ... ok
+test_filtered_hole_is_not_gap (test_live_cursor_gap.LiveCursorGapTest.test_filtered_hole_is_not_gap) ... ok
+test_branch_ratio_nonpositive_tau (test_local_branch.BudgetTest.test_branch_ratio_nonpositive_tau) ... ok
+test_priority_from_heatmap (test_local_branch.BudgetTest.test_priority_from_heatmap) ... ok
+test_scheduler (test_local_branch.BudgetTest.test_scheduler) ... ok
+test_sidak_and_union_thresholds (test_local_branch.BudgetTest.test_sidak_and_union_thresholds) ... ok
+test_sources_unfrozen (test_local_branch.BudgetTest.test_sources_unfrozen) ... ok
+test_union_and_side_effects (test_local_branch.BudgetTest.test_union_and_side_effects) ... ok
+test_budget_mode_and_force_full (test_local_branch.LocalBranchTest.test_budget_mode_and_force_full) ... ok
+test_fit_score_report (test_local_branch.LocalBranchTest.test_fit_score_report) ... ok
+test_mask_boxes (test_local_branch.LocalBranchTest.test_mask_boxes) ... ok
+test_persist_load (test_local_branch.LocalBranchTest.test_persist_load) ... ok
+test_pseudo_off_by_default (test_local_branch.LocalBranchTest.test_pseudo_off_by_default) ... ok
+test_state_roundtrip_and_signature (test_local_branch.LocalBranchTest.test_state_roundtrip_and_signature) ... ok
+test_added_by_local (test_local_branch.PipelineOverlayTest.test_added_by_local) ... ok
+test_budget_conflict_rescore (test_local_branch.PipelineOverlayTest.test_budget_conflict_rescore) ... ok
+test_disabled_passthrough (test_local_branch.PipelineOverlayTest.test_disabled_passthrough) ... ok
+test_veto_only_to_gray (test_local_branch.PipelineOverlayTest.test_veto_only_to_gray) ... ok
+test_bounds_direction (test_local_branch.TileSizeTest.test_bounds_direction) ... ok
+test_resolve (test_local_branch.TileSizeTest.test_resolve) ... ok
+test_tiles_cover_and_labels (test_local_branch.TileSizeTest.test_tiles_cover_and_labels) ... ok
+test_modes (test_local_branch.ViewModeTest.test_modes) ... ok
+test_profile_from_cfg (test_local_branch.ViewModeTest.test_profile_from_cfg) ... ok
+test_dispute_isolation (test_localization.LocalizationPureTest.test_dispute_isolation) ... ok
+test_eval_and_select (test_localization.LocalizationPureTest.test_eval_and_select) ... ok
+test_postproc_version_and_finalize (test_localization.LocalizationPureTest.test_postproc_version_and_finalize) ... ok
+test_review_ops (test_localization.LocalizationPureTest.test_review_ops) ... ok
+test_result_render_persist_and_api (test_localization.LocalizationServiceApiTest.test_result_render_persist_and_api) ... ok
+test_permissions_and_persisted_evidence (test_open_alert_queue.OpenQueueTest.test_permissions_and_persisted_evidence) ... ok
+test_temp_api_and_offscreen (test_open_alert_queue.OpenQueueTest.test_temp_api_and_offscreen) ... ok
+test_empty_and_single_class (test_paired_evaluation.PairedEvaluationTest.test_empty_and_single_class) ... ok
+test_fail_closed_pairing (test_paired_evaluation.PairedEvaluationTest.test_fail_closed_pairing) ... ok
+test_nonfinite_and_missing_decisions_are_not_fabricated (test_paired_evaluation.PairedEvaluationTest.test_nonfinite_and_missing_decisions_are_not_fabricated) ... ok
+test_protocol_audit_record_aliases (test_paired_evaluation.PairedEvaluationTest.test_protocol_audit_record_aliases) ... ok
+test_reordered_pairs_and_exact_deltas (test_paired_evaluation.PairedEvaluationTest.test_reordered_pairs_and_exact_deltas) ... ok
+test_crash_claim_requires_manual_recovery_and_stale_persist_rejected (test_pipeline_claim.PipelineClaimTest.test_crash_claim_requires_manual_recovery_and_stale_persist_rejected) ... ok
+test_multi_workorder_and_no_duplicate (test_pipeline_claim.PipelineClaimTest.test_multi_workorder_and_no_duplicate) ... ok
+test_requeue_generation_and_failed_is_not_retried (test_pipeline_claim.PipelineClaimTest.test_requeue_generation_and_failed_is_not_retried) ... ok
+test_load_rejects_traversal (test_raw_heatmap_retention.RawHeatmapRetentionTest.test_load_rejects_traversal) ... ok
+test_orphan_refs_and_file_whitelist (test_raw_heatmap_retention.RawHeatmapRetentionTest.test_orphan_refs_and_file_whitelist) ... ok
+test_pure_recompute_equals_render (test_raw_heatmap_retention.RawHeatmapRetentionTest.test_pure_recompute_equals_render) ... ok
+test_saved_raw_and_default_recompute_matches_online (test_raw_heatmap_retention.RawHeatmapRetentionTest.test_saved_raw_and_default_recompute_matches_online) ... ok
+test_switch_off_writes_no_raw (test_raw_heatmap_retention.RawHeatmapRetentionTest.test_switch_off_writes_no_raw) ... ok
+test_api_returns_human_box_contract (test_region_human_box_status.RegionHumanBoxApiTest.test_api_returns_human_box_contract) ... ok
+test_candidate_vs_human_truth (test_region_human_box_status.RegionHumanBoxPureTest.test_candidate_vs_human_truth) ... ok
+test_disputed_and_inconsistent_excluded (test_region_human_box_status.RegionHumanBoxPureTest.test_disputed_and_inconsistent_excluded) ... ok
+test_draw_add_and_revise (test_region_review_draw.DialogDrawTest.test_draw_add_and_revise) ... ok
+test_overlay_columns_highlight (test_region_review_draw.DialogDrawTest.test_overlay_columns_highlight) ... ok
+test_add_payload (test_region_review_draw.PureFunctionTest.test_add_payload) ... ok
+test_box_style_mapping (test_region_review_draw.PureFunctionTest.test_box_style_mapping) ... ok
+test_coord_scale_and_clip (test_region_review_draw.PureFunctionTest.test_coord_scale_and_clip) ... ok
+test_revise_payload (test_region_review_draw.PureFunctionTest.test_revise_payload) ... ok
+test_to_dict_annotated (test_region_review_draw.PureFunctionTest.test_to_dict_annotated) ... ok
+test_api_delete_undo (test_region_review_edit.ApiTest.test_api_delete_undo) ... ok
+test_delete_semantics (test_region_review_edit.BackendSemanticsTest.test_delete_semantics) ... ok
+test_undo_semantics (test_region_review_edit.BackendSemanticsTest.test_undo_semantics) ... ok
+test_delete_button (test_region_review_edit.DialogEditTest.test_delete_button) ... ok
+test_handles_and_corner_drag_revise (test_region_review_edit.DialogEditTest.test_handles_and_corner_drag_revise) ... ok
+test_stale_revision_refresh (test_region_review_edit.DialogEditTest.test_stale_revision_refresh) ... ok
+test_undo_button_and_conflict (test_region_review_edit.DialogEditTest.test_undo_button_and_conflict) ... ok
+test_corner_geometry (test_region_review_edit.PureFunctionTest.test_corner_geometry) ... ok
+test_delete_undo_payload (test_region_review_edit.PureFunctionTest.test_delete_undo_payload) ... ok
+test_build_records_consumption_and_api_exposes (test_region_used_status.RegionUsedDbTest.test_build_records_consumption_and_api_exposes) ... ok
+test_legacy_guard_without_regions (test_region_used_status.RegionUsedDbTest.test_legacy_guard_without_regions) ... ok
+test_stale_blocks_release (test_region_used_status.RegionUsedDbTest.test_stale_blocks_release) ... ok
+test_snapshot_and_used (test_region_used_status.RegionUsedPureTest.test_snapshot_and_used) ... ok
+test_stale_after_use (test_region_used_status.RegionUsedPureTest.test_stale_after_use) ... ok
+test_downward_not_cum_blocked (test_regress_gate_ac036.RegressGateAC036Test.test_downward_not_cum_blocked) ... ok
+test_freeze_and_unfreeze (test_regress_gate_ac036.RegressGateAC036Test.test_freeze_and_unfreeze) ... ok
+test_persist_and_legacy (test_regress_gate_ac036.RegressGateAC036Test.test_persist_and_legacy) ... ok
+test_slow_drift_capped (test_regress_gate_ac036.RegressGateAC036Test.test_slow_drift_capped) ... ok
+test_activate_rollback (test_representation_rebuild.EngineGuardTest.test_activate_rollback) ... ok
+test_learning_and_consolidate_blocked (test_representation_rebuild.EngineGuardTest.test_learning_and_consolidate_blocked) ... ok
+test_activate_api_409 (test_representation_rebuild.RebuildRouteTest.test_activate_api_409) ... ok
+test_prepare_engine_rebuild (test_representation_rebuild.RebuildRouteTest.test_prepare_engine_rebuild) ... ok
+test_rebuild_route (test_representation_rebuild.RebuildRouteTest.test_rebuild_route) ... ok
+test_detection_rejects_invalid_before_persistence (test_router_finite.RouterFiniteTest.test_detection_rejects_invalid_before_persistence) ... ok
+test_entropy_reg_resists_collapse (test_router_finite.RouterFiniteTest.test_entropy_reg_resists_collapse)
+CDEF6：λH 正则须提高权重熵（防坍缩），而不是鼓励坍缩。 ... ok
+test_multiple_positive_preserves_sample_std (test_router_finite.RouterFiniteTest.test_multiple_positive_preserves_sample_std) ... ok
+test_nonfinite_training_fails_closed (test_router_finite.RouterFiniteTest.test_nonfinite_training_fails_closed) ... ok
+test_single_positive_std_is_undefined (test_router_finite.RouterFiniteTest.test_single_positive_std_is_undefined) ... ok
+test_features_identical_between_instances (test_shared_backbone.SharedBackboneTest.test_features_identical_between_instances) ... D:\CGAIC\AOI_SSOCL\AOI_tree\assets\dinov2\dinov2\layers\swiglu_ffn.py:51: UserWarning: xFormers is not available (SwiGLU)
+  warnings.warn("xFormers is not available (SwiGLU)")
+D:\CGAIC\AOI_SSOCL\AOI_tree\assets\dinov2\dinov2\layers\attention.py:33: UserWarning: xFormers is not available (Attention)
+  warnings.warn("xFormers is not available (Attention)")
+D:\CGAIC\AOI_SSOCL\AOI_tree\assets\dinov2\dinov2\layers\block.py:40: UserWarning: xFormers is not available (Block)
+  warnings.warn("xFormers is not available (Block)")
+ok
+test_rng_trajectory_matches_fresh_build (test_shared_backbone.SharedBackboneTest.test_rng_trajectory_matches_fresh_build) ... ok
+test_all_slots_degraded_refuses (test_snapshot_layout_compat.SnapshotLayoutCompatTest.test_all_slots_degraded_refuses) ... ok
+test_full_snapshot_unchanged (test_snapshot_layout_compat.SnapshotLayoutCompatTest.test_full_snapshot_unchanged) ... ok
+test_legacy_snapshot_degrades_explicitly (test_snapshot_layout_compat.SnapshotLayoutCompatTest.test_legacy_snapshot_degrades_explicitly) ... ok
+test_strict_paths_still_reject (test_snapshot_layout_compat.SnapshotLayoutCompatTest.test_strict_paths_still_reject) ... ok
+test_activate_allow_stale_forbidden (test_stale_override_forbidden.StaleOverrideForbiddenTest.test_activate_allow_stale_forbidden) ... ok
+test_activate_default_path_unchanged (test_stale_override_forbidden.StaleOverrideForbiddenTest.test_activate_default_path_unchanged) ... ok
+test_rollback_allow_stale_forbidden (test_stale_override_forbidden.StaleOverrideForbiddenTest.test_rollback_allow_stale_forbidden) ... ok
+test_rollback_default_path_unchanged (test_stale_override_forbidden.StaleOverrideForbiddenTest.test_rollback_default_path_unchanged) ... ok
+test_e2e_not_faked_and_basis_fields (test_stats_window_basis.StatsWindowBasisTest.test_e2e_not_faked_and_basis_fields) ... ok
+test_window_start_and_all_missing_e2e (test_stats_window_basis.StatsWindowBasisTest.test_window_start_and_all_missing_e2e) ... ok
+test_real_overview_to_dashboard (test_ui_stats_caliber.BackendToUiTest.test_real_overview_to_dashboard) ... ok
+test_full_fields (test_ui_stats_caliber.CaliberTextTest.test_full_fields) ... ok
+test_missing_not_zero (test_ui_stats_caliber.CaliberTextTest.test_missing_not_zero) ... ok
+test_fill_kpi_legacy_payload (test_ui_stats_caliber.DashboardWidgetTest.test_fill_kpi_legacy_payload) ... ok
+test_widgets_and_tooltip (test_ui_stats_caliber.DashboardWidgetTest.test_widgets_and_tooltip) ... ok
+test_real_overview_and_quality (test_ui_stats_page_caliber.BackendToStatsPageTest.test_real_overview_and_quality) ... ok
+test_batch_table_missing (test_ui_stats_page_caliber.StatsPageCaliberTest.test_batch_table_missing) ... ok
+test_export_blank_not_zero (test_ui_stats_page_caliber.StatsPageCaliberTest.test_export_blank_not_zero) ... ok
+test_full_scope_split (test_ui_stats_page_caliber.StatsPageCaliberTest.test_full_scope_split) ... ok
+test_initial_widgets_and_tooltip (test_ui_stats_page_caliber.StatsPageCaliberTest.test_initial_widgets_and_tooltip) ... ok
+test_legacy_and_empty_payloads (test_ui_stats_page_caliber.StatsPageCaliberTest.test_legacy_and_empty_payloads) ... ok
+test_reuses_dashboard_caliber (test_ui_stats_page_caliber.StatsPageCaliberTest.test_reuses_dashboard_caliber) ... ok
+test_no_legacy_online_from_production (test_work_candidate_isolation_ac038.ProductionEntryGuardTest.test_no_legacy_online_from_production) ... ok
+test_service_legacy_branch_guarded (test_work_candidate_isolation_ac038.ProductionEntryGuardTest.test_service_legacy_branch_guarded) ... ok
+test_backbone_shared_readonly (test_work_candidate_isolation_ac038.SharedBackboneTest.test_backbone_shared_readonly) ... ok
+
+----------------------------------------------------------------------
+Ran 371 tests in 105.453s
+
+OK

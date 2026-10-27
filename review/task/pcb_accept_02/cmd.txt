@@ -1,0 +1,8 @@
+# PCB-ACCEPT-02 复跑
+
+:: 6-case paired（含坐标契约）：
+cd /d d:\CGAIC\AOI_SSOCL\stable_AOI_tree\PCB_Dual
+set QT_QPA_PLATFORM=offscreen
+py -3.11 -m tests.tuner02_real_cases --output "d:\CGAIC\AOI_SSOCL\review\task\pcb_accept_02\raw"
+py -3.11 -m unittest tests.test_pcbdual04 -v
+:: 桌面部分见 pcb_accept_01/cmd.txt

@@ -1,0 +1,8 @@
+{
+  "cases": 6,
+  "unexpected_failures": [],
+  "raw_smt_equivalence_pass": 0,
+  "smt_contract_pass": 3,
+  "raw_equivalence_verdict": "FAIL",
+  "contract_verdict": "PASS"
+}

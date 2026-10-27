@@ -1,0 +1,44 @@
+{
+  "n_normal": 10,
+  "n_anomaly": 10,
+  "fpr": {
+    "value": 1.0,
+    "wilson95": [
+      0.7224598312333834,
+      1.0
+    ],
+    "threshold": 0.05,
+    "point_pass": false
+  },
+  "recall": {
+    "value": 1.0,
+    "wilson95": [
+      0.7224598312333834,
+      1.0
+    ],
+    "threshold": 0.95,
+    "point_pass": true
+  },
+  "recall_incl_gray": 1.0,
+  "gray_rate": {
+    "value": 0.0,
+    "wilson95": [
+      -1.1641658116749259e-17,
+      0.1611301254949332
+    ],
+    "threshold": 0.15,
+    "point_pass": true
+  },
+  "thresholds_frozen": {
+    "fpr_max": 0.05,
+    "recall_min": 0.95,
+    "gray_max": 0.15
+  },
+  "threshold_source": "用户定值 2026-10-13（SYNC-27 business_budget）",
+  "model_version": 1,
+  "category": "gold_finger_eval",
+  "config_hash": "916698549867265a1e64183386680d3914d0617bbbd954db2127bc0d40c8e5ad",
+  "data_manifest_sha256": "428fa1b70baac9c5c2cfa5c5b6982e45ac461205d7c9fca8b1e369c63edc9d27",
+  "temp": "C:\\Users\\imia\\AppData\\Local\\Temp\\aoi_test07_lk84ve7s",
+  "note": "n=10/类过小，Wilson 区间必然很宽；点估计通过不等于门禁证实"
+}

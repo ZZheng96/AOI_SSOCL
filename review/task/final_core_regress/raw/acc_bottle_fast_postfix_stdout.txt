@@ -1,0 +1,36 @@
+[static_accuracy] dataset=mvtec profile=fast base_cfg=engine_fast.yaml storage=C:\Users\imia\AppData\Local\Temp\aoi_static_bench_a94tpku6
+[engine] device=cuda
+
+=== [1/1] mvtec/bottle ===
+[data] init_normal=100 init_defect=30 test=53
+[dino] 使用随包 vendor 权重: D:\CGAIC\AOI_SSOCL\AOI_tree\assets\dinov2\dinov2_vits14_pretrain.pth
+[disc] 加载预训练头 D:\CGAIC\AOI_SSOCL\AOI_tree\AOI_Core\assets\disc_pretrain.pt
+    [extract] 20/100 (1s)
+    [extract] 40/100 (2s)
+    [extract] 60/100 (3s)
+    [extract] 80/100 (4s)
+    [extract] 100/100 (5s)
+  [fit] init_normal 提取 100 张完成 (5s)
+    [extract] 20/30 (1s)
+  [fit] init_defect 提取 30 张完成 (6s)
+  [fit] 加载全局类型判别器（D:\CGAIC\AOI_SSOCL\AOI_tree\assets\defect_clf.pkl）
+  [fit] 槽位 sem 完成 (8s)
+  [fit] 槽位 disc 完成 (8s)
+[shead] epoch 10/50 loss_n=6.2489 loss_a=6.0995
+[shead] epoch 20/50 loss_n=6.2558 loss_a=5.5511
+[shead] epoch 30/50 loss_n=4.4511 loss_a=6.2557
+[shead] epoch 40/50 loss_n=5.4754 loss_a=2.8084
+[shead] epoch 50/50 loss_n=2.1463 loss_a=2.1936
+[shead] fit 完成: normal=80 pseudo=240 real_defect=30 pos_total=270 X=350 batch=32 lr=0.001
+  [fit] 槽位 shead 完成 (13s)
+[fusion] sanity 加权: sem=0.365 disc=0.265 shead=0.370
+[fusion] train 域 fused AUROC=1.0（初始权重质量，协议内）
+[route] base=1.0000 router=1.0000 enabled=False (margin=0.005)
+[route] 准入=trace_only（未在 val/test 同时胜固定权重与硬规则（或权重坍缩），只做追溯）
+  [fit] 视图模式 profile_missing（min_defect_px 未提供，保持整图） 局部分支=关（auto_profile）
+    [extract] 20/20 (1s)
+  [eval] 20/53 (2s)
+  [eval] 40/53 (3s)
+[result] bottle: fused=1.0000 slots={'sem': 0.9947, 'disc': 0.9909, 'shead': 1.0} (26.4s)
+
+[summary] avg=1.0 >=0.9: 1/1 -> d:\CGAIC\AOI_SSOCL\review\task\final_core_regress\raw\acc_bottle_fast_postfix.json

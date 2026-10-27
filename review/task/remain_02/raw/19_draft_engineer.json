@@ -1,0 +1,22 @@
+{
+  "name": "draft_engineer",
+  "method": "POST",
+  "path": "/api/models/feature-set/gold_finger/draft",
+  "role": "engineer",
+  "request_body": {
+    "groups": [
+      "glcm"
+    ],
+    "scoring": "grouped",
+    "note": "REMAIN-02 联调"
+  },
+  "status_code": 200,
+  "response": {
+    "revision_id": "ba47d05c566a175eb8728a6aeece4c23d130dbd1af396f56e2b5866ae4ac8df8",
+    "state": "draft",
+    "activated": false,
+    "changes_production": false,
+    "message": "已提交为候选特征集（draft），需评估/审批后才可绑定新模型"
+  },
+  "note": "changes_production 必须为 false"
+}

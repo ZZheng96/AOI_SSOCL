@@ -1,0 +1,41 @@
+Actual terminal run job-a09f1e4603ed4d22a538ebb354427e33, exit 0, 2026-10-13.
+Command: $env:QT_QPA_PLATFORM='offscreen'; py -3.11 -m unittest tests.test_pcbdual04 tests.test_adapter_batch tests.test_shift_batch tests.test_tuner_preview -v
+New cases (all ok):
+test_alignment_failure_not_ok
+test_crack_real_hough_execution_and_missing_inputs
+test_four_slots_reject_release_recover_request_isolation
+capacity: 4 occupied, fifth rejected, independent keys, released slot recovered
+test_resize_roi_offset_output_original_coordinates
+test_rim_minus_toe_rule1_and_crack_unavailable
+test_scheduler_batch_timeout_once_and_cleanup
+不可取消检测线程超时，未重试: {'count': 1, 'limit': 4, 'tasks': [{'started_at': 284531.906, 'timeout_s': 0.01, 'timed_out': True, 'key': '2169510254208:batch:2168970352592', 'age_ms': 14, 'cancellable': False}]}
+test_th_auto_single_multi_readiness_matches_scheduler
+test_th_checkbox_modes_offscreen
+Existing cases (all ok):
+test_errors_and_unready_are_identical
+test_frozen_shared_override_and_non_ok_states
+test_scheduler_uses_batch_and_real_shared_computation
+scheduler smt: scalar shared work=4, batch shared work=1, adapter.run_many=1
+scheduler th: scalar shared work=4, batch shared work=2, adapter.run_many=1
+test_short_timeout_snapshot_release_and_no_retry
+拒绝不可取消任务重入: key=batch-test-timeout count=1 limit=4
+test_smt_configuration_and_input_isolation
+test_smt_exact_flags_toe_rim_and_shared_extraction
+test_status_trace_table
+test_th_exact_single_multi_review_and_configuration
+test_exact_output_and_diagnostics
+test_extract_and_integral_reuse
+test_invalid_roi_preserves_other_results
+test_no_cross_request_or_config_reuse
+test_apply_freeze_scheduler_equivalence
+test_dialog_changes_apply_and_status
+test_latest_cancel_close
+test_non_hsv_live_edit_and_apply
+test_real_shift_parameters_and_coordinates
+test_smt_pad_layers_and_real_mask
+test_through_hole_real_diagnostics
+Ran 27 tests in 2.356s
+OK
+Windows-10-10.0.19045-SP0
+3.11.9 5.0.0 2.4.6 6.8.3
+Shift default comparison job-8816a5e1db91450fabbcfa74062b18f6: [] (no UI/shared source defaults differ after bool normalization).

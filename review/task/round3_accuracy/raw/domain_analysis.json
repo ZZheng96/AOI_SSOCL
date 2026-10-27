@@ -1,0 +1,95 @@
+{
+  "mode": "domain",
+  "n": 37,
+  "tau_high": 0.989921875,
+  "weights": {
+    "sem": 0.0,
+    "disc": 1.0,
+    "shead": 0.0
+  },
+  "system": {
+    "auroc_fused": 0.7029411764705882,
+    "fpr": 0.29411764705882354,
+    "recall": 0.7,
+    "op": {
+      "max_recall_at_fpr5": [
+        0.0,
+        null
+      ],
+      "min_fpr_at_recall95": [
+        0.35294117647058826,
+        0.859375
+      ]
+    }
+  },
+  "slots": {
+    "sem": {
+      "auroc_raw": 0.3088,
+      "auroc_cal": 0.3074,
+      "sat_rate": 0.0,
+      "n_ties_top": 1,
+      "train_hi": 0.6350539926439523,
+      "test_normal_raw_min": 0.4346,
+      "test_defect_raw_min": 0.3599,
+      "op_raw": {
+        "max_recall_at_fpr5": [
+          0.0,
+          null
+        ],
+        "min_fpr_at_recall95": [
+          1.0,
+          null
+        ]
+      }
+    },
+    "disc": {
+      "auroc_raw": 0.7029,
+      "auroc_cal": 0.7029,
+      "sat_rate": 0.0,
+      "n_ties_top": 1,
+      "train_hi": 0.9969703547656535,
+      "test_normal_raw_min": 0.9869,
+      "test_defect_raw_min": 0.9955,
+      "op_raw": {
+        "max_recall_at_fpr5": [
+          0.0,
+          null
+        ],
+        "min_fpr_at_recall95": [
+          0.35294117647058826,
+          0.9959941413253546
+        ]
+      }
+    },
+    "shead": {
+      "auroc_raw": 0.9559,
+      "auroc_cal": 0.9603,
+      "sat_rate": 0.0,
+      "n_ties_top": 1,
+      "train_hi": 2.7505106925964355,
+      "test_normal_raw_min": 1.9027,
+      "test_defect_raw_min": 2.3037,
+      "op_raw": {
+        "max_recall_at_fpr5": [
+          0.8,
+          2.518149852752685
+        ],
+        "min_fpr_at_recall95": [
+          0.23529411764705882,
+          2.3036787509918213
+        ]
+      }
+    }
+  },
+  "fused_unclipped_auroc": 0.7029411764705882,
+  "fused_unclipped_op": {
+    "max_recall_at_fpr5": [
+      0.0,
+      null
+    ],
+    "min_fpr_at_recall95": [
+      0.35294117647058826,
+      0.8951936795730142
+    ]
+  }
+}

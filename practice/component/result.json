@@ -7,9 +7,45 @@
   "识别确认窗": {"格式": "标准目录结构（根本身即单品类）", "图片": 24, "掩码": 0, "品类行": {"component": [2, 0, 14, 8, 0]}, "说明": "[训练正常, 检测正常, 检测缺陷, 模板图, 掩码]；train\\good 8 张中 6 张 *_template → 模板，test\\good 2 张也全是 *_template → 模板"},
   "导入结果": {"imported": 24, "total": 24, "n_masks": 0, "dataset_ids": {"component": 28}},
   "precheck": {"train_normal": 2, "test_normal": 0, "test_anomaly": 14, "template": 8},
+  "本轮重新导入": {
+    "状态": "通过",
+    "识别确认": {"图片": 24, "掩码": 0, "未识别": 0, "品类": "component", "训练正常": 2, "检测正常": 0, "检测缺陷": 14, "模板图": 8},
+    "后台任务": "已完成 100%",
+    "数据导航": "component（16 图）",
+    "图像表证据": "component 品类记录已出现，批次 4，来源 智能适配；模板行可见"
+  },
   "数据源落库": {"label_tier": "L1a", "has_template": true},
   "界面细节": "数据源树显示「component（16 图）」= 24 - 8 模板；图像表划分列可见 template 行",
   "截图": ["01_新建数据源.jpg", "02_识别确认.jpg", "03_导入完成.jpg"],
   "文档核验": {"速查表component行": "一致（24图/0掩码/模板8/L1a+提供模板图）", "检测组无正常图": "一致（test_normal=0，文档§8已说明误检率指标为空属预期）"},
-  "结论": "通过"
+  "本轮PCB_Dual_AOI_Core实操": {
+    "状态": "component独立模板已由真实UI创建并保存；完整业务验收仍受模型准备与部分流程阻塞",
+    "证据": "真实桌面UI中component已出现在数据管理导航和模型管理树；通过PCB Dual选择标准图新建独立模板，绑定missing1_template.png，品类模型切换为component，传统差分模式下完成1个检测区域框选并保存为component_template_20261017；未通过业务API、数据库或后台数据绕过",
+    "AOI_Core": {
+      "页面": ["数据管理", "数据增强", "模型管理", "评估看板", "标注复核", "学习效果", "特征工程", "存档统计"],
+      "标注复核子Tab": ["反馈记录", "待复核", "错检追溯", "开放告警样本"],
+      "学习效果子Tab": ["线上学习证据", "离线回放验证", "槽位健康与更新审计"],
+      "指标边界": "component没有可绑定的生产模型和评估记录；当前可见指标/样本主要属于solder_smt或gold_finger，不能归属于component；test_normal=0时FPR/误检率为空属预期"
+    },
+    "PCB_Dual": {
+      "页面": ["算法调试", "预处理", "自动检测", "历史", "模板建模", "特征学习（AOI_Core）"],
+      "模板建模": "通过选择标准图新建真实UI路径建立component_template_20261017草稿；标准图missing1_template.png（762×572），传统差分，品类模型component，检测项少锡，区域贴片焊盘，框/点1，保存成功，发布检查显示可发布但未发布",
+      "其他页面": "可达；特征学习页当前仍显示既有solder_smt离线记录，不能计为component指标；未执行发布、自动检测和历史结果归属验收"
+    },
+    "模型状态": "component数据不足（训练正常2张，准备模型至少需要3张）；未准备候选模型、未激活生产模型、生产模型未改变",
+    "保护边界": "未通过业务API、数据库或后台强制设置component；未修改源码、既有导入结果和历史截图"
+  },
+  "录屏": {
+    "文件": "PCBDual_component_fullflow_20261017.mp4",
+    "路径": "D:\\CGAIC\\AOI_SSOCL\\practice\\component\\PCBDual_component_fullflow_20261017.mp4",
+    "状态": "媒体核验通过；不等于UI覆盖或业务验收通过",
+    "大小_bytes": 639554,
+    "mtime": "2026-10-17T03:48:02.0716648+08:00",
+    "mtime_ns": 1792180082071664800,
+    "sha256": "4098B00F84A8D1DE8DD1A8848A68FB5135542FDF7ADCC886C2994DF88451FE75",
+    "ffprobe": {"duration_s": 180.0, "codec": "H.264/AVC High Profile", "resolution": "1920x1080", "fps": 4, "video_frames": 720, "audio_streams": 0, "streams": 1},
+    "strict_decode": {"exit_code": 0, "frames": 720, "stderr_media_errors": 0},
+    "业务结论": "录屏覆盖本轮桌面操作，但因品类上下文未切换且大量页面显示既有solder_smt/gold_finger数据，不能宣称component全流程业务验收通过"
+  },
+  "结论": "component导入通过；通过真实UI建立并保存component独立传统差分模板，完成标准图绑定与1个检测区域框选；模型准备、发布、自动检测、历史归属及完整媒体覆盖仍未完成，当前不能宣称component业务全流程验收通过"
 }

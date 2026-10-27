@@ -27,3 +27,47 @@ AOI_tree/PCB_Dual/docs/演示视频/
 
 # 公开预训练权重（DINOv2，可重新下载）
 **/dinov2_vits14_pretrain.pth
+
+# ===== 同步清理：运行时产物与大文件（仅保留本地，不入库）=====
+# 演示录像与录制素材
+*.mp4
+/practice - 副本/
+/practice/BTAD/raw/
+/practice/BTAD/TEMP_v2/
+/practice/solder_smt/Temp/
+/practice/solder_smt/run_*/
+
+# 日志与本地数据库
+*.log
+*.db
+*.db-wal
+*.db-shm
+
+# 模型 / 特征中间产物
+*.pkl
+*.joblib
+*.npy
+*.npz
+*.pt
+
+# 运行期生成的存储数据
+/AOI_tree/PCB_Dual/storage/outputs/
+/AOI_tree/PCB_Dual/storage/snapshots/
+/AOI_tree/PCB_Dual/storage/core_stage/
+/AOI_tree/PCB_Dual/storage/template_calib/
+/AOI_tree/PCB_Dual/storage/recipes/params/
+/AOI_tree/PCB_Dual/storage/locks/
+/AOI_tree/PCB_Dual/storage/logs/
+
+# 测试图片数据集
+/AOI_tree/PCB_Dual/alg_repo/gold_finger/test_images/
+
+# 归档旧资料中的录制素材
+/AOI_tree/AOI_Core/docs/old/视频录制素材/
+
+# 评审过程中产生的临时副本
+/review/task/remain_02/temp_core/
+/review/task/pcb_accept_01/temp_tree/
+
+# 临时验证文件
+**/TEMP_*

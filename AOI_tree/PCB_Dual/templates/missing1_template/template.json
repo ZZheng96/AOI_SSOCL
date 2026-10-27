@@ -1,0 +1,113 @@
+{
+  "id": "missing1_template",
+  "display_name": "component_template_20261017",
+  "version": 1,
+  "status": "draft",
+  "created_at": "2026-10-17T06:55:05+08:00",
+  "updated_at": "2026-10-17T06:58:41+08:00",
+  "standard_image": {
+    "path": "D:\\CGAIC\\AOI_SSOCL\\AOI_tree\\PCB_Dual\\templates\\missing1_template\\standard.png",
+    "sha1": "a3ef62eeef7914ef804d76334e055484af59a730",
+    "width": 762,
+    "height": 572,
+    "source_name": "missing1_template.png"
+  },
+  "category": "",
+  "detection_items": [
+    {
+      "algorithm_id": "solder_少锡",
+      "enabled": true,
+      "params": {
+        "insufficient_thresh": 0.09,
+        "diff_insufficient_thresh": 0.05,
+        "insufficient_use_diff": "true"
+      },
+      "preprocess_recipe": null,
+      "region_kind": "smt"
+    },
+    {
+      "algorithm_id": "solder_共用参数",
+      "enabled": false,
+      "params": {
+        "solder_blue_h_low": 85,
+        "solder_blue_h_high": 115,
+        "solder_blue_s_min": 60,
+        "solder_blue_v_min": 150,
+        "pad_expand_ratio": 0.3,
+        "pad_expand_short_ratio": 0.3,
+        "min_pad_area": 20,
+        "min_interference_area": 30,
+        "enable_auto_resize": "true",
+        "auto_resize_max_size": 400,
+        "auto_resize_threshold": 450
+      },
+      "preprocess_recipe": null,
+      "region_kind": "smt"
+    }
+  ],
+  "algorithms": [
+    {
+      "algorithm_id": "solder_少锡",
+      "enabled": true,
+      "params": {
+        "insufficient_thresh": 0.09,
+        "diff_insufficient_thresh": 0.05,
+        "insufficient_use_diff": "true"
+      },
+      "preprocess_recipe": null,
+      "region_kind": "smt"
+    },
+    {
+      "algorithm_id": "solder_共用参数",
+      "enabled": false,
+      "params": {
+        "solder_blue_h_low": 85,
+        "solder_blue_h_high": 115,
+        "solder_blue_s_min": 60,
+        "solder_blue_v_min": 150,
+        "pad_expand_ratio": 0.3,
+        "pad_expand_short_ratio": 0.3,
+        "min_pad_area": 20,
+        "min_interference_area": 30,
+        "enable_auto_resize": "true",
+        "auto_resize_max_size": 400,
+        "auto_resize_threshold": 450
+      },
+      "preprocess_recipe": null,
+      "region_kind": "smt"
+    }
+  ],
+  "region_sets": {
+    "smt_pads": [
+      {
+        "shape": "rect",
+        "x": 27.568740955137482,
+        "y": 104.04630969609259,
+        "w": 219.44717800289436,
+        "h": 95.93921852387844
+      }
+    ]
+  },
+  "calibration": {
+    "smt_pads": [
+      [
+        27.568740955137482,
+        104.04630969609259,
+        219.44717800289436,
+        95.93921852387844
+      ]
+    ]
+  },
+  "gate": {
+    "size_gate_enabled": true,
+    "size_gate_max_diff_px": 10
+  },
+  "notes": "",
+  "calib_key": "missing1_template",
+  "engine_mode": "traditional",
+  "model_category": "component",
+  "px_calibration": {},
+  "cad_items": [],
+  "panels": {},
+  "fov_grid": []
+}

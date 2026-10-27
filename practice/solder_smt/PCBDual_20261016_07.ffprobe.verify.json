@@ -1,0 +1,19 @@
+{
+  "command": "ffprobe -v warning -show_entries format=duration,size:stream=index,codec_type,codec_name,width,height,avg_frame_rate -of json D:/CGAIC/AOI_SSOCL/practice/solder_smt/PCBDual_20261016_07.mp4",
+  "exit_code": 0,
+  "streams": [
+    {
+      "index": 0,
+      "codec_name": "h264",
+      "codec_type": "video",
+      "width": 1920,
+      "height": 1080,
+      "avg_frame_rate": "10/1"
+    }
+  ],
+  "format": {
+    "duration": "900.000000",
+    "size": "16328738"
+  },
+  "warnings": []
+}

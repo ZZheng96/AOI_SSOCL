@@ -202,12 +202,13 @@ class ShiftAdapter(BaseAdapter):
         boxes: list[DefectBox] = []
         errors: list[str] = []
         last_vis = None
-        for base in bases:
-            try:
-                result = alg["instance"].run(test_bgr, cfg, roi_bbox=list(base))
-            except Exception as exc:  # noqa: BLE001
-                return AlgorithmResult(algorithm=algorithm_id, ok=False, message=f"[适配器异常] {label_cn}: {exc}")
-
+        diagnostics = []
+        cfg["diagnostics"] = bool(req.preprocess_meta.get("diagnostics"))
+        try:
+            results = alg["instance"].run_many(test_bgr, cfg, bases)
+        except Exception as exc:  # noqa: BLE001
+            return AlgorithmResult(algorithm=algorithm_id, ok=False, status="ERROR", error_code="RUN_EXCEPTION", message=f"[适配器异常] {label_cn}: {exc}")
+        for base, result in zip(bases, results):
             if result.code == 2:  # 算法出错
                 errors.append(str(result.metadata.get("error", "算法错误")))
                 continue
@@ -220,6 +221,8 @@ class ShiftAdapter(BaseAdapter):
                 if result.metadata.get("is_shifted"):
                     bb = result.metadata.get("base_box") or list(base)
                     boxes.append(DefectBox(x=int(bb[0]), y=int(bb[1]), w=int(bb[2]), h=int(bb[3]), label=label_cn))
+            if cfg.get("diagnostics"):
+                diagnostics.append({"roi": list(base), **result.metadata, "GT/IoU": "不可用：未提供真实GT"})
             vis = result.metadata.get("output_image")
             if vis is not None:
                 last_vis = vis
@@ -234,7 +237,7 @@ class ShiftAdapter(BaseAdapter):
         ok = len(boxes) == 0
         err_note = f"，部分底座框失败={len(errors)}" if errors else ""
         message = f"{label_cn} 判定={'OK' if ok else 'NG'}，缺陷数={len(boxes)}，底座框={len(bases)}{err_note}"
-        return AlgorithmResult(algorithm=algorithm_id, ok=ok, message=message, boxes=boxes, diff_image=last_vis)
+        return AlgorithmResult(algorithm=algorithm_id, ok=ok and not errors, status="ERROR" if errors else None, error_code="PARTIAL_RUN_ERROR" if errors else None, message=message, boxes=boxes, diff_image=last_vis, metadata={"regions": diagnostics} if cfg.get("diagnostics") else {})
 
     def _run_shared_preview(self, req: DetectRequest, shared_params: dict[str, Any]) -> AlgorithmResult:
         """共用参数预览：对每个底座框同时跑一次，把移位+缺件结果一起画出来。"""
@@ -258,11 +261,12 @@ class ShiftAdapter(BaseAdapter):
         boxes: list[DefectBox] = []
         errors: list[str] = []
         last_vis = None
-        for base in bases:
-            try:
-                result = alg["instance"].run(test_bgr, cfg, roi_bbox=list(base))
-            except Exception as exc:  # noqa: BLE001
-                return AlgorithmResult(algorithm=SHIFT_SHARED_ID, ok=False, message=f"[适配器异常] 共用参数预览: {exc}")
+        cfg["diagnostics"] = bool(req.preprocess_meta.get("diagnostics"))
+        try:
+            results = alg["instance"].run_many(test_bgr, cfg, bases)
+        except Exception as exc:  # noqa: BLE001
+            return AlgorithmResult(algorithm=SHIFT_SHARED_ID, ok=False, message=f"[适配器异常] 共用参数预览: {exc}")
+        for base, result in zip(bases, results):
             if result.code == 2:
                 # 算法内部失败要计数，全部失败时透出 ERROR，不得静默判 OK
                 errors.append(str(result.metadata.get("error", "算法错误")))

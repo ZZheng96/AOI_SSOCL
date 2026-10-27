@@ -1,0 +1,229 @@
+{
+ "fit": {
+  "weights": {
+   "sem": 0.25,
+   "disc": 0.25,
+   "shead": 0.25,
+   "tpl": 0.25
+  },
+  "tau_high_fit": 0.9003527376402578,
+  "tpl_ref_fit": 3.5700778365135193,
+  "tpl_ref_pairC_train": 4.627132058143616,
+  "n_init_normal": 16,
+  "n_templates": 22
+ },
+ "metrics": {
+  "base": {
+   "tpl": {
+    "auroc": 0.4975,
+    "tau": 3.5701,
+    "fpr": 0.4255,
+    "recall": 0.4255,
+    "recall_fpr5": 0.0851
+   },
+   "w_default": {
+    "auroc": 0.5115,
+    "tau": 0.9004,
+    "fpr": 0.4043,
+    "recall": 0.4255,
+    "recall_fpr5": 0.0638,
+    "weights": {
+     "sem": 0.25,
+     "disc": 0.25,
+     "shead": 0.25,
+     "tpl": 0.25
+    }
+   },
+   "win_rate_tpl": 0.4894,
+   "n_pairs": 47,
+   "win_rate_fused_w1.0": 0.6383
+  },
+  "pairA": {
+   "tpl": {
+    "auroc": 1.0,
+    "tau": 4.6271,
+    "fpr": 0.0,
+    "recall": 0.0,
+    "recall_fpr5": 1.0
+   },
+   "w_default": {
+    "auroc": 0.5727,
+    "tau": 0.9046,
+    "fpr": 0.1489,
+    "recall": 0.2553,
+    "recall_fpr5": 0.0851,
+    "weights": {
+     "sem": 0.25,
+     "disc": 0.25,
+     "shead": 0.25,
+     "tpl": 0.25
+    }
+   },
+   "w_tpl0.8": {
+    "auroc": 0.8968,
+    "tau": 0.9637,
+    "fpr": 0.0,
+    "recall": 0.0,
+    "recall_fpr5": 0.4255,
+    "weights": {
+     "tpl": 0.8,
+     "sem": 0.0667,
+     "disc": 0.0667,
+     "shead": 0.0667
+    }
+   },
+   "w_tpl1.0": {
+    "auroc": 1.0,
+    "tau": 1.005,
+    "fpr": 0.0,
+    "recall": 0.0,
+    "recall_fpr5": 1.0,
+    "weights": {
+     "tpl": 1.0,
+     "sem": 0.0,
+     "disc": 0.0,
+     "shead": 0.0
+    }
+   },
+   "win_rate_tpl": 1.0,
+   "n_pairs": 47,
+   "win_rate_fused_w1.0": 1.0
+  },
+  "pairB": {
+   "tpl": {
+    "auroc": 0.0,
+    "tau": 4.6271,
+    "fpr": 0.0,
+    "recall": 0.0,
+    "recall_fpr5": 0.0
+   },
+   "w_default": {
+    "auroc": 0.3916,
+    "tau": 0.9046,
+    "fpr": 0.4043,
+    "recall": 0.2553,
+    "recall_fpr5": 0.0,
+    "weights": {
+     "sem": 0.25,
+     "disc": 0.25,
+     "shead": 0.25,
+     "tpl": 0.25
+    }
+   },
+   "w_tpl0.8": {
+    "auroc": 0.0,
+    "tau": 0.9637,
+    "fpr": 0.0213,
+    "recall": 0.0,
+    "recall_fpr5": 0.0,
+    "weights": {
+     "tpl": 0.8,
+     "sem": 0.0667,
+     "disc": 0.0667,
+     "shead": 0.0667
+    }
+   },
+   "w_tpl1.0": {
+    "auroc": 0.0,
+    "tau": 1.005,
+    "fpr": 0.0,
+    "recall": 0.0,
+    "recall_fpr5": 0.0,
+    "weights": {
+     "tpl": 1.0,
+     "sem": 0.0,
+     "disc": 0.0,
+     "shead": 0.0
+    }
+   },
+   "win_rate_tpl": 0.0,
+   "n_pairs": 47,
+   "win_rate_fused_w1.0": 0.0
+  },
+  "pairC": {
+   "tpl": {
+    "auroc": 0.0,
+    "tau": 4.6271,
+    "fpr": 0.4043,
+    "recall": 0.0,
+    "recall_fpr5": 0.0
+   },
+   "w_default": {
+    "auroc": 0.378,
+    "tau": 0.9046,
+    "fpr": 0.4043,
+    "recall": 0.2553,
+    "recall_fpr5": 0.0,
+    "weights": {
+     "sem": 0.25,
+     "disc": 0.25,
+     "shead": 0.25,
+     "tpl": 0.25
+    }
+   },
+   "w_tpl0.8": {
+    "auroc": 0.0,
+    "tau": 0.9637,
+    "fpr": 0.4681,
+    "recall": 0.0,
+    "recall_fpr5": 0.0,
+    "weights": {
+     "tpl": 0.8,
+     "sem": 0.0667,
+     "disc": 0.0667,
+     "shead": 0.0667
+    }
+   },
+   "w_tpl1.0": {
+    "auroc": 0.0,
+    "tau": 1.005,
+    "fpr": 0.3617,
+    "recall": 0.0,
+    "recall_fpr5": 0.0,
+    "weights": {
+     "tpl": 1.0,
+     "sem": 0.0,
+     "disc": 0.0,
+     "shead": 0.0
+    }
+   },
+   "win_rate_tpl": 0.0,
+   "n_pairs": 47,
+   "win_rate_fused_w1.0": 0.0
+  }
+ },
+ "latency_pair_cold_ms": {
+  "n": 94,
+  "p50": 306.0,
+  "p95": 786.1,
+  "max": 864.5
+ },
+ "baseline_ref": {
+  "main": {
+   "n_norm": 47,
+   "n_def": 47,
+   "auroc": 0.5138,
+   "fpr": 0.4894,
+   "recall": 0.4681,
+   "recall_fpr5": 0.0638,
+   "auroc_sem": 0.5057,
+   "auroc_disc": 0.5156,
+   "auroc_shead": 0.4966,
+   "auroc_tpl": 0.4975
+  },
+  "pair": {
+   "n_pairs": 47,
+   "auroc": 0.5138,
+   "win_rate": 0.6596,
+   "auroc_tpl": 0.4975,
+   "win_rate_tpl": 0.4894
+  },
+  "latency": {
+   "n": 282,
+   "p50": 278.9,
+   "p95": 558.1,
+   "mean": 322.7
+  }
+ },
+ "total_s": 94.3
+}

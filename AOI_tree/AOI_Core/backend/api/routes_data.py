@@ -17,12 +17,22 @@ from ..core.tasks import task_manager
 from ..db.database import log_action, session_scope
 from ..db.models import (Dataset, Detection, Feedback, Image, Model,
                          PseudoAnomaly, Video, VideoFrame)
-from .schemas import (AugmentConfigUpdateRequest, DatasetAdaptImportRequest,
+from .schemas import (AugmentAblationRequest, AugmentConfigUpdateRequest, DatasetAdaptImportRequest,
                       DatasetProbeRequest, ImageAnnotateRequest,
                       ImageImportRequest, MvtecImportRequest, OrphanCleanRequest,
-                      PseudoPreviewRequest, VideoImportRequest, to_dict)
+                      FeatureSpaceRequest, PreprocessPreviewRequest, PseudoPreviewRequest,
+                      VideoImportRequest, to_dict)
 
 router = APIRouter()
+
+
+@router.post('/augment/feature-space')
+def api_feature_space(req: FeatureSpaceRequest):
+    from ..augmentation.feature_space import submit_analysis
+    try:
+        return {'task_id': submit_analysis(req.model_dump())}
+    except ValueError as exc:
+        raise HTTPException(status_code=409, detail=str(exc)) from exc
 
 
 def _get_image_path_or_404(image_id: int) -> str:
@@ -393,6 +403,17 @@ def api_get_augment_config():
     }
 
 
+@router.post("/augment/ablation", dependencies=[Depends(require_role("engineer"))])
+def api_augment_ablation(req: AugmentAblationRequest):
+    from ..augmentation.ablation import submit_ablation
+    if not isinstance(req, AugmentAblationRequest):
+        raise HTTPException(status_code=422, detail="增强消融请求必须包含品类、消融因素和留出集参数")
+    try:
+        return {'task_id': submit_ablation(req.model_dump()), 'status': 'pending'}
+    except ValueError as exc:
+        raise HTTPException(status_code=409, detail=str(exc)) from exc
+
+
 @router.put("/augment/config",
             dependencies=[Depends(require_role("engineer"))])
 def api_update_augment_config(req: AugmentConfigUpdateRequest):
@@ -444,23 +465,63 @@ def api_update_augment_config(req: AugmentConfigUpdateRequest):
             "enhance": dict(aug.get("enhance", {}))}
 
 
+@router.post("/preprocess/preview")
+def api_preview_preprocess(req: PreprocessPreviewRequest):
+    """缩略图外观预览：不改配置、不入库、不执行模型前向。"""
+    import cv2
+    from uuid import uuid4
+    from algo.common.preprocess import preprocess_image
+    from ..core.imaging import imread, imwrite
+
+    path = _get_image_path_or_404(req.image_id)
+    img = imread(path)
+    if img is None:
+        raise HTTPException(status_code=400, detail="无法读取图像")
+    h, w = img.shape[:2]
+    if max(h, w) > 1024:
+        scale = 1024 / max(h, w)
+        img = cv2.resize(img, (max(1, round(w * scale)),
+                               max(1, round(h * scale))),
+                         interpolation=cv2.INTER_AREA)
+    cfg = {k: req.preprocess[k] for k in ("enabled", "gray", "clahe", "median")
+           if k in req.preprocess}
+    try:
+        if not 0 <= float(cfg.get("clahe") or 0) <= 8:
+            raise ValueError("CLAHE 应为 0~8")
+        if cfg.get("median", 0) not in (0, 3, 5):
+            raise ValueError("中值核仅支持 0、3、5")
+        # imaging 读写为 BGR；公共预处理函数的输入输出均为 RGB。
+        out = preprocess_image(cv2.cvtColor(img, cv2.COLOR_BGR2RGB), cfg)
+    except (ValueError, TypeError, cv2.error) as e:
+        raise HTTPException(status_code=400, detail=f"预处理参数无效: {e}")
+    token = uuid4().hex
+    out_dir = get_settings().storage("pseudo")
+    original_path = out_dir / f"preprocess_{req.image_id}_{token}_original.png"
+    image_path = out_dir / f"preprocess_{req.image_id}_{token}.png"
+    if not imwrite(original_path, img) or not imwrite(
+            image_path, cv2.cvtColor(out, cv2.COLOR_RGB2BGR)):
+        raise HTTPException(status_code=500, detail="预览图片写入失败")
+    return {"image_path": str(image_path), "original_path": str(original_path)}
+
+
 @router.post("/pseudo/preview")
 def api_preview_pseudo(req: PseudoPreviewRequest):
     """单张伪异常合成预览（同步，不入库）。
 
-    defect_transplant（真实缺陷移植）：取同品类已标注缺陷图整图作移植源，
-    缩放到配置比例后随机贴入该正常图；该品类无缺陷图时自动回退 CutPaste。
+    defect_transplant 按同品类位置掩码抠缺陷，缺陷块长边固定为基底短边
+    的 10%~40%；无有效移植源时自动回退 CutPaste。params 仅覆盖羽化。
     """
     path = _get_image_path_or_404(req.image_id)
     try:
-        return _preview_pseudo_synth(path, req.image_id, req.method)
+        return _preview_pseudo_synth(path, req.image_id, req.method, req.params)
     except ValueError as e:
         raise HTTPException(status_code=400, detail=str(e))
     except Exception as e:  # noqa: BLE001
         raise HTTPException(status_code=500, detail=f"预览失败: {e}")
 
 
-def _preview_pseudo_synth(path: str, image_id: int, method: str) -> dict:
+def _preview_pseudo_synth(path: str, image_id: int, method: str,
+                          params: Optional[Dict] = None) -> dict:
     """用引擎同款 synth_pseudo 生成预览（1 张 + 掩码，落 storage/pseudo/preview_*）。
 
     与 algo/slots/disc.py 的合成保持一致：合成时基底=该图本身；
@@ -484,6 +545,8 @@ def _preview_pseudo_synth(path: str, image_id: int, method: str) -> dict:
                         .get("pseudo", {}) or {})
         except Exception:  # noqa: BLE001
             pass
+    if params is not None and "feather" in params:
+        pcfg["feather"] = bool(params["feather"])
     # 预览强制使用下拉选定的合成方式（synth_pseudo 默认从配置 methods 里随机挑，
     # 不锁定则三种预览效果相同）
     pcfg["methods"] = [method]
@@ -731,6 +794,11 @@ def _referenced_paths() -> set:
             for (p,) in q.all():
                 if p:
                     refs.add(p)
+                    # AC-063：热图二值 mask / 原始热图与 overlay 同名前缀
+                    # （*_mask.png / *_raw.npy），随检测引用
+                    if p.endswith("_overlay.jpg"):
+                        refs.add(p[:-len("_overlay.jpg")] + "_mask.png")
+                        refs.add(p[:-len("_overlay.jpg")] + "_raw.npy")
     out = set(refs)
     for p in refs:
         pp = Path(p)

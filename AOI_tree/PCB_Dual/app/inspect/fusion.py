@@ -71,6 +71,8 @@ class DualSummary:
         return {
             "overall": self.overall,
             **result_interpretation(self.overall),
+            "requires_review": (self.overall in {"GRAY", "REVIEW", "SKIP"}
+                                or bool(self.traditional and self.traditional.requires_review)),
             "overall_ok": self.overall_ok,
             "engine_mode": self.engine_mode,
             "gray": self.gray,
@@ -83,6 +85,9 @@ class DualSummary:
                 "results": [
                     {"status": r.status, "display_name": r.display_name,
                      "message": r.message, "defect_count": r.defect_count,
+                     "item_id": r.item_id, "algorithm_version": r.algorithm_version,
+                     "error_code": r.error_code, "error_message": r.error_message,
+                     "skip_reason": r.skip_reason,
                      "elapsed_ms": r.elapsed_ms, "metadata": r.metadata,
                      "boxes": [
                         {"x": b.x, "y": b.y, "w": b.w, "h": b.h, "label": b.label}
@@ -176,7 +181,7 @@ def fuse_dual(trad: DetectSummary | None, feat: dict[str, Any] | None,
     if required_missing or execution_error:
         overall = "ERROR"
     elif mode == "traditional":
-        overall = "NG" if trad.overall == "NG" else "OK"
+        overall = trad.overall
     elif mode == "feature":
         if feat["is_anomaly"]:
             overall = "NG"
@@ -188,6 +193,8 @@ def fuse_dual(trad: DetectSummary | None, feat: dict[str, Any] | None,
         feat_ng = bool(feat["is_anomaly"])
         if trad_ng or feat_ng:
             overall = "NG"
+        elif trad.overall in {"REVIEW", "SKIP"} or trad.requires_review:
+            overall = "REVIEW"
         elif gray:
             # 任一引擎灰区且无 NG：整体 GRAY（需复判），不得判 OK
             overall = "GRAY"

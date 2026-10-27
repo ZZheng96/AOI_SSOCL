@@ -1,0 +1,668 @@
+[
+  {
+    "path": "D:\\CGAIC\\data_local\\gold_finger\\test\\good\\Image_20260116193703828_repaired.jpg",
+    "label": 0,
+    "decision": "normal",
+    "fused": 0.80078125,
+    "boost": 0.0,
+    "slot_scores": {
+      "sem": -1.0,
+      "disc": 0.80078125,
+      "shead": 0.03515625
+    },
+    "raw_scores": {
+      "sem": 0.44651563130319116,
+      "disc": 0.9956110630184412,
+      "shead": 2.1415343284606934
+    },
+    "ms": 428.2
+  },
+  {
+    "path": "D:\\CGAIC\\data_local\\gold_finger\\test\\good\\Image_20260116193843246_repaired.jpg",
+    "label": 0,
+    "decision": "normal",
+    "fused": 0.76953125,
+    "boost": 0.0,
+    "slot_scores": {
+      "sem": -0.8102886041264135,
+      "disc": 0.76953125,
+      "shead": 0.046875
+    },
+    "raw_scores": {
+      "sem": 0.4501865390688181,
+      "disc": 0.9954129960387944,
+      "shead": 2.1708312034606934
+    },
+    "ms": 220.8
+  },
+  {
+    "path": "D:\\CGAIC\\data_local\\gold_finger\\test\\good\\Image_20260116193850558_repaired.jpg",
+    "label": 0,
+    "decision": "normal",
+    "fused": 0.3046875,
+    "boost": 0.0,
+    "slot_scores": {
+      "sem": 0.0078125,
+      "disc": 0.3046875,
+      "shead": 0.03515625
+    },
+    "raw_scores": {
+      "sem": 0.45142309665679925,
+      "disc": 0.9914303757250309,
+      "shead": 2.1331632137298584
+    },
+    "ms": 228.7
+  },
+  {
+    "path": "D:\\CGAIC\\data_local\\gold_finger\\test\\good\\Image_20260116193859871_repaired.jpg",
+    "label": 0,
+    "decision": "normal",
+    "fused": 0.9453125,
+    "boost": 0.0,
+    "slot_scores": {
+      "sem": 0.21875,
+      "disc": 0.9453125,
+      "shead": -0.5468884548021009
+    },
+    "raw_scores": {
+      "sem": 0.47010524980723856,
+      "disc": 0.9966037228703498,
+      "shead": 2.004537343978882
+    },
+    "ms": 191.6
+  },
+  {
+    "path": "D:\\CGAIC\\data_local\\gold_finger\\test\\good\\Image_20260116194217730_repaired.jpg",
+    "label": 0,
+    "decision": "normal",
+    "fused": 0.3125,
+    "boost": 0.0,
+    "slot_scores": {
+      "sem": 0.1015625,
+      "disc": 0.3125,
+      "shead": 0.03515625
+    },
+    "raw_scores": {
+      "sem": 0.459376572817564,
+      "disc": 0.9915433108806609,
+      "shead": 2.133056402206421
+    },
+    "ms": 198.3
+  },
+  {
+    "path": "D:\\CGAIC\\data_local\\gold_finger\\test\\good\\Image_20260116194228683_repaired.jpg",
+    "label": 0,
+    "decision": "normal",
+    "fused": 0.3984375,
+    "boost": 0.0,
+    "slot_scores": {
+      "sem": 0.30078125,
+      "disc": 0.3984375,
+      "shead": -1.0
+    },
+    "raw_scores": {
+      "sem": 0.4779831204563379,
+      "disc": 0.9926681518554688,
+      "shead": 1.9026964902877808
+    },
+    "ms": 220.3
+  },
+  {
+    "path": "D:\\CGAIC\\data_local\\gold_finger\\test\\good\\Image_20260116194235228_repaired.jpg",
+    "label": 0,
+    "decision": "normal",
+    "fused": -1.0,
+    "boost": 0.0,
+    "slot_scores": {
+      "sem": 0.84375,
+      "disc": -1.0,
+      "shead": 0.01171875
+    },
+    "raw_scores": {
+      "sem": 0.528285413980484,
+      "disc": 0.9875326812267303,
+      "shead": 2.056842803955078
+    },
+    "ms": 214.5
+  },
+  {
+    "path": "D:\\CGAIC\\data_local\\gold_finger\\test\\good\\Image_20260116194241339_repaired.jpg",
+    "label": 0,
+    "decision": "normal",
+    "fused": 0.41796875,
+    "boost": 0.0,
+    "slot_scores": {
+      "sem": 0.78125,
+      "disc": 0.41796875,
+      "shead": 0.04296875
+    },
+    "raw_scores": {
+      "sem": 0.515392018854618,
+      "disc": 0.9929222762584686,
+      "shead": 2.1677281856536865
+    },
+    "ms": 196.0
+  },
+  {
+    "path": "D:\\CGAIC\\data_local\\gold_finger\\test\\good\\Image_20260116194259739_repaired.jpg",
+    "label": 0,
+    "decision": "normal",
+    "fused": 0.13671875,
+    "boost": 0.0,
+    "slot_scores": {
+      "sem": 0.09765625,
+      "disc": 0.13671875,
+      "shead": -1.0
+    },
+    "raw_scores": {
+      "sem": 0.4591565765440464,
+      "disc": 0.9889556910842656,
+      "shead": 1.9842479228973389
+    },
+    "ms": 209.5
+  },
+  {
+    "path": "D:\\CGAIC\\data_local\\gold_finger\\test\\good\\Image_20260116194303443_repaired.jpg",
+    "label": 0,
+    "decision": "normal",
+    "fused": 0.76953125,
+    "boost": 0.0,
+    "slot_scores": {
+      "sem": 0.0546875,
+      "disc": 0.76953125,
+      "shead": -1.0
+    },
+    "raw_scores": {
+      "sem": 0.4555369541049004,
+      "disc": 0.9954046286642552,
+      "shead": 1.9281827211380007
+    },
+    "ms": 255.5
+  },
+  {
+    "path": "D:\\CGAIC\\data_local\\gold_finger\\test\\good\\Image_20260116194441909_repaired.jpg",
+    "label": 0,
+    "decision": "normal",
+    "fused": 0.28125,
+    "boost": 0.0,
+    "slot_scores": {
+      "sem": -1.0,
+      "disc": 0.28125,
+      "shead": -1.0
+    },
+    "raw_scores": {
+      "sem": 0.4345534920692444,
+      "disc": 0.9910304594784975,
+      "shead": 1.9680556058883667
+    },
+    "ms": 267.0
+  },
+  {
+    "path": "D:\\CGAIC\\data_local\\gold_finger\\test\\good\\Image_20260116194458486_repaired.jpg",
+    "label": 0,
+    "decision": "normal",
+    "fused": -1.0,
+    "boost": 0.0,
+    "slot_scores": {
+      "sem": -1.0,
+      "disc": -1.0,
+      "shead": 0.015625
+    },
+    "raw_scores": {
+      "sem": 0.44108084551990034,
+      "disc": 0.9868938080966473,
+      "shead": 2.068472146987915
+    },
+    "ms": 272.3
+  },
+  {
+    "path": "D:\\CGAIC\\data_local\\gold_finger\\test\\good\\t_fov_13_repaired.jpg",
+    "label": 0,
+    "decision": "anomaly",
+    "fused": 2.0,
+    "boost": 0.0,
+    "slot_scores": {
+      "sem": 0.86328125,
+      "disc": 2.0,
+      "shead": 0.109375
+    },
+    "raw_scores": {
+      "sem": 0.5408415593206882,
+      "disc": 0.9984133206307888,
+      "shead": 2.380615234375
+    },
+    "ms": 182.1
+  },
+  {
+    "path": "D:\\CGAIC\\data_local\\gold_finger\\test\\good\\t_fov_14_repaired.jpg",
+    "label": 0,
+    "decision": "anomaly",
+    "fused": 2.0,
+    "boost": 0.0,
+    "slot_scores": {
+      "sem": 0.87890625,
+      "disc": 2.0,
+      "shead": 0.12109375
+    },
+    "raw_scores": {
+      "sem": 0.5533400304615498,
+      "disc": 0.9991087701171637,
+      "shead": 2.4231979846954346
+    },
+    "ms": 185.1
+  },
+  {
+    "path": "D:\\CGAIC\\data_local\\gold_finger\\test\\good\\t_fov_26_repaired.jpg",
+    "label": 0,
+    "decision": "anomaly",
+    "fused": 2.0,
+    "boost": 0.0,
+    "slot_scores": {
+      "sem": 0.9375,
+      "disc": 2.0,
+      "shead": 0.0859375
+    },
+    "raw_scores": {
+      "sem": 0.592517426609993,
+      "disc": 0.9990781027823687,
+      "shead": 2.3109869956970215
+    },
+    "ms": 165.7
+  },
+  {
+    "path": "D:\\CGAIC\\data_local\\gold_finger\\test\\good\\t_fov_3_repaired.jpg",
+    "label": 0,
+    "decision": "anomaly",
+    "fused": 2.0,
+    "boost": 0.0,
+    "slot_scores": {
+      "sem": 0.875,
+      "disc": 2.0,
+      "shead": 0.0546875
+    },
+    "raw_scores": {
+      "sem": 0.5506350409239531,
+      "disc": 0.9986187960952521,
+      "shead": 2.208035707473755
+    },
+    "ms": 165.5
+  },
+  {
+    "path": "D:\\CGAIC\\data_local\\gold_finger\\test\\good\\t_fov_6_repaired.jpg",
+    "label": 0,
+    "decision": "anomaly",
+    "fused": 2.0,
+    "boost": 0.0,
+    "slot_scores": {
+      "sem": 0.8828125,
+      "disc": 2.0,
+      "shead": 0.10546875
+    },
+    "raw_scores": {
+      "sem": 0.5541266389191151,
+      "disc": 0.9986422676593065,
+      "shead": 2.369381427764892
+    },
+    "ms": 178.5
+  },
+  {
+    "path": "D:\\CGAIC\\data_local\\gold_finger\\test\\defect\\1308.jpg",
+    "label": 1,
+    "decision": "anomaly",
+    "fused": 2.0,
+    "boost": 0.0,
+    "slot_scores": {
+      "sem": 0.2578125,
+      "disc": 2.0,
+      "shead": 2.0
+    },
+    "raw_scores": {
+      "sem": 0.4738098334521055,
+      "disc": 0.9984565809369087,
+      "shead": 2.9330222606658936
+    },
+    "ms": 159.9
+  },
+  {
+    "path": "D:\\CGAIC\\data_local\\gold_finger\\test\\defect\\1310.jpg",
+    "label": 1,
+    "decision": "anomaly",
+    "fused": 2.0,
+    "boost": 0.0,
+    "slot_scores": {
+      "sem": 0.2109375,
+      "disc": 2.0,
+      "shead": 0.36328125
+    },
+    "raw_scores": {
+      "sem": 0.46961963251233096,
+      "disc": 0.997894236445427,
+      "shead": 2.6044025421142574
+    },
+    "ms": 155.5
+  },
+  {
+    "path": "D:\\CGAIC\\data_local\\gold_finger\\test\\defect\\1312.jpg",
+    "label": 1,
+    "decision": "anomaly",
+    "fused": 2.0,
+    "boost": 0.0,
+    "slot_scores": {
+      "sem": 0.88671875,
+      "disc": 2.0,
+      "shead": 0.0859375
+    },
+    "raw_scores": {
+      "sem": 0.557500172778964,
+      "disc": 0.9985822021961211,
+      "shead": 2.3076670169830322
+    },
+    "ms": 160.4
+  },
+  {
+    "path": "D:\\CGAIC\\data_local\\gold_finger\\test\\defect\\1314.jpg",
+    "label": 1,
+    "decision": "normal",
+    "fused": 0.8984375,
+    "boost": 0.0,
+    "slot_scores": {
+      "sem": -1.0,
+      "disc": 0.8984375,
+      "shead": 0.53125
+    },
+    "raw_scores": {
+      "sem": 0.3981753934174776,
+      "disc": 0.9962754562497139,
+      "shead": 2.627882480621338
+    },
+    "ms": 147.8
+  },
+  {
+    "path": "D:\\CGAIC\\data_local\\gold_finger\\test\\defect\\1315.jpg",
+    "label": 1,
+    "decision": "anomaly",
+    "fused": 2.0,
+    "boost": 0.0,
+    "slot_scores": {
+      "sem": 0.42578125,
+      "disc": 2.0,
+      "shead": 0.29296875
+    },
+    "raw_scores": {
+      "sem": 0.49293419569730756,
+      "disc": 0.9981576330959797,
+      "shead": 2.5951719284057617
+    },
+    "ms": 152.1
+  },
+  {
+    "path": "D:\\CGAIC\\data_local\\gold_finger\\test\\defect\\1316.jpg",
+    "label": 1,
+    "decision": "normal",
+    "fused": 0.77734375,
+    "boost": 0.0,
+    "slot_scores": {
+      "sem": 0.1015625,
+      "disc": 0.77734375,
+      "shead": 0.15625
+    },
+    "raw_scores": {
+      "sem": 0.4593904823064804,
+      "disc": 0.9954552441835404,
+      "shead": 2.549272060394287
+    },
+    "ms": 154.3
+  },
+  {
+    "path": "D:\\CGAIC\\data_local\\gold_finger\\test\\defect\\1317.jpg",
+    "label": 1,
+    "decision": "anomaly",
+    "fused": 2.0,
+    "boost": 0.0,
+    "slot_scores": {
+      "sem": -1.0,
+      "disc": 2.0,
+      "shead": 0.83984375
+    },
+    "raw_scores": {
+      "sem": 0.4370470896363258,
+      "disc": 0.9977499499917031,
+      "shead": 2.6948471069335938
+    },
+    "ms": 156.8
+  },
+  {
+    "path": "D:\\CGAIC\\data_local\\gold_finger\\test\\defect\\1318.jpg",
+    "label": 1,
+    "decision": "anomaly",
+    "fused": 0.9921875,
+    "boost": 0.0,
+    "slot_scores": {
+      "sem": -1.0,
+      "disc": 0.9921875,
+      "shead": 0.5703125
+    },
+    "raw_scores": {
+      "sem": 0.35985938683152197,
+      "disc": 0.996920732781291,
+      "shead": 2.645667552947998
+    },
+    "ms": 172.6
+  },
+  {
+    "path": "D:\\CGAIC\\data_local\\gold_finger\\test\\defect\\1319.jpg",
+    "label": 1,
+    "decision": "gray",
+    "fused": 0.96484375,
+    "boost": 0.0,
+    "slot_scores": {
+      "sem": -1.0,
+      "disc": 0.96484375,
+      "shead": 0.27734375
+    },
+    "raw_scores": {
+      "sem": 0.42589526586234566,
+      "disc": 0.996737702563405,
+      "shead": 2.5925443172454834
+    },
+    "ms": 172.6
+  },
+  {
+    "path": "D:\\CGAIC\\data_local\\gold_finger\\test\\defect\\1320.jpg",
+    "label": 1,
+    "decision": "anomaly",
+    "fused": 2.0,
+    "boost": 0.0,
+    "slot_scores": {
+      "sem": -1.0,
+      "disc": 2.0,
+      "shead": 0.0859375
+    },
+    "raw_scores": {
+      "sem": 0.4012073423713446,
+      "disc": 0.9981335327029228,
+      "shead": 2.3036787509918213
+    },
+    "ms": 172.8
+  },
+  {
+    "path": "D:\\CGAIC\\data_local\\gold_finger\\test\\defect\\1321.jpg",
+    "label": 1,
+    "decision": "anomaly",
+    "fused": 2.0,
+    "boost": 0.0,
+    "slot_scores": {
+      "sem": 0.375,
+      "disc": 2.0,
+      "shead": 0.953125
+    },
+    "raw_scores": {
+      "sem": 0.4864605087786913,
+      "disc": 0.9987033527344465,
+      "shead": 2.73492693901062
+    },
+    "ms": 171.7
+  },
+  {
+    "path": "D:\\CGAIC\\data_local\\gold_finger\\test\\defect\\1322.jpg",
+    "label": 1,
+    "decision": "anomaly",
+    "fused": 2.0,
+    "boost": 0.0,
+    "slot_scores": {
+      "sem": 0.87109375,
+      "disc": 2.0,
+      "shead": 0.0859375
+    },
+    "raw_scores": {
+      "sem": 0.5458067186176777,
+      "disc": 0.9973629608750343,
+      "shead": 2.308992862701416
+    },
+    "ms": 154.4
+  },
+  {
+    "path": "D:\\CGAIC\\data_local\\gold_finger\\test\\defect\\1323.jpg",
+    "label": 1,
+    "decision": "anomaly",
+    "fused": 2.0,
+    "boost": 0.0,
+    "slot_scores": {
+      "sem": 0.4453125,
+      "disc": 2.0,
+      "shead": 2.0
+    },
+    "raw_scores": {
+      "sem": 0.4953357256948948,
+      "disc": 0.9978121694177389,
+      "shead": 2.7594437599182124
+    },
+    "ms": 149.0
+  },
+  {
+    "path": "D:\\CGAIC\\data_local\\gold_finger\\test\\defect\\1324.jpg",
+    "label": 1,
+    "decision": "normal",
+    "fused": 0.87109375,
+    "boost": 0.0,
+    "slot_scores": {
+      "sem": -1.0,
+      "disc": 0.87109375,
+      "shead": 0.1953125
+    },
+    "raw_scores": {
+      "sem": 0.4032728526741266,
+      "disc": 0.9960774041712284,
+      "shead": 2.5771517753601074
+    },
+    "ms": 137.8
+  },
+  {
+    "path": "D:\\CGAIC\\data_local\\gold_finger\\test\\defect\\1325.jpg",
+    "label": 1,
+    "decision": "anomaly",
+    "fused": 2.0,
+    "boost": 0.0,
+    "slot_scores": {
+      "sem": -1.0,
+      "disc": 2.0,
+      "shead": 0.1640625
+    },
+    "raw_scores": {
+      "sem": 0.3987631395459175,
+      "disc": 0.998094044625759,
+      "shead": 2.5706877708435054
+    },
+    "ms": 143.9
+  },
+  {
+    "path": "D:\\CGAIC\\data_local\\gold_finger\\test\\defect\\1326.jpg",
+    "label": 1,
+    "decision": "normal",
+    "fused": 0.91796875,
+    "boost": 0.0,
+    "slot_scores": {
+      "sem": -1.0,
+      "disc": 0.91796875,
+      "shead": 0.515625
+    },
+    "raw_scores": {
+      "sem": 0.40280028022825715,
+      "disc": 0.9964146230369806,
+      "shead": 2.620100498199463
+    },
+    "ms": 137.1
+  },
+  {
+    "path": "D:\\CGAIC\\data_local\\gold_finger\\test\\defect\\1327.jpg",
+    "label": 1,
+    "decision": "anomaly",
+    "fused": 2.0,
+    "boost": 0.0,
+    "slot_scores": {
+      "sem": 0.4296875,
+      "disc": 2.0,
+      "shead": 2.0
+    },
+    "raw_scores": {
+      "sem": 0.4935529634356499,
+      "disc": 0.9975897915661335,
+      "shead": 2.753892421722412
+    },
+    "ms": 178.2
+  },
+  {
+    "path": "D:\\CGAIC\\data_local\\gold_finger\\test\\defect\\1330.jpg",
+    "label": 1,
+    "decision": "anomaly",
+    "fused": 2.0,
+    "boost": 0.0,
+    "slot_scores": {
+      "sem": 0.40234375,
+      "disc": 2.0,
+      "shead": 0.1484375
+    },
+    "raw_scores": {
+      "sem": 0.48995067104697226,
+      "disc": 0.9977609615772962,
+      "shead": 2.518149852752685
+    },
+    "ms": 168.1
+  },
+  {
+    "path": "D:\\CGAIC\\data_local\\gold_finger\\test\\defect\\1331.jpg",
+    "label": 1,
+    "decision": "normal",
+    "fused": 0.859375,
+    "boost": 0.0,
+    "slot_scores": {
+      "sem": -1.0,
+      "disc": 0.859375,
+      "shead": 0.08984375
+    },
+    "raw_scores": {
+      "sem": 0.40770354643464085,
+      "disc": 0.9959941413253546,
+      "shead": 2.313512086868286
+    },
+    "ms": 144.2
+  },
+  {
+    "path": "D:\\CGAIC\\data_local\\gold_finger\\test\\defect\\1332.jpg",
+    "label": 1,
+    "decision": "anomaly",
+    "fused": 2.0,
+    "boost": 0.0,
+    "slot_scores": {
+      "sem": -1.0,
+      "disc": 2.0,
+      "shead": 0.21484375
+    },
+    "raw_scores": {
+      "sem": 0.4101309318095446,
+      "disc": 0.9977295022457837,
+      "shead": 2.580935478210449
+    },
+    "ms": 145.4
+  }
+]

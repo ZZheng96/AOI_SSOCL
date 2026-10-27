@@ -1,0 +1,17 @@
+# PCB-ACCEPT-05 复跑命令
+
+:: 1. 差异清单（只读）
+py -3.11 d:\CGAIC\AOI_SSOCL\review\task\pcb_accept_05\raw\diff_pcbdual.py
+
+:: 2. 受控同步（备份+复制+哈希核对）
+py -3.11 d:\CGAIC\AOI_SSOCL\review\task\pcb_accept_05\raw\sync_pcbdual.py
+
+:: 3. 稳定版回归（注意 tests 无 __init__.py，用模块方式）
+cd /d d:\CGAIC\AOI_SSOCL\stable_AOI_tree\PCB_Dual
+set QT_QPA_PLATFORM=offscreen
+py -3.11 -m unittest tests.test_pcbdual04 tests.test_adapter_batch tests.test_shift_batch tests.test_tuner_preview tests.test_async_template_snapshot tests.test_template_delete_cascade -v
+
+:: 4. 6-case 真实 paired 对照
+py -3.11 -m tests.tuner02_real_cases --output "d:\CGAIC\AOI_SSOCL\review\task\pcb_accept_05\raw"
+
+:: 回滚：把 review\sync_backup\PCB-ACCEPT-05\ 下文件按相对路径复制回 stable_AOI_tree\PCB_Dual\，删除 6 个新增文件

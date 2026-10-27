@@ -1,0 +1,12 @@
+{
+  "name": "sysinfo_no_key",
+  "method": "GET",
+  "path": "/api/system/info",
+  "role": "NONE",
+  "request_body": null,
+  "status_code": 401,
+  "response": {
+    "detail": "未授权：缺少或错误的 X-API-Key 请求头"
+  },
+  "note": "鉴权开启后无密钥一律 401"
+}

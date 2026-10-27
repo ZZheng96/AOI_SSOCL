@@ -1,0 +1,1007 @@
+{
+  "category": "synthetic",
+  "n_ref": 60,
+  "n_test": 45,
+  "n_defect": 15,
+  "full_auroc": 1.0,
+  "full_ap": 1.0,
+  "groups": {
+    "glcm": {
+      "name": "① GLCM 纹理",
+      "dim": 4,
+      "standalone_auroc": 0.8111111111111111,
+      "loo_auroc": 1.0,
+      "loo_drop": 0.0,
+      "perm_drop_mean": 0.0035555555555555783,
+      "perm_drop_std": 0.003014368881389027
+    },
+    "selfsim": {
+      "name": "② 区域自相似",
+      "dim": 5,
+      "standalone_auroc": 0.6666666666666666,
+      "loo_auroc": 1.0,
+      "loo_drop": 0.0,
+      "perm_drop_mean": 0.006222222222222263,
+      "perm_drop_std": 0.0008888888888888946
+    },
+    "edge": {
+      "name": "③ 边缘梯度",
+      "dim": 28,
+      "standalone_auroc": 0.7866666666666666,
+      "loo_auroc": 1.0,
+      "loo_drop": 0.0,
+      "perm_drop_mean": 0.010222222222222221,
+      "perm_drop_std": 0.004786813161897314
+    },
+    "hog": {
+      "name": "④ HOG",
+      "dim": 11,
+      "standalone_auroc": 0.5111111111111111,
+      "loo_auroc": 1.0,
+      "loo_drop": 0.0,
+      "perm_drop_mean": 0.0,
+      "perm_drop_std": 0.0
+    },
+    "shape": {
+      "name": "⑤ 形状/几何",
+      "dim": 11,
+      "standalone_auroc": 0.8666666666666666,
+      "loo_auroc": 1.0,
+      "loo_drop": 0.0,
+      "perm_drop_mean": 0.016444444444444418,
+      "perm_drop_std": 0.007774602526460371
+    },
+    "gray": {
+      "name": "⑥ 灰度统计",
+      "dim": 12,
+      "standalone_auroc": 0.9800000000000001,
+      "loo_auroc": 1.0,
+      "loo_drop": 0.0,
+      "perm_drop_mean": 0.017333333333333333,
+      "perm_drop_std": 0.007875575620741985
+    },
+    "gloss": {
+      "name": "⑦ 材质反光",
+      "dim": 4,
+      "standalone_auroc": 0.5955555555555555,
+      "loo_auroc": 1.0,
+      "loo_drop": 0.0,
+      "perm_drop_mean": 0.0062222222222222175,
+      "perm_drop_std": 0.004309048762147836
+    },
+    "color": {
+      "name": "⑧ 色彩 HSV+矩",
+      "dim": 36,
+      "standalone_auroc": 1.0,
+      "loo_auroc": 1.0,
+      "loo_drop": 0.0,
+      "perm_drop_mean": 0.13822222222222225,
+      "perm_drop_std": 0.04681247063985634
+    },
+    "fft": {
+      "name": "⑨ FFT 频域",
+      "dim": 13,
+      "standalone_auroc": 0.8755555555555554,
+      "loo_auroc": 1.0,
+      "loo_drop": 0.0,
+      "perm_drop_mean": 0.005777777777777793,
+      "perm_drop_std": 0.0030143688813890047
+    },
+    "wavelet": {
+      "name": "⑩ Haar 小波",
+      "dim": 40,
+      "standalone_auroc": 0.9555555555555556,
+      "loo_auroc": 1.0,
+      "loo_drop": 0.0,
+      "perm_drop_mean": 0.04533333333333334,
+      "perm_drop_std": 0.015498307354811294
+    },
+    "logic": {
+      "name": "⑪ 逻辑关系",
+      "dim": 6,
+      "standalone_auroc": 0.33777777777777773,
+      "loo_auroc": 1.0,
+      "loo_drop": 0.0,
+      "perm_drop_mean": 0.0008888888888888946,
+      "perm_drop_std": 0.0017777777777777891
+    },
+    "gabor": {
+      "name": "⑫ Gabor",
+      "dim": 8,
+      "standalone_auroc": 0.9755555555555555,
+      "loo_auroc": 1.0,
+      "loo_drop": 0.0,
+      "perm_drop_mean": 0.028888888888888832,
+      "perm_drop_std": 0.006885303726590972
+    },
+    "log": {
+      "name": "⑬ LoG 斑点",
+      "dim": 5,
+      "standalone_auroc": 0.68,
+      "loo_auroc": 1.0,
+      "loo_drop": 0.0,
+      "perm_drop_mean": 0.0,
+      "perm_drop_std": 0.0
+    },
+    "pc": {
+      "name": "⑭ 相位一致性",
+      "dim": 3,
+      "standalone_auroc": 0.5177777777777778,
+      "loo_auroc": 1.0,
+      "loo_drop": 0.0,
+      "perm_drop_mean": 0.0,
+      "perm_drop_std": 0.0
+    },
+    "surf": {
+      "name": "⑮ SURF",
+      "dim": 14,
+      "standalone_auroc": 0.52,
+      "loo_auroc": 1.0,
+      "loo_drop": 0.0,
+      "perm_drop_mean": 0.02488888888888887,
+      "perm_drop_std": 0.008122518614443141
+    }
+  },
+  "meta": {
+    "k": 3,
+    "n_perm": 5,
+    "seed": 42,
+    "feature_set": "trunk_200",
+    "caliber": "U27 播种 / U36 z-clip ±10 / 独立测试查询保留最近邻（训练自身查询才跳过）",
+    "honesty": "AUROC 不翻转；fit 仅用 train 域 init_normal；负贡献如实登记",
+    "feature_revision_id": "0278960b9cef6449f67c685f55274d10ce51bad3982bd291e90c7154d1ff8772",
+    "feature_revision_manifest": {
+      "schema_version": 1,
+      "name": "trunk_200",
+      "groups": [
+        {
+          "key": "glcm",
+          "dim": 4,
+          "slice": [
+            0,
+            4
+          ],
+          "params": {
+            "distances": [
+              1
+            ],
+            "angles_deg": [
+              0,
+              45,
+              90,
+              135
+            ],
+            "levels": 256,
+            "props": [
+              "contrast",
+              "correlation",
+              "energy",
+              "homogeneity"
+            ]
+          }
+        },
+        {
+          "key": "selfsim",
+          "dim": 5,
+          "slice": [
+            4,
+            9
+          ],
+          "params": {
+            "scales": [
+              4,
+              8,
+              16
+            ],
+            "max_blocks": 100
+          }
+        },
+        {
+          "key": "edge",
+          "dim": 28,
+          "slice": [
+            9,
+            37
+          ],
+          "params": {
+            "canny_sigmas": [
+              1,
+              2,
+              3
+            ],
+            "grad_bins": 16,
+            "lbp_P": 8,
+            "lbp_R": 1,
+            "lbp_bins": 6
+          }
+        },
+        {
+          "key": "hog",
+          "dim": 11,
+          "slice": [
+            37,
+            48
+          ],
+          "params": {
+            "orientations": 9,
+            "cell": 16,
+            "block": 2,
+            "out_dim": 11
+          }
+        },
+        {
+          "key": "shape",
+          "dim": 11,
+          "slice": [
+            48,
+            59
+          ],
+          "params": {}
+        },
+        {
+          "key": "gray",
+          "dim": 12,
+          "slice": [
+            59,
+            71
+          ],
+          "params": {}
+        },
+        {
+          "key": "gloss",
+          "dim": 4,
+          "slice": [
+            71,
+            75
+          ],
+          "params": {
+            "sigma_mult": 2.0,
+            "min_size": 50
+          }
+        },
+        {
+          "key": "color",
+          "dim": 36,
+          "slice": [
+            75,
+            111
+          ],
+          "params": {
+            "hsv_bins": 8
+          }
+        },
+        {
+          "key": "fft",
+          "dim": 13,
+          "slice": [
+            111,
+            124
+          ],
+          "params": {
+            "radius_frac": 4,
+            "radial_bins": 10
+          }
+        },
+        {
+          "key": "wavelet",
+          "dim": 40,
+          "slice": [
+            124,
+            164
+          ],
+          "params": {
+            "levels": 3
+          }
+        },
+        {
+          "key": "logic",
+          "dim": 6,
+          "slice": [
+            164,
+            170
+          ],
+          "params": {}
+        },
+        {
+          "key": "gabor",
+          "dim": 8,
+          "slice": [
+            170,
+            178
+          ],
+          "params": {
+            "thetas_deg": [
+              0,
+              45,
+              90,
+              135
+            ],
+            "freqs": [
+              0.1,
+              0.3
+            ],
+            "ksize": 21,
+            "sigma": 4.0,
+            "gamma": 0.5
+          }
+        },
+        {
+          "key": "log",
+          "dim": 5,
+          "slice": [
+            178,
+            183
+          ],
+          "params": {
+            "sigmas": [
+              1,
+              2,
+              4,
+              8,
+              16
+            ]
+          }
+        },
+        {
+          "key": "pc",
+          "dim": 3,
+          "slice": [
+            183,
+            186
+          ],
+          "params": {
+            "nscale": 4
+          }
+        },
+        {
+          "key": "surf",
+          "dim": 14,
+          "slice": [
+            186,
+            200
+          ],
+          "params": {
+            "n_octaves": 3,
+            "n_scales": 3,
+            "base_sigma": 1.6,
+            "sigma_step": 1.26,
+            "rel_thresh": 0.01
+          }
+        }
+      ],
+      "dimension": 200,
+      "preprocess": {
+        "max_side": 256,
+        "min_side": 32
+      },
+      "implementation_hashes": {
+        "D:\\CGAIC\\AOI_SSOCL\\AOI_tree\\AOI_feature\\feature_lib.py": "c969efbe592a793c3c837f58c2095fdc9a5b7ad6d550fdb6918798e3bda79422",
+        "D:\\CGAIC\\AOI_SSOCL\\AOI_tree\\AOI_feature\\feature_set.py": "d4b6493fd34105ed8df659602598fb744939d76b5256e9301dd339519e48429c",
+        "D:\\CGAIC\\AOI_SSOCL\\AOI_tree\\AOI_feature\\scoring.py": "a3f5ffa1a6c9da348d7c7cb9aa84ae3527801d735c6e041958a8dd694df47b80"
+      },
+      "seed": 42,
+      "extract_seed": 42,
+      "dataset_split": {
+        "init_normal": [
+          {
+            "path": "C:\\Users\\imia\\AppData\\Local\\Temp\\aoi_feat_synth_iabrrpfy\\synthetic\\train\\good\\0000.png",
+            "sha256": "dbcffec9027c399460414de2805bd23841c6174303986c3b9104c2d4a9e80948",
+            "label": null
+          },
+          {
+            "path": "C:\\Users\\imia\\AppData\\Local\\Temp\\aoi_feat_synth_iabrrpfy\\synthetic\\train\\good\\0001.png",
+            "sha256": "b76ceb6678b5e87e60ed512deffe3a0f650ad880c478777fc46398251acf4647",
+            "label": null
+          },
+          {
+            "path": "C:\\Users\\imia\\AppData\\Local\\Temp\\aoi_feat_synth_iabrrpfy\\synthetic\\train\\good\\0002.png",
+            "sha256": "88dba0714f7b76971dcbb8cab510a96ad0305c5c45da6f8f2f2532b1ad4c65c2",
+            "label": null
+          },
+          {
+            "path": "C:\\Users\\imia\\AppData\\Local\\Temp\\aoi_feat_synth_iabrrpfy\\synthetic\\train\\good\\0003.png",
+            "sha256": "adb454269ceadc117297107c2d38bc4764bbf27f5e0a57e809dbd576dd31f1f4",
+            "label": null
+          },
+          {
+            "path": "C:\\Users\\imia\\AppData\\Local\\Temp\\aoi_feat_synth_iabrrpfy\\synthetic\\train\\good\\0004.png",
+            "sha256": "1f05f1439c2516d3b3c335140486737b1cb34b7cdb7998dab20cdd9145e9823f",
+            "label": null
+          },
+          {
+            "path": "C:\\Users\\imia\\AppData\\Local\\Temp\\aoi_feat_synth_iabrrpfy\\synthetic\\train\\good\\0005.png",
+            "sha256": "523c1ea8f996e6223b3eac5a635c12d179c346315ffe5d993484dc75c02a5dea",
+            "label": null
+          },
+          {
+            "path": "C:\\Users\\imia\\AppData\\Local\\Temp\\aoi_feat_synth_iabrrpfy\\synthetic\\train\\good\\0006.png",
+            "sha256": "47f472a37c2677c2de6f44bf74ec80c3c5099c8d191775711c8f65d8849835ca",
+            "label": null
+          },
+          {
+            "path": "C:\\Users\\imia\\AppData\\Local\\Temp\\aoi_feat_synth_iabrrpfy\\synthetic\\train\\good\\0007.png",
+            "sha256": "8ccaa2324c121b9bba4d4c486f3b36114a726941ab71ce1a2551f29fa3993389",
+            "label": null
+          },
+          {
+            "path": "C:\\Users\\imia\\AppData\\Local\\Temp\\aoi_feat_synth_iabrrpfy\\synthetic\\train\\good\\0008.png",
+            "sha256": "90a8d30026de6bb13c2b63567e9f310ac37e6026af99c4f2136480fa96a48ac5",
+            "label": null
+          },
+          {
+            "path": "C:\\Users\\imia\\AppData\\Local\\Temp\\aoi_feat_synth_iabrrpfy\\synthetic\\train\\good\\0009.png",
+            "sha256": "156e29554e4a4f6c19f63833659b515fef5da671700f68f390424538190f9b66",
+            "label": null
+          },
+          {
+            "path": "C:\\Users\\imia\\AppData\\Local\\Temp\\aoi_feat_synth_iabrrpfy\\synthetic\\train\\good\\0010.png",
+            "sha256": "a765214adf1c0e06fe32caa570a2da4ea939faf7ed96ebdb11b1b1b2d788fda5",
+            "label": null
+          },
+          {
+            "path": "C:\\Users\\imia\\AppData\\Local\\Temp\\aoi_feat_synth_iabrrpfy\\synthetic\\train\\good\\0011.png",
+            "sha256": "67f019549022e9e5fc674c41c4450fc43ad624f2d1811e689610a6b9cd23c9c5",
+            "label": null
+          },
+          {
+            "path": "C:\\Users\\imia\\AppData\\Local\\Temp\\aoi_feat_synth_iabrrpfy\\synthetic\\train\\good\\0012.png",
+            "sha256": "5107f468f73b21af4e48648c7403b702d2a6e3ccf0926e764a0b1798f68ae171",
+            "label": null
+          },
+          {
+            "path": "C:\\Users\\imia\\AppData\\Local\\Temp\\aoi_feat_synth_iabrrpfy\\synthetic\\train\\good\\0013.png",
+            "sha256": "f10a3dda69d5738e4b8ef163c8168534dad5b8c2bbd2e572a7f40fdc9d01161d",
+            "label": null
+          },
+          {
+            "path": "C:\\Users\\imia\\AppData\\Local\\Temp\\aoi_feat_synth_iabrrpfy\\synthetic\\train\\good\\0014.png",
+            "sha256": "f3ac66790846a467c0b8b1426f26c6e3cba769a03152d333b116c5d40927af3c",
+            "label": null
+          },
+          {
+            "path": "C:\\Users\\imia\\AppData\\Local\\Temp\\aoi_feat_synth_iabrrpfy\\synthetic\\train\\good\\0015.png",
+            "sha256": "3fc76d85de88dc22ae9511a07a00761e8a5989268daeda12914b4a37d4b4143b",
+            "label": null
+          },
+          {
+            "path": "C:\\Users\\imia\\AppData\\Local\\Temp\\aoi_feat_synth_iabrrpfy\\synthetic\\train\\good\\0016.png",
+            "sha256": "7a6c60deed096fca93001a008cdf13ef6039eca2a5ccd2f1d23231dc5e6cfede",
+            "label": null
+          },
+          {
+            "path": "C:\\Users\\imia\\AppData\\Local\\Temp\\aoi_feat_synth_iabrrpfy\\synthetic\\train\\good\\0017.png",
+            "sha256": "81bd260d4963cd387545aa38fdfbbbd85910a0ee6359e8cdb906489fd8f4c9ed",
+            "label": null
+          },
+          {
+            "path": "C:\\Users\\imia\\AppData\\Local\\Temp\\aoi_feat_synth_iabrrpfy\\synthetic\\train\\good\\0018.png",
+            "sha256": "80840fbad786deb8df7b7aba6f73807e202241af178305aab16d7d73597ab110",
+            "label": null
+          },
+          {
+            "path": "C:\\Users\\imia\\AppData\\Local\\Temp\\aoi_feat_synth_iabrrpfy\\synthetic\\train\\good\\0019.png",
+            "sha256": "8f51bed7dea9c4623ebc95df5b5367b19b70711c35603ea67e4ee08190baad28",
+            "label": null
+          },
+          {
+            "path": "C:\\Users\\imia\\AppData\\Local\\Temp\\aoi_feat_synth_iabrrpfy\\synthetic\\train\\good\\0020.png",
+            "sha256": "474265a9adde8ae3f9c232831d399ca9f53d5c20f99a95332dacfff53bf91c95",
+            "label": null
+          },
+          {
+            "path": "C:\\Users\\imia\\AppData\\Local\\Temp\\aoi_feat_synth_iabrrpfy\\synthetic\\train\\good\\0021.png",
+            "sha256": "000e60ab97b9f5b2e8f0e2639e68ec1a22860f8129224b5ff0c07ebc4b479f61",
+            "label": null
+          },
+          {
+            "path": "C:\\Users\\imia\\AppData\\Local\\Temp\\aoi_feat_synth_iabrrpfy\\synthetic\\train\\good\\0022.png",
+            "sha256": "d20bf77175c6492fb6ebdeca6c298b708f624d46595f4e7f70d9508b4fd2419f",
+            "label": null
+          },
+          {
+            "path": "C:\\Users\\imia\\AppData\\Local\\Temp\\aoi_feat_synth_iabrrpfy\\synthetic\\train\\good\\0023.png",
+            "sha256": "49c549c852c54115849e7edb77b628177d7a109e481ffaaa6ef3593ecf96d4f5",
+            "label": null
+          },
+          {
+            "path": "C:\\Users\\imia\\AppData\\Local\\Temp\\aoi_feat_synth_iabrrpfy\\synthetic\\train\\good\\0024.png",
+            "sha256": "b924d482ea8d9ba21b6ee489b7cdf72319329c3d3ed0d57157feb1983ce8b568",
+            "label": null
+          },
+          {
+            "path": "C:\\Users\\imia\\AppData\\Local\\Temp\\aoi_feat_synth_iabrrpfy\\synthetic\\train\\good\\0025.png",
+            "sha256": "233b0353b926dc609ff19f17320b98172959ffd83f5a70167b20a84633c798a8",
+            "label": null
+          },
+          {
+            "path": "C:\\Users\\imia\\AppData\\Local\\Temp\\aoi_feat_synth_iabrrpfy\\synthetic\\train\\good\\0026.png",
+            "sha256": "1302343fb018edb151aa4eba4ed20a4374301e8b169f6108dc31aae6d3895a97",
+            "label": null
+          },
+          {
+            "path": "C:\\Users\\imia\\AppData\\Local\\Temp\\aoi_feat_synth_iabrrpfy\\synthetic\\train\\good\\0027.png",
+            "sha256": "529c58f98ffc0f6e6feaac75a0a4b9d186715227429c44b439deb948387c7c0d",
+            "label": null
+          },
+          {
+            "path": "C:\\Users\\imia\\AppData\\Local\\Temp\\aoi_feat_synth_iabrrpfy\\synthetic\\train\\good\\0028.png",
+            "sha256": "31f80f67e80d1a84c61d6687bc959a58a5a686477c4730496d495275f5f6e6fa",
+            "label": null
+          },
+          {
+            "path": "C:\\Users\\imia\\AppData\\Local\\Temp\\aoi_feat_synth_iabrrpfy\\synthetic\\train\\good\\0029.png",
+            "sha256": "6c786d90842abb27a6b6bc422d6fb1168a719972f9017f24c4201d3db9f771e9",
+            "label": null
+          },
+          {
+            "path": "C:\\Users\\imia\\AppData\\Local\\Temp\\aoi_feat_synth_iabrrpfy\\synthetic\\train\\good\\0030.png",
+            "sha256": "4be2e435c3efdbd7817f16c25742f89cc3b028e5be3a1db527b70e53eb5bda86",
+            "label": null
+          },
+          {
+            "path": "C:\\Users\\imia\\AppData\\Local\\Temp\\aoi_feat_synth_iabrrpfy\\synthetic\\train\\good\\0031.png",
+            "sha256": "277d58b0d7b638b2856ae7c47933a9b5f552ba5f15a5dd71b4dd2df2d6d0ce82",
+            "label": null
+          },
+          {
+            "path": "C:\\Users\\imia\\AppData\\Local\\Temp\\aoi_feat_synth_iabrrpfy\\synthetic\\train\\good\\0032.png",
+            "sha256": "d71c41334055f587540c3c6e6c04807f6d5796b34c9c23a1db0bafa14c6dcc26",
+            "label": null
+          },
+          {
+            "path": "C:\\Users\\imia\\AppData\\Local\\Temp\\aoi_feat_synth_iabrrpfy\\synthetic\\train\\good\\0033.png",
+            "sha256": "0e2eaae53668c0a8aa782eb809539c1634cf1a2ccc57f899e6aa7d841a4007d9",
+            "label": null
+          },
+          {
+            "path": "C:\\Users\\imia\\AppData\\Local\\Temp\\aoi_feat_synth_iabrrpfy\\synthetic\\train\\good\\0034.png",
+            "sha256": "117cf01be6530bac7838537cd3739435c007d13b8b90d484f1132ff9403af671",
+            "label": null
+          },
+          {
+            "path": "C:\\Users\\imia\\AppData\\Local\\Temp\\aoi_feat_synth_iabrrpfy\\synthetic\\train\\good\\0035.png",
+            "sha256": "58ce69986ab04c907b7a1c7596b274c9588223fc02f07ee4dc55c1a4d2d86027",
+            "label": null
+          },
+          {
+            "path": "C:\\Users\\imia\\AppData\\Local\\Temp\\aoi_feat_synth_iabrrpfy\\synthetic\\train\\good\\0036.png",
+            "sha256": "4a673a56f39bea395f9ec7e29cca15b649d94f032592717fe6dce7487ad79d31",
+            "label": null
+          },
+          {
+            "path": "C:\\Users\\imia\\AppData\\Local\\Temp\\aoi_feat_synth_iabrrpfy\\synthetic\\train\\good\\0037.png",
+            "sha256": "508fd3b64705a0989337161a8786d6d5f9a29ea18124756403b6c4efc704b5a0",
+            "label": null
+          },
+          {
+            "path": "C:\\Users\\imia\\AppData\\Local\\Temp\\aoi_feat_synth_iabrrpfy\\synthetic\\train\\good\\0038.png",
+            "sha256": "86fe4fd1f325fd172c193f7933f1e3d6792697d5ba971285746d178e42531555",
+            "label": null
+          },
+          {
+            "path": "C:\\Users\\imia\\AppData\\Local\\Temp\\aoi_feat_synth_iabrrpfy\\synthetic\\train\\good\\0039.png",
+            "sha256": "242158b3140497e573cf1ebbe9eb7953da135da3fd706fbc3a0179c3c8c0127f",
+            "label": null
+          },
+          {
+            "path": "C:\\Users\\imia\\AppData\\Local\\Temp\\aoi_feat_synth_iabrrpfy\\synthetic\\train\\good\\0040.png",
+            "sha256": "4ace4d7d5493b256f1925d6f65a9c26c5bd2480a6896bedfe7fb40042d0fa4f9",
+            "label": null
+          },
+          {
+            "path": "C:\\Users\\imia\\AppData\\Local\\Temp\\aoi_feat_synth_iabrrpfy\\synthetic\\train\\good\\0041.png",
+            "sha256": "c2d2f12751efd844efa6e8f4e5f1073804d8f393673f127edcb399b0baf8ebfe",
+            "label": null
+          },
+          {
+            "path": "C:\\Users\\imia\\AppData\\Local\\Temp\\aoi_feat_synth_iabrrpfy\\synthetic\\train\\good\\0042.png",
+            "sha256": "ec31d97e1b0cd92c21e745c8c631338e75f8a028a1398d864a1dba009e6757d8",
+            "label": null
+          },
+          {
+            "path": "C:\\Users\\imia\\AppData\\Local\\Temp\\aoi_feat_synth_iabrrpfy\\synthetic\\train\\good\\0043.png",
+            "sha256": "e83621b5d2d738cdb5074ca6b98dde5df1bf5cc246d398efd669a9d8b2b530c7",
+            "label": null
+          },
+          {
+            "path": "C:\\Users\\imia\\AppData\\Local\\Temp\\aoi_feat_synth_iabrrpfy\\synthetic\\train\\good\\0044.png",
+            "sha256": "5afab970d03acd9d3d4782d29761c77d68826e26b368dda739a82eb4b7f6fa43",
+            "label": null
+          },
+          {
+            "path": "C:\\Users\\imia\\AppData\\Local\\Temp\\aoi_feat_synth_iabrrpfy\\synthetic\\train\\good\\0045.png",
+            "sha256": "3e3f4b55c43dab0ed56f6c5217c19e9b85901e08b01fe53ca5bf8b540199b189",
+            "label": null
+          },
+          {
+            "path": "C:\\Users\\imia\\AppData\\Local\\Temp\\aoi_feat_synth_iabrrpfy\\synthetic\\train\\good\\0046.png",
+            "sha256": "2946867b9de3aee7ba52f671eb8bd9284f3b9ebcaf4c3bae5ed8b84811434e51",
+            "label": null
+          },
+          {
+            "path": "C:\\Users\\imia\\AppData\\Local\\Temp\\aoi_feat_synth_iabrrpfy\\synthetic\\train\\good\\0047.png",
+            "sha256": "21a47f17e9fe492dbd8facd613909e4792df6b600ce4043c1b7f2fdd83d4e883",
+            "label": null
+          },
+          {
+            "path": "C:\\Users\\imia\\AppData\\Local\\Temp\\aoi_feat_synth_iabrrpfy\\synthetic\\train\\good\\0048.png",
+            "sha256": "5339c31f0f7f190fa7326b8ac9a31a67bc22cd7a42258cf7181ed08d775f502d",
+            "label": null
+          },
+          {
+            "path": "C:\\Users\\imia\\AppData\\Local\\Temp\\aoi_feat_synth_iabrrpfy\\synthetic\\train\\good\\0049.png",
+            "sha256": "d0b898332c33fd0a849ec96bd4f1d7316d522c82230c345e257a7a268b6757bc",
+            "label": null
+          },
+          {
+            "path": "C:\\Users\\imia\\AppData\\Local\\Temp\\aoi_feat_synth_iabrrpfy\\synthetic\\train\\good\\0050.png",
+            "sha256": "ee2a7bece9c761be111eab050d47bb443ef813091b1dffbb3481e5e526a44d6f",
+            "label": null
+          },
+          {
+            "path": "C:\\Users\\imia\\AppData\\Local\\Temp\\aoi_feat_synth_iabrrpfy\\synthetic\\train\\good\\0051.png",
+            "sha256": "b2524ebacc4c0dab8e125738676c90598f9db7907882312961e6e94775edcf08",
+            "label": null
+          },
+          {
+            "path": "C:\\Users\\imia\\AppData\\Local\\Temp\\aoi_feat_synth_iabrrpfy\\synthetic\\train\\good\\0052.png",
+            "sha256": "67cb7b92e9637da47ae447d41211f45a39f1272b16087cac45b8ddfec5a4d6e6",
+            "label": null
+          },
+          {
+            "path": "C:\\Users\\imia\\AppData\\Local\\Temp\\aoi_feat_synth_iabrrpfy\\synthetic\\train\\good\\0053.png",
+            "sha256": "bab1fbf246db4a57c0bf33876b98b0442d78b42f2db75c8913699dfbb19ce206",
+            "label": null
+          },
+          {
+            "path": "C:\\Users\\imia\\AppData\\Local\\Temp\\aoi_feat_synth_iabrrpfy\\synthetic\\train\\good\\0054.png",
+            "sha256": "ac75578398e84a51b976f3342df4e291744b9d796b76729c69f7eb5ed780869a",
+            "label": null
+          },
+          {
+            "path": "C:\\Users\\imia\\AppData\\Local\\Temp\\aoi_feat_synth_iabrrpfy\\synthetic\\train\\good\\0055.png",
+            "sha256": "ba1eab3e0cf1dbc00a2071602b0a9ad633ab4fbf34facd9e186fd64b195a8892",
+            "label": null
+          },
+          {
+            "path": "C:\\Users\\imia\\AppData\\Local\\Temp\\aoi_feat_synth_iabrrpfy\\synthetic\\train\\good\\0056.png",
+            "sha256": "4b84e55369121f13709331f2ef99319dc530190ecbe5f3018e51136f65106ec9",
+            "label": null
+          },
+          {
+            "path": "C:\\Users\\imia\\AppData\\Local\\Temp\\aoi_feat_synth_iabrrpfy\\synthetic\\train\\good\\0057.png",
+            "sha256": "47a0b4a617a25bb389abbe142e02fedc6ba2929aa06ea6f7a70789f0e1366ad2",
+            "label": null
+          },
+          {
+            "path": "C:\\Users\\imia\\AppData\\Local\\Temp\\aoi_feat_synth_iabrrpfy\\synthetic\\train\\good\\0058.png",
+            "sha256": "63028dac48f362fb8906c9a8fc09a6c8f2b5758eae5351aa343e94599f39e293",
+            "label": null
+          },
+          {
+            "path": "C:\\Users\\imia\\AppData\\Local\\Temp\\aoi_feat_synth_iabrrpfy\\synthetic\\train\\good\\0059.png",
+            "sha256": "05e8f7023d71800b23d365197df53a776908ab4294dd8f4a578290d3017cb6c5",
+            "label": null
+          }
+        ],
+        "init_defect": [
+          {
+            "path": "C:\\Users\\imia\\AppData\\Local\\Temp\\aoi_feat_synth_iabrrpfy\\synthetic\\test\\defect_synth\\0001.png",
+            "sha256": "8156d9b339a218d4718ba4a1e9c611e16bbe5c4628a4c45b54de8fe0725950b4",
+            "label": null
+          },
+          {
+            "path": "C:\\Users\\imia\\AppData\\Local\\Temp\\aoi_feat_synth_iabrrpfy\\synthetic\\test\\defect_synth\\0002.png",
+            "sha256": "8b5dd5e34c9c1bace7951c64958017a5dd2f720741eeb641f3338dc80e74e345",
+            "label": null
+          },
+          {
+            "path": "C:\\Users\\imia\\AppData\\Local\\Temp\\aoi_feat_synth_iabrrpfy\\synthetic\\test\\defect_synth\\0003.png",
+            "sha256": "d12f963216e30bb57b9c39d06ac6180aee570e815304ab4144156206930b2172",
+            "label": null
+          },
+          {
+            "path": "C:\\Users\\imia\\AppData\\Local\\Temp\\aoi_feat_synth_iabrrpfy\\synthetic\\test\\defect_synth\\0007.png",
+            "sha256": "bf4a1e48cdffe7209ccc0563a58c7ef1049d48e6b7c6c8319da045b6709cf8d4",
+            "label": null
+          },
+          {
+            "path": "C:\\Users\\imia\\AppData\\Local\\Temp\\aoi_feat_synth_iabrrpfy\\synthetic\\test\\defect_synth\\0009.png",
+            "sha256": "e02affabff2f65fc461eee504443e14722b47449279f4ada25a477cb0456fcf1",
+            "label": null
+          },
+          {
+            "path": "C:\\Users\\imia\\AppData\\Local\\Temp\\aoi_feat_synth_iabrrpfy\\synthetic\\test\\defect_synth\\0012.png",
+            "sha256": "2448430bd264be15ee591361c1eaecc150d1c06d24c08d019bcbb6814632fcab",
+            "label": null
+          },
+          {
+            "path": "C:\\Users\\imia\\AppData\\Local\\Temp\\aoi_feat_synth_iabrrpfy\\synthetic\\test\\defect_synth\\0013.png",
+            "sha256": "076004940f30cbc93b7d3a5c14260b00bcde842d85b0e17fa598df94f4d35067",
+            "label": null
+          },
+          {
+            "path": "C:\\Users\\imia\\AppData\\Local\\Temp\\aoi_feat_synth_iabrrpfy\\synthetic\\test\\defect_synth\\0014.png",
+            "sha256": "83b29537d570f8ccc68d63970b64fea2aa3d0425d075774ecf3286a557c6e088",
+            "label": null
+          },
+          {
+            "path": "C:\\Users\\imia\\AppData\\Local\\Temp\\aoi_feat_synth_iabrrpfy\\synthetic\\test\\defect_synth\\0015.png",
+            "sha256": "7fd5fe58405ada597f75feddb79b32025530ac7fe98f6cfe1698ee40de70604c",
+            "label": null
+          },
+          {
+            "path": "C:\\Users\\imia\\AppData\\Local\\Temp\\aoi_feat_synth_iabrrpfy\\synthetic\\test\\defect_synth\\0016.png",
+            "sha256": "c46442d4939e4ee6cf29a0a940fb1c4cf75c6bae1addd68125bc7c92e6733032",
+            "label": null
+          },
+          {
+            "path": "C:\\Users\\imia\\AppData\\Local\\Temp\\aoi_feat_synth_iabrrpfy\\synthetic\\test\\defect_synth\\0017.png",
+            "sha256": "c22fc6b67dc1af7a64b2356701cebd629b68a4e7957f978b5e7ef66945449156",
+            "label": null
+          },
+          {
+            "path": "C:\\Users\\imia\\AppData\\Local\\Temp\\aoi_feat_synth_iabrrpfy\\synthetic\\test\\defect_synth\\0018.png",
+            "sha256": "bceb915143ed412c8eaed4be4e850def794c7b5f24638876e40a925b3fd0372d",
+            "label": null
+          },
+          {
+            "path": "C:\\Users\\imia\\AppData\\Local\\Temp\\aoi_feat_synth_iabrrpfy\\synthetic\\test\\defect_synth\\0019.png",
+            "sha256": "ccf1b5fa4165a45d6c822d0eab95a3349635a8b33dfd9897f4f27d40c3741f89",
+            "label": null
+          },
+          {
+            "path": "C:\\Users\\imia\\AppData\\Local\\Temp\\aoi_feat_synth_iabrrpfy\\synthetic\\test\\defect_synth\\0022.png",
+            "sha256": "52472d78fcbda14eb6fcae28516f3c7393259c26ba5209baaf4eb6d52e4cd96f",
+            "label": null
+          },
+          {
+            "path": "C:\\Users\\imia\\AppData\\Local\\Temp\\aoi_feat_synth_iabrrpfy\\synthetic\\test\\defect_synth\\0023.png",
+            "sha256": "fd507aa5dfd14f41b00b412e22acc2c6b3666fed31259f94db5ecd679f21582b",
+            "label": null
+          }
+        ],
+        "val": [],
+        "test": [
+          {
+            "path": "C:\\Users\\imia\\AppData\\Local\\Temp\\aoi_feat_synth_iabrrpfy\\synthetic\\test\\defect_synth\\0025.png",
+            "sha256": "edc275e5744e62667a19a4409a5c159b6991a5e58a41d9c6fc6f813d29b3b7fb",
+            "label": 1
+          },
+          {
+            "path": "C:\\Users\\imia\\AppData\\Local\\Temp\\aoi_feat_synth_iabrrpfy\\synthetic\\test\\defect_synth\\0006.png",
+            "sha256": "86d6e77c4d3473b466c96753569945924ae3c4db45d0a778922974ce4b2c5ce6",
+            "label": 1
+          },
+          {
+            "path": "C:\\Users\\imia\\AppData\\Local\\Temp\\aoi_feat_synth_iabrrpfy\\synthetic\\test\\good\\0022.png",
+            "sha256": "198b71bcae3a4474c52ea90901a69290aa932976848af1f59cd3906d104a9356",
+            "label": 0
+          },
+          {
+            "path": "C:\\Users\\imia\\AppData\\Local\\Temp\\aoi_feat_synth_iabrrpfy\\synthetic\\test\\good\\0007.png",
+            "sha256": "60ce6f4e7b2a9f6ad67552b6253341bfc3ed9f5607ea13ee3aff62933fe02311",
+            "label": 0
+          },
+          {
+            "path": "C:\\Users\\imia\\AppData\\Local\\Temp\\aoi_feat_synth_iabrrpfy\\synthetic\\test\\defect_synth\\0008.png",
+            "sha256": "7c00804c1ab807bb9e2b97358243c884192258080982372af379c3eef2bf10ac",
+            "label": 1
+          },
+          {
+            "path": "C:\\Users\\imia\\AppData\\Local\\Temp\\aoi_feat_synth_iabrrpfy\\synthetic\\test\\good\\0006.png",
+            "sha256": "3114b13442e6cb47586b6d2a48ee355bc06e9e355c3f3c755de5deaaf73376bc",
+            "label": 0
+          },
+          {
+            "path": "C:\\Users\\imia\\AppData\\Local\\Temp\\aoi_feat_synth_iabrrpfy\\synthetic\\test\\good\\0008.png",
+            "sha256": "c9024abe05bf77351903721ed7a7998008c2951d7cae5e929a7f5bb26607aceb",
+            "label": 0
+          },
+          {
+            "path": "C:\\Users\\imia\\AppData\\Local\\Temp\\aoi_feat_synth_iabrrpfy\\synthetic\\test\\defect_synth\\0027.png",
+            "sha256": "6e328612b54415f87ec01f177c57e6ef4e314105b88a5e0bf13562501591c866",
+            "label": 1
+          },
+          {
+            "path": "C:\\Users\\imia\\AppData\\Local\\Temp\\aoi_feat_synth_iabrrpfy\\synthetic\\test\\defect_synth\\0021.png",
+            "sha256": "c84231f0a978abe886d8023dd4e12d23cb401c59646d32ef16c387385e279dd3",
+            "label": 1
+          },
+          {
+            "path": "C:\\Users\\imia\\AppData\\Local\\Temp\\aoi_feat_synth_iabrrpfy\\synthetic\\test\\good\\0003.png",
+            "sha256": "95e6362fcffb84477c35fc40324ee53ec2029bf81be7e1c81291b5ec7296a608",
+            "label": 0
+          },
+          {
+            "path": "C:\\Users\\imia\\AppData\\Local\\Temp\\aoi_feat_synth_iabrrpfy\\synthetic\\test\\good\\0015.png",
+            "sha256": "d6a76bd26853ce5dea2f417801dbfad3205c48fbcd1c3ab06b9bf99563531056",
+            "label": 0
+          },
+          {
+            "path": "C:\\Users\\imia\\AppData\\Local\\Temp\\aoi_feat_synth_iabrrpfy\\synthetic\\test\\defect_synth\\0026.png",
+            "sha256": "46c0228eb8ff08ba36a537c8b2ac9eb5f2d0cf45805c6d118e0779bfd21e5c7d",
+            "label": 1
+          },
+          {
+            "path": "C:\\Users\\imia\\AppData\\Local\\Temp\\aoi_feat_synth_iabrrpfy\\synthetic\\test\\good\\0029.png",
+            "sha256": "a3795c76c167653e93a7a168a6db6a606e41140d9bdbd32bc77ff44b6d37a261",
+            "label": 0
+          },
+          {
+            "path": "C:\\Users\\imia\\AppData\\Local\\Temp\\aoi_feat_synth_iabrrpfy\\synthetic\\test\\defect_synth\\0000.png",
+            "sha256": "5fbc2526ed94c95e591ff5b7bba6e5e6957b9bde1148b642876b92c6a035ad01",
+            "label": 1
+          },
+          {
+            "path": "C:\\Users\\imia\\AppData\\Local\\Temp\\aoi_feat_synth_iabrrpfy\\synthetic\\test\\good\\0004.png",
+            "sha256": "52b28d567cd39b0f9649b71603960de94f55ae4b379dc1ef68002dbc1701ce2f",
+            "label": 0
+          },
+          {
+            "path": "C:\\Users\\imia\\AppData\\Local\\Temp\\aoi_feat_synth_iabrrpfy\\synthetic\\test\\defect_synth\\0011.png",
+            "sha256": "a52ce0f6c8443ca3a00850b6479b1fd947163beae1e100dbe3b9dd64147f42de",
+            "label": 1
+          },
+          {
+            "path": "C:\\Users\\imia\\AppData\\Local\\Temp\\aoi_feat_synth_iabrrpfy\\synthetic\\test\\defect_synth\\0024.png",
+            "sha256": "b016a6ad1fef7dbe19ca43108ea6a0ea12e6886e1d276344f4618667505c635b",
+            "label": 1
+          },
+          {
+            "path": "C:\\Users\\imia\\AppData\\Local\\Temp\\aoi_feat_synth_iabrrpfy\\synthetic\\test\\good\\0016.png",
+            "sha256": "0ba29e1d4ffe796023e6146b7f4afc2610827072f30d9fb0896c9233f08eec28",
+            "label": 0
+          },
+          {
+            "path": "C:\\Users\\imia\\AppData\\Local\\Temp\\aoi_feat_synth_iabrrpfy\\synthetic\\test\\defect_synth\\0004.png",
+            "sha256": "11b1b7d0db239b90691729a8e54530dbd06673c80c894907ddf13d28f1bf60f8",
+            "label": 1
+          },
+          {
+            "path": "C:\\Users\\imia\\AppData\\Local\\Temp\\aoi_feat_synth_iabrrpfy\\synthetic\\test\\good\\0002.png",
+            "sha256": "5be620f832d8959260ab580205946a19a9eef9630bad7b6f83278a0431484687",
+            "label": 0
+          },
+          {
+            "path": "C:\\Users\\imia\\AppData\\Local\\Temp\\aoi_feat_synth_iabrrpfy\\synthetic\\test\\good\\0020.png",
+            "sha256": "1f44e2cc92f34901371ac74d490ac917701226c3fa3074d109ac1c53fdc9bd1d",
+            "label": 0
+          },
+          {
+            "path": "C:\\Users\\imia\\AppData\\Local\\Temp\\aoi_feat_synth_iabrrpfy\\synthetic\\test\\good\\0025.png",
+            "sha256": "46ffb8dcac20d9d23b9f1f9bfac5c498e614bb19a9f41339788653475eb35550",
+            "label": 0
+          },
+          {
+            "path": "C:\\Users\\imia\\AppData\\Local\\Temp\\aoi_feat_synth_iabrrpfy\\synthetic\\test\\good\\0011.png",
+            "sha256": "43cb2bb6932476896b91ce8645384ea696cec68f259f1e3ee2dd7c93526dde1c",
+            "label": 0
+          },
+          {
+            "path": "C:\\Users\\imia\\AppData\\Local\\Temp\\aoi_feat_synth_iabrrpfy\\synthetic\\test\\good\\0017.png",
+            "sha256": "8b9ed46993069f277f127505e2e632f8d77b3d076af2656ea9d3e15a066c00e8",
+            "label": 0
+          },
+          {
+            "path": "C:\\Users\\imia\\AppData\\Local\\Temp\\aoi_feat_synth_iabrrpfy\\synthetic\\test\\defect_synth\\0005.png",
+            "sha256": "ed4758db17e2f06c4a77081fba53f146d7c7d0ec1b20a099a7fbcce473dfdc4b",
+            "label": 1
+          },
+          {
+            "path": "C:\\Users\\imia\\AppData\\Local\\Temp\\aoi_feat_synth_iabrrpfy\\synthetic\\test\\good\\0024.png",
+            "sha256": "b148d7f944fb2d61159d9358379027b6a74fd9f074fe78c3ecee38f7aea04b8a",
+            "label": 0
+          },
+          {
+            "path": "C:\\Users\\imia\\AppData\\Local\\Temp\\aoi_feat_synth_iabrrpfy\\synthetic\\test\\good\\0012.png",
+            "sha256": "4a45537a6c8c621914813ca3d0466dec6f7332174ef540e1665846bcd6cfba4f",
+            "label": 0
+          },
+          {
+            "path": "C:\\Users\\imia\\AppData\\Local\\Temp\\aoi_feat_synth_iabrrpfy\\synthetic\\test\\good\\0014.png",
+            "sha256": "fc74c021c4cfb0e51f86390f2ca69d00e343fa61b9b311a47f5a8c82518828d8",
+            "label": 0
+          },
+          {
+            "path": "C:\\Users\\imia\\AppData\\Local\\Temp\\aoi_feat_synth_iabrrpfy\\synthetic\\test\\defect_synth\\0028.png",
+            "sha256": "f88b5c070992d012eff21b406e11038f733a609fe1481472136a62f49ce924d3",
+            "label": 1
+          },
+          {
+            "path": "C:\\Users\\imia\\AppData\\Local\\Temp\\aoi_feat_synth_iabrrpfy\\synthetic\\test\\good\\0026.png",
+            "sha256": "72ac53d22671e131a8d19a412db1187311f75c84901512b900660509f50cfe75",
+            "label": 0
+          },
+          {
+            "path": "C:\\Users\\imia\\AppData\\Local\\Temp\\aoi_feat_synth_iabrrpfy\\synthetic\\test\\good\\0000.png",
+            "sha256": "88b6e046187d37d92b80cff98dfca03f2ea9495b88e2c180d9aba8383312dfcf",
+            "label": 0
+          },
+          {
+            "path": "C:\\Users\\imia\\AppData\\Local\\Temp\\aoi_feat_synth_iabrrpfy\\synthetic\\test\\defect_synth\\0029.png",
+            "sha256": "f3823059f82ea3ab8198c4d295ca23fb7d863f4531f0d08bccc9775a2da48bf7",
+            "label": 1
+          },
+          {
+            "path": "C:\\Users\\imia\\AppData\\Local\\Temp\\aoi_feat_synth_iabrrpfy\\synthetic\\test\\good\\0010.png",
+            "sha256": "63fb8fdc68de46928624083951c6dda3547613a70310105b54a58f662803cabf",
+            "label": 0
+          },
+          {
+            "path": "C:\\Users\\imia\\AppData\\Local\\Temp\\aoi_feat_synth_iabrrpfy\\synthetic\\test\\good\\0027.png",
+            "sha256": "a475f360cd27ddfcedc0df4031efecf55f9c4115344773744ec21a06664ac147",
+            "label": 0
+          },
+          {
+            "path": "C:\\Users\\imia\\AppData\\Local\\Temp\\aoi_feat_synth_iabrrpfy\\synthetic\\test\\good\\0018.png",
+            "sha256": "32856f805c08bb9f541bc794692b940ee64cb45ebff6ca6484fdb4a146cb57eb",
+            "label": 0
+          },
+          {
+            "path": "C:\\Users\\imia\\AppData\\Local\\Temp\\aoi_feat_synth_iabrrpfy\\synthetic\\test\\defect_synth\\0020.png",
+            "sha256": "82333dedfa27c4923ef2639d9978fde4a2e27a0635ceb3ba8993b3c474a93eca",
+            "label": 1
+          },
+          {
+            "path": "C:\\Users\\imia\\AppData\\Local\\Temp\\aoi_feat_synth_iabrrpfy\\synthetic\\test\\good\\0001.png",
+            "sha256": "43ceedbd5e58ab978b1cfc59d02e55402caead01a816e31e277c4064d9ffd4af",
+            "label": 0
+          },
+          {
+            "path": "C:\\Users\\imia\\AppData\\Local\\Temp\\aoi_feat_synth_iabrrpfy\\synthetic\\test\\good\\0019.png",
+            "sha256": "84596eb9c647a810ab470a951403aa6bad367195e7283ff9fc6430c73ca15b5e",
+            "label": 0
+          },
+          {
+            "path": "C:\\Users\\imia\\AppData\\Local\\Temp\\aoi_feat_synth_iabrrpfy\\synthetic\\test\\good\\0013.png",
+            "sha256": "b5659923c891ff26225f5174e9e102e3dd878d7f1863db277a8220e780c8c0da",
+            "label": 0
+          },
+          {
+            "path": "C:\\Users\\imia\\AppData\\Local\\Temp\\aoi_feat_synth_iabrrpfy\\synthetic\\test\\good\\0023.png",
+            "sha256": "fab7475b6327a0216f48247587d5cbe9489fb99b8dc2263d65f52b22d8cc5124",
+            "label": 0
+          },
+          {
+            "path": "C:\\Users\\imia\\AppData\\Local\\Temp\\aoi_feat_synth_iabrrpfy\\synthetic\\test\\good\\0028.png",
+            "sha256": "1ee6789dedf76f57e531fcfa842d333f63a7d709a222e8a84844166f4f952692",
+            "label": 0
+          },
+          {
+            "path": "C:\\Users\\imia\\AppData\\Local\\Temp\\aoi_feat_synth_iabrrpfy\\synthetic\\test\\defect_synth\\0010.png",
+            "sha256": "29d41ae037b14260d7aa3e0101f8fa62ae11803b0cdd07563f9e59f92182dab7",
+            "label": 1
+          },
+          {
+            "path": "C:\\Users\\imia\\AppData\\Local\\Temp\\aoi_feat_synth_iabrrpfy\\synthetic\\test\\good\\0005.png",
+            "sha256": "0ebdec87f6f65fb0f84da774244ff26e4751064460092e1e7f6b04d7d47a29e3",
+            "label": 0
+          },
+          {
+            "path": "C:\\Users\\imia\\AppData\\Local\\Temp\\aoi_feat_synth_iabrrpfy\\synthetic\\test\\good\\0021.png",
+            "sha256": "6821b4132e62201650562f4556dcf6884895c70aac794135fe1c96c83c83390d",
+            "label": 0
+          },
+          {
+            "path": "C:\\Users\\imia\\AppData\\Local\\Temp\\aoi_feat_synth_iabrrpfy\\synthetic\\test\\good\\0009.png",
+            "sha256": "74eb75ee24d40c658c725533d79ededcb954ae8bc4e5a9fd70fbef6569685e38",
+            "label": 0
+          }
+        ]
+      },
+      "model_snapshot": {
+        "type": "experimental_group_knn",
+        "k": 3,
+        "zclip": 10.0,
+        "reference_sha256": "7d4760077a9921224502031fbcb9ef9685d4cfd991ba63213c07086f8f56a4b6",
+        "production_snapshot": "unknown",
+        "fitted_artifact": "unknown",
+        "evaluation_protocol": {
+          "n_perm": 5,
+          "seed": 42
+        }
+      }
+    }
+  }
+}

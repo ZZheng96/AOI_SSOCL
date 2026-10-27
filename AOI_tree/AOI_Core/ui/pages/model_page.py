@@ -97,6 +97,9 @@ def handle_activation_result(page: QWidget, client: ApiClient, category: str,
         return False
     if isinstance(res, dict) and res.get("_status") == 409:
         detail = res.get("detail")
+        if isinstance(detail, dict) and detail.get("force_allowed") is False:
+            warn(page, "激活被拒绝（不可强制）", str(detail.get("message") or "特征门禁未通过"))
+            return True
         report = detail.get("gate_report") if isinstance(detail, dict) else {}
         dlg = ActivationGateDialog(category, False, report or {}, page)
         if dlg.exec() and dlg.force_requested:
@@ -168,6 +171,63 @@ def _user_warning(w) -> str:
     return s
 
 
+SLOT_NAMES = {
+    "sem": "正常语义记忆", "disc": "伪异常判别头", "shead": "偏离检测头",
+    "trad": "传统特征距离", "blob": "斑点检测", "layout": "布局统计",
+    "inp": "图内原型", "tpl": "模板差分", "color": "颜色分布",
+    "open": "开放集哨兵（独立告警，非融合）",
+}
+
+MODEL_HELP = """<h3>模型管理做什么？每品类一个模型吗？</h3>
+<p>管理品类的检测方案与版本：准备、查看评估、激活、回滚和快照迁移。
+按品类隔离，每个品类可保留多个版本，但只有一个当前指针。
+数据源只是取样与导航入口；不同数据源的同名品类共享模型和当前版本，激活/回滚会共同受影响。</p>
+<h3>模型是什么？槽位怎样协作？</h3>
+<p>不是每品类重训一个完整大网络。共享冻结的特征提取骨干，各品类保存自己的正常/缺陷记忆库、
+检测头、分数校准、融合权重、阈值及学习状态。快照不仅是神经网络权重；迁移仍依赖外部骨干资产。</p>
+<p>槽位是并行证据分支，不是串联流水线；按数据条件、运行模式和配置启用，不固定全部开启。
+语义记忆比较正常 patch 最近余弦距离；判别头学习正常与伪异常；偏离头输出 margin 偏离而非概率。
+传统距离、斑点、布局、图内原型、模板、颜色提供其他证据；开放集 PCA 哨兵独立告警，不参与融合。</p>
+<p>各分支分数先校准，再按“权重 × confidence”归一化融合，不是缺陷概率，也不是百分制质量分。
+阈值分为正常/灰区/异常，仍有后处理；router 当前不实际接管融合。</p>
+<h3>持续学习和页面操作</h3>
+<p>骨干不动；记忆库、检测头、校准和权重等仅在条件满足且门控允许时更新，不是每条反馈全量重训。
+默认候选反馈隔离，需要独立验收、批准、激活才上线。legacy 即学是旧兼容路径，可能更新内存态；
+本页“固化学习快照”实际调用 consolidate，把已有学习状态落成版本，不等于处理全部待反馈或完成候选发布。
+是否自动激活取决于后端 auto_activate 设置（默认关闭），不能把任务完成当作已上线。</p>
+<p>“准备模型”取所选数据源预训练组，准备结果会明确是否激活；
+“学习效果”跳转学习页；版本历史可选版本激活、回滚或提交 A/B，结果到评估看板查看。
+导出当前版本为 zip，导入不自动激活。独立验收与批准不在本页完成。</p>
+<h3>如何看评分？</h3>
+<p>没有总分。当前版本最近精度评估只采用明确绑定版本/模型 ID 的完成记录；未绑定不冒认。
+AUROC/AP 看排序能力，F1、误报/漏检来自最优 F1 阈值扫描，不是生产阈值在线效果。
+历史最佳验证 AUC 是全品类所有 accuracy 记录的最好值，不代表当前版本或当前数据源。</p>"""
+
+
+def _latest_bound_eval(runs: list[dict], model: dict) -> dict | None:
+    matches = []
+    for run in runs:
+        metrics = run.get("metrics") or {}
+        if (run.get("category") != model.get("category")
+                or run.get("run_type") != "accuracy"
+                or metrics.get("status") not in (None, "completed")):
+            continue
+        version = metrics.get("model_version", run.get("model_version"))
+        mid = metrics.get("model_id", run.get("model_id"))
+        if version is None and mid is None:
+            continue
+        if version is not None:
+            parsed = _version_num({"version": version})
+            if parsed is None or parsed != _version_num(model):
+                continue
+        if mid is not None and str(mid) != str(model.get("id")):
+            continue
+        if not any(metrics.get(k) is not None for k in ("auroc", "ap", "f1", "fp", "fn")):
+            continue
+        matches.append(run)
+    return max(matches, key=lambda r: int(r.get("id") or 0), default=None)
+
+
 class ModelPage(QWidget):
     """模型管理页：左侧「数据源→品类」导航树（当前工单口径），
     右侧品类模型面板（状态头 + 当前状态 + 主操作 + 折叠版本历史）。"""
@@ -183,6 +243,7 @@ class ModelPage(QWidget):
         self._monitor = task_monitor
         self._get_workorder = lambda: None   # main_window 启动后注入
         self._models: list[dict] = []
+        self._eval_runs: list[dict] | None = None
         self._readiness: dict[str, dict] = {}
         self._sl_by_cat: dict[str, dict] = {}
         self._cur: dict | None = None        # 当前选中品类上下文
@@ -201,8 +262,15 @@ class ModelPage(QWidget):
         top.addWidget(make_banner(
             "模型管理：按数据源组织品类模型，准备 → 验收 → 激活 → 反馈学习"))
         attach_level_badge(self, top)
+        # 与其他页面一致：横幅 + 数据条件徽标都靠左，右侧留空（此前该行缺 stretch，
+        # 徽标会被推到最右，和其他页顶部风格不一致——前端反馈 2026-10-14）
+        top.addStretch(1)
+        help_btn = QPushButton("模型是什么 / 如何操作与评分")
+        help_btn.clicked.connect(self._show_model_help)
+        top.addWidget(help_btn)
         lay.addLayout(top)
-        tip = QLabel("左侧选择「数据源 → 品类」查看模型状态；版本历史默认折叠")
+        tip = QLabel("按品类管理多个版本、一个当前指针；不同数据源的同名品类共享模型，激活/回滚共同生效。")
+        tip.setWordWrap(True)
         tip.setProperty("subtext", True)
         lay.addWidget(tip)
 
@@ -262,7 +330,16 @@ class ModelPage(QWidget):
         self.lbl_version = QLabel("—")
         st.addRow("当前版本：", self.lbl_version)
         self.lbl_auroc = QLabel("—")
-        st.addRow("历史最佳验证 AUC：", self.lbl_auroc)
+        st.addRow("品类历史最佳验证 AUC：", self.lbl_auroc)
+        self.lbl_auroc.setToolTip("品类所有 accuracy 评估中的最佳 AUROC；非当前版本、非当前数据源的评分。")
+        self.lbl_eval = QLabel("评估记录未加载")
+        self.lbl_eval.setWordWrap(True)
+        self.lbl_eval.setTextFormat(Qt.PlainText)
+        self.lbl_eval.setTextInteractionFlags(Qt.TextSelectableByMouse)
+        st.addRow("当前版本最近精度评估：", self.lbl_eval)
+        self.lbl_slots = QLabel("未知（版本元数据未提供）")
+        self.lbl_slots.setWordWrap(True)
+        st.addRow("当前版本槽位（只读）：", self.lbl_slots)
         self.lbl_pending = QLabel("—")
         st.addRow("待学习反馈：", self.lbl_pending)
         self.lbl_source = QLabel("—")
@@ -289,7 +366,8 @@ class ModelPage(QWidget):
         self.edit_note.setPlaceholderText(
             "本次学习的说明（可选），如：换型后首批反馈")
         btn_row.addWidget(self.edit_note, 1)
-        self.btn_learn = QPushButton("学习反馈并更新模型")
+        self.btn_learn = QPushButton("固化学习快照")
+        self.btn_learn.setToolTip("巩固已有学习状态生成快照；不等于消费所有待反馈，也不是隔离候选的验收/批准发布。激活遵循后端设置。")
         self.btn_learn.setProperty("primary", True)
         self.btn_learn.clicked.connect(self._on_self_learning)
         btn_row.addWidget(self.btn_learn)
@@ -358,6 +436,51 @@ class ModelPage(QWidget):
         lb.setProperty("heading", True)
         return lb
 
+    def _show_model_help(self) -> None:
+        from PySide6.QtWidgets import QTextBrowser
+        dlg = QDialog(self)
+        dlg.setWindowTitle("模型管理说明")
+        dlg.resize(760, 640)
+        lay = QVBoxLayout(dlg)
+        browser = QTextBrowser()
+        browser.setHtml(MODEL_HELP)
+        lay.addWidget(browser)
+        buttons = QDialogButtonBox(QDialogButtonBox.Close)
+        buttons.rejected.connect(dlg.reject)
+        lay.addWidget(buttons)
+        dlg.exec()
+
+    def _fill_evals(self, runs: list | None) -> None:
+        self._eval_runs = runs
+        self._refresh_panel()
+
+    def _show_version_eval(self, active: dict | None) -> None:
+        self.lbl_eval.setToolTip("")
+        slots = (active.get("metrics") or {}).get("slot_names") if active else None
+        self.lbl_slots.setText("、".join(SLOT_NAMES.get(n, str(n)) for n in slots)
+                               if isinstance(slots, list) and slots
+                               else "未知（版本元数据未提供）")
+        if active is None:
+            self.lbl_eval.setText("未激活或当前模型记录未加载，无法绑定评估")
+            return
+        if self._eval_runs is None:
+            self.lbl_eval.setText("评估记录未加载或读取失败，暂不可用")
+            return
+        run = _latest_bound_eval(self._eval_runs, active)
+        if run is None:
+            self.lbl_eval.setText("未评估（无明确绑定当前版本的完成记录；旧记录未绑定不计入）")
+            return
+        m = run.get("metrics") or {}
+        values = " · ".join(f"{label}={_fmt_metric(m.get(key))}" for key, label in
+                             (("auroc", "AUROC"), ("ap", "AP"), ("f1", "F1"),
+                              ("fp", "误报数"), ("fn", "漏检数"),
+                              ("fpr", "误报率"), ("recall_defect", "检出率")))
+        self.lbl_eval.setText(
+            f"EvalRun #{run.get('id')} · {active.get('version')} · {run.get('created_at') or '时间未知'}\n"
+            f"{run.get('dataset_desc') or '数据集描述缺失'} · 样本 {run.get('n_images', '未知')}\n"
+            f"{values}\n最优 F1 阈值={_fmt_metric(m.get('threshold'))}；F1/误报/检出率为评估集阈值效果（比率为 0–1，非总分）；检出率=TP/(TP+FN)，FN 为漏检数")
+        self.lbl_eval.setToolTip(f"记录：{run.get('name') or '—'}\n快照元数据 SHA256：{m.get('snapshot_meta_sha256') or '未记录'}")
+
     # ── 数据加载 ─────────────────────────────────
     def update_level_badge(self) -> None:
         """顶栏工单切换时同步数据条件徽标。"""
@@ -369,6 +492,8 @@ class ModelPage(QWidget):
         run_async(self, self._client.models_readiness, self._fill_readiness)
         run_async(self, self._client.list_models, self._fill_models)
         run_async(self, self._client.self_learning_status, self._fill_sl)
+        self._eval_runs = None
+        run_async(self, lambda: self._client.list_eval_runs(all_pages=True), self._fill_evals)
 
     def _emit_open_learning(self) -> None:
         """「学习曲线」按钮：带当前选中品类跳转（多品类工单全局品类为空，
@@ -547,6 +672,7 @@ class ModelPage(QWidget):
 
         # 当前状态
         active = next((m for m in models if m.get("is_active")), None)
+        self._show_version_eval(active)
         ver = active.get("version") if active else it.get("active_version")
         self.lbl_version.setText(str(ver) if ver is not None else "未激活")
         # 导出按钮仅在有激活版本时可用（导出对象=当前激活版本）
@@ -581,7 +707,8 @@ class ModelPage(QWidget):
             self.btn_prepare.setVisible(True)
         else:
             self.lbl_op_hint.setText(
-                "可「学习反馈并更新模型」生成新版本；或重新准备（换型/数据大改时）")
+                "可重新准备（换型/数据大改时）；「固化学习快照」仅落盘已有学习状态，"
+                "不保证消费待反馈或发布候选。候选需独立验收、批准、激活；巩固是否激活遵循后端设置。")
             self.btn_prepare.setText("重新准备模型")
             self.btn_prepare.setVisible(True)
         self.btn_learn.setVisible(has_models)
@@ -619,7 +746,11 @@ class ModelPage(QWidget):
                            (("AUC", metrics.get("auroc")),
                             ("AP", metrics.get("ap")),
                             ("F1", metrics.get("f1"))) if v is not None)
-            self.tbl.setItem(row, 3, QTableWidgetItem(txt or "—"))
+            binding = metrics.get("feature_revision_binding") or {}
+            revision_txt = binding.get("revision_id") or "未知（生产特征未绑定 revision）"
+            metric_item = QTableWidgetItem(txt or "—")
+            metric_item.setToolTip(f"特征版本：{revision_txt}")
+            self.tbl.setItem(row, 3, metric_item)
             btn_ab = QPushButton("A/B 对比")
             btn_ab.clicked.connect(
                 lambda _=False, mm=m: self._on_ab(mm))
@@ -672,7 +803,9 @@ class ModelPage(QWidget):
             return
         cat = self._cur["category"]
         if not notify(self, "确认学习更新",
-                      f"把积累的反馈固化到「{cat}」模型并生成新版本？",
+                      f"把「{cat}」已有学习状态固化为新快照？\n"
+                      "此操作不是候选反馈验收/批准，也不保证消费全部待反馈。\n"
+                      "是否自动激活由后端 auto_activate 设置决定（默认关闭）；同名品类跨数据源共享。", 
                       ask=True):
             return
         self._sl_running = True
@@ -713,7 +846,12 @@ class ModelPage(QWidget):
             self.bar_learn.setVisible(False)
             if status in ("done", "success"):
                 cat = (self._cur or {}).get("category", "")
-                notify(self, "学习更新", f"「{cat}」已生成新版本")
+                result = t.get("result") or {}
+                activation = ("已按后端设置激活" if result.get("activated") is True
+                              else "未激活，需独立验收后按流程激活"
+                              if result.get("activated") is False
+                              else "激活状态未返回，请刷新当前版本确认")
+                notify(self, "学习快照", f"「{cat}」已生成新版本 {result.get('version') or ''}；{activation}")
             else:
                 warn(self, "学习更新失败", str(t.get("message") or t.get("error") or ""))
             self.reload()

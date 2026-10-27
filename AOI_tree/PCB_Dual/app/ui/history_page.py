@@ -73,6 +73,8 @@ def _summary_from_record(record: dict) -> DetectSummary:
                 error_code=item.get("error_code"),
                 error_message=item.get("error_message"),
                 manual_verdict=item.get("manual_verdict"),
+                metadata={"execution_mode": item.get("execution_mode", "unknown"),
+                          "request_snapshot": item.get("request_snapshot")},
             )
         )
     overall = str(record.get("overall") or "NG")
@@ -87,6 +89,7 @@ def _summary_from_record(record: dict) -> DetectSummary:
         source=str(record.get("source") or "inspect"),
         gate_blocked=bool(record.get("gate_blocked")),
         gate_message=str(record.get("gate_message") or ""),
+        metadata=dict(record.get("metadata") or {}),
     )
 
 
@@ -133,13 +136,26 @@ class HistoryPage(QWidget):
         root.addWidget(self.lbl_stats)
 
         splitter = QSplitter(Qt.Horizontal)
-        self.table = QTableWidget(0, 7)
-        self.table.setHorizontalHeaderLabels(["时间", "模板", "图号", "判定", "复判", "NG 摘要", "耗时"])
+        self.table = QTableWidget(0, 9)
+        self.table.setHorizontalHeaderLabels(["时间", "模板", "图号", "判定", "传统引擎", "特征引擎", "复判", "NG 摘要", "耗时"])
         self.table.setSelectionBehavior(QAbstractItemView.SelectionBehavior.SelectRows)
         self.table.setSelectionMode(QAbstractItemView.SelectionMode.SingleSelection)
         self.table.setEditTriggers(QAbstractItemView.EditTrigger.NoEditTriggers)
         self.table.verticalHeader().setVisible(False)
-        self.table.horizontalHeader().setStretchLastSection(True)
+        header = self.table.horizontalHeader()
+        header.setMinimumSectionSize(48)
+        header.setSectionResizeMode(QHeaderView.ResizeMode.Stretch)
+        for column in (0, 3, 4, 6):
+            header.setSectionResizeMode(
+                column,
+                QHeaderView.ResizeMode.ResizeToContents,
+            )
+        self.table.setWordWrap(True)
+        self.table.setTextElideMode(Qt.TextElideMode.ElideNone)
+        header.setStretchLastSection(False)
+        self.table.setHorizontalScrollBarPolicy(
+            Qt.ScrollBarPolicy.ScrollBarAlwaysOff
+        )
         self.table.setAlternatingRowColors(True)
         splitter.addWidget(self.table)
 
@@ -266,11 +282,26 @@ class HistoryPage(QWidget):
                 str(x.get("defect_type") or x.get("display_name") or x.get("algorithm") or "")
                 for x in (r.get("ng_list") or [])
             )
+            metadata = dict(r.get("metadata") or {})
+            traditional = dict(metadata.get("traditional") or {})
+            feature = dict(metadata.get("feature") or {})
+            trad_text = str(traditional.get("overall") or "—")
+            trad_ms = traditional.get("elapsed_ms")
+            if trad_ms:
+                trad_text += f" · {trad_ms:g} ms"
+            feat_text = str(feature.get("overall") or "—")
+            if feature.get("score") is not None:
+                feat_text += f" · {float(feature['score']):.4f}"
+            feat_ms = feature.get("elapsed_ms")
+            if feat_ms:
+                feat_text += f" · {feat_ms:g} ms"
             vals = [
                 str(r.get("time") or "-"),
                 tid,
                 Path(str(r.get("test_image") or "")).name or "-",
                 overall,
+                trad_text,
+                feat_text,
                 str(r.get("manual_overall_verdict") or "-"),
                 ng_names or "-",
                 f'{r.get("elapsed_ms") or "-"} ms' if r.get("elapsed_ms") else "-",
@@ -308,6 +339,16 @@ class HistoryPage(QWidget):
             if test and Path(str(test)).exists():
                 img = imread_unicode(test)
         self.canvas.bind_job(img, summary, overlays, filename=str(r.get("test_image") or ""))
+        aux = dict(summary.metadata.get("aux_pair") or {})
+        archived = dict(aux.get("archived_paths") or {})
+        paths = {}
+        for key in ("heatmap", "overlay"):
+            name = archived.get(f"{key}_path")
+            if name:
+                p = Path(r["_dir"]) / name
+                if p.exists():
+                    paths[key] = str(p)
+        self.canvas.set_heatmap_paths(paths)
 
     def open_folder(self) -> None:
         r = self._current()

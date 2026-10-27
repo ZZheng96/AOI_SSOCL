@@ -2,14 +2,16 @@
 from __future__ import annotations
 
 import os
-from datetime import date
+from datetime import date, datetime
 from pathlib import Path
 
 from fastapi import APIRouter, Depends, HTTPException, Request
 from fastapi.responses import FileResponse
 from sqlalchemy import func
 
-from ..core.config import get_settings
+from ..core.config import (BUSINESS_BUDGET_SPEC, FEEDBACK_EVENT_WAL_RETENTION,
+                           FROZEN_THRESHOLD_KEYS, GOVERNANCE_DECISIONS_SPEC,
+                           ConfigValidationError, get_settings)
 from ..core.security import require_role
 from ..db.database import log_action, session_scope
 from ..db.models import (ConsolidationBatch, ConsolidationFeedback, DataSource,
@@ -25,7 +27,17 @@ def api_health():
     """健康检查（仅探测设备，不加载模型）。"""
     info = device_info()
     return {"status": "ok", "device": info["device"],
-            "gpu_name": info["gpu_name"]}
+            "gpu_name": info["gpu_name"],
+            "gpu_short": info.get("gpu_short"),
+            "tops_int8": info.get("tops_int8"),
+            "baseline_name": info.get("baseline_name"),
+            "baseline_ratio_pct": info.get("baseline_ratio_pct"),
+            "latency_factor": info.get("latency_factor"),
+            "tflops_fp32": info.get("tflops_fp32"),
+            "vram_gb": info.get("vram_gb"),
+            "compute_capability": info.get("compute_capability"),
+            "sm_count": info.get("sm_count"),
+            "clock_ghz": info.get("clock_ghz")}
 
 
 @router.get("/system/info")
@@ -44,6 +56,17 @@ def api_system_info(request: Request):
         "device": info["device"],
         "gpu_name": info["gpu_name"],
         "torch_version": info["torch_version"],
+        # 算力口径（UI 顶栏「算力」徽标用；吞吐/占比均为估算值，非厂商标称值）
+        "gpu_short": info.get("gpu_short"),
+        "tops_int8": info.get("tops_int8"),
+        "baseline_name": info.get("baseline_name"),
+        "baseline_ratio_pct": info.get("baseline_ratio_pct"),
+        "latency_factor": info.get("latency_factor"),
+        "tflops_fp32": info.get("tflops_fp32"),
+        "vram_gb": info.get("vram_gb"),
+        "compute_capability": info.get("compute_capability"),
+        "sm_count": info.get("sm_count"),
+        "clock_ghz": info.get("clock_ghz"),
         "n_images": n_images,
         "n_videos": n_videos,
         "n_detections": n_detections,
@@ -56,7 +79,22 @@ def api_system_info(request: Request):
         "role": getattr(request.state, "role", None) or "admin",
         # M16f（review R9）：能力开关状态透出——运维自检"我以为配了"类事故
         "features": _feature_flags(),
+        # AC-072：业务预算与保留期（UI 统计/评估页达标线）
+        "business_budget": get_settings().business_budget(),
+        # 第三轮：待决策事项当前值 + 依赖锁一致性
+        "governance_decisions": get_settings().governance_decisions(),
+        "dependency_lock": _dependency_lock_info(),
     }
+
+
+def _dependency_lock_info() -> dict:
+    from ..core.deplock import lock_status
+    try:
+        st = lock_status()
+    except Exception as e:  # noqa: BLE001 自检信息不阻断系统概览
+        return {"ok": False, "error": str(e)}
+    st["policy"] = get_settings().governance_decisions()["dependency_lock_policy"]
+    return st
 
 
 def _feature_flags() -> dict:
@@ -88,10 +126,14 @@ _CONFIG_SCHEMA = [
     ("pipeline", "review_backlog_low", "int", "复判积压低水位",
      "待复核消化到该值时自动恢复送检（默认 10），须小于高水位"),
     ("self_learning", "trigger_min_feedback", "int", "巩固提醒阈值",
-     "未巩固反馈达到该数量时状态表提示（即学始终即时生效）"),
+     "有效待消费反馈达到该数量时提示等待候选巩固；不自动训练或激活生产模型"),
     ("self_learning", "auto_activate", "bool", "巩固后自动激活",
      "开启后巩固生成的新版本自动切换为当前版本（默认关，人工 A/B 后再激活）"),
+    ("self_learning", "learning_parallel", "bool", "学习与推理并行",
+     "默认关：候选学习/巩固在检查点让行前台推理（推理结束 300ms 后再继续），推理不受学习拖慢、"
+     "学习完成时间随产线负载延后；开启后两者并发争用 GPU/CPU，学习更快但推理会变慢"),
     ("evaluation", "benchmark_n_images", "int", "延迟基准样本数", ""),
+    ("evaluation", "benchmark_warmup", "int", "延迟基准预热次数", ""),
     ("notify", "webhook_url", "str", "Webhook 地址",
      "空=禁用；检测/告警事件推送到 MES/上位机"),
     ("notify", "events", "list", "订阅事件",
@@ -104,20 +146,139 @@ _CONFIG_SCHEMA = [
     ("plc", "trigger_dir", "str", "PLC 触发目录", "空=禁用；光电信号落图目录（FIFO 取最早图检测）"),
     ("logging", "max_mb", "int", "日志单文件 MB", "超出自动轮转（重启后生效）"),
     ("logging", "backups", "int", "日志保留份数", "重启后生效"),
+    # AC-072 业务预算与保留期（用户定值 2026-10-13；范围/默认见 BUSINESS_BUDGET_SPEC）
+    ("business_budget", "g2_max_fpr_pct", "float", "G2 正常图误报率上限 %",
+     "统计页/评估页/候选验收的 FPR 达标线，超限标红（默认 5%）"),
+    ("business_budget", "g2_min_recall_pct", "float", "G2 缺陷召回下限 %",
+     "评估页/候选验收的缺陷召回达标线，低于标红（默认 95%）"),
+    ("business_budget", "g6_max_old_recall_drop_pt", "float", "G6 旧域召回回退上限 pt/版本",
+     "候选验收：新版本相对父版本的旧域召回最多下降多少个百分点（默认 2pt）"),
+    ("business_budget", "max_gray_ratio_pct", "float", "灰区占比上限 %",
+     "统计页灰区率/候选验收的灰区达标线，超限标黄（默认 15%）"),
+    ("business_budget", "raw_hot_days", "int", "原图热存天数",
+     "仅登记与展示，系统不自动删除（默认 90 天）"),
+    ("business_budget", "raw_cold_months", "int", "原图冷归档月数",
+     "仅登记与展示，系统不自动删除（默认 12 个月）"),
+    ("business_budget", "heatmap_overlay_days", "int", "热图/overlay/mask 保留天数",
+     "仅登记与展示，系统不自动删除（默认 30 天）"),
+    ("business_budget", "snapshot_keep_recent", "int", "模型快照保留最近版本数",
+     "每品类保留最近 N 版；仅登记与展示，系统不自动删除（默认 10）"),
+    ("business_budget", "snapshot_keep_activated", "bool", "保留所有曾激活快照",
+     "仅登记与展示（默认开）"),
+    ("business_budget", "evalrun_audit_months", "int", "EvalRun/审计日志保留月数",
+     "仅登记与展示，系统不自动删除（默认 12 个月）"),
+    ("business_budget", "label_late_tolerance_days", "int", "标签迟到容忍天数",
+     "超时标签只统计不入训（默认 7 天）；当前仅存配置，入训路径尚未接入"),
+    # 第三轮（2026-10-14）：总览 §7 待用户拍板事项（默认 = 保持现状）
+    ("governance_decisions", "gt_threshold_frozen", "bool", "冻结 GT 与业务阈值（AC-067/072）",
+     "开启后 G2/G6/灰区四项业务阈值与 GT 数据集引用锁定，修改接口返回 409；需先关闭冻结才能调整"),
+    ("governance_decisions", "gt_threshold_frozen_at", "str", "冻结时间",
+     "服务端在开启冻结时自动记录（只读）；关闭冻结时清空"),
+    ("governance_decisions", "gt_dataset_ref", "str", "GT 数据集引用",
+     "冻结的 GT 数据集标识/路径（登记用）；冻结期间不可修改"),
+    ("governance_decisions", "ac045_l1_real_training_enabled", "bool", "启用 AC-045 L1 真实训练",
+     "P2 未实现项的启用意图登记（默认关）；当前无代码路径读取该开关"),
+    ("governance_decisions", "ac046_l1_pollution_exit_enabled", "bool", "启用 AC-046 L1 污染与退出",
+     "P2 未实现项的启用意图登记（默认关）；当前无代码路径读取该开关"),
+    ("governance_decisions", "candidate_release_mode", "choice", "候选发布策略",
+     "manual=批准后由管理员手动激活；auto_on_approve=管理员批准成功后自动激活该候选"),
+    ("governance_decisions", "calibration_isolation", "choice", "校准隔离模式（holdout）",
+     "传给 offline.resolve_isolation：auto=按训练集规模自动；self=自校准；holdout=留出集校准"),
+    ("governance_decisions", "dependency_lock_policy", "choice", "依赖锁不一致策略",
+     "当前环境与 requirements-lock.txt 不一致时：warn=仅告警；block=阻断候选激活"),
+    ("governance_decisions", "ac062_legacy_artifact_dir", "str", "AC-062 旧 trad 协议工件目录",
+     "由用户提供旧工件位置（登记用）；为空表示尚未提供"),
+    ("governance_decisions", "sync28_29_accepted", "bool", "SYNC-28/29 稳定版同步验收",
+     "用户确认稳定版同步验收通过（登记用，系统不自动勾选）"),
+    ("governance_decisions", "production_acceptance_signed", "bool", "生产验收确认",
+     "生产验收框只能由用户勾选（登记用，系统不自动勾选）"),
+    ("governance_decisions", "blob_gpu_enabled", "bool", "blob 槽位 GPU 加速",
+     "默认关。开启后 blob 槽位走 GPU（与环境变量 AOI_BLOB_GPU、槽位 cfg.gpu 任一为真即启用；"
+     "AOI_BLOB_GPU=0 显式关闭优先）。实测单图 P95 从 316.8ms 降到 181.8ms；"
+     "开启前需先复核 blob 和融合的 AUROC"),
+    ("governance_decisions", "approved_extra_good_batches", "str", "批准纳入 train/good 的额外批次",
+     "逗号分隔批次名（对应评估页“批次覆盖告警”的未覆盖批次）；登记后不自动重建。"
+     "下次准备/重建模型时，这些批次的 test 正常图按 seed=0 50/50 划分，fit 子集复制到 approved_extra/train/good 并入拟合，"
+     "评估时自动剔除 fit 子集"),
 ]
 _CONFIG_KEYS = {(s, k) for s, k, *_ in _CONFIG_SCHEMA}
+
+# 待决策事项：影响范围 / 可选项 / 只读
+_GOV_IMPACT = {
+    "gt_threshold_frozen": "POST /system/config 的 business_budget 四项阈值与 gt_dataset_ref；统计/评估/候选验收达标线不再可调",
+    "gt_threshold_frozen_at": "仅展示",
+    "gt_dataset_ref": "仅登记；冻结期间锁定",
+    "ac045_l1_real_training_enabled": "仅登记意图，无运行时影响",
+    "ac046_l1_pollution_exit_enabled": "仅登记意图，无运行时影响",
+    "candidate_release_mode": "POST /candidates/{cat}/{ver}/decision：批准成功后是否自动执行激活",
+    "calibration_isolation": "之后新建的品类快照（engine.prepare 校准阶段）；已有快照不变",
+    "dependency_lock_policy": "候选激活（手动/自动）前的依赖一致性检查；/system/info 展示状态",
+    "ac062_legacy_artifact_dir": "仅登记，无运行时影响",
+    "sync28_29_accepted": "仅登记，无运行时影响",
+    "production_acceptance_signed": "仅登记，无运行时影响",
+    "blob_gpu_enabled": "之后加载/新建的品类引擎中 blob 槽位的设备选择（重启或重新加载品类后生效）",
+    "approved_extra_good_batches": "之后的准备模型/表示重建（DB 取样路径）：fit 子集并入 init_normal；精度评估剔除 fit 子集；评估页覆盖告警标注“已登记”。不自动重建",
+}
+_GOV_OPTIONS = {
+    "candidate_release_mode": [["manual", "手动激活"], ["auto_on_approve", "批准后自动激活"]],
+    "calibration_isolation": [["auto", "自动"], ["self", "自校准"], ["holdout", "留出集"]],
+    "dependency_lock_policy": [["warn", "告警"], ["block", "阻断"]],
+}
+_GOV_READONLY = {"gt_threshold_frozen_at"}
+_FROZEN_GOV_KEYS = ("gt_dataset_ref",)
 
 
 @router.get("/system/config")
 def api_get_config():
-    """读取白名单配置项（security 段不暴露——密钥只写不读）。"""
+    """读取白名单配置项（security 段不暴露——密钥只写不读）。
+
+    AC-072：business_budget 项附 default/min/max，供 UI 范围化编辑与恢复默认。"""
     cfg = get_settings()
+    bb = cfg.business_budget()
+    gd = cfg.governance_decisions()
     items = []
     for sec, key, typ, name, desc in _CONFIG_SCHEMA:
-        items.append({"section": sec, "key": key, "type": typ,
-                      "name": name, "desc": desc,
-                      "value": cfg.get(sec, key)})
-    return {"items": items, "config_path": str(cfg.config_path)}
+        it = {"section": sec, "key": key, "type": typ,
+              "name": name, "desc": desc,
+              "value": cfg.get(sec, key)}
+        if sec == "business_budget":
+            _t, default, lo, hi = BUSINESS_BUDGET_SPEC[key]
+            it.update(value=bb[key], default=default, min=lo, max=hi)
+        elif sec == "governance_decisions":
+            _t, default, _c = GOVERNANCE_DECISIONS_SPEC[key]
+            it.update(value=gd[key], default=default,
+                      impact=_GOV_IMPACT.get(key, ""),
+                      readonly=key in _GOV_READONLY)
+            if key in _GOV_OPTIONS:
+                it["options"] = _GOV_OPTIONS[key]
+        if gd["gt_threshold_frozen"] and (
+                (sec == "business_budget" and key in FROZEN_THRESHOLD_KEYS)
+                or (sec == "governance_decisions" and key in _FROZEN_GOV_KEYS)):
+            it["locked"] = True
+        items.append(it)
+    return {"items": items, "config_path": str(cfg.config_path),
+            "fixed": {"business_budget.feedback_event_wal_retention":
+                      FEEDBACK_EVENT_WAL_RETENTION}}
+
+
+def _frozen_conflicts(cfg, updates: dict) -> list:
+    """已冻结且本次未解冻时，实际改动了被锁阈值的键。
+    同批"冻结 + 定值"允许（本次值即冻结值）；同批"解冻 + 改值"允许。"""
+    gd = cfg.governance_decisions()
+    if not gd["gt_threshold_frozen"] or updates.get(
+            "governance_decisions.gt_threshold_frozen", True) is False:
+        return []
+    bb = cfg.business_budget()
+    out = []
+    for k in FROZEN_THRESHOLD_KEYS:
+        sk = f"business_budget.{k}"
+        if sk in updates and updates[sk] != bb[k]:
+            out.append(sk)
+    for k in _FROZEN_GOV_KEYS:
+        sk = f"governance_decisions.{k}"
+        if sk in updates and updates[sk] != gd[k]:
+            out.append(sk)
+    return out
 
 
 @router.post("/system/config",
@@ -128,8 +289,17 @@ def api_update_config(updates: dict):
     非白名单键一律拒绝（引擎槽位参数/安全密钥属高危项，仍走 yaml 手改）。
     """
     cfg = get_settings()
-    applied, rejected = [], []
-    for sec_key, value in (updates or {}).items():
+    updates = updates or {}
+    # 第三轮 AC-067/072：GT 与阈值冻结期间改阈值 → 整批 409（不做部分写入）
+    conflicts = _frozen_conflicts(cfg, updates)
+    if conflicts:
+        log_action("config_update_rejected", f"frozen conflicts={conflicts}")
+        raise HTTPException(status_code=409, detail={
+            "message": "GT 与业务阈值已冻结，需先关闭冻结再修改",
+            "reason_code": "THRESHOLD_FROZEN", "keys": conflicts})
+    was_frozen = cfg.governance_decisions()["gt_threshold_frozen"]
+    applied, rejected, errors = [], [], {}
+    for sec_key, value in updates.items():
         try:
             sec, key = sec_key.split(".", 1)
         except ValueError:
@@ -138,11 +308,61 @@ def api_update_config(updates: dict):
         if (sec, key) not in _CONFIG_KEYS:
             rejected.append(sec_key)
             continue
-        cfg.update(sec, key, value)
+        if sec == "governance_decisions" and key in _GOV_READONLY:
+            # 只读项：与当前值相同视为无操作（UI 全量回传），不同则拒绝
+            if value != cfg.governance_decisions()[key]:
+                rejected.append(sec_key)
+                errors[sec_key] = f"{sec_key} 为只读项，由服务端维护"
+            continue
+        try:
+            cfg.update(sec, key, value)
+        except ConfigValidationError as e:
+            # AC-072：类型/范围校验失败 → 拒绝该项并回传原因（此前抛 500）
+            rejected.append(sec_key)
+            errors[sec_key] = str(e)
+            continue
         applied.append(sec_key)
+    now_frozen = cfg.governance_decisions()["gt_threshold_frozen"]
+    if now_frozen != was_frozen:
+        stamp = (datetime.now().isoformat(timespec="seconds")
+                 if now_frozen else "")
+        cfg.update("governance_decisions", "gt_threshold_frozen_at", stamp)
+        applied.append("governance_decisions.gt_threshold_frozen_at")
     log_action("config_update",
                f"applied={len(applied)} rejected={rejected}")
-    return {"applied": applied, "rejected": rejected}
+    return {"applied": applied, "rejected": rejected, "errors": errors}
+
+
+# ── AC-072 保留期清理：预览（默认 dry-run）+ 审批后执行 ─────────────
+@router.get("/system/retention/preview",
+            dependencies=[Depends(require_role("engineer"))])
+def api_retention_preview():
+    from ..core.retention import preview_retention
+    s = get_settings()
+    return preview_retention(s.storage_dir, s.business_budget())
+
+
+@router.post("/system/retention/execute",
+             dependencies=[Depends(require_role("admin"))])
+def api_retention_execute(body: dict):
+    from ..core.retention import RetentionApprovalError, execute_retention
+    s = get_settings()
+    dry_run = body.get("dry_run", True) is not False
+    try:
+        out = execute_retention(s.storage_dir, s.business_budget(),
+                                approval=body.get("approval"), dry_run=dry_run)
+    except RetentionApprovalError as e:
+        raise HTTPException(status_code=403, detail=str(e))
+    if not dry_run:
+        log_action("retention_execute",
+                   f"plan={out['plan_id']} deleted={out['deleted']} by={out['approver']}")
+    return out
+
+
+@router.get("/system/retention/late_labels")
+def api_late_label_stats(category: str | None = None):
+    from ..self_learning.service import late_label_stats
+    return late_label_stats(category)
 
 
 @router.get("/categories")
@@ -203,6 +423,16 @@ def api_file(path: str, thumb: int = 0):
     if not is_path_allowed(path):
         raise HTTPException(status_code=403,
                             detail="路径不在白名单（仅 storage 目录或已登记图片）")
+    # TEST-01 dev_async：检测产物在线程池渲染/写盘；在途时等待而非 404
+    from concurrent.futures import TimeoutError as _FutTimeout
+    from ..pipeline.service import wait_artifact
+    try:
+        state = wait_artifact(path, timeout=5.0)
+    except _FutTimeout:
+        raise HTTPException(status_code=503, detail=f"产物生成中，请稍后重试: {path}",
+                            headers={"Retry-After": "1"})
+    if state is False:
+        raise HTTPException(status_code=500, detail=f"产物写盘失败: {path}")
     if not p.is_file():
         raise HTTPException(status_code=404, detail=f"文件不存在: {path}")
     if thumb > 0:

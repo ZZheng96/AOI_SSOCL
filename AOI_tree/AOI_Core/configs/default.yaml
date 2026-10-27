@@ -1,16 +1,12 @@
 system:
   host: 127.0.0.1
   port: 8017
-  # 相对路径统一基于仓库根（AOI_sys）解析，保证工程整体搬移后可移植
   storage_dir: storage
   engine_storage: storage/engine
   engine_base_cfg: configs/engine_fast.yaml
-  # 引擎内存中最多缓存的品类 Pipeline 数（LRU 驱逐，评审问题 A9）；
-  # 未巩固学习有 WAL 兜底，驱逐重载不丢
   engine_max_cached_categories: 8
   database_url: sqlite:///database/aoi.db
 data:
-  # UI 导入标准数据集（MVTec 等）时的默认根目录；环境变量 AOI_DATA_ROOT 优先
   default_root: data
 pipeline:
   tile_size: 512
@@ -25,7 +21,9 @@ pipeline:
   l1_batch_size: 8
   overlay_max_dim: 1280
   video_frame_interval: 5
-  latency_budget_ms: 200
+  latency_budget_ms: 250
+  review_backlog_high: 0
+  review_backlog_low: 0
 pseudo_anomaly:
   default_method: cutpaste
   default_count: 20
@@ -40,6 +38,7 @@ self_learning:
   lr: 1.0e-05
   epochs: 10
   auto_activate: false
+  learning_parallel: false
 evaluation:
   default_split: test
   benchmark_n_images: 30
@@ -56,13 +55,12 @@ notify:
   alarm_k: 5
   alarm_cooldown_s: 60.0
 security:
-  # 密钥三选一（优先级递减）：AOI_API_KEY 环境变量 > api_key_env 指向的自
-  # 定义环境变量 > 下方 api_key 明文（仅开发兜底，生产勿写入仓库——A10）
   api_key: ''
   api_key_env: ''
   keys: {}
-  # 上传体积硬顶（MB）：图片/快照 zip 导入超限返回 413（A10）
   max_upload_mb: 200
+  rate_limit_per_window: 0
+  rate_limit_window_s: 60
 logging:
   max_mb: 10
   backups: 5
@@ -79,3 +77,28 @@ plc:
   - .jpg
   - .jpeg
   - .bmp
+governance_decisions:
+  dependency_lock_policy: warn
+  candidate_release_mode: manual
+  calibration_isolation: auto
+  ac045_l1_real_training_enabled: false
+  ac046_l1_pollution_exit_enabled: false
+  blob_gpu_enabled: false
+  approved_extra_good_batches: Image_2026,t_fov
+  gt_threshold_frozen: false
+  gt_dataset_ref: ''
+  ac062_legacy_artifact_dir: ''
+  sync28_29_accepted: false
+  production_acceptance_signed: false
+business_budget:
+  g2_max_fpr_pct: 5.0
+  g2_min_recall_pct: 95.0
+  g6_max_old_recall_drop_pt: 2.0
+  max_gray_ratio_pct: 15.0
+  raw_hot_days: 90
+  raw_cold_months: 12
+  heatmap_overlay_days: 30
+  snapshot_keep_recent: 10
+  snapshot_keep_activated: true
+  evalrun_audit_months: 12
+  label_late_tolerance_days: 7

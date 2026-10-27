@@ -6,6 +6,9 @@
 """
 from __future__ import annotations
 
+import math
+from copy import deepcopy
+
 from PySide6.QtCore import Qt, QThread, QTimer, Signal
 from PySide6.QtGui import QPixmap
 from PySide6.QtWidgets import (
@@ -36,6 +39,80 @@ FEEDBACK_TYPES = {
 }
 
 
+def feedback_evidence_text(result):
+    result = result if isinstance(result, dict) else {}
+    details = result.get("details") or {}
+    trace = result.get("learning_trace") or {}
+    update = details.get("engine_update") or result.get("engine_update") or trace.get("engine_update") or {}
+    candidate = (trace.get("candidate") or result.get("candidate")
+                 or details.get("candidate_entry") or {})
+    candidate = candidate if isinstance(candidate, dict) else {}
+    if "entry" not in candidate and details.get("candidate_entry"):
+        candidate = {"entry": candidate}
+    attribution = update.get("attribution")
+    attribution = attribution if isinstance(attribution, dict) else {}
+    candidate_entry = candidate.get("entry")
+    candidate_entry = candidate_entry if isinstance(candidate_entry, dict) else {}
+    candidate_attribution = candidate_entry.get("attribution")
+    candidate_attribution = candidate_attribution if isinstance(candidate_attribution, dict) else {}
+
+    def display(value):
+        if value is None:
+            return "未知（未记录或不可用）"
+        if isinstance(value, float) and not math.isfinite(value):
+            return "未知（非有限值）"
+        if isinstance(value, dict):
+            return "\n".join(f"{k}: {display(v)}" for k, v in value.items())
+        if isinstance(value, list):
+            return "\n".join(display(v) for v in value) or "未知（无记录）"
+        return str(value)
+
+    status = result.get('learning_status') or details.get('learning_status') or trace.get('learning_status')
+    if status == "candidate_queued":
+        availability = "待候选计算（尚未产生归因）"
+    elif status in ("candidate_failed", "failed"):
+        availability = "候选计算失败（不代表生产模型更新）"
+    elif status in ("unavailable", "not_requested", "unknown") or not status:
+        availability = "不适用或未记录"
+    elif attribution:
+        availability = "已有真实生产归因"
+    elif candidate_attribution:
+        availability = "已有真实候选归因（未激活，不代表生产更新）"
+    else:
+        availability = "暂无真实归因证据"
+    lines = ["反馈持久证据（图级归因，不代表逐框来源或缺陷概率）",
+             f"学习状态：{display(status)}", f"归因证据：{availability}"]
+    for key in ("action", "drift", "boost", "defect_ratio"):
+        if key in update:
+            lines.append(f"{key}：{display(update[key])}")
+    shown_attribution = attribution or candidate_attribution
+    if shown_attribution:
+        for key in ("mode", "verdict", "next", "confidence", "source_slot"):
+            if key in shown_attribution:
+                lines.append(f"归因 {key}：{display(shown_attribution[key])}")
+        lines.extend(["归因检查序列（series）：", display(shown_attribution.get("series"))])
+    else:
+        lines.append("归因详情：暂无真实归因记录")
+    lines.extend(["独立 evidence：", display(update.get("evidence")) if "evidence" in update else "不适用（未记录）",
+                  "候选 entry（仅候选，不代表生产更新）：", display(candidate_entry) if candidate_entry else "未记录",
+                  "完整反馈结果（非实际weights/router门控面板）：", display(update) if update else "未记录"])
+    return "\n".join(lines)
+
+
+class FeedbackEvidenceDialog(QDialog):
+    def __init__(self, result, parent=None):
+        super().__init__(parent)
+        self.setWindowTitle("反馈归因与持久证据")
+        self.resize(680, 520)
+        layout = QVBoxLayout(self)
+        self.evidence = QPlainTextEdit(feedback_evidence_text(result))
+        self.evidence.setReadOnly(True)
+        layout.addWidget(self.evidence)
+        close = QDialogButtonBox(QDialogButtonBox.Close)
+        close.rejected.connect(self.reject)
+        layout.addWidget(close)
+
+
 class _ThumbLoader(QThread):
     """后台加载缩略图字节。"""
 
@@ -61,7 +138,9 @@ class FeedbackDialog(QDialog):
                  preset_type: str = "", parent: QWidget | None = None):
         super().__init__(parent)
         self._client = client
-        self._det = detection or {}
+        self._det = deepcopy(detection or {})
+        self._image_generation = 0
+        self.finished.connect(self._invalidate_images)
         self._loaders: list[QThread] = []
         self._region: list | None = None  # 漏检框选区域 [x,y,w,h] 原图像素坐标
         self.setWindowTitle("检测反馈标注")
@@ -142,6 +221,11 @@ class FeedbackDialog(QDialog):
         row.addWidget(btn_clear)
         rg.addLayout(row)
         right.addWidget(self._region_box)
+        # AC-064：框级复核入口（与图级反馈分开）
+        self.btn_regions = QPushButton("多框复核…")
+        self.btn_regions.setEnabled(bool(det.get("detection_id", det.get("id"))))
+        self.btn_regions.clicked.connect(self._open_region_review)
+        right.addWidget(self.btn_regions)
         right.addStretch(1)
         # 框选区构建完成后再连接类型切换（避免初始化期触发未就绪控件）
         for rb in self._radios.values():
@@ -167,6 +251,13 @@ class FeedbackDialog(QDialog):
         self._load_thumbnails()
         self._update_region_visibility()
         self._load_region_image()
+
+    def _open_region_review(self) -> None:
+        from ui.widgets.region_review_dialog import RegionReviewDialog
+        path = self._det.get("image_path")   # 框为原图像素 xyxy，预览用原图而非叠加图
+        RegionReviewDialog(self._client, self._det.get("detection_id", self._det.get("id")),
+                           parent=self,
+                           image_url=self._client.file_url(path) if path else "").exec()
 
     # ── 反馈类型 ─────────────────────────────────────────
     def _set_status(self, text: str, kind: str = "info") -> None:
@@ -214,7 +305,7 @@ class FeedbackDialog(QDialog):
             return
         self._set_status(self._success_text(result), "ok")
         self.submitted.emit(result if isinstance(result, dict) else {})
-        QTimer.singleShot(900, self.accept)          # 展示成功状态后自动关闭
+        self.accept()
 
     # ── 漏检框选 ─────────────────────────────────────────
     def _update_region_visibility(self) -> None:
@@ -225,7 +316,7 @@ class FeedbackDialog(QDialog):
         """框选小图：优先叠加图，其次原图（走 /api/file 加载）。"""
         path = self._det.get("overlay_path") or self._det.get("image_path")
         if path:
-            self._sel_viewer.set_image_url(self._client.file_url(path))
+            self._load_image(path, self._sel_viewer.set_image_bytes)
 
     def _on_region_selected(self, region: list) -> None:
         self._region = list(region)
@@ -252,13 +343,25 @@ class FeedbackDialog(QDialog):
             if not path:
                 label.setText("无图片")
                 continue
-            url = self._client.file_url(path)
-            loader = _ThumbLoader(self._client, url, self)
-            loader.loaded.connect(
-                lambda data, lb=label: self._set_thumb(lb, data))
-            loader.finished.connect(lambda w=loader: self._forget(w))
-            self._loaders.append(loader)
-            loader.start()
+            self._load_image(path, lambda data, lb=label: self._set_thumb(lb, data))
+
+    def _invalidate_images(self, _result=0) -> None:
+        self._image_generation += 1
+
+    def _load_image(self, path, apply) -> None:
+        generation = self._image_generation
+        did = self._det.get("detection_id", self._det.get("id"))
+        loader = _ThumbLoader(self._client, self._client.file_url(path), self)
+
+        def loaded(data):
+            if (generation == self._image_generation
+                    and did == self._det.get("detection_id", self._det.get("id"))):
+                apply(data)
+
+        loader.loaded.connect(loaded)
+        loader.finished.connect(lambda w=loader: self._forget(w))
+        self._loaders.append(loader)
+        loader.start()
 
     def _set_thumb(self, label: QLabel, data: bytes) -> None:
         pm = QPixmap()
@@ -288,12 +391,15 @@ class FeedbackDialog(QDialog):
         pre_txt = ""
         pre = result.get("pre")
         if isinstance(pre, dict) and isinstance(pre.get("score"), (int, float)):
-            pre_txt = f"分数 {float(pre['score']):.2f}→已学习"
+            pre_txt = f"反馈前分数 {float(pre['score']):.2f}"
         upd = result.get("engine_update")
         if not isinstance(upd, dict):
             note = result.get("note")
             base = f"反馈已提交。{note}" if note else "反馈已提交，感谢标注！"
             return f"{base}（{pre_txt}）" if pre_txt else base
+        status = result.get("learning_status")
+        if upd.get("async") or status in ("pending", "unavailable", "failed", "candidate_queued"):
+            return f"反馈已记录，学习状态：{status or 'pending'}（不代表学习完成或模型激活）"
         action_cn = {
             "reflow_accepted": "正常样本已回流，校准分布已更新",
             "reflow_pending": "回流证据累积中（需连续相似样本成簇）",
@@ -312,7 +418,7 @@ class FeedbackDialog(QDialog):
             parts.append("熔断保护中（在线缺陷率高）")
         ms = upd.get("feedback_ms")
         tail = f"（耗时 {float(ms):.0f}ms）" if isinstance(ms, (int, float)) else ""
-        summary = "、".join(parts) if parts else "已学习"
+        summary = "、".join(parts) if parts else "结果未知，请查看持久证据"
         if pre_txt:
             summary = pre_txt + ("、" + summary if parts else "")
-        return f"反馈已提交并在线学习：{summary}{tail}"
+        return f"反馈已提交：{summary}{tail}（不代表版本已激活）"

@@ -1,7 +1,7 @@
 """工作台首页（W-workorder v2，前端反馈 2026-08-27）：工单为统计基础。
 
-- KPI 行：检测数 / 不良数 / 不良率 / 待复核——按「当前工单 + 时间范围」
-  （全部/近7天/今天）统计；未选工单时为全局口径并在副文本注明
+- KPI 行：检测数 / 不良数 / 不良率 / 待复核——固定当前工单全部记录；
+  未选工单时为全局口径并在副文本注明
 - 待办卡片：待复核队列 / 不完备预警 / 待巩固反馈（点击直达处理页）
 - 工单运营表：list_workorders(range) 驱动；单击行切换主窗口当前工单，
   双击「数据条件」列弹工单编辑（三档＋两开关＋体检），可新建工单
@@ -12,7 +12,6 @@ from __future__ import annotations
 from PySide6.QtCore import Qt, Signal
 from PySide6.QtGui import QColor
 from PySide6.QtWidgets import (
-    QComboBox,
     QHBoxLayout,
     QLabel,
     QMessageBox,
@@ -32,6 +31,104 @@ from ui.widgets.workorder_dialogs import (WorkOrderCreateDialog,
                                           WorkOrderEditDialog)
 
 _RANGE_CN = {"all": "全部", "7d": "近 7 天", "today": "今天"}
+
+# 工作台小面板按钮统一规格（2026-10-14 前端反馈：面板内的按钮尺寸/对齐不统一）：
+# 同一工作台内的面板操作按钮统一为「最小宽 100 × 固定高 30」的紧凑样式，
+# 并统一**右对齐、贴卡片底部**，使并排卡片上的按钮落在同一条基线上。
+_PANEL_BTN_MIN_W = 100
+_PANEL_BTN_H = 30
+
+
+def _panel_button(text: str, tooltip: str = "",
+                  danger: bool = False) -> QPushButton:
+    """工作台小面板统一规格按钮（尺寸 + 对齐由调用处的 stretch 统一保证）。"""
+    btn = QPushButton(text)
+    btn.setProperty("compact", True)
+    if danger:
+        btn.setProperty("danger", True)
+    btn.setMinimumWidth(_PANEL_BTN_MIN_W)
+    btn.setFixedHeight(_PANEL_BTN_H)
+    if tooltip:
+        btn.setToolTip(tooltip)
+    return btn
+
+
+def _panel_button_row(*buttons: QPushButton) -> QHBoxLayout:
+    """把小面板按钮统一放到右对齐的行里（并排卡片因此共享同一对齐基线）。"""
+    row = QHBoxLayout()
+    row.setContentsMargins(0, 0, 0, 0)
+    row.setSpacing(8)
+    row.addStretch(1)
+    for b in buttons:
+        row.addWidget(b)
+    return row
+
+
+# AC-058：scope_stats 口径字段的展示文案（缺数据显示“—/不可用”，不补 0）
+NA = "—"
+_SOURCE_CN = {"pipeline": "产线", "stream": "视频流", "upload": "上传",
+              "image": "图片", "plc": "PLC", "video_frame": "视频帧",
+              "review": "复核补检", "unknown": "未知"}
+_LATENCY_BASIS_CN = {"inference_only": "模型判断耗时，不含采集和保存"}
+CALIBER_TIP = (
+    "当前工单统计说明：\n"
+    "· 检测数：已经保存的检测结果数量，不是相机拍到的帧数\n"
+    "· 不良数 / 不良率：系统判定为异常的数量 / 占比；灰区结果单独进入待复核\n"
+    "· 模型判断耗时：模型完成一次判断所用时间，不含相机采集、传输和保存\n"
+    "· 检测处理耗时（保存前）：从检测处理开始到保存前的耗时，不含落库和告警，不代表相机到保存的全链路\n"
+    "· 接收后保存比例：接收数量中成功保存检测结果的比例；当前没有接收计数，因此显示不可用\n"
+    "· 统计范围：当前工单的全部检测记录；日期仅用于追溯")
+
+
+def _ms(v) -> str:
+    try:
+        return f"{float(v):.0f} ms"
+    except (TypeError, ValueError):
+        return NA
+
+
+def scope_caliber_texts(scope: dict) -> dict:
+    """把 /stats/overview 的 scope_stats 转成展示文案（纯函数，便于离屏测试）。
+
+    返回 {infer, infer_sub, e2e, e2e_sub, receipt, receipt_sub, basis}。"""
+    scope = scope if isinstance(scope, dict) else {}
+    n = int(scope.get("n_inspected", 0) or 0)
+    basis = scope.get("latency_basis")
+    infer = _ms(scope.get("avg_latency_ms")) if n else NA
+    infer_sub = _LATENCY_BASIS_CN.get(basis, f"口径：{basis}" if basis else "口径未声明")
+    e2e_avg = scope.get("avg_latency_e2e_ms")
+    e2e = _ms(e2e_avg) if e2e_avg is not None else "不可用"
+    e2e_p95 = scope.get("p95_latency_e2e_ms")
+    p95_text = _ms(e2e_p95) if e2e_p95 is not None else "不可用"
+    miss = scope.get("n_e2e_missing")
+    e2e_sub = (f"检测处理开始到保存前的平均时间；P95：{p95_text}（95%样本不超过）；"
+               f"{miss} / {n} 条记录没有该数据"
+               if miss is not None and n else
+               f"检测处理开始到保存前；P95：{p95_text}（95%样本不超过）"
+               if e2e_avg is not None or e2e_p95 is not None else
+               "没有检测处理耗时数据；P95：不可用")
+    if scope.get("receipt_rate") is not None:
+        receipt = f"{float(scope['receipt_rate']) * 100:.1f}%"
+        receipt_sub = "接收→落库"
+    else:
+        receipt = "不可用"
+        receipt_sub = "暂无相机接收计数数据源，不以 0 代替"
+    wid = scope.get("workorder_id")
+    wo_t = f"当前工单 #{wid}" if wid is not None else "当前未选工单（全局）"
+    src = scope.get("by_source")
+    if isinstance(src, dict) and src:
+        src_t = "、".join(f"{_SOURCE_CN.get(k, k)} {v} 条" for k, v in
+                         sorted(src.items(), key=lambda kv: -int(kv[1] or 0)))
+    elif isinstance(src, dict):
+        src_t = "暂无检测记录"
+    else:
+        src_t = "暂无来源数据"
+    basis_t = f"统计对象：{wo_t}｜共 {n} 条已保存检测结果｜来源：{src_t}"
+    rng, ws = scope.get("range"), scope.get("window_start")
+    if rng and rng != "all" and ws:
+        basis_t += f"｜{_RANGE_CN.get(rng, rng)}（起点 {str(ws)[:19].replace('T', ' ')}）"
+    return {"infer": infer, "infer_sub": infer_sub, "e2e": e2e, "e2e_sub": e2e_sub,
+            "receipt": receipt, "receipt_sub": receipt_sub, "basis": basis_t}
 
 
 class DashboardPage(QWidget):
@@ -55,16 +152,9 @@ class DashboardPage(QWidget):
 
         top = QHBoxLayout()
         top.addWidget(make_banner(
-            "工作台：以工单为统计基础（先建工单、挂数据源，再检测统计）"))
+            "工作台：先建立并导入数据源，再创建工单挂接数据源；检测统计以工单为基础"))
         attach_level_badge(self, top)   # 当前工单数据条件徽标
         top.addStretch(1)
-        top.addWidget(QLabel("时间范围"))
-        self.combo_range = QComboBox()
-        for name, code in (("全部", "all"), ("近 7 天", "7d"), ("今天", "today")):
-            self.combo_range.addItem(name, code)
-        self.combo_range.setToolTip("KPI 与工单表统计的时间范围")
-        self.combo_range.currentIndexChanged.connect(lambda _i: self.reload())
-        top.addWidget(self.combo_range)
         btn_new = QPushButton("新建工单")
         btn_new.setProperty("primary", True)
         btn_new.clicked.connect(self._on_create_workorder)
@@ -74,20 +164,38 @@ class DashboardPage(QWidget):
         top.addWidget(btn_refresh)
         root.addLayout(top)
 
-        # ── KPI 卡片行（当前工单 + 时间范围口径） ──
+        # ── KPI 卡片行（当前工单全部检测记录） ──
         kpi_row = QHBoxLayout()
-        self.kpi_inspected = KpiCard("检测数", "-", sub_text="当前工单：-")
+        self.kpi_inspected = KpiCard("检测数", "-", sub_text="已保存的检测结果")
         self.kpi_anomaly = KpiCard("不良数", "-", accent=DANGER,
-                                   sub_text="系统判定口径（异常 + 灰区判异常）")
+                                   sub_text="系统判定为异常")
         self.kpi_rate = KpiCard("不良率", "-", accent=WARNING,
-                                sub_text="系统判定口径，含未复核/重复检测；"
-                                         "复核后真实口径见存档统计")
+                                sub_text="不良数 ÷ 检测数；灰区结果不计入不良数")
         self.kpi_pending = KpiCard("待复核", "-", accent=WARNING,
-                                   sub_text="当前工单灰区待人工裁定")
+                                   sub_text="等待人工裁定的检测结果")
         for k in (self.kpi_inspected, self.kpi_anomaly,
                   self.kpi_rate, self.kpi_pending):
             kpi_row.addWidget(k)
         root.addLayout(kpi_row)
+
+        # ── 运行指标：处理速度与结果保存情况 ──
+        cal_row = QHBoxLayout()
+        self.kpi_latency_infer = KpiCard("模型判断耗时（均值）", NA,
+                                         sub_text="模型完成一次判断的平均时间")
+        self.kpi_latency_e2e = KpiCard("检测处理耗时（均值）", NA,
+                                       sub_text="从检测处理开始到保存前")
+        self.kpi_receipt = KpiCard("接收后保存比例", NA,
+                                   sub_text="当前没有相机接收计数")
+        for k in (self.kpi_latency_infer, self.kpi_latency_e2e,
+                  self.kpi_receipt):
+            k.setToolTip(CALIBER_TIP)
+            cal_row.addWidget(k)
+        root.addLayout(cal_row)
+        self.lbl_caliber = QLabel("统计对象：当前工单｜共 0 条已保存检测结果｜来源：暂无检测记录")
+        self.lbl_caliber.setProperty("subtext", True)
+        self.lbl_caliber.setWordWrap(True)
+        self.lbl_caliber.setToolTip(CALIBER_TIP)
+        root.addWidget(self.lbl_caliber)
 
         # ── 待办卡片行 ──
         todo_row = QHBoxLayout()
@@ -105,8 +213,12 @@ class DashboardPage(QWidget):
         st_card = make_card()
         st_lay = QVBoxLayout(st_card)
         st_head = QLabel(
-            "工单运营状态（单击行切换当前工单；双击「数据条件」可调整工单）")
+            "工单统计汇总（单击行切换当前工单；双击「数据条件」可调整工单）")
         st_head.setProperty("heading", True)
+        st_head.setToolTip(
+            "此表展示工单配置、数据规模和检测结果汇总；\n"
+            "不表示未检测、检测中或已完成等完整生命周期状态。\n"
+            "检测列是已保存的检测结果数，不代表全部图片已完成检测。")
         st_lay.addWidget(st_head)
         self.table = QTableWidget(0, 9)
         self.table.setHorizontalHeaderLabels(
@@ -121,6 +233,17 @@ class DashboardPage(QWidget):
         if h5 is not None:
             h5.setToolTip("声明条件 vs 数据实际支撑的体检结果；"
                           "有提醒时橙色显示，悬停查看明细")
+        for idx, tip in {
+                0: "工单名称；单击所在行可切换当前工单",
+                2: "当前工单挂接的数据源名称",
+                3: "挂接数据源中实际存在的品类",
+                4: "数据源中的图片总数，不是待检测数量",
+                6: "当前工单已保存的检测结果数量",
+                7: "系统判定为异常的检测结果数量",
+                8: "不良数 ÷ 检测数；无检测记录时不计算"}.items():
+            item = self.table.horizontalHeaderItem(idx)
+            if item is not None:
+                item.setToolTip(tip)
         self.table.horizontalHeader().setStretchLastSection(True)
         self.table.setEditTriggers(QTableWidget.NoEditTriggers)
         self.table.setAlternatingRowColors(True)
@@ -132,20 +255,21 @@ class DashboardPage(QWidget):
         # 改=双击「数据条件」或此处按钮；存档=转入历史管理（数据保留，
         # 见「存档统计」页）；删=级联删除该工单全部检测/反馈记录，不可恢复
         op_row = QHBoxLayout()
+        op_row.setContentsMargins(0, 0, 0, 0)
+        op_row.setSpacing(8)
         op_row.addStretch(1)
-        btn_edit = QPushButton("编辑所选工单")
-        btn_edit.setToolTip("修改所选工单的名称/备注/复判开关/挂接数据源")
+        btn_edit = _panel_button("编辑所选工单",
+                                 "修改所选工单的名称/备注/复判开关/挂接数据源")
         btn_edit.clicked.connect(self._on_edit_selected)
         op_row.addWidget(btn_edit)
-        btn_arch = QPushButton("存档所选工单")
-        btn_arch.setToolTip("存档后数据保留，转入「存档统计」页历史管理；"
-                            "不再参与全局统计/复核队列，可在该页还原")
+        btn_arch = _panel_button("存档所选工单",
+                                 "存档后数据保留，转入「存档统计」页历史管理；"
+                                 "不再参与全局统计/复核队列，可在该页还原")
         btn_arch.clicked.connect(self._on_archive_selected)
         op_row.addWidget(btn_arch)
-        btn_del = QPushButton("删除所选工单")
-        btn_del.setProperty("danger", True)
-        btn_del.setToolTip("级联删除该工单的全部检测记录与反馈记录，"
-                           "不可恢复；想保留数据请用「存档」")
+        btn_del = _panel_button("删除所选工单",
+                                "级联删除该工单的全部检测记录与反馈记录，"
+                                "不可恢复；想保留数据请用「存档」", danger=True)
         btn_del.clicked.connect(self._on_delete_selected)
         op_row.addWidget(btn_del)
         st_lay.addLayout(op_row)
@@ -161,20 +285,25 @@ class DashboardPage(QWidget):
         self._feature_badges: dict[str, QLabel] = {}
         for key, name, tip in (
                 ("webhook", "Webhook 告警",
-                 "检测/告警事件推送到 MES/上位机。在设置中心「Webhook 地址」配置，空=禁用"),
+                 "把异常、灰区和告警等事件通过 HTTP 推送给 MES/上位机；\n"
+                 "在设置中心配置地址和订阅事件，地址为空=禁用"),
                 ("plc_trigger", "PLC 触发",
-                 "传统 AOI/光电信号落图目录触发检测。在设置中心「PLC 触发目录」配置，空=禁用"),
+                 "AOI 不直接监听 PLC 协议；PLC/光电触发相机落图后，\n"
+                 "外部上位机调用 HTTP 接口，AOI 按先到先处理一张图片；\n"
+                 "在设置中心配置触发目录，目录为空=禁用"),
                 ("auto_archive", "自动归档",
-                 "命中决策的缺陷帧自动归档留存。在设置中心「缺陷自动归档」开关"),
+                 "按配置把异常/灰区原图或视频帧复制到\n"
+                 "storage/archive/品类/日期，并登记为归档数据；用于追溯、复盘和后续训练回流"),
                 ("auth", "API 鉴权",
-                 "外部接口访问控制。安全密钥属高危项，需手改配置文件 security 段")):
+                 "外部调用 API 时用 X-API-Key 验证身份；\n"
+                 "再按 operator/engineer/admin 角色限制接口权限；密钥需在安全配置中设置")):
             lb = QLabel(f"{name} -")
             lb.setProperty("badge", "muted")
             lb.setToolTip(tip)
             self._feature_badges[key] = lb
             f_row.addWidget(lb)
         f_row.addStretch(1)
-        btn_goto_settings = QPushButton("去设置中心")
+        btn_goto_settings = _panel_button("去设置中心")
         btn_goto_settings.clicked.connect(
             lambda: self.goto_page.emit("系统设置"))
         f_row.addWidget(btn_goto_settings)
@@ -201,14 +330,16 @@ class DashboardPage(QWidget):
         d = QLabel(desc)
         d.setProperty("subtext", True)
         lay.addWidget(d)
-        btn = QPushButton(btn_text)
+        # 统一规格 + 右对齐 + 贴卡片底部（并排的三张待办卡按钮因此同基线）
+        btn = _panel_button(btn_text)
         btn.clicked.connect(lambda _=False, p=page: self.goto_page.emit(p))
-        lay.addWidget(btn, 0, Qt.AlignRight)
+        lay.addStretch(1)
+        lay.addLayout(_panel_button_row(btn))
         return card, val
 
     # ══════════════════ 当前上下文 ══════════════════
     def _range_name(self) -> str:
-        return str(self.combo_range.currentData() or "all")
+        return "all"
 
     def _current_wo(self) -> dict | None:
         fn = getattr(self, "_get_workorder", None)
@@ -227,8 +358,11 @@ class DashboardPage(QWidget):
     def reload(self) -> None:
         range_name = self._range_name()
         wid = self._current_wo_id()
+        self._stats_request = request = object()
         run_async(self, lambda: self._client.stats_overview(
-            workorder_id=wid, range_name=range_name), self._fill_kpi)
+            workorder_id=wid, range_name=range_name),
+            lambda data: self._fill_kpi(data) if self._stats_request is request
+            and self._current_wo_id() == wid else None)
         run_async(self, self._client.review_stats, self._fill_review)
         run_async(self, lambda: self._client.list_feedback(
             consumed=False, page=1, page_size=1), self._fill_unconsumed)
@@ -244,26 +378,31 @@ class DashboardPage(QWidget):
         scope = data.get("scope_stats") or {}
         n_ins = int(scope.get("n_inspected", 0) or 0)
         n_an = int(scope.get("n_anomaly", 0) or 0)
-        rate = float(scope.get("rate", 0.0) or 0.0)
+        rate = scope.get("rate")
         ctx = self._scope_text()
         self.kpi_inspected.set_value(str(n_ins), ctx)
-        self.kpi_anomaly.set_value(str(n_an), ctx)
+        self.kpi_anomaly.set_value(str(n_an), "系统判定为异常")
+        # rate 为 None（无样本）显示“—”，不以 0.0% 冒充
         self.kpi_rate.set_value(
-            f"{rate * 100:.1f}%",
-            f"{n_an} / {n_ins}" if n_ins else "该范围暂无检测")
+            f"{float(rate) * 100:.1f}%" if (n_ins and rate is not None) else NA,
+            f"不良数 ÷ 检测数（{n_an} / {n_ins}）；灰区结果不计入不良数"
+            if n_ins else "该范围暂无检测")
+        t = scope_caliber_texts(scope)
+        self.kpi_latency_infer.set_value(t["infer"], t["infer_sub"])
+        self.kpi_latency_e2e.set_value(t["e2e"], t["e2e_sub"])
+        self.kpi_receipt.set_value(t["receipt"], t["receipt_sub"])
+        self.lbl_caliber.setText(t["basis"])
 
     def _fill_review(self, data) -> None:
         if not data:
             return
-        # 待复核按当前工单品类集合计（无工单时为全局）
-        by_cat = data.get("pending_by_category") or {}
-        wo = self._current_wo()
-        if wo:
-            cats = set(str(c) for c in (wo.get("categories") or []))
-            n = sum(int(v or 0) for c, v in by_cat.items() if str(c) in cats)
+        wid = self._current_wo_id()
+        by_wo = data.get("pending_by_workorder")
+        if wid is not None:
+            n = int(by_wo.get(str(wid), 0) or 0) if isinstance(by_wo, dict) else None
         else:
             n = int(data.get("pending_total", 0) or 0)
-        self.kpi_pending.set_value(str(n), self._scope_text())
+        self.kpi_pending.set_value(str(n) if n is not None else NA, self._scope_text())
         total = int(data.get("pending_total", 0) or 0)
         self.todo_review[1].setText(str(total))
         self.todo_review[1].setStyleSheet(
@@ -280,13 +419,15 @@ class DashboardPage(QWidget):
     def _fill_incomplete(self, data) -> None:
         if not data:
             return
-        warns = [r for r in (data.get("reports") or []) if r.get("warn")]
+        warns = [r for r in (data.get("reports") or []) if r.get("alert")]
         self.todo_incomplete[1].setText(str(len(warns)))
         color = DANGER if warns else TEXT_SUB
         self.todo_incomplete[1].setStyleSheet(f"color: {color};")
         if warns:
             cats = "、".join(str(r.get("category", "")) for r in warns)
             self.todo_incomplete[1].setToolTip(f"预警品类：{cats}")
+        else:
+            self.todo_incomplete[1].setToolTip("")
 
     # ══════════════════ 工单表 ══════════════════
     def _fill_workorders(self, items) -> None:

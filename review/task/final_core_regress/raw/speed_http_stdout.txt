@@ -1,0 +1,74 @@
+[1/5] isolate inputs/snapshots/SQLite: C:\Users\imia\AppData\Local\Temp\aoi_native_fullchain_c751fawg
+[2/5] first complete request: cold model/first image, separately recorded
+[dino] 使用随包 vendor 权重: D:\CGAIC\AOI_SSOCL\AOI_tree\assets\dinov2\dinov2_vits14_pretrain.pth
+[disc] 加载预训练头 D:\CGAIC\AOI_SSOCL\AOI_tree\AOI_Core\assets\disc_pretrain.pt
+  cold_first_request 0: 2991.600ms anomaly
+[3/5] warmup 5 complete requests (excluded)
+  warmup 0: 199.047ms anomaly
+  warmup 1: 279.613ms anomaly
+  warmup 2: 277.157ms anomaly
+  warmup 3: 206.533ms anomaly
+  warmup 4: 201.452ms anomaly
+[4/5] timed complete production service; feature cache disabled
+  hot 0: 203.954ms anomaly
+  hot 1: 262.728ms anomaly
+  hot 2: 206.162ms anomaly
+  hot 3: 205.749ms anomaly
+  hot 4: 234.992ms anomaly
+  hot 5: 261.911ms anomaly
+  hot 6: 214.662ms anomaly
+  hot 7: 214.435ms anomaly
+  hot 8: 245.375ms anomaly
+  hot 9: 261.557ms anomaly
+  hot 10: 250.430ms anomaly
+  hot 11: 240.550ms anomaly
+  hot 12: 265.034ms anomaly
+  hot 13: 360.769ms anomaly
+  hot 14: 210.017ms anomaly
+  hot 15: 204.731ms anomaly
+  hot 16: 227.779ms anomaly
+  hot 17: 223.094ms anomaly
+  hot 18: 214.699ms anomaly
+  hot 19: 201.839ms anomaly
+  hot 20: 218.412ms anomaly
+  hot 21: 212.182ms anomaly
+  hot 22: 259.133ms anomaly
+  hot 23: 225.825ms anomaly
+  hot 24: 236.981ms anomaly
+  hot 25: 237.164ms anomaly
+  hot 26: 289.205ms anomaly
+  hot 27: 238.667ms anomaly
+  hot 28: 284.800ms anomaly
+  hot 29: 253.732ms anomaly
+  hot 30: 238.796ms anomaly
+  hot 31: 227.463ms anomaly
+[5/5] RESULT=C:\Users\imia\AppData\Local\Temp\aoi_native_fullchain_c751fawg\result.json
+{
+  "hot": {
+    "n": 32,
+    "p50": 235.98619998665527,
+    "p95": 286.7819150269497,
+    "p99": 338.5838670236991,
+    "max": 360.7688000192866,
+    "mean": 238.52580000675516
+  },
+  "learning_overlap": {},
+  "idle": {
+    "n": 32,
+    "p50": 235.98619998665527,
+    "p95": 286.7819150269497,
+    "p99": 338.5838670236991,
+    "max": 360.7688000192866,
+    "mean": 238.52580000675516
+  },
+  "learning_duration_ms": {},
+  "category_lock_wait_ms": {
+    "n": 32,
+    "p50": 0.022450025426223874,
+    "p95": 0.11196502600796512,
+    "p99": 0.360373999574222,
+    "max": 0.44239999260753393,
+    "mean": 0.04311875090934336
+  }
+}
+G1 NOT ACCEPTED (see manifest and native/accuracy/sample/competition gates)

@@ -1,0 +1,522 @@
+{
+  "isolated_temp": "C:\\Users\\imia\\AppData\\Local\\Temp\\aoi_ac063raw_yshusq24",
+  "n_test_images": 4,
+  "n_prepare": 6,
+  "rounds": 6,
+  "io": [
+    {
+      "image": "det878_bench_00.png",
+      "raw_shape": [
+        512,
+        512
+      ],
+      "raw_dtype": "float16",
+      "display_size": [
+        1280,
+        1280
+      ],
+      "write_ms": {
+        "n": 5,
+        "p50": 1.01,
+        "p95": 1.45,
+        "mean": 1.07
+      },
+      "bytes": {
+        "raw_heatmap_path": 524416,
+        "mask_path": 26878,
+        "heatmap_path": 277868,
+        "overlay_path": 358356
+      },
+      "recompute_mask_equal": true,
+      "recompute_boxes_equal": true,
+      "n_heatmap_boxes": 56
+    },
+    {
+      "image": "det27_bench_07.png",
+      "raw_shape": [
+        512,
+        512
+      ],
+      "raw_dtype": "float16",
+      "display_size": [
+        1280,
+        1280
+      ],
+      "write_ms": {
+        "n": 5,
+        "p50": 0.71,
+        "p95": 1.0,
+        "mean": 0.74
+      },
+      "bytes": {
+        "raw_heatmap_path": 524416,
+        "mask_path": 22765,
+        "heatmap_path": 254872,
+        "overlay_path": 363231
+      },
+      "recompute_mask_equal": true,
+      "recompute_boxes_equal": true,
+      "n_heatmap_boxes": 70
+    },
+    {
+      "image": "det900_bench_02.png",
+      "skipped": "no_heatmap",
+      "status": null
+    },
+    {
+      "image": "det881_bench_01.png",
+      "raw_shape": [
+        512,
+        512
+      ],
+      "raw_dtype": "float16",
+      "display_size": [
+        1280,
+        1280
+      ],
+      "write_ms": {
+        "n": 5,
+        "p50": 0.63,
+        "p95": 0.74,
+        "mean": 0.64
+      },
+      "bytes": {
+        "raw_heatmap_path": 524416,
+        "mask_path": 20520,
+        "heatmap_path": 277476,
+        "overlay_path": 362303
+      },
+      "recompute_mask_equal": true,
+      "recompute_boxes_equal": true,
+      "n_heatmap_boxes": 38
+    }
+  ],
+  "latency_summary": {
+    "on": {
+      "infer_ms": {
+        "n": 24,
+        "p50": 83.23,
+        "p95": 122.01,
+        "mean": 85.94
+      },
+      "e2e_ms": {
+        "n": 24,
+        "p50": 224.22,
+        "p95": 258.76,
+        "mean": 221.43
+      },
+      "wall_ms": {
+        "n": 24,
+        "p50": 245.23,
+        "p95": 282.59,
+        "mean": 240.38
+      }
+    },
+    "off": {
+      "infer_ms": {
+        "n": 24,
+        "p50": 80.67,
+        "p95": 94.73,
+        "mean": 82.12
+      },
+      "e2e_ms": {
+        "n": 24,
+        "p50": 219.52,
+        "p95": 256.1,
+        "mean": 212.27
+      },
+      "wall_ms": {
+        "n": 24,
+        "p50": 241.09,
+        "p95": 300.3,
+        "mean": 231.88
+      }
+    }
+  },
+  "rows": [
+    {
+      "tag": "on",
+      "image": "det878_bench_00.png",
+      "e2e_ms": 215.2817000169307,
+      "infer_ms": 78.17549997707829,
+      "wall_ms": 238.11959999147803,
+      "raw": true
+    },
+    {
+      "tag": "off",
+      "image": "det878_bench_00.png",
+      "e2e_ms": 215.34920000704005,
+      "infer_ms": 77.6354999979958,
+      "wall_ms": 239.5122000016272,
+      "raw": false
+    },
+    {
+      "tag": "off",
+      "image": "det27_bench_07.png",
+      "e2e_ms": 212.70979999098927,
+      "infer_ms": 78.45929998438805,
+      "wall_ms": 235.47110002255067,
+      "raw": false
+    },
+    {
+      "tag": "on",
+      "image": "det27_bench_07.png",
+      "e2e_ms": 210.43370000552386,
+      "infer_ms": 78.79610004602,
+      "wall_ms": 232.82780003501102,
+      "raw": true
+    },
+    {
+      "tag": "on",
+      "image": "det900_bench_02.png",
+      "e2e_ms": 174.8643000028096,
+      "infer_ms": 72.50140001997352,
+      "wall_ms": 180.7435000082478,
+      "raw": false
+    },
+    {
+      "tag": "off",
+      "image": "det900_bench_02.png",
+      "e2e_ms": 171.01580003509298,
+      "infer_ms": 71.7212000163272,
+      "wall_ms": 176.18720000609756,
+      "raw": false
+    },
+    {
+      "tag": "off",
+      "image": "det881_bench_01.png",
+      "e2e_ms": 219.3320000078529,
+      "infer_ms": 83.20130000356585,
+      "wall_ms": 240.10009999619797,
+      "raw": false
+    },
+    {
+      "tag": "on",
+      "image": "det881_bench_01.png",
+      "e2e_ms": 221.27509996062145,
+      "infer_ms": 81.7246000515297,
+      "wall_ms": 244.61440002778545,
+      "raw": true
+    },
+    {
+      "tag": "off",
+      "image": "det878_bench_00.png",
+      "e2e_ms": 226.21440002694726,
+      "infer_ms": 85.12090001022443,
+      "wall_ms": 247.32699996093288,
+      "raw": false
+    },
+    {
+      "tag": "on",
+      "image": "det878_bench_00.png",
+      "e2e_ms": 230.13350000837818,
+      "infer_ms": 83.76210002461448,
+      "wall_ms": 253.54519998654723,
+      "raw": true
+    },
+    {
+      "tag": "on",
+      "image": "det27_bench_07.png",
+      "e2e_ms": 224.05809996416792,
+      "infer_ms": 83.92369997454807,
+      "wall_ms": 245.83819997496903,
+      "raw": true
+    },
+    {
+      "tag": "off",
+      "image": "det27_bench_07.png",
+      "e2e_ms": 221.68860002420843,
+      "infer_ms": 85.23610001429915,
+      "wall_ms": 244.7632999974303,
+      "raw": false
+    },
+    {
+      "tag": "off",
+      "image": "det900_bench_02.png",
+      "e2e_ms": 166.62819997873157,
+      "infer_ms": 68.10199999017641,
+      "wall_ms": 172.85870003979653,
+      "raw": false
+    },
+    {
+      "tag": "on",
+      "image": "det900_bench_02.png",
+      "e2e_ms": 174.89470000145957,
+      "infer_ms": 74.10650001838803,
+      "wall_ms": 179.2206999962218,
+      "raw": false
+    },
+    {
+      "tag": "on",
+      "image": "det881_bench_01.png",
+      "e2e_ms": 234.88950001774356,
+      "infer_ms": 92.21470000920817,
+      "wall_ms": 257.02339998679236,
+      "raw": true
+    },
+    {
+      "tag": "off",
+      "image": "det881_bench_01.png",
+      "e2e_ms": 227.82939998432994,
+      "infer_ms": 84.66350001981482,
+      "wall_ms": 248.04970005061477,
+      "raw": false
+    },
+    {
+      "tag": "on",
+      "image": "det878_bench_00.png",
+      "e2e_ms": 228.44480001367629,
+      "infer_ms": 86.18859999114648,
+      "wall_ms": 251.58789998386055,
+      "raw": true
+    },
+    {
+      "tag": "off",
+      "image": "det878_bench_00.png",
+      "e2e_ms": 220.96239996608347,
+      "infer_ms": 82.78419997077435,
+      "wall_ms": 254.0762000135146,
+      "raw": false
+    },
+    {
+      "tag": "off",
+      "image": "det27_bench_07.png",
+      "e2e_ms": 225.32130003673956,
+      "infer_ms": 85.97319998079911,
+      "wall_ms": 250.63879997469485,
+      "raw": false
+    },
+    {
+      "tag": "on",
+      "image": "det27_bench_07.png",
+      "e2e_ms": 229.90969999227673,
+      "infer_ms": 84.82479996746406,
+      "wall_ms": 253.42519994592294,
+      "raw": true
+    },
+    {
+      "tag": "on",
+      "image": "det900_bench_02.png",
+      "e2e_ms": 171.71580001013353,
+      "infer_ms": 70.82779996562749,
+      "wall_ms": 177.88020003354177,
+      "raw": false
+    },
+    {
+      "tag": "off",
+      "image": "det900_bench_02.png",
+      "e2e_ms": 167.68829995999113,
+      "infer_ms": 68.27310001244769,
+      "wall_ms": 173.38619998190552,
+      "raw": false
+    },
+    {
+      "tag": "off",
+      "image": "det881_bench_01.png",
+      "e2e_ms": 289.97460001846775,
+      "infer_ms": 152.39550004480407,
+      "wall_ms": 312.0264000026509,
+      "raw": false
+    },
+    {
+      "tag": "on",
+      "image": "det881_bench_01.png",
+      "e2e_ms": 238.70200000237674,
+      "infer_ms": 79.84739996027201,
+      "wall_ms": 265.33540000673383,
+      "raw": true
+    },
+    {
+      "tag": "off",
+      "image": "det878_bench_00.png",
+      "e2e_ms": 259.7156999981962,
+      "infer_ms": 92.00080001028255,
+      "wall_ms": 307.5027000159025,
+      "raw": false
+    },
+    {
+      "tag": "on",
+      "image": "det878_bench_00.png",
+      "e2e_ms": 291.446499992162,
+      "infer_ms": 98.24230003869161,
+      "wall_ms": 322.2727000247687,
+      "raw": true
+    },
+    {
+      "tag": "on",
+      "image": "det27_bench_07.png",
+      "e2e_ms": 261.61409995984286,
+      "infer_ms": 85.67720005521551,
+      "wall_ms": 285.6351000373252,
+      "raw": true
+    },
+    {
+      "tag": "off",
+      "image": "det27_bench_07.png",
+      "e2e_ms": 235.62479997053742,
+      "infer_ms": 82.34129997435957,
+      "wall_ms": 259.45169996703044,
+      "raw": false
+    },
+    {
+      "tag": "off",
+      "image": "det900_bench_02.png",
+      "e2e_ms": 171.59159999573603,
+      "infer_ms": 69.95589996222407,
+      "wall_ms": 175.5354999913834,
+      "raw": false
+    },
+    {
+      "tag": "on",
+      "image": "det900_bench_02.png",
+      "e2e_ms": 174.33579999487847,
+      "infer_ms": 65.57050003902987,
+      "wall_ms": 178.49209997802973,
+      "raw": false
+    },
+    {
+      "tag": "on",
+      "image": "det881_bench_01.png",
+      "e2e_ms": 229.71980000147596,
+      "infer_ms": 84.33909999439493,
+      "wall_ms": 251.66660000104457,
+      "raw": true
+    },
+    {
+      "tag": "off",
+      "image": "det881_bench_01.png",
+      "e2e_ms": 227.61440003523603,
+      "infer_ms": 86.44569996977225,
+      "wall_ms": 247.9757000110112,
+      "raw": false
+    },
+    {
+      "tag": "on",
+      "image": "det878_bench_00.png",
+      "e2e_ms": 224.3633999605663,
+      "infer_ms": 89.27609998499975,
+      "wall_ms": 250.11600001016632,
+      "raw": true
+    },
+    {
+      "tag": "off",
+      "image": "det878_bench_00.png",
+      "e2e_ms": 222.7947000064887,
+      "infer_ms": 94.08030001213774,
+      "wall_ms": 244.51789999147877,
+      "raw": false
+    },
+    {
+      "tag": "off",
+      "image": "det27_bench_07.png",
+      "e2e_ms": 230.68909998983145,
+      "infer_ms": 94.84790003625676,
+      "wall_ms": 252.81939998967573,
+      "raw": false
+    },
+    {
+      "tag": "on",
+      "image": "det27_bench_07.png",
+      "e2e_ms": 242.61330004082993,
+      "infer_ms": 103.27069996856153,
+      "wall_ms": 265.3161999769509,
+      "raw": true
+    },
+    {
+      "tag": "on",
+      "image": "det900_bench_02.png",
+      "e2e_ms": 226.70180001296103,
+      "infer_ms": 128.30530002247542,
+      "wall_ms": 233.37039997568354,
+      "raw": false
+    },
+    {
+      "tag": "off",
+      "image": "det900_bench_02.png",
+      "e2e_ms": 159.79730000253767,
+      "infer_ms": 63.63340001553297,
+      "wall_ms": 165.68390000611544,
+      "raw": false
+    },
+    {
+      "tag": "off",
+      "image": "det881_bench_01.png",
+      "e2e_ms": 219.7172999731265,
+      "infer_ms": 79.00319999316707,
+      "wall_ms": 239.89399999845773,
+      "raw": false
+    },
+    {
+      "tag": "on",
+      "image": "det881_bench_01.png",
+      "e2e_ms": 231.08919995138422,
+      "infer_ms": 82.7036999980919,
+      "wall_ms": 253.2132000196725,
+      "raw": true
+    },
+    {
+      "tag": "off",
+      "image": "det878_bench_00.png",
+      "e2e_ms": 216.90920001128688,
+      "infer_ms": 72.98609998542815,
+      "wall_ms": 242.071200045757,
+      "raw": false
+    },
+    {
+      "tag": "on",
+      "image": "det878_bench_00.png",
+      "e2e_ms": 217.95630000997335,
+      "infer_ms": 76.5844999696128,
+      "wall_ms": 240.32649997388944,
+      "raw": true
+    },
+    {
+      "tag": "on",
+      "image": "det27_bench_07.png",
+      "e2e_ms": 215.8699999563396,
+      "infer_ms": 77.52220000838861,
+      "wall_ms": 237.59169998811558,
+      "raw": true
+    },
+    {
+      "tag": "off",
+      "image": "det27_bench_07.png",
+      "e2e_ms": 215.38389998022467,
+      "infer_ms": 78.64690001588315,
+      "wall_ms": 237.11460002232343,
+      "raw": false
+    },
+    {
+      "tag": "off",
+      "image": "det900_bench_02.png",
+      "e2e_ms": 161.42789996229112,
+      "infer_ms": 61.2777000060305,
+      "wall_ms": 167.61300002690405,
+      "raw": false
+    },
+    {
+      "tag": "on",
+      "image": "det900_bench_02.png",
+      "e2e_ms": 224.07200001180172,
+      "infer_ms": 125.31619996298105,
+      "wall_ms": 228.51829999126494,
+      "raw": false
+    },
+    {
+      "tag": "on",
+      "image": "det881_bench_01.png",
+      "e2e_ms": 220.04849999211729,
+      "infer_ms": 78.8011999684386,
+      "wall_ms": 242.415799992159,
+      "raw": true
+    },
+    {
+      "tag": "off",
+      "image": "det881_bench_01.png",
+      "e2e_ms": 208.59529997687787,
+      "infer_ms": 71.98330003302544,
+      "wall_ms": 230.62190000200644,
+      "raw": false
+    }
+  ]
+}

@@ -1,0 +1,53 @@
+{
+  "A_offline_vendor": {
+    "rc": 0,
+    "wall_s": 4.25,
+    "stdout_tail": [
+      "[dino] 使用随包 vendor 权重: d:\\CGAIC\\AOI_SSOCL\\AOI_tree\\assets\\dinov2\\dinov2_vits14_pretrain.pth",
+      "RESULT OK load_s=3.78 params=22056576"
+    ],
+    "stderr_tail": [
+      " 18%|█▊        | 15.0M/84.2M [00:00<00:00, 155MB/s]",
+      " 39%|███▉      | 33.0M/84.2M [00:00<00:00, 171MB/s]",
+      " 61%|██████    | 51.5M/84.2M [00:00<00:00, 181MB/s]",
+      " 82%|████████▏ | 69.2M/84.2M [00:00<00:00, 182MB/s]",
+      "100%|██████████| 84.2M/84.2M [00:00<00:00, 180MB/s]"
+    ],
+    "fake_home": "C:\\Users\\imia\\AppData\\Local\\Temp\\aoi_test05_A_offline_vendor_yfr39sj8",
+    "fake_home_listing": [
+      "torch"
+    ]
+  },
+  "B_offline_no_weights": {
+    "rc": 0,
+    "wall_s": 3.21,
+    "stdout_tail": [
+      "[dino] 使用随包 vendor 权重: d:\\CGAIC\\AOI_SSOCL\\AOI_tree\\assets\\dinov2\\dinov2_vits14_pretrain.pth",
+      "RESULT OK load_s=2.77 params=22056576"
+    ],
+    "stderr_tail": [
+      "  warnings.warn(\"xFormers is not available (Block)\")",
+      "Downloading: \"file:///D:/CGAIC/AOI_SSOCL/AOI_tree/assets/dinov2/dinov2_vits14_pretrain.pth\" to C:\\Users\\imia\\AppData\\Local\\Temp\\aoi_test05_B_offline_no_weights_dd9xi06m\\torch\\hub\\checkpoints\\dinov2_vits14_pretrain.pth",
+      "",
+      "  0%|          | 0.00/84.2M [00:00<?, ?B/s]",
+      "100%|██████████| 84.2M/84.2M [00:00<00:00, 1.69GB/s]"
+    ],
+    "fake_home": "C:\\Users\\imia\\AppData\\Local\\Temp\\aoi_test05_B_offline_no_weights_dd9xi06m",
+    "fake_home_listing": [
+      "torch"
+    ]
+  },
+  "C_offline_missing_weight_file": {
+    "rc": null,
+    "wall_s": 180,
+    "timeout": true,
+    "stdout_tail": [],
+    "stderr_tail": [
+      "TIMEOUT"
+    ],
+    "fake_home": "C:\\Users\\imia\\AppData\\Local\\Temp\\aoi_test05_C_offline_missing_weight_file_u3zb4ud5",
+    "fake_home_listing": [
+      "torch"
+    ]
+  }
+}

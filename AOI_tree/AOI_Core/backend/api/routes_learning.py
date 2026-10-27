@@ -6,8 +6,9 @@ latest 端点供 M3 UI 画曲线。
 """
 from __future__ import annotations
 
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter, Depends, HTTPException
 
+from ..core.security import require_role
 from ..core.tasks import task_manager
 from ..db.database import session_scope
 from ..db.models import EvalRun
@@ -110,7 +111,56 @@ def api_weight_history(category: str):
     return get_engine().weight_history(category)
 
 
-@router.post("/learning/contribution")
+@router.get("/learning/candidate_weight_history/{category}")
+def api_candidate_weight_history(category: str, version: int | None = None):
+    """只读候选持久化历史；不加载模型、不运行推理、不写发布账本。"""
+    import json
+    from pathlib import Path
+
+    engine = get_engine()
+    # 品类来自目录名，拒绝路径穿越；版本只允许正整数。
+    if (not category or category in (".", "..")
+            or any(c in category for c in ("/", "\\", ":"))):
+        raise HTTPException(status_code=400, detail="无效品类")
+    if version is not None and version <= 0:
+        raise HTTPException(status_code=400, detail="无效版本")
+    active = engine.current_version(category)
+    versions = [version] if version is not None else sorted(
+        engine.list_versions(category), reverse=True)
+    for v in versions:
+        path = Path(engine._v_dir(category, v))
+        try:
+            with (path / "meta.json").open(encoding="utf-8") as f:
+                meta = json.load(f)
+            if (meta.get("trigger") != "isolated_candidate"
+                    or meta.get("candidate_state") != "completed"):
+                continue
+            history = path / "ssocl" / "weight_history.json"
+            points = []
+            if history.is_file():
+                with history.open(encoding="utf-8") as f:
+                    points = json.load(f)
+                if not isinstance(points, list):
+                    raise ValueError("候选权重历史格式无效")
+        except FileNotFoundError:
+            continue
+        except (OSError, ValueError) as exc:
+            raise HTTPException(status_code=409,
+                                detail=f"候选持久化证据读取失败：{exc}") from exc
+        return {"category": category, "enabled": True,
+                "source": "candidate_snapshot", "version": f"v{v}",
+                "parent_version": meta.get("parent_version"),
+                "active_version": f"v{active}" if active is not None else None,
+                "is_active": v == active, "candidate_state": meta["candidate_state"],
+                "points": points,
+                "history_file": f"v{v}/ssocl/weight_history.json"}
+    return {"category": category, "enabled": False,
+            "source": "candidate_snapshot", "version": None, "points": [],
+            "active_version": f"v{active}" if active is not None else None}
+
+
+@router.post("/learning/contribution",
+             dependencies=[Depends(require_role("engineer"))])
 def api_learning_contribution(req: ContributionRequest):
     """后台任务：槽位贡献档案（单变量/冗余度/消融三层评价）。"""
     def fn(progress_cb):
@@ -134,6 +184,7 @@ def api_learning_contribution_latest(category: str):
         "univariate": m.get("univariate"),
         "redundancy": m.get("redundancy"),
         "ablation": m.get("ablation"),
+        "trad_groups": m.get("trad_groups"),
     }
 
 

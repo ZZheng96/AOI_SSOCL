@@ -52,6 +52,7 @@ slots:
     max_patches: 50000
   blob:
     enabled: false
+    with_heatmap: true
   trad:
     enabled: false
   layout:

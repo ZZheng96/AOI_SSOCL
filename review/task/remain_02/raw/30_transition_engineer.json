@@ -1,0 +1,15 @@
+{
+  "name": "transition_engineer",
+  "method": "POST",
+  "path": "/api/models/feature-revisions/ba47d05c566a175eb8728a6aeece4c23d130dbd1af396f56e2b5866ae4ac8df8/transition",
+  "role": "engineer",
+  "request_body": {
+    "target": "evaluated",
+    "actor": "eng"
+  },
+  "status_code": 403,
+  "response": {
+    "detail": "权限不足：该操作需要 admin 及以上角色（当前 engineer）"
+  },
+  "note": "门禁 transition 需 admin"
+}

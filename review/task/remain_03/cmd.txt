@@ -1,0 +1,22 @@
+# REMAIN-03 执行动作记录（全部为只读审计；无生产写操作）
+
+1. LS d:\CGAIC\AOI_SSOCL\stable_AOI_tree\AOI_Core  —— 盘点稳定版目录结构
+2. Read algo\feature_revision.py（全量 307 行）—— FeatureSetRevision 模型/状态机/生产指针/detection_stamp
+3. Read algo\features\registry.py —— 生产 trad 特征来源（15 组 200 维常量注册表）
+4. Grep "feature_revision|FeatureSetRevision|detection_stamp|production_pointer|bind_production|rollback_production"（全库）
+5. Read algo\release_ops.py（全量）—— revision_binding/feature_ops_view 定义，确认仅测试引用
+6. Grep backend\db\models.py "class Detection|revision|hash|seed|snapshot|dimension|extra"
+7. Read backend\db\models.py L200-279 / L320-365 —— Detection schema 确认无血缘列；extra 属 OperationLog
+8. Grep backend "Detection\(" —— 唯一写入点 pipeline\service.py:719
+9. Read backend\pipeline\service.py L670-749 —— _persist 落库字段确认无血缘键
+10. Read algo\persist.py L610-678 —— 快照 meta：feature_revision_binding 硬编码 unknown（L652-653）
+11. Read backend\api\routes_models.py L220-339 / L380-499 / L590-693 / L696-755 —— revision API、激活/回滚门禁
+12. Grep backend\engine "current\.json|def activate|def rollback|def load|restart|恢复"
+13. Read backend\engine\__init__.py L1-80（DetectionResult 契约）/ L860-957（activate/rollback）
+14. Grep backend "bind_production|rollback_production|detection_stamp|revision_binding|feature_revision_binding" —— 确认无生产调用方/无 API 入口
+15. Read tests\smoke\test_feature_revision.py L120-168 —— 静态契约：trad.py 不得含 feature_revision
+16. Grep "revision_binding|feature_ops_view"（全库）/ Grep backend "feature_revisions" —— 调用方盘点
+17. Grep algo\decide.py "class DetectionResult|model_version|feature|seed|revision|snapshot" —— 无匹配
+18. 结论：绑定闭环未实现 → 跳过 TEMP 实证（未建 8032 端口环境、未起进程），直接产出 FAIL+阻塞清单
+19. New-Item d:\CGAIC\AOI_SSOCL\review\task\remain_03\raw  —— 建产物目录（review 区，非稳定版）
+20. Write result.md / env.json / cmd.txt / raw\* —— 产物落盘

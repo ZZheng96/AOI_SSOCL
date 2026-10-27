@@ -1,0 +1,25 @@
+{
+ "database": {
+  "files": 3,
+  "mib": 13.5
+ },
+ "storage_archive": {
+  "files": 780,
+  "mib": 4365.4
+ },
+ "storage_heatmaps": null,
+ "engine_snapshots": {
+  "files": 122,
+  "mib": 27.8
+ },
+ "storage_all": {
+  "files": 909,
+  "mib": 4393.4
+ },
+ "rows_images": 854,
+ "rows_detections": 919,
+ "rows_feedback": 0,
+ "rows_operation_logs": 25,
+ "rows_eval_runs": 0,
+ "rows_models": 6
+}

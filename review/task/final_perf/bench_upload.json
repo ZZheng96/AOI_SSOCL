@@ -1,0 +1,200 @@
+{
+  "temp": "C:\\Users\\imia\\AppData\\Local\\Temp\\aoi_finalperf_up_cce190q3",
+  "rows": [
+    {
+      "image": "det776_det14_bench_02.png",
+      "size": [
+        2500,
+        2500
+      ],
+      "upload": {
+        "ms": 622.3,
+        "score": 2.0,
+        "is_anomaly": true
+      },
+      "frame": {
+        "ms": 504.4,
+        "score": 2.0,
+        "is_anomaly": true
+      },
+      "same": true
+    },
+    {
+      "image": "det385_det28_bench_00.png",
+      "size": [
+        4096,
+        3000
+      ],
+      "upload": {
+        "ms": 788.7,
+        "score": 2.0,
+        "is_anomaly": true
+      },
+      "frame": {
+        "ms": 728.7,
+        "score": 2.0,
+        "is_anomaly": true
+      },
+      "same": true
+    },
+    {
+      "image": "det588_det61_bench_07.png",
+      "size": [
+        1024,
+        1024
+      ],
+      "upload": {
+        "ms": 276.3,
+        "score": 2.0,
+        "is_anomaly": true
+      },
+      "frame": {
+        "ms": 280.0,
+        "score": 2.0,
+        "is_anomaly": true
+      },
+      "same": true
+    },
+    {
+      "image": "det7_bench_03.png",
+      "size": [
+        2500,
+        2500
+      ],
+      "upload": {
+        "ms": 475.0,
+        "score": 2.0,
+        "is_anomaly": true
+      },
+      "frame": {
+        "ms": 570.6,
+        "score": 2.0,
+        "is_anomaly": true
+      },
+      "same": true
+    },
+    {
+      "image": "det245_det14_bench_02.png",
+      "size": [
+        2500,
+        2500
+      ],
+      "upload": {
+        "ms": 503.7,
+        "score": 2.0,
+        "is_anomaly": true
+      },
+      "frame": {
+        "ms": 495.4,
+        "score": 2.0,
+        "is_anomaly": true
+      },
+      "same": true
+    },
+    {
+      "image": "det711_det28_bench_00.png",
+      "size": [
+        4096,
+        3000
+      ],
+      "upload": {
+        "ms": 894.3,
+        "score": 2.0,
+        "is_anomaly": true
+      },
+      "frame": {
+        "ms": 802.1,
+        "score": 2.0,
+        "is_anomaly": true
+      },
+      "same": true
+    },
+    {
+      "image": "det179_det14_bench_02.png",
+      "size": [
+        2500,
+        2500
+      ],
+      "upload": {
+        "ms": 513.9,
+        "score": 2.0,
+        "is_anomaly": true
+      },
+      "frame": {
+        "ms": 568.1,
+        "score": 2.0,
+        "is_anomaly": true
+      },
+      "same": true
+    },
+    {
+      "image": "det452_0599_repaired.png",
+      "size": [
+        304,
+        432
+      ],
+      "upload": {
+        "ms": 167.6,
+        "score": 0.678069720405768,
+        "is_anomaly": false
+      },
+      "frame": {
+        "ms": 154.3,
+        "score": 0.678069720405768,
+        "is_anomaly": false
+      },
+      "same": true
+    },
+    {
+      "image": "det20_bench_00.png",
+      "size": [
+        2500,
+        2500
+      ],
+      "upload": {
+        "ms": 539.2,
+        "score": 2.0,
+        "is_anomaly": true
+      },
+      "frame": {
+        "ms": 528.1,
+        "score": 2.0,
+        "is_anomaly": true
+      },
+      "same": true
+    },
+    {
+      "image": "det12_bench_00.png",
+      "size": [
+        2500,
+        2500
+      ],
+      "upload": {
+        "ms": 621.1,
+        "score": 2.0,
+        "is_anomaly": true
+      },
+      "frame": {
+        "ms": 519.5,
+        "score": 2.0,
+        "is_anomaly": true
+      },
+      "same": true
+    }
+  ],
+  "upload_png": {
+    "p50": 513.9,
+    "p95": 894.3,
+    "max": 894.3,
+    "mean": 540.2
+  },
+  "frame_png": {
+    "p50": 519.5,
+    "p95": 802.1,
+    "max": 802.1,
+    "mean": 515.1
+  },
+  "all_same": true,
+  "over_1s": 0,
+  "scope": "G1 复测：/detect/upload 去掉 PNG 重编码后的 HTTP 往返（与 bench_decode 同 seed 同 10 张）。\n\n口径：TestClient 进程内 ASGI 往返（含 multipart 解析 + 落盘 + 检测 + 落库，不含真实网络）。\n另做逐图精度门：upload 与 frame 两条路径的 score/decision 必须一致。\n"
+}

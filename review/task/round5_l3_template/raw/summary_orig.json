@@ -1,0 +1,555 @@
+{
+  "tag": "orig",
+  "fit": {
+    "B_base": {
+      "score_slots": [
+        "sem",
+        "disc",
+        "shead"
+      ],
+      "weights": {
+        "sem": 0.3333333333333333,
+        "disc": 0.3333333333333333,
+        "shead": 0.3333333333333333
+      },
+      "slot_sanity": {},
+      "train_auroc": null,
+      "tau_high": 0.6633072916666666,
+      "n_templates": 0,
+      "tpl_ref": null,
+      "fit_s": 16.2
+    },
+    "B_L3": {
+      "score_slots": [
+        "sem",
+        "disc",
+        "shead",
+        "tpl"
+      ],
+      "weights": {
+        "sem": 0.25,
+        "disc": 0.25,
+        "shead": 0.25,
+        "tpl": 0.25
+      },
+      "slot_sanity": {},
+      "train_auroc": null,
+      "tau_high": 0.7480437678507683,
+      "n_templates": 22,
+      "tpl_ref": 3.553079903125763,
+      "fit_s": 20.9
+    },
+    "A_base": {
+      "score_slots": [
+        "sem",
+        "disc",
+        "shead"
+      ],
+      "weights": {
+        "sem": 0.25265285497726125,
+        "disc": 0.0,
+        "shead": 0.7473471450227388
+      },
+      "slot_sanity": {
+        "sem": 0.6,
+        "disc": 0.4917,
+        "shead": 0.7958
+      },
+      "train_auroc": 0.675,
+      "tau_high": 0.7488903407655382,
+      "n_templates": 0,
+      "tpl_ref": null,
+      "fit_s": 17.3
+    },
+    "A_L3": {
+      "score_slots": [
+        "sem",
+        "disc",
+        "shead",
+        "tpl"
+      ],
+      "weights": {
+        "sem": 0.25265285497726125,
+        "disc": 0.0,
+        "shead": 0.7473471450227388,
+        "tpl": 0.0
+      },
+      "slot_sanity": {
+        "sem": 0.6,
+        "disc": 0.4917,
+        "shead": 0.7958,
+        "tpl": 0.3833
+      },
+      "train_auroc": 0.675,
+      "tau_high": 0.7488903407655382,
+      "n_templates": 22,
+      "tpl_ref": 3.553079903125763,
+      "fit_s": 28.1
+    }
+  },
+  "metrics": {
+    "B_base": {
+      "main": {
+        "n_norm": 47,
+        "n_def": 47,
+        "auroc": 0.5147,
+        "fpr": 0.4681,
+        "recall": 0.4468,
+        "recall_fpr5": 0.0638,
+        "auroc_sem": 0.5057,
+        "auroc_disc": 0.5156,
+        "auroc_shead": 0.4966
+      },
+      "E1": {
+        "n_norm": 9,
+        "n_def": 10,
+        "auroc": 0.6222,
+        "fpr": 0.3333,
+        "recall": 0.2,
+        "recall_fpr5": 0.1,
+        "auroc_sem": 0.9556,
+        "auroc_disc": 0.6556,
+        "auroc_shead": 0.2444
+      },
+      "E2": {
+        "n_norm": 9,
+        "n_def": 9,
+        "auroc": 0.5432,
+        "fpr": 0.3333,
+        "recall": 0.3333,
+        "recall_fpr5": 0.1111,
+        "auroc_sem": 0.5679,
+        "auroc_disc": 0.5309,
+        "auroc_shead": 0.4938
+      },
+      "E1E2": {
+        "n_norm": 9,
+        "n_def": 19,
+        "auroc": 0.5848,
+        "fpr": 0.3333,
+        "recall": 0.2632,
+        "recall_fpr5": 0.1053,
+        "auroc_sem": 0.7719,
+        "auroc_disc": 0.5965,
+        "auroc_shead": 0.3626
+      },
+      "pair": {
+        "n_pairs": 47,
+        "auroc": 0.5147,
+        "win_rate": 0.6596
+      },
+      "batch_fpr": {
+        "orig": {
+          "n": 32,
+          "fpr": 0.5
+        },
+        "Image_2026": {
+          "n": 11,
+          "fpr": 0.2727
+        },
+        "t_fov": {
+          "n": 3,
+          "fpr": 0.6667
+        },
+        "fov_14": {
+          "n": 1,
+          "fpr": 1.0
+        }
+      },
+      "leak_ref": {
+        "n": 8,
+        "recall": 0.125
+      },
+      "latency": {
+        "n": 282,
+        "p50": 141.9,
+        "p95": 361.6,
+        "mean": 176.7
+      }
+    },
+    "B_L3": {
+      "main": {
+        "n_norm": 47,
+        "n_def": 47,
+        "auroc": 0.5138,
+        "fpr": 0.4894,
+        "recall": 0.4681,
+        "recall_fpr5": 0.0638,
+        "auroc_sem": 0.5057,
+        "auroc_disc": 0.5156,
+        "auroc_shead": 0.4966,
+        "auroc_tpl": 0.4975
+      },
+      "E1": {
+        "n_norm": 9,
+        "n_def": 10,
+        "auroc": 0.6111,
+        "fpr": 0.4444,
+        "recall": 0.2,
+        "recall_fpr5": 0.1,
+        "auroc_sem": 0.9556,
+        "auroc_disc": 0.6556,
+        "auroc_shead": 0.2444,
+        "auroc_tpl": 0.1111
+      },
+      "E2": {
+        "n_norm": 9,
+        "n_def": 9,
+        "auroc": 0.5802,
+        "fpr": 0.4444,
+        "recall": 0.4444,
+        "recall_fpr5": 0.1111,
+        "auroc_sem": 0.5679,
+        "auroc_disc": 0.5309,
+        "auroc_shead": 0.4938,
+        "auroc_tpl": 0.5432
+      },
+      "E1E2": {
+        "n_norm": 9,
+        "n_def": 19,
+        "auroc": 0.5965,
+        "fpr": 0.4444,
+        "recall": 0.3158,
+        "recall_fpr5": 0.1053,
+        "auroc_sem": 0.7719,
+        "auroc_disc": 0.5965,
+        "auroc_shead": 0.3626,
+        "auroc_tpl": 0.3158
+      },
+      "pair": {
+        "n_pairs": 47,
+        "auroc": 0.5138,
+        "win_rate": 0.6596,
+        "auroc_tpl": 0.4975,
+        "win_rate_tpl": 0.4894
+      },
+      "batch_fpr": {
+        "orig": {
+          "n": 32,
+          "fpr": 0.5
+        },
+        "Image_2026": {
+          "n": 11,
+          "fpr": 0.2727
+        },
+        "t_fov": {
+          "n": 3,
+          "fpr": 1.0
+        },
+        "fov_14": {
+          "n": 1,
+          "fpr": 1.0
+        }
+      },
+      "leak_ref": {
+        "n": 8,
+        "recall": 0.125
+      },
+      "latency": {
+        "n": 282,
+        "p50": 278.9,
+        "p95": 558.1,
+        "mean": 322.7
+      }
+    },
+    "A_base": {
+      "main": {
+        "n_norm": 47,
+        "n_def": 47,
+        "auroc": 0.5124,
+        "fpr": 0.7447,
+        "recall": 0.7447,
+        "recall_fpr5": 0.0426,
+        "auroc_sem": 0.5057,
+        "auroc_disc": 0.5156,
+        "auroc_shead": 0.5079
+      },
+      "E1": {
+        "n_norm": 9,
+        "n_def": 10,
+        "auroc": 1.0,
+        "fpr": 0.3333,
+        "recall": 1.0,
+        "recall_fpr5": 1.0,
+        "auroc_sem": 0.9556,
+        "auroc_disc": 0.6556,
+        "auroc_shead": 1.0
+      },
+      "E2": {
+        "n_norm": 9,
+        "n_def": 9,
+        "auroc": 0.5802,
+        "fpr": 0.3333,
+        "recall": 0.3333,
+        "recall_fpr5": 0.0,
+        "auroc_sem": 0.5679,
+        "auroc_disc": 0.5309,
+        "auroc_shead": 0.5309
+      },
+      "E1E2": {
+        "n_norm": 9,
+        "n_def": 19,
+        "auroc": 0.8012,
+        "fpr": 0.3333,
+        "recall": 0.6842,
+        "recall_fpr5": 0.5263,
+        "auroc_sem": 0.7719,
+        "auroc_disc": 0.5965,
+        "auroc_shead": 0.7778
+      },
+      "pair": {
+        "n_pairs": 47,
+        "auroc": 0.5124,
+        "win_rate": 0.5745
+      },
+      "batch_fpr": {
+        "orig": {
+          "n": 32,
+          "fpr": 1.0
+        },
+        "Image_2026": {
+          "n": 11,
+          "fpr": 0.0
+        },
+        "t_fov": {
+          "n": 3,
+          "fpr": 1.0
+        },
+        "fov_14": {
+          "n": 1,
+          "fpr": 0.0
+        }
+      },
+      "leak_ref": {
+        "n": 8,
+        "recall": 0.0
+      },
+      "latency": {
+        "n": 282,
+        "p50": 141.9,
+        "p95": 342.8,
+        "mean": 173.5
+      }
+    },
+    "A_L3": {
+      "main": {
+        "n_norm": 47,
+        "n_def": 47,
+        "auroc": 0.5124,
+        "fpr": 0.7447,
+        "recall": 0.7447,
+        "recall_fpr5": 0.0426,
+        "auroc_sem": 0.5057,
+        "auroc_disc": 0.5156,
+        "auroc_shead": 0.5079,
+        "auroc_tpl": 0.4975
+      },
+      "E1": {
+        "n_norm": 9,
+        "n_def": 10,
+        "auroc": 1.0,
+        "fpr": 0.3333,
+        "recall": 1.0,
+        "recall_fpr5": 1.0,
+        "auroc_sem": 0.9556,
+        "auroc_disc": 0.6556,
+        "auroc_shead": 1.0,
+        "auroc_tpl": 0.1111
+      },
+      "E2": {
+        "n_norm": 9,
+        "n_def": 9,
+        "auroc": 0.5802,
+        "fpr": 0.3333,
+        "recall": 0.3333,
+        "recall_fpr5": 0.0,
+        "auroc_sem": 0.5679,
+        "auroc_disc": 0.5309,
+        "auroc_shead": 0.5309,
+        "auroc_tpl": 0.5432
+      },
+      "E1E2": {
+        "n_norm": 9,
+        "n_def": 19,
+        "auroc": 0.8012,
+        "fpr": 0.3333,
+        "recall": 0.6842,
+        "recall_fpr5": 0.5263,
+        "auroc_sem": 0.7719,
+        "auroc_disc": 0.5965,
+        "auroc_shead": 0.7778,
+        "auroc_tpl": 0.3158
+      },
+      "pair": {
+        "n_pairs": 47,
+        "auroc": 0.5124,
+        "win_rate": 0.5745,
+        "auroc_tpl": 0.4975,
+        "win_rate_tpl": 0.4894
+      },
+      "batch_fpr": {
+        "orig": {
+          "n": 32,
+          "fpr": 1.0
+        },
+        "Image_2026": {
+          "n": 11,
+          "fpr": 0.0
+        },
+        "t_fov": {
+          "n": 3,
+          "fpr": 1.0
+        },
+        "fov_14": {
+          "n": 1,
+          "fpr": 0.0
+        }
+      },
+      "leak_ref": {
+        "n": 8,
+        "recall": 0.0
+      },
+      "latency": {
+        "n": 282,
+        "p50": 291.1,
+        "p95": 558.0,
+        "mean": 333.8
+      }
+    }
+  },
+  "evalset": {
+    "main_normal": [
+      "D:\\CGAIC\\data_local\\gold_finger\\test\\good\\Image_20260116193703828_repaired.jpg",
+      "D:\\CGAIC\\data_local\\gold_finger\\test\\good\\Image_20260116193859871_repaired.jpg",
+      "D:\\CGAIC\\data_local\\gold_finger\\test\\good\\Image_20260116194235228_repaired.jpg",
+      "D:\\CGAIC\\data_local\\gold_finger\\test\\good\\Image_20260116194441909_repaired.jpg",
+      "D:\\CGAIC\\data_local\\gold_finger\\test\\good\\Image_20260116194259739_repaired.jpg",
+      "D:\\CGAIC\\data_local\\gold_finger\\test\\good\\Image_20260116193843246_repaired.jpg",
+      "D:\\CGAIC\\data_local\\gold_finger\\test\\good\\t_fov_3_repaired.jpg",
+      "D:\\CGAIC\\data_local\\gold_finger\\test\\good\\t_fov_13_repaired.jpg",
+      "D:\\CGAIC\\data_local\\gold_finger\\test\\good\\t_fov_14_repaired.jpg",
+      "D:\\CGAIC\\data_local\\gold_finger\\train\\good\\1308_repaired.jpg",
+      "D:\\CGAIC\\data_local\\gold_finger\\train\\good\\1310_repaired.jpg",
+      "D:\\CGAIC\\data_local\\gold_finger\\train\\good\\1312_repaired.jpg",
+      "D:\\CGAIC\\data_local\\gold_finger\\train\\good\\1314_repaired.jpg",
+      "D:\\CGAIC\\data_local\\gold_finger\\train\\good\\1315_repaired.jpg",
+      "D:\\CGAIC\\data_local\\gold_finger\\train\\good\\1316_repaired.jpg",
+      "D:\\CGAIC\\data_local\\gold_finger\\train\\good\\1317_repaired.jpg",
+      "D:\\CGAIC\\data_local\\gold_finger\\train\\good\\1318_repaired.jpg",
+      "D:\\CGAIC\\data_local\\gold_finger\\train\\good\\1319_repaired.jpg",
+      "D:\\CGAIC\\data_local\\gold_finger\\train\\good\\1320_repaired.jpg",
+      "D:\\CGAIC\\data_local\\gold_finger\\train\\good\\1321_repaired.jpg",
+      "D:\\CGAIC\\data_local\\gold_finger\\train\\good\\1322_repaired.jpg",
+      "D:\\CGAIC\\data_local\\gold_finger\\train\\good\\1323_repaired.jpg",
+      "D:\\CGAIC\\data_local\\gold_finger\\train\\good\\1324_repaired.jpg",
+      "D:\\CGAIC\\data_local\\gold_finger\\train\\good\\1325_repaired.jpg",
+      "D:\\CGAIC\\data_local\\gold_finger\\train\\good\\1326_repaired.jpg",
+      "D:\\CGAIC\\data_local\\gold_finger\\train\\good\\1327_repaired.jpg",
+      "D:\\CGAIC\\data_local\\gold_finger\\train\\good\\1330_repaired.jpg",
+      "D:\\CGAIC\\data_local\\gold_finger\\train\\good\\1331_repaired.jpg",
+      "D:\\CGAIC\\data_local\\gold_finger\\train\\good\\1332_repaired.jpg",
+      "D:\\CGAIC\\data_local\\gold_finger\\train\\good\\1334_repaired.jpg",
+      "D:\\CGAIC\\data_local\\gold_finger\\train\\good\\2444_repaired.jpg",
+      "D:\\CGAIC\\data_local\\gold_finger\\train\\good\\2446_repaired.jpg",
+      "D:\\CGAIC\\data_local\\gold_finger\\train\\good\\2447_repaired.jpg",
+      "D:\\CGAIC\\data_local\\gold_finger\\train\\good\\2448_repaired.jpg",
+      "D:\\CGAIC\\data_local\\gold_finger\\train\\good\\2449_repaired.jpg",
+      "D:\\CGAIC\\data_local\\gold_finger\\train\\good\\2452_repaired.jpg",
+      "D:\\CGAIC\\data_local\\gold_finger\\train\\good\\2453_repaired.jpg",
+      "D:\\CGAIC\\data_local\\gold_finger\\train\\good\\2455_repaired.jpg",
+      "D:\\CGAIC\\data_local\\gold_finger\\train\\good\\2458_repaired.jpg",
+      "D:\\CGAIC\\data_local\\gold_finger\\train\\good\\2464_repaired.jpg",
+      "D:\\CGAIC\\data_local\\gold_finger\\train\\good\\2465_repaired.jpg",
+      "D:\\CGAIC\\data_local\\gold_finger\\train\\good\\Image_20260116193528907_repaired.jpg",
+      "D:\\CGAIC\\data_local\\gold_finger\\train\\good\\Image_20260116193602828_repaired.jpg",
+      "D:\\CGAIC\\data_local\\gold_finger\\train\\good\\Image_20260116193618467_repaired.jpg",
+      "D:\\CGAIC\\data_local\\gold_finger\\train\\good\\Image_20260116193635836_repaired.jpg",
+      "D:\\CGAIC\\data_local\\gold_finger\\train\\good\\Image_20260116193646380_repaired.jpg",
+      "D:\\CGAIC\\data_local\\gold_finger\\train\\good\\fov_14_20240723141433_repaired.jpg"
+    ],
+    "main_defect": [
+      "D:\\CGAIC\\data_local\\gold_finger\\test\\defect\\1308.jpg",
+      "D:\\CGAIC\\data_local\\gold_finger\\test\\defect\\1310.jpg",
+      "D:\\CGAIC\\data_local\\gold_finger\\test\\defect\\1312.jpg",
+      "D:\\CGAIC\\data_local\\gold_finger\\test\\defect\\1314.jpg",
+      "D:\\CGAIC\\data_local\\gold_finger\\test\\defect\\1315.jpg",
+      "D:\\CGAIC\\data_local\\gold_finger\\test\\defect\\1316.jpg",
+      "D:\\CGAIC\\data_local\\gold_finger\\test\\defect\\1317.jpg",
+      "D:\\CGAIC\\data_local\\gold_finger\\test\\defect\\1318.jpg",
+      "D:\\CGAIC\\data_local\\gold_finger\\test\\defect\\1319.jpg",
+      "D:\\CGAIC\\data_local\\gold_finger\\test\\defect\\1320.jpg",
+      "D:\\CGAIC\\data_local\\gold_finger\\test\\defect\\1321.jpg",
+      "D:\\CGAIC\\data_local\\gold_finger\\test\\defect\\1322.jpg",
+      "D:\\CGAIC\\data_local\\gold_finger\\test\\defect\\1323.jpg",
+      "D:\\CGAIC\\data_local\\gold_finger\\test\\defect\\1324.jpg",
+      "D:\\CGAIC\\data_local\\gold_finger\\test\\defect\\1325.jpg",
+      "D:\\CGAIC\\data_local\\gold_finger\\test\\defect\\1326.jpg",
+      "D:\\CGAIC\\data_local\\gold_finger\\test\\defect\\1327.jpg",
+      "D:\\CGAIC\\data_local\\gold_finger\\test\\defect\\1330.jpg",
+      "D:\\CGAIC\\data_local\\gold_finger\\test\\defect\\1331.jpg",
+      "D:\\CGAIC\\data_local\\gold_finger\\test\\defect\\1332.jpg",
+      "D:\\CGAIC\\data_local\\gold_finger\\test\\defect\\1334.jpg",
+      "D:\\CGAIC\\data_local\\gold_finger\\test\\defect\\2444.jpg",
+      "D:\\CGAIC\\data_local\\gold_finger\\test\\defect\\2446.jpg",
+      "D:\\CGAIC\\data_local\\gold_finger\\test\\defect\\2447.jpg",
+      "D:\\CGAIC\\data_local\\gold_finger\\test\\defect\\2448.jpg",
+      "D:\\CGAIC\\data_local\\gold_finger\\test\\defect\\2449.jpg",
+      "D:\\CGAIC\\data_local\\gold_finger\\test\\defect\\2452.jpg",
+      "D:\\CGAIC\\data_local\\gold_finger\\test\\defect\\2453.jpg",
+      "D:\\CGAIC\\data_local\\gold_finger\\test\\defect\\2455.jpg",
+      "D:\\CGAIC\\data_local\\gold_finger\\test\\defect\\2458.jpg",
+      "D:\\CGAIC\\data_local\\gold_finger\\test\\defect\\2464.jpg",
+      "D:\\CGAIC\\data_local\\gold_finger\\test\\defect\\2465.jpg",
+      "D:\\CGAIC\\data_local\\gold_finger\\test\\defect\\Image_20260116193528907.jpg",
+      "D:\\CGAIC\\data_local\\gold_finger\\test\\defect\\Image_20260116193602828.jpg",
+      "D:\\CGAIC\\data_local\\gold_finger\\test\\defect\\Image_20260116193618467.jpg",
+      "D:\\CGAIC\\data_local\\gold_finger\\test\\defect\\Image_20260116193635836.jpg",
+      "D:\\CGAIC\\data_local\\gold_finger\\test\\defect\\Image_20260116193646380.jpg",
+      "D:\\CGAIC\\data_local\\gold_finger\\test\\defect\\Image_20260116193703828.jpg",
+      "D:\\CGAIC\\data_local\\gold_finger\\test\\defect\\Image_20260116193843246.jpg",
+      "D:\\CGAIC\\data_local\\gold_finger\\test\\defect\\Image_20260116193859871.jpg",
+      "D:\\CGAIC\\data_local\\gold_finger\\test\\defect\\Image_20260116194235228.jpg",
+      "D:\\CGAIC\\data_local\\gold_finger\\test\\defect\\Image_20260116194259739.jpg",
+      "D:\\CGAIC\\data_local\\gold_finger\\test\\defect\\Image_20260116194441909.jpg",
+      "D:\\CGAIC\\data_local\\gold_finger\\test\\defect\\fov_14_20240723141433.jpg",
+      "D:\\CGAIC\\data_local\\gold_finger\\test\\defect\\t_fov_13.jpg",
+      "D:\\CGAIC\\data_local\\gold_finger\\test\\defect\\t_fov_14.jpg",
+      "D:\\CGAIC\\data_local\\gold_finger\\test\\defect\\t_fov_3.jpg"
+    ],
+    "leak_ref_defect": [
+      "D:\\CGAIC\\data_local\\gold_finger\\test\\defect\\Image_20260116193850558.jpg",
+      "D:\\CGAIC\\data_local\\gold_finger\\test\\defect\\Image_20260116194217730.jpg",
+      "D:\\CGAIC\\data_local\\gold_finger\\test\\defect\\Image_20260116194228683.jpg",
+      "D:\\CGAIC\\data_local\\gold_finger\\test\\defect\\Image_20260116194241339.jpg",
+      "D:\\CGAIC\\data_local\\gold_finger\\test\\defect\\Image_20260116194303443.jpg",
+      "D:\\CGAIC\\data_local\\gold_finger\\test\\defect\\Image_20260116194458486.jpg",
+      "D:\\CGAIC\\data_local\\gold_finger\\test\\defect\\t_fov_26.jpg",
+      "D:\\CGAIC\\data_local\\gold_finger\\test\\defect\\t_fov_6.jpg"
+    ],
+    "template_lib_src": [
+      "D:\\CGAIC\\data_local\\gold_finger\\train\\good\\0598_repaired.png",
+      "D:\\CGAIC\\data_local\\gold_finger\\train\\good\\0599_repaired.png",
+      "D:\\CGAIC\\data_local\\gold_finger\\train\\good\\0602_repaired.png",
+      "D:\\CGAIC\\data_local\\gold_finger\\train\\good\\0604_repaired.png",
+      "D:\\CGAIC\\data_local\\gold_finger\\train\\good\\0605_repaired.png",
+      "D:\\CGAIC\\data_local\\gold_finger\\train\\good\\0606_repaired.png",
+      "D:\\CGAIC\\data_local\\gold_finger\\train\\good\\0607_repaired.png",
+      "D:\\CGAIC\\data_local\\gold_finger\\train\\good\\0609_repaired.png",
+      "D:\\CGAIC\\data_local\\gold_finger\\train\\good\\0610_repaired.png",
+      "D:\\CGAIC\\data_local\\gold_finger\\train\\good\\0611_repaired.png",
+      "D:\\CGAIC\\data_local\\gold_finger\\train\\good\\0613_repaired.png",
+      "D:\\CGAIC\\data_local\\gold_finger\\train\\good\\0617_repaired.png",
+      "D:\\CGAIC\\data_local\\gold_finger\\train\\good\\0618_repaired.png",
+      "D:\\CGAIC\\data_local\\gold_finger\\train\\good\\0621_repaired.png",
+      "D:\\CGAIC\\data_local\\gold_finger\\test\\good\\Image_20260116194303443_repaired.jpg",
+      "D:\\CGAIC\\data_local\\gold_finger\\test\\good\\Image_20260116193850558_repaired.jpg",
+      "D:\\CGAIC\\data_local\\gold_finger\\test\\good\\Image_20260116194241339_repaired.jpg",
+      "D:\\CGAIC\\data_local\\gold_finger\\test\\good\\Image_20260116194217730_repaired.jpg",
+      "D:\\CGAIC\\data_local\\gold_finger\\test\\good\\Image_20260116194228683_repaired.jpg",
+      "D:\\CGAIC\\data_local\\gold_finger\\test\\good\\Image_20260116194458486_repaired.jpg",
+      "D:\\CGAIC\\data_local\\gold_finger\\test\\good\\t_fov_26_repaired.jpg",
+      "D:\\CGAIC\\data_local\\gold_finger\\test\\good\\t_fov_6_repaired.jpg"
+    ]
+  },
+  "total_s": 411.8
+}

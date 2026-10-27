@@ -2,6 +2,10 @@ from __future__ import annotations
 
 import threading
 import time
+import copy
+import hashlib
+import json
+import logging
 from concurrent.futures import Future, TimeoutError as FutureTimeoutError
 
 import cv2
@@ -25,6 +29,15 @@ _MAX_INFLIGHT_THREADS = 4
 _inflight_lock = threading.Lock()
 _inflight: dict[str, Future] = {}
 _inflight_count = 0
+_inflight_details = {}
+
+
+def inflight_snapshot():
+    with _inflight_lock:
+        now = time.monotonic()
+        return {"count": _inflight_count, "limit": _MAX_INFLIGHT_THREADS,
+                "tasks": [{**detail, "key": key, "age_ms": int((now - detail["started_at"]) * 1000),
+                           "cancellable": False} for key, detail in _inflight_details.items()]}
 
 
 def _run_with_timeout(fn, timeout_s: float, tries: int = 2, *, key: str = ""):
@@ -34,11 +47,14 @@ def _run_with_timeout(fn, timeout_s: float, tries: int = 2, *, key: str = ""):
     with _inflight_lock:
         previous = _inflight.get(key)
         if previous is not None and not previous.done():
+            logging.getLogger(__name__).warning("拒绝不可取消任务重入: key=%s count=%s limit=%s", key, _inflight_count, _MAX_INFLIGHT_THREADS)
             raise TimeoutError(f"检测项 {key} 上次执行仍在运行")
         if _inflight_count >= _MAX_INFLIGHT_THREADS:
+            logging.getLogger(__name__).warning("不可取消任务容量已满: count=%s limit=%s", _inflight_count, _MAX_INFLIGHT_THREADS)
             raise TimeoutError("检测执行线程已达上限，拒绝新增不可取消任务")
         fut = Future()
         _inflight[key] = fut
+        _inflight_details[key] = {"started_at": time.monotonic(), "timeout_s": timeout_s, "timed_out": False}
         _inflight_count += 1
 
     def forget(done):
@@ -46,6 +62,7 @@ def _run_with_timeout(fn, timeout_s: float, tries: int = 2, *, key: str = ""):
         with _inflight_lock:
             if _inflight.get(key) is done:
                 del _inflight[key]
+                _inflight_details.pop(key, None)
                 _inflight_count -= 1
 
     fut.add_done_callback(forget)
@@ -58,10 +75,18 @@ def _run_with_timeout(fn, timeout_s: float, tries: int = 2, *, key: str = ""):
         except BaseException as exc:
             fut.set_exception(exc)
 
-    threading.Thread(target=execute, daemon=True, name=f"aoi-algo-{key}").start()
+    try:
+        threading.Thread(target=execute, daemon=True, name=f"aoi-algo-{key}").start()
+    except BaseException as exc:
+        fut.set_exception(exc)
+        raise
     try:
         return fut.result(timeout=timeout_s)
     except FutureTimeoutError as exc:
+        with _inflight_lock:
+            if key in _inflight_details:
+                _inflight_details[key]["timed_out"] = True
+        logging.getLogger(__name__).warning("不可取消检测线程超时，未重试: %s", inflight_snapshot())
         raise TimeoutError(f"检测项 {key} 执行超过 {timeout_s}s") from exc
 
 
@@ -76,7 +101,7 @@ __all__ = [
 
 
 class DetectScheduler:
-    """门禁 → 预处理 → 按 Catalog 逐项 run。
+    """门禁 → 预处理 → Catalog 请求内可选批量（stop_on_error 时逐项）。
 
     禁止按 algorithm_id 前缀写特例；SMT 共用参数走 manifest.shared_param_id。
     """
@@ -105,6 +130,8 @@ class DetectScheduler:
         source: str = "inspect",
         gate_enabled: bool | None = None,
         size_gate_max_diff_px: int | None = None,
+        diagnostics: bool = False,
+        batch_enabled: bool = True,
     ) -> DetectSummary:
         catalog = get_catalog()
         algorithm_labels = algorithm_labels or catalog.labels()
@@ -170,6 +197,8 @@ class DetectScheduler:
             image_std = image_test
 
         results: list[AlgorithmResult] = []
+        pending = []
+        batch_enabled = batch_enabled and not stop_on_error
         # 同一次检测中配方相同的算法共用预处理结果（整图预处理是主要耗时）
         pre_cache: dict[tuple, tuple[np.ndarray, np.ndarray]] = {}
 
@@ -199,7 +228,7 @@ class DetectScheduler:
                 template_id=template_id or template_name,
                 template_version=template_version,
                 trigger=trigger,
-                preprocess_meta={"recipe_hit": hit, "preprocess": dict(record.preprocess or {})},
+                preprocess_meta={"recipe_hit": hit, "preprocess": dict(record.preprocess or {}), "diagnostics": diagnostics},
             )
             ctx = DetectionContext(
                 item_id=alg_id,
@@ -217,6 +246,15 @@ class DetectScheduler:
                 template_name=template_name,
             )
 
+            request_snapshot = {
+                "params": {}, "rois": [r.to_dict() for r in item_rois],
+                "roi_coordinate_system": "standard_image_pixels",
+                "template_id": req.template_id, "template_version": template_version,
+                "preprocess": copy.deepcopy(record.preprocess or {}),
+                "image_size": [int(test_p.shape[1]), int(test_p.shape[0])],
+                "source": source,
+            }
+            execution_mode = "not_executed"
             adapter = get_adapter_for(alg_id)
             t_item = time.perf_counter()
             if adapter is None:
@@ -269,6 +307,7 @@ class DetectScheduler:
                         param_overrides,
                         prefer_frozen_params,
                     )
+                    request_snapshot["params"] = copy.deepcopy(resolved_params)
                     ok_params, param_err = adapter.validate_params(alg_id, resolved_params)
                     if not ok_params:
                         result = AlgorithmResult(
@@ -281,8 +320,14 @@ class DetectScheduler:
                             display_name=label,
                         )
                     else:
+                        execution_mode = "production_adapter"
                         ctx.params = resolved_params
                         req.params = resolved_params
+                        if batch_enabled and callable(getattr(adapter, "run_many", None)):
+                            pending.append((len(results), adapter, alg_id, req, resolved_params, label,
+                                            manifest, request_snapshot, std_p, test_p, hit, param_hit))
+                            results.append(None)
+                            continue
                         try:
                             result = _run_with_timeout(
                                 lambda: adapter.run(alg_id, req, resolved_params),
@@ -313,12 +358,65 @@ class DetectScheduler:
 
             elapsed = int((time.perf_counter() - t_item) * 1000)
             self._enrich_result(result, alg_id, label, manifest, elapsed)
+            request_snapshot["algorithm_version"] = result.algorithm_version
+            request_snapshot["param_schema_version"] = result.param_schema_version
+            request_snapshot["version_id"] = hashlib.sha256(
+                json.dumps(request_snapshot, sort_keys=True, ensure_ascii=False, default=str).encode("utf-8")
+            ).hexdigest()[:16]
+            result.metadata["request_snapshot"] = request_snapshot
+            result.metadata.setdefault("execution_mode", execution_mode)
             result.preprocess_std = std_p
             result.preprocess_test = test_p
             result.hit_layer = f"{hit} | 参数:{param_hit}" if param_hit else hit
+            if diagnostics:
+                result.metadata["preview_request"] = {
+                    "params": dict(req.params),
+                    "rois": [{"kind": r.kind, "layer": r.layer, "shape": dict(r.shape)} for r in item_rois],
+                    "mode": "production scheduler / adapter.run / stub " + ("allowed" if allow_stub else "disabled"),
+                    "preprocess": req.preprocess_meta,
+                }
             results.append(result)
             if stop_on_error and result.status == "ERROR":
                 break
+
+        groups = {}
+        for entry in pending:
+            groups.setdefault(id(entry[1]), []).append(entry)
+        for entries in groups.values():
+            adapter = entries[0][1]
+            calls = [(e[2], e[3], e[4]) for e in entries]
+            started = time.perf_counter()
+            try:
+                batch_results = _run_with_timeout(
+                    lambda adapter=adapter, calls=calls: adapter.run_many(calls),
+                    timeout_s=_ALGO_TIMEOUT_S, key=f"{id(pending)}:batch:{id(adapter)}")
+                if len(batch_results) != len(entries):
+                    raise ValueError("run_many 返回数量与请求不一致")
+            except Exception as exc:
+                code = "RUN_TIMEOUT" if isinstance(exc, TimeoutError) else "RUN_EXCEPTION"
+                batch_results = [AlgorithmResult(algorithm=e[2], ok=False, status="ERROR",
+                    error_code=code, error_message=str(exc), message=f"[批量执行失败] {e[5]}: {exc}") for e in entries]
+            elapsed = int((time.perf_counter() - started) * 1000)
+            for entry, result in zip(entries, batch_results):
+                index, _, alg_id, req, _, label, manifest, snapshot, std_p, test_p, hit, param_hit = entry
+                self._enrich_result(result, alg_id, label, manifest, result.elapsed_ms)
+                if result.error_code == "RUN_TIMEOUT":
+                    result.metadata["inflight"] = inflight_snapshot()
+                snapshot["algorithm_version"] = result.algorithm_version
+                snapshot["param_schema_version"] = result.param_schema_version
+                snapshot["version_id"] = hashlib.sha256(json.dumps(snapshot, sort_keys=True,
+                    ensure_ascii=False, default=str).encode("utf-8")).hexdigest()[:16]
+                result.metadata["request_snapshot"] = snapshot
+                result.metadata["execution_mode"] = "production_adapter_batch"
+                result.metadata["batch"] = {"items": [e[2] for e in entries], "elapsed_ms": elapsed,
+                                            "timing_scope": "shared_batch_wall_time"}
+                result.preprocess_std, result.preprocess_test = std_p, test_p
+                result.hit_layer = f"{hit} | 参数:{param_hit}" if param_hit else hit
+                if diagnostics:
+                    result.metadata["preview_request"] = {"params": dict(req.params),
+                        "rois": [r.to_dict() for r in req.rois], "preprocess": req.preprocess_meta,
+                        "mode": "production scheduler / adapter.run_many"}
+                results[index] = result
 
         overall = job_status(gate_blocked=False, items=results)
         overall_ok = overall == "OK"
@@ -429,10 +527,13 @@ class DetectScheduler:
     def _detect_stub(req: DetectRequest, label: str) -> AlgorithmResult:
         return AlgorithmResult(
             algorithm=req.algorithm,
-            ok=True,
-            message=f"[stub] {label} 对照检测未接入，暂返回 OK",
+            ok=False,
+            skipped=True,
+            skip_reason="算法未接入，stub 未执行检测",
+            message=f"[stub] {label} 未执行真实算法",
             boxes=[],
-            status="OK",
+            status="SKIP",
+            metadata={"execution_mode": "stub"},
             display_name=label,
         )
 
@@ -454,11 +555,15 @@ class DetectScheduler:
             label = f'{item.get("index", "")} {item.get("label") or ""}'.strip()
             put_text_bgr(vis, label, (x1 + 2, y1 - 4), color, font_size=16, thickness_box=True)
 
-        tag = "OK" if overall_ok else "NG"
-        if any(r.status == "ERROR" or r.error_code for r in results):
+        tag = job_status(gate_blocked=False, items=results)
+        if tag == "OK" and not overall_ok:
+            tag = "NG"
+        if tag == "ERROR":
             tag = "ERR"
-        tag_color = (0, 180, 0) if tag == "OK" else ((0, 102, 255) if tag == "ERR" else (0, 0, 255))
-        cv2.rectangle(vis, (4, 4), (62, 28), tag_color, -1)
+        tag_color = {"OK": (0, 180, 0), "SKIP": (128, 128, 128),
+                     "REVIEW": (0, 180, 220), "ERR": (0, 102, 255)}.get(tag, (0, 0, 255))
+        tag_width = cv2.getTextSize(tag, cv2.FONT_HERSHEY_SIMPLEX, 0.7, 2)[0][0] + 16
+        cv2.rectangle(vis, (4, 4), (4 + tag_width, 28), tag_color, -1)
         cv2.putText(vis, tag, (10, 22), cv2.FONT_HERSHEY_SIMPLEX, 0.7, (255, 255, 255), 2, cv2.LINE_AA)
         _ = catalog
         return vis
@@ -476,7 +581,7 @@ def merge_defect_overlays(results: list[AlgorithmResult], *, iou_thresh: float =
     """同位置多算法命中合并为一框，label 用「缺件 · 移位」。"""
     raw: list[dict] = []
     for result in results:
-        if result.ok or result.skipped or result.status in {"SKIP", "ERROR"}:
+        if result.status != "NG":
             continue
         color = ""
         try:
@@ -495,6 +600,11 @@ def merge_defect_overlays(results: list[AlgorithmResult], *, iou_thresh: float =
                     "item_id": box.item_id or result.item_id,
                     "score": box.score,
                     "roi_id": box.roi_id,
+                    "status": result.status,
+                    "elapsed_ms": result.elapsed_ms,
+                    "algorithm_version": result.algorithm_version,
+                    "reason": result.error_message or result.skip_reason or result.message,
+                    "request_snapshot": result.metadata.get("request_snapshot"),
                 }
             )
     # 按几何和来源固定排序，并用连通分量合并，避免结果依赖算法/框的输入顺序。
@@ -539,6 +649,7 @@ def merge_defect_overlays(results: list[AlgorithmResult], *, iou_thresh: float =
                 "w": x2 - x1,
                 "h": y2 - y1,
                 "labels": labels,
+                "sources": members,
             }
         )
 

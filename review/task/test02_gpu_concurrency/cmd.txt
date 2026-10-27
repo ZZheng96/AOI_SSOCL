@@ -1,0 +1,6 @@
+# TEST-02 复跑命令
+
+py -3.11 d:\CGAIC\AOI_SSOCL\review\task\test02_gpu_concurrency\raw\bench_test02.py
+
+# 产物：raw\per_request.csv（t_submit/t_lock_acquired/t_done/queue/wall/infer/e2e/品类/并发度/负载）
+#       raw\learning_timeline.json（学习事件时间线）、raw\summary.json

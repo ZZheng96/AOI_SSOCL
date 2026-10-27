@@ -1,0 +1,20 @@
+{
+  "date": "2026-10-13",
+  "command": "py -3.11 -m unittest tests.test_adapter_batch tests.test_shift_batch tests.test_tuner_preview -v",
+  "exit_code": 0,
+  "tests": 19,
+  "result": "PASS",
+  "suite_seconds_not_performance": 2.389,
+  "scheduler_real_algorithm_mock_counts": {
+    "smt_4_default_items": {"scalar_extract_solder": 4, "batch_extract_solder": 1, "adapter_run_many": 1},
+    "th_5_default_single_pad": {"scalar_run_inspect": 4, "batch_run_inspect": 2, "adapter_run_many": 1, "bridge_unready": true},
+    "th_5_same_empty_params_single_pad": {"batch_run_inspect": 1},
+    "th_5_multi_pad": {"batch_run_inspect": 1, "only_bridge_ready": true}
+  },
+  "comparison": "real small synthetic images; recursive dataclass/dict/list and exact ndarray; elapsed_ms/total_ms excluded",
+  "timeout_test_seconds": 0.01,
+  "timeout": "timed_out=true, cancellable=false; no retry; release and cleanup verified",
+  "ui": "offscreen table algorithm/ROI/time/review reason and non-OK aggregation PASS",
+  "warning": "Qt font directory warning; not a test failure",
+  "limits": "not performance or GT accuracy evidence; core.run remains per-item"
+}

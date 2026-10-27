@@ -1,0 +1,311 @@
+{
+  "db": "d:\\CGAIC\\AOI_SSOCL\\review\\task\\remain_02\\temp_core\\database\\aoi.db",
+  "sha256": "00873501bc3d7bb4733d2ad5821a4f50c3668a595b135fbab0fd6102ca5e6d57",
+  "counts": {
+    "images": 18,
+    "models": 2,
+    "eval_runs": 0,
+    "operation_logs": 10
+  },
+  "tables": {
+    "images": [
+      {
+        "id": 1,
+        "path": "d:\\CGAIC\\AOI_SSOCL\\review\\task\\remain_02\\temp_core\\storage\\seed_images\\gold_finger\\train\\normal_00.png",
+        "category": "gold_finger",
+        "split": "train",
+        "label": "normal",
+        "source": "remain02_seed",
+        "width": 512,
+        "height": 512,
+        "sha1": "7e06cd63dbe2b21c7b80ec5280f8470f58f42890"
+      },
+      {
+        "id": 2,
+        "path": "d:\\CGAIC\\AOI_SSOCL\\review\\task\\remain_02\\temp_core\\storage\\seed_images\\gold_finger\\train\\normal_01.png",
+        "category": "gold_finger",
+        "split": "train",
+        "label": "normal",
+        "source": "remain02_seed",
+        "width": 512,
+        "height": 512,
+        "sha1": "17e289f6adfc6a8fe72c072d7539f46bd2d29e1f"
+      },
+      {
+        "id": 3,
+        "path": "d:\\CGAIC\\AOI_SSOCL\\review\\task\\remain_02\\temp_core\\storage\\seed_images\\gold_finger\\train\\normal_02.png",
+        "category": "gold_finger",
+        "split": "train",
+        "label": "normal",
+        "source": "remain02_seed",
+        "width": 512,
+        "height": 512,
+        "sha1": "1ce548ac7316273e62836f5cfa849f320b1b068a"
+      },
+      {
+        "id": 4,
+        "path": "d:\\CGAIC\\AOI_SSOCL\\review\\task\\remain_02\\temp_core\\storage\\seed_images\\gold_finger\\train\\normal_03.png",
+        "category": "gold_finger",
+        "split": "train",
+        "label": "normal",
+        "source": "remain02_seed",
+        "width": 512,
+        "height": 512,
+        "sha1": "58a0e8304303ca8a26aaed3fed5c1bc51140db4c"
+      },
+      {
+        "id": 5,
+        "path": "d:\\CGAIC\\AOI_SSOCL\\review\\task\\remain_02\\temp_core\\storage\\seed_images\\gold_finger\\train\\normal_04.png",
+        "category": "gold_finger",
+        "split": "train",
+        "label": "normal",
+        "source": "remain02_seed",
+        "width": 512,
+        "height": 512,
+        "sha1": "6d3b2df883b4ecbee232dfc02bed96468e37b790"
+      },
+      {
+        "id": 6,
+        "path": "d:\\CGAIC\\AOI_SSOCL\\review\\task\\remain_02\\temp_core\\storage\\seed_images\\gold_finger\\train\\normal_05.png",
+        "category": "gold_finger",
+        "split": "train",
+        "label": "normal",
+        "source": "remain02_seed",
+        "width": 512,
+        "height": 512,
+        "sha1": "c2d49fec47b4c9895a26967f2ccf563bfe04159e"
+      },
+      {
+        "id": 7,
+        "path": "d:\\CGAIC\\AOI_SSOCL\\review\\task\\remain_02\\temp_core\\storage\\seed_images\\gold_finger\\train\\normal_06.png",
+        "category": "gold_finger",
+        "split": "train",
+        "label": "normal",
+        "source": "remain02_seed",
+        "width": 512,
+        "height": 512,
+        "sha1": "50e7b0f8d4b6255d0ceb95b21bf36a3631f0a3bb"
+      },
+      {
+        "id": 8,
+        "path": "d:\\CGAIC\\AOI_SSOCL\\review\\task\\remain_02\\temp_core\\storage\\seed_images\\gold_finger\\train\\normal_07.png",
+        "category": "gold_finger",
+        "split": "train",
+        "label": "normal",
+        "source": "remain02_seed",
+        "width": 512,
+        "height": 512,
+        "sha1": "342a5c8137699862e20dbf0fabbe492373f752c6"
+      },
+      {
+        "id": 9,
+        "path": "d:\\CGAIC\\AOI_SSOCL\\review\\task\\remain_02\\temp_core\\storage\\seed_images\\gold_finger\\train_anomaly\\anomaly_00.png",
+        "category": "gold_finger",
+        "split": "train_anomaly",
+        "label": "anomaly",
+        "source": "remain02_seed",
+        "width": 512,
+        "height": 512,
+        "sha1": "19e3c6d894677eeec0bbb62dc14fa13935e20452"
+      },
+      {
+        "id": 10,
+        "path": "d:\\CGAIC\\AOI_SSOCL\\review\\task\\remain_02\\temp_core\\storage\\seed_images\\gold_finger\\train_anomaly\\anomaly_01.png",
+        "category": "gold_finger",
+        "split": "train_anomaly",
+        "label": "anomaly",
+        "source": "remain02_seed",
+        "width": 512,
+        "height": 512,
+        "sha1": "24e86d847fdfe68c1f8f50dc3652633d2d2df529"
+      },
+      {
+        "id": 11,
+        "path": "d:\\CGAIC\\AOI_SSOCL\\review\\task\\remain_02\\temp_core\\storage\\seed_images\\gold_finger\\test\\normal_00.png",
+        "category": "gold_finger",
+        "split": "test",
+        "label": "normal",
+        "source": "remain02_seed",
+        "width": 512,
+        "height": 512,
+        "sha1": "d6653963cce56862475369f1b5b3bc8009f52b4d"
+      },
+      {
+        "id": 12,
+        "path": "d:\\CGAIC\\AOI_SSOCL\\review\\task\\remain_02\\temp_core\\storage\\seed_images\\gold_finger\\test\\normal_01.png",
+        "category": "gold_finger",
+        "split": "test",
+        "label": "normal",
+        "source": "remain02_seed",
+        "width": 512,
+        "height": 512,
+        "sha1": "709bd52cda0bcee84e1f3322fc17f616b8167c5a"
+      },
+      {
+        "id": 13,
+        "path": "d:\\CGAIC\\AOI_SSOCL\\review\\task\\remain_02\\temp_core\\storage\\seed_images\\gold_finger\\test\\normal_02.png",
+        "category": "gold_finger",
+        "split": "test",
+        "label": "normal",
+        "source": "remain02_seed",
+        "width": 512,
+        "height": 512,
+        "sha1": "3e00e2e602a1b438ec22a14fdd6565523b92f0ba"
+      },
+      {
+        "id": 14,
+        "path": "d:\\CGAIC\\AOI_SSOCL\\review\\task\\remain_02\\temp_core\\storage\\seed_images\\gold_finger\\test\\normal_03.png",
+        "category": "gold_finger",
+        "split": "test",
+        "label": "normal",
+        "source": "remain02_seed",
+        "width": 512,
+        "height": 512,
+        "sha1": "f0c5253ca4210d7d38a32f3cd6332ba7b2ba24b9"
+      },
+      {
+        "id": 15,
+        "path": "d:\\CGAIC\\AOI_SSOCL\\review\\task\\remain_02\\temp_core\\storage\\seed_images\\gold_finger\\test\\anomaly_00.png",
+        "category": "gold_finger",
+        "split": "test",
+        "label": "anomaly",
+        "source": "remain02_seed",
+        "width": 512,
+        "height": 512,
+        "sha1": "907653456bd35db77f5393e3ec801f2065d546d0"
+      },
+      {
+        "id": 16,
+        "path": "d:\\CGAIC\\AOI_SSOCL\\review\\task\\remain_02\\temp_core\\storage\\seed_images\\gold_finger\\test\\anomaly_01.png",
+        "category": "gold_finger",
+        "split": "test",
+        "label": "anomaly",
+        "source": "remain02_seed",
+        "width": 512,
+        "height": 512,
+        "sha1": "77aeaa8e0a17dcce10939f5a2741d064d2038cd8"
+      },
+      {
+        "id": 17,
+        "path": "d:\\CGAIC\\AOI_SSOCL\\review\\task\\remain_02\\temp_core\\storage\\seed_images\\gold_finger\\test\\anomaly_02.png",
+        "category": "gold_finger",
+        "split": "test",
+        "label": "anomaly",
+        "source": "remain02_seed",
+        "width": 512,
+        "height": 512,
+        "sha1": "2fde9a32f9d7dc178d072f35d113a0f29e339421"
+      },
+      {
+        "id": 18,
+        "path": "d:\\CGAIC\\AOI_SSOCL\\review\\task\\remain_02\\temp_core\\storage\\seed_images\\gold_finger\\test\\anomaly_03.png",
+        "category": "gold_finger",
+        "split": "test",
+        "label": "anomaly",
+        "source": "remain02_seed",
+        "width": 512,
+        "height": 512,
+        "sha1": "e1a89691aa040b9c47b60382457b0df8864970f2"
+      }
+    ],
+    "models": [
+      {
+        "id": 1,
+        "name": "gold_finger_v1",
+        "category": "gold_finger",
+        "version": "v1",
+        "path": "d:\\CGAIC\\AOI_SSOCL\\review\\task\\remain_02\\temp_core\\storage\\engine\\snapshots\\gold_finger\\v1",
+        "format": "engine_snapshot",
+        "metrics": "{\"fit_seconds\": 9.043204069137573, \"slot_names\": [\"sem\", \"disc\", \"shead\"], \"note\": \"scenario=L1a, profile=fast. \", \"feature_revision_binding\": {\"status\": \"unknown\", \"revision_id\": null}, \"orphan\": true}",
+        "is_active": 0,
+        "origin": "engine_fit"
+      },
+      {
+        "id": 2,
+        "name": "gold_finger_v2",
+        "category": "gold_finger",
+        "version": "v2",
+        "path": "d:\\CGAIC\\AOI_SSOCL\\review\\task\\remain_02\\temp_core\\storage\\engine\\snapshots\\gold_finger\\v2",
+        "format": "engine_snapshot",
+        "metrics": "{\"fit_seconds\": 15.949384689331055, \"slot_names\": [\"blob\", \"trad\", \"layout\"], \"note\": \"scenario=L1a, profile=cpu. \", \"feature_revision_binding\": {\"status\": \"unknown\", \"revision_id\": null}, \"orphan\": true}",
+        "is_active": 1,
+        "origin": "engine_fit"
+      }
+    ],
+    "eval_runs": [],
+    "operation_logs": [
+      {
+        "id": 1,
+        "user": "engineer",
+        "action": "feature_report_submit",
+        "detail": "category=gold_finger reason=manual task=1"
+      },
+      {
+        "id": 2,
+        "user": "engineer",
+        "action": "feature_report_submit",
+        "detail": "category=gold_finger reason=manual task=2"
+      },
+      {
+        "id": 3,
+        "user": "admin",
+        "action": "config_update",
+        "detail": "applied=2 rejected=[]"
+      },
+      {
+        "id": 4,
+        "user": "admin",
+        "action": "config_update_rejected",
+        "detail": "frozen conflicts=['business_budget.g2_max_fpr_pct']"
+      },
+      {
+        "id": 5,
+        "user": "admin",
+        "action": "config_update",
+        "detail": "applied=2 rejected=[]"
+      },
+      {
+        "id": 6,
+        "user": "admin",
+        "action": "config_update",
+        "detail": "applied=1 rejected=[]"
+      },
+      {
+        "id": 7,
+        "user": "admin",
+        "action": "candidate_decision_rejected",
+        "detail": "category=gold_finger version=999"
+      },
+      {
+        "id": 8,
+        "user": "admin",
+        "action": "config_update",
+        "detail": "applied=1 rejected=[]"
+      },
+      {
+        "id": 9,
+        "user": "admin",
+        "action": "candidate_activate_rejected",
+        "detail": "category=gold_finger version=1"
+      },
+      {
+        "id": 10,
+        "user": "admin",
+        "action": "config_update",
+        "detail": "applied=1 rejected=[]"
+      }
+    ]
+  },
+  "engine_current_pointer": {
+    "path": "d:\\CGAIC\\AOI_SSOCL\\review\\task\\remain_02\\temp_core\\storage\\engine\\snapshots\\gold_finger\\current.json",
+    "sha256": "6d1fe9b16a03e5a9ffbd2485ba6afea317f14cb01bde2cd64ebba6394e19b99d"
+  },
+  "feature_revision_registry": {
+    "path": "d:\\CGAIC\\AOI_SSOCL\\review\\task\\remain_02\\temp_core\\storage\\feature_revisions\\registry.json",
+    "status": "missing"
+  },
+  "feature_revision_production_pointer": {
+    "path": "d:\\CGAIC\\AOI_SSOCL\\review\\task\\remain_02\\temp_core\\storage\\feature_revisions\\registry.production.json",
+    "status": "missing"
+  }
+}

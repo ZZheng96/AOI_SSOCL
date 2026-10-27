@@ -1,0 +1,79 @@
+{
+  "dataset": "BTAD",
+  "dataset_root": "D:/CGAIC/data_origin/BTAD",
+  "system": "AOI Core（独立应用）",
+  "work_order": "BTAD_UI_20261017",
+  "date": "2026-10-17",
+  "import_scope": {
+    "images": 1099,
+    "categories": [
+      "01",
+      "02"
+    ],
+    "category_03_confirmed": false,
+    "masks_ui": 498,
+    "masks_identification_01_02": 249,
+    "mask_difference": "UI计数与识别页不一致，未修正"
+  },
+  "model": {
+    "category": "01",
+    "version": "v1",
+    "normal_train": 100,
+    "abnormal_train": 0,
+    "test_pool": 370,
+    "status": "应用显示已投产；不等于精度验收通过"
+  },
+  "evaluation": {
+    "name": "BTAD01_v1_UI_20_20261017",
+    "samples": 20,
+    "auroc": 0.54,
+    "ap": 0.507,
+    "f1": 0.741,
+    "avg_latency_ms": 88.1,
+    "tn": 3,
+    "fp": 7,
+    "fn": 0,
+    "tp": 10,
+    "accuracy": 0.65,
+    "precision": 0.588,
+    "defect_recall": 1,
+    "fpr": 0.7,
+    "specificity": 0.3,
+    "conclusion": "精度未达标"
+  },
+  "bypass_inspection": {
+    "image_id": 1062,
+    "path": "D:/CGAIC/data_origin/BTAD/BTech_Dataset_transformed/01/train/ok/0399.bmp",
+    "label": "normal",
+    "verdict": "正常",
+    "score": 0.3359375,
+    "version": "v1",
+    "e2e_ms": 199.7,
+    "inference_ms": 174.7,
+    "threshold": 0.806,
+    "gray_zone": ">=0.805",
+    "defect_boxes": 0,
+    "channel": "upload/image旁路，不进入产线流"
+  },
+  "feedback": {
+    "type": "确认正确",
+    "operator": "BTAD_UI_20261017",
+    "persisted": true,
+    "learning_status": "候选排队",
+    "auto_learning": false,
+    "auto_publish": false
+  },
+  "production": {
+    "line_status": "已暂停",
+    "realtime_consumed": false,
+    "production_acceptance": "未通过"
+  },
+  "media": {
+    "file": "AOICore_BTAD_20261017_01.mp4",
+    "duration_s": 180,
+    "size_bytes": 2922090,
+    "sha256": "435C3EAB68C8B5124F8536DE95298EE052FC91DFD6D56FD6387E0806DE755062",
+    "decode_check": "passed",
+    "coverage": "模型准备、评估、旁路试检部分；未覆盖数据源导入和工单创建，不能视为全流程录屏"
+  }
+}

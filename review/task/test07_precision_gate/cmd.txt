@@ -1,0 +1,7 @@
+# TEST-07 复跑命令
+
+py -3.11 d:\CGAIC\AOI_SSOCL\review\task\test07_precision_gate\raw\bench_test07.py
+
+# 前置：stable DB（database\aoi.db）中存在 gold_finger 的 train/train_anomaly/test 切分。
+# 产物：raw\split_manifest.json、raw\per_image_scores.csv、raw\eval_run.json
+# 探针（只读）：raw\probe_labels.py、raw\probe_splits.py

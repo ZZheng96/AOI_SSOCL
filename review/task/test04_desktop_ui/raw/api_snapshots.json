@@ -1,0 +1,94 @@
+{
+  "open_alerts": {
+    "total": 3,
+    "page": 1,
+    "page_size": 5,
+    "items": [
+      {
+        "status": "queued",
+        "revision": 0,
+        "e_open_score": null,
+        "e_open_threshold": null,
+        "operator": null,
+        "disposed_at": null,
+        "reason": null,
+        "feedback_id": null,
+        "events": [],
+        "detection_id": 918,
+        "image_id": null,
+        "image_path": "D:\\CGAIC\\AOI_SSOCL\\AOI_tree\\PCB_Dual\\alg_repo\\smt\\test_images\\excess_pair\\pair4\\PixPin_2026-07-01_11-21-15.png",
+        "overlay_path": null,
+        "category": "smt_solder",
+        "workorder_id": null,
+        "target_type": "image",
+        "model_version": null,
+        "evidence_status": "legacy_unknown",
+        "created_at": "2026-10-11T23:00:38.224077",
+        "is_defect": false,
+        "note": "未知信号不等于缺陷；处置仅留存反馈，未训练或发布模型"
+      },
+      {
+        "status": "queued",
+        "revision": 0,
+        "e_open_score": null,
+        "e_open_threshold": null,
+        "operator": null,
+        "disposed_at": null,
+        "reason": null,
+        "feedback_id": null,
+        "events": [],
+        "detection_id": 916,
+        "image_id": null,
+        "image_path": "D:\\CGAIC\\AOI_SSOCL\\AOI_tree\\PCB_Dual\\alg_repo\\smt\\test_images\\excess_pair\\pair4\\PixPin_2026-07-01_11-21-15.png",
+        "overlay_path": null,
+        "category": "smt_solder",
+        "workorder_id": null,
+        "target_type": "image",
+        "model_version": null,
+        "evidence_status": "legacy_unknown",
+        "created_at": "2026-10-11T22:58:31.249091",
+        "is_defect": false,
+        "note": "未知信号不等于缺陷；处置仅留存反馈，未训练或发布模型"
+      },
+      {
+        "status": "queued",
+        "revision": 0,
+        "e_open_score": null,
+        "e_open_threshold": null,
+        "operator": null,
+        "disposed_at": null,
+        "reason": null,
+        "feedback_id": null,
+        "events": [],
+        "detection_id": 914,
+        "image_id": null,
+        "image_path": "D:\\CGAIC\\AOI_SSOCL\\AOI_tree\\PCB_Dual\\alg_repo\\smt\\test_images\\excess_pair\\pair4\\PixPin_2026-07-01_11-21-15.png",
+        "overlay_path": null,
+        "category": "smt_solder",
+        "workorder_id": null,
+        "target_type": "image",
+        "model_version": null,
+        "evidence_status": "legacy_unknown",
+        "created_at": "2026-10-11T22:53:25.675838",
+        "is_defect": false,
+        "note": "未知信号不等于缺陷；处置仅留存反馈，未训练或发布模型"
+      }
+    ]
+  },
+  "review_queue": {
+    "total": 0,
+    "page": 1,
+    "page_size": 3,
+    "items": []
+  },
+  "review_stats": {
+    "pending_total": 0,
+    "pending_by_category": {},
+    "categories": [],
+    "reviewed_today": 0,
+    "reviewed_total": 0
+  },
+  "live": {
+    "error": "HTTP Error 404: Not Found"
+  }
+}

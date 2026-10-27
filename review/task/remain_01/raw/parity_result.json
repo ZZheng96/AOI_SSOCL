@@ -1,0 +1,168 @@
+{
+  "revision_id": "remain01-aoi-feature-stable",
+  "seed": 0,
+  "dataset_split": {
+    "train": [
+      {
+        "seed": 0,
+        "shape": [
+          64,
+          64,
+          3
+        ]
+      },
+      {
+        "seed": 1,
+        "shape": [
+          64,
+          64,
+          3
+        ]
+      },
+      {
+        "seed": 2,
+        "shape": [
+          64,
+          64,
+          3
+        ]
+      },
+      {
+        "seed": 3,
+        "shape": [
+          64,
+          64,
+          3
+        ]
+      },
+      {
+        "seed": 4,
+        "shape": [
+          64,
+          64,
+          3
+        ]
+      },
+      {
+        "seed": 5,
+        "shape": [
+          64,
+          64,
+          3
+        ]
+      }
+    ],
+    "probe": [
+      {
+        "seed": 100,
+        "shape": [
+          300,
+          280,
+          3
+        ]
+      },
+      {
+        "seed": 101,
+        "shape": [
+          20,
+          40,
+          3
+        ]
+      },
+      {
+        "seed": 102,
+        "shape": [
+          64,
+          64,
+          3
+        ]
+      }
+    ],
+    "constant_image": {
+      "fill": 128,
+      "shape": [
+        64,
+        64,
+        3
+      ]
+    },
+    "recipe": "default_rng(seed) 正弦/余弦基 + N(0,8) 噪声，3 通道 roll（同 TEST-06）",
+    "global_seed": 0,
+    "atol": 1e-06
+  },
+  "model_snapshot": {
+    "category": "none",
+    "note": "合成图现场拟合，无快照"
+  },
+  "status": "failed",
+  "verdict": "new_candidate",
+  "checks": {
+    "extraction": false,
+    "preprocess": false,
+    "dimension_order_slice": true,
+    "rng": true,
+    "knn_neighbors_self_match": false,
+    "scoring": false,
+    "report": false,
+    "bank_compatibility": false
+  },
+  "diffs": {
+    "preprocess": {
+      "spec_equal": true,
+      "max_abs_diff": 14.665191650390625,
+      "n_resize_probes": 2
+    },
+    "extraction": {
+      "max_abs_diff": 14.665191650390625
+    },
+    "bank_compatibility": {
+      "max_abs_diff": 7.203334207363865
+    },
+    "knn_neighbors_self_match": {
+      "mismatch": [
+        {
+          "probe": 1,
+          "candidate": [
+            5,
+            4,
+            0
+          ],
+          "production": [
+            5,
+            0,
+            4
+          ]
+        }
+      ],
+      "production_rule": "skip nearest (self) → [1:4]"
+    },
+    "scoring": {
+      "max_abs_diff": 0.37591788389005387
+    },
+    "report": {
+      "mismatch_probes": [
+        0,
+        1,
+        2
+      ]
+    }
+  },
+  "failed_checks": [
+    "extraction",
+    "preprocess",
+    "knn_neighbors_self_match",
+    "scoring",
+    "report",
+    "bank_compatibility"
+  ],
+  "baseline_implementation_hashes": {
+    "vendor/traditional.py": "8b74188c777ccee9745b1e0d62d4cb045dfd0e2ea6c26f84c6c2350cdc23f8a2",
+    "slots/trad.py": "d3caf552b2e5a467552f4353cc7b94d69877ae3c0232aa5872816e3a94e7bbdd"
+  },
+  "protocol_hash": "992f1602abaea976eabf524eb0c27aa09e985c2fd43582fbb3567fff2c3866b2",
+  "numeric": {
+    "n_samples": 9,
+    "max_abs_diff": 14.665191650390625,
+    "atol": 1e-06
+  }
+}

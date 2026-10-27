@@ -5,7 +5,7 @@ from pathlib import Path
 
 import cv2
 import numpy as np
-from PySide6.QtCore import Qt, QTimer, Signal
+from PySide6.QtCore import Qt, QTimer, Signal, QObject, QRunnable, QThreadPool
 from PySide6.QtGui import QColor, QKeySequence, QShortcut
 from PySide6.QtWidgets import (
     QAbstractItemView,
@@ -38,6 +38,28 @@ from app.ui.widgets import Card, ToolbarStrip
 from app.utils.cv_io import imread_unicode
 
 
+class _PairSignals(QObject):
+    done = Signal(dict, str, str)
+    failed = Signal(str, str, str)
+
+
+class _PairTask(QRunnable):
+    def __init__(self, client, path: str, template: str, token: str) -> None:
+        super().__init__()
+        self.client = client
+        self.path = path
+        self.template = template
+        self.token = token
+        self.signals = _PairSignals()
+
+    def run(self) -> None:
+        try:
+            result = self.client.pair_heatmap(self.path, self.template, same_view_confirmed=True)
+            self.signals.done.emit(result, self.path, self.token)
+        except Exception as exc:
+            self.signals.failed.emit(str(exc), self.path, self.token)
+
+
 class InspectPage(QWidget):
     request_goto_studio = Signal(str)
     session_stats_changed = Signal()
@@ -63,9 +85,15 @@ class InspectPage(QWidget):
         self.last_run: InspectRunResult | None = None
         self.last_folder: Path | None = None
         self._runs_by_path: dict[str, InspectRunResult] = {}
+        self._queue_states: dict[str, str] = {}
         self._worker: InspectWorker | None = None
         self._single_index = -1  # 单张检测时记录队列索引（worker 内子队列索引恒为 0）
-        self._queue_filter = "all"  # all | ng | error
+        self._queue_filter = "all"  # all | ng | error | pending | review
+        self._pair_request_id = 0
+        self._pair_token = ""
+        self._pair_context: tuple[str, str, int, str] | None = None
+        self._pair_paths: dict[tuple[str, str, int, str], dict] = {}
+        self._pair_pool = QThreadPool(self)
         self._build()
         self._bind_shortcuts()
 
@@ -126,11 +154,19 @@ class InspectPage(QWidget):
         self.btn_filt_err = QToolButton()
         self.btn_filt_err.setText("ERROR")
         self.btn_filt_err.setCheckable(True)
+        self.btn_filt_review = QToolButton()
+        self.btn_filt_review.setText("REVIEW")
+        self.btn_filt_review.setCheckable(True)
+        self.btn_filt_pending = QToolButton()
+        self.btn_filt_pending.setText("待处理")
+        self.btn_filt_pending.setCheckable(True)
         self.btn_next_ng = QPushButton("下一张 NG")
         self.btn_next_ng.setObjectName("Ghost")
         filt.addWidget(self.btn_filt_all)
         filt.addWidget(self.btn_filt_ng)
+        filt.addWidget(self.btn_filt_review)
         filt.addWidget(self.btn_filt_err)
+        filt.addWidget(self.btn_filt_pending)
         filt.addWidget(self.btn_next_ng)
         left_lay.addLayout(filt)
         self.list_queue = QListWidget()
@@ -175,8 +211,8 @@ class InspectPage(QWidget):
         splitter.addWidget(right)
         splitter.setStretchFactor(0, 1)
         splitter.setStretchFactor(1, 3)
-        splitter.setStretchFactor(2, 2)
-        splitter.setSizes([240, 720, 380])
+        splitter.setStretchFactor(2, 3)
+        splitter.setSizes([220, 660, 520])
         root.addWidget(splitter, 1)
 
         self.lbl_status = QLabel("Enter 当前张 · Ctrl+Enter 整批 · N 下一 NG · 1/2 复判 · F 自适应 · Esc 停批")
@@ -196,9 +232,12 @@ class InspectPage(QWidget):
         self.defect_table.defect_selected.connect(self._on_defect_row)
         self.inspect_canvas.defect_clicked.connect(self.defect_table.select_index)
         self.inspect_canvas.image_dropped.connect(lambda p: self._append_paths([Path(p)]))
+        self.inspect_canvas.chk_pair.toggled.connect(self._pair_toggled)
         self.btn_filt_all.clicked.connect(lambda: self._set_queue_filter("all"))
         self.btn_filt_ng.clicked.connect(lambda: self._set_queue_filter("ng"))
         self.btn_filt_err.clicked.connect(lambda: self._set_queue_filter("error"))
+        self.btn_filt_review.clicked.connect(lambda: self._set_queue_filter("review"))
+        self.btn_filt_pending.clicked.connect(lambda: self._set_queue_filter("pending"))
         self.btn_next_ng.clicked.connect(self._next_ng)
         self._update_run_enabled()
 
@@ -246,6 +285,7 @@ class InspectPage(QWidget):
         }
 
     def _on_template(self, tpl: InspectionTemplate | None) -> None:
+        self._reset_pair_confirmation()
         self.current_template = tpl
         self._fill_rules(tpl)
         self._update_run_enabled()
@@ -298,6 +338,7 @@ class InspectPage(QWidget):
         for p in paths:
             if str(p) not in existing:
                 self.queue.append(p)
+                self._queue_states[str(p)] = "pending"
                 existing.add(str(p))
         self._reload_queue_list()
         if self.queue and self.list_queue.currentRow() < 0:
@@ -309,6 +350,7 @@ class InspectPage(QWidget):
         self.queue.clear()
         self.current_index = -1
         self._runs_by_path.clear()
+        self._queue_states.clear()
         self.last_run = None
         self.last_folder = None
         self._reload_queue_list()
@@ -324,6 +366,8 @@ class InspectPage(QWidget):
         self.btn_filt_all.setChecked(filt == "all")
         self.btn_filt_ng.setChecked(filt == "ng")
         self.btn_filt_err.setChecked(filt == "error")
+        self.btn_filt_review.setChecked(filt == "review")
+        self.btn_filt_pending.setChecked(filt == "pending")
         self._reload_queue_list()
 
     def _visible_indices(self) -> list[int]:
@@ -335,6 +379,10 @@ class InspectPage(QWidget):
                 # 口径与 session_counts/_next_ng 对齐：灰区待复判按不通过计入 NG 过滤
                 continue
             if self._queue_filter == "error" and tag != "ERR":
+                continue
+            if self._queue_filter == "review" and tag not in ("GRAY", "REVIEW"):
+                continue
+            if self._queue_filter == "pending" and self._queue_states.get(str(path), "pending") not in ("pending", "running"):
                 continue
             out.append(i)
         return out
@@ -349,16 +397,30 @@ class InspectPage(QWidget):
             p = self.queue[qi]
             run = self._runs_by_path.get(str(p))
             tag = self._run_tag(run) if run else ""
-            item = QListWidgetItem(f"[{tag}] {p.name}" if tag else p.name)
+            state = self._queue_states.get(str(p), "pending")
+            label = self._queue_item_label(state, tag)
+            item = QListWidgetItem(f"{label}  {p.name}")
+            if run is not None:
+                elapsed = run.summary.elapsed_ms
+                defects = run.summary.ng_count
+                item.setToolTip(f"结果：{tag or '—'}\n缺陷：{defects}\n耗时：{elapsed} ms\n{run.error or run.summary.gate_message or ''}".strip())
+            elif state == "running":
+                item.setToolTip("当前正在检测")
+            else:
+                item.setToolTip("等待检测")
             item.setData(Qt.ItemDataRole.UserRole, qi)
             if tag == "OK":
                 item.setForeground(QColor(theme.OK))
             elif tag == "NG":
                 item.setForeground(QColor(theme.NG))
-            elif tag == "GRAY":
+            elif tag in ("GRAY", "REVIEW"):
                 item.setForeground(QColor(theme.REVIEW))
             elif tag == "ERR":
                 item.setForeground(QColor(theme.ERROR))
+            elif state == "running":
+                item.setForeground(QColor(theme.RUNNING))
+            elif state == "cancelled":
+                item.setForeground(QColor(theme.TEXT_MUTE))
             self.list_queue.addItem(item)
             if keep is not None and p == keep:
                 select = row
@@ -367,19 +429,36 @@ class InspectPage(QWidget):
             self.list_queue.setCurrentRow(select)
         self._refresh_queue_meta()
 
+    def _queue_item_label(self, state: str, tag: str) -> str:
+        if state == "running":
+            return "[检测中]"
+        if state == "cancelled":
+            return "[已取消]"
+        if tag == "OK":
+            return "[OK]"
+        if tag in ("NG", "GRAY"):
+            return f"[{tag}]"
+        if tag == "ERR":
+            return "[ERROR]"
+        if tag in ("REVIEW", "SKIP"):
+            return f"[{tag}]"
+        return "[等待]"
+
     def _refresh_queue_meta(self) -> None:
         ok, ng, err = self.session_counts()
         n = len(self.queue)
         idx = self.current_index + 1 if 0 <= self.current_index < n else 0
-        self.lbl_queue_meta.setText(f"{idx}/{n}")
+        done = ok + ng + err
+        pending = max(0, n - done)
+        self.lbl_queue_meta.setText(f"{done}/{n} 完成 · OK {ok} · NG {ng} · 异常 {err} · 待处理 {pending}")
         denom = ok + ng
         self.lbl_yield.setText(f"直通率 {100 * ok / denom:.0f}%" if denom else "直通率 —")
 
     def _run_tag(self, run: InspectRunResult) -> str:
         if run.error or run.summary.gate_blocked or run.summary.overall == "ERROR":
             return "ERR"
-        if run.summary.overall == "GRAY":
-            return "GRAY"  # 灰区待复判：不计 OK，也不混进 NG
+        if run.summary.overall in {"GRAY", "REVIEW", "SKIP"}:
+            return run.summary.overall  # 未执行和待复检不计 OK/NG
         return "OK" if run.summary.overall_ok else "NG"
 
     def _on_queue_row(self, row: int) -> None:
@@ -387,6 +466,8 @@ class InspectPage(QWidget):
         if item is None:
             return
         qi = int(item.data(Qt.ItemDataRole.UserRole))
+        if qi != self.current_index:
+            self._reset_pair_confirmation()
         self.current_index = qi
         self._refresh_current_view()
         self._refresh_queue_meta()
@@ -426,6 +507,62 @@ class InspectPage(QWidget):
         interp = cv2.INTER_AREA if (img.shape[1] > tw or img.shape[0] > th) else cv2.INTER_LINEAR
         return cv2.resize(img, (tw, th), interpolation=interp)
 
+    def _reset_pair_confirmation(self) -> None:
+        self._pair_request_id += 1
+        self._pair_token = ""
+        self._pair_context = None
+        self._pair_paths.clear()
+        self.inspect_canvas.chk_pair.blockSignals(True)
+        self.inspect_canvas.chk_pair.setChecked(False)
+        self.inspect_canvas.chk_pair.blockSignals(False)
+        self.inspect_canvas.set_heatmap_paths({})
+
+    def _pair_toggled(self, checked: bool) -> None:
+        self._pair_request_id += 1
+        self._pair_token = str(self._pair_request_id) if checked else ""
+        self._pair_context = None
+        self.inspect_canvas.set_heatmap_paths({})
+        image_path = self._current_path()
+        tpl = self.current_template
+        if not checked or image_path is None or tpl is None:
+            return
+        template_path = tpl.standard_image.path
+        if not template_path:
+            return
+        context = (str(image_path), str(tpl.id), int(tpl.version), str(template_path))
+        self._pair_context = context
+        cached = self._pair_paths.get(context)
+        if cached:
+            self.inspect_canvas.set_heatmap_paths(cached)
+            return
+        from app.engines.feature import get_engine
+        task = _PairTask(get_engine(), context[0], context[3], self._pair_token)
+        task.signals.done.connect(self._pair_done)
+        task.signals.failed.connect(self._pair_failed)
+        self._pair_pool.start(task)
+
+    def _pair_done(self, result: dict, path: str, token: str) -> None:
+        tpl = self.current_template
+        context = self._pair_context
+        if (token != self._pair_token or context is None or context[0] != path
+                or str(self._current_path()) != path or tpl is None
+                or context[1:] != (str(tpl.id), int(tpl.version), str(tpl.standard_image.path))):
+            return
+        aux = dict(result.get("aux_pair") or {})
+        aux.update({k: result.get(k) for k in ("heatmap_path", "overlay_path", "raw_path") if result.get(k)})
+        self._pair_paths[context] = aux
+        run = self._runs_by_path.get(path)
+        if run is not None and run.test_path == path and run.folder:
+            archived = self.result_store.attach_aux_pair(run.folder, aux)
+            run.summary.metadata["aux_pair"] = archived
+            aux = archived
+        self.inspect_canvas.set_heatmap_paths(aux)
+
+    def _pair_failed(self, message: str, path: str, token: str) -> None:
+        if token == self._pair_token and self._pair_context and self._pair_context[0] == path:
+            self.inspect_canvas.set_heatmap_paths({})
+            self.lbl_status.setText(f"热图失败 · {message[:80]}")
+
     def _refresh_current_view(self) -> None:
         path = self._current_path()
         if path is None:
@@ -446,6 +583,7 @@ class InspectPage(QWidget):
             self.inspect_canvas.set_image(img, filename=str(path))
             self.inspect_canvas.set_rois(rois)
             self.inspect_canvas.set_defects([])
+            self.inspect_canvas.set_heatmap_paths({})
             self.result_hud.clear()
             self.defect_table.clear()
             return
@@ -460,6 +598,14 @@ class InspectPage(QWidget):
             template_version=self.current_template.version if self.current_template else None,
         )
         self.inspect_canvas.bind_job(img, run.summary, overlays, filename=str(path), region_sets=rois)
+        context = self._pair_context
+        if self.inspect_canvas.chk_pair.isChecked() and context is not None:
+            aux = self._pair_paths.get(context, {})
+            if aux and run.test_path == str(path) and run.folder:
+                aux = self.result_store.attach_aux_pair(run.folder, aux)
+                run.summary.metadata["aux_pair"] = aux
+                self._pair_paths[context] = aux
+            self.inspect_canvas.set_heatmap_paths(aux)
 
     def _start_detect(self) -> None:
         if not self.queue or self.current_template is None:
@@ -496,6 +642,8 @@ class InspectPage(QWidget):
         self._single_index = index
         self.result_hud.set_running("检测中…")
         # 单张同样走后台线程：同步检测会阻塞 UI 事件循环造成假死
+        self._queue_states[str(path)] = "running"
+        self._reload_queue_list()
         self._worker = InspectWorker(self.service, self.current_template, [path], allow_stub=False, parent=self)
         self._worker.item_done.connect(self._on_single_item)
         self._worker.batch_finished.connect(self._on_single_finished)
@@ -532,12 +680,16 @@ class InspectPage(QWidget):
         if not ok:
             QMessageBox.warning(self, "无法检测", msg)
             return
+        for path in self.queue:
+            if str(path) not in self._runs_by_path:
+                self._queue_states[str(path)] = "pending"
         self._worker = InspectWorker(self.service, self.current_template, self.queue, allow_stub=False, parent=self)
         self._worker.progress.connect(self._on_batch_progress)
         self._worker.item_done.connect(self._on_batch_item)
         self._worker.batch_finished.connect(self._on_batch_finished)
         self._worker.failed.connect(lambda m: QMessageBox.warning(self, "批量失败", m))
         self.progress.setVisible(True)
+        self._reload_queue_list()
         self.progress.setMaximum(len(self.queue))
         self.progress.setValue(0)
         self.result_hud.set_running("批量检测中…")
@@ -545,20 +697,33 @@ class InspectPage(QWidget):
         self._worker.start()
 
     def _on_batch_progress(self, i: int, total: int, path: str) -> None:
+        for queued in self.queue:
+            if self._queue_states.get(str(queued)) == "running":
+                self._queue_states[str(queued)] = "done" if str(queued) in self._runs_by_path else "pending"
+        current = Path(path)
+        if str(current) in self._queue_states:
+            self._queue_states[str(current)] = "running"
         self.progress.setMaximum(total)
         self.progress.setValue(i)
+        self._reload_queue_list()
         self.lbl_status.setText(f"检测中 {i}/{total}  {Path(path).name}")
 
     def _on_batch_item(self, index: int, run: object) -> None:
         if not isinstance(run, InspectRunResult):
             return
         self._runs_by_path[str(self.queue[index])] = run
+        self._queue_states[str(self.queue[index])] = "done"
         self.current_index = index
         self._refresh_current_view()
         self.session_stats_changed.emit()
 
     def _on_batch_finished(self, batch: object) -> None:
         self.progress.setVisible(False)
+        cancelled = getattr(batch, "cancelled", False)
+        for path in self.queue:
+            key = str(path)
+            if key not in self._runs_by_path and self._queue_states.get(key) == "running":
+                self._queue_states[key] = "cancelled" if cancelled else "pending"
         self._worker = None
         self._reload_queue_list()
         self._update_run_enabled()
@@ -573,7 +738,7 @@ class InspectPage(QWidget):
             self._reload_queue_list()
         cancelled = getattr(batch, "cancelled", False)
         if cancelled:
-            self.lbl_status.setText("已取消")
+            self.lbl_status.setText("已取消 · 未处理图片保留在队列中")
         elif first_ng is not None:
             self.lbl_status.setText("批量完成 · 已停在首张 NG")
         else:
@@ -647,7 +812,7 @@ class InspectPage(QWidget):
         overall = summary.overall or (
             "ERROR" if summary.gate_blocked else ("OK" if summary.overall_ok else "NG")
         )
-        if overall == "ERROR" or run.error:
+        if overall in {"ERROR", "REVIEW", "SKIP"} or run.error:
             return ""  # 机器未给出有效判定，不作为学习样本
         # 学习样本以 AOI 引擎自身判定为准（双检时融合结论可能来自传统 CV，
         # 不能把传统 CV 的 NG 记成 AOI 的误报）；无 AOI 行时回退融合结论
@@ -672,4 +837,4 @@ class InspectPage(QWidget):
             return f"学习反馈未生效（{str(exc)[:60]}）"
         if isinstance(info, dict) and info.get("duplicate"):
             return "该次检测已反馈过（未重复学习）"
-        return "已反馈学习（AOI_Core）" if aoi_meta.get("backend") == "aoi_core" else "已反馈学习"
+        return "已进入学习候选队列"

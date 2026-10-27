@@ -1,0 +1,4 @@
+# TEST-08 依据采集命令（只读统计，无测量负载）
+
+# 稳定版存储与表行数统计（输出已存 raw\storage_stats.json）
+py -3.11 -c "import os,json,sqlite3; ..."   # 完整命令见协同记录；统计 database/storage 目录大小与 images/detections/feedback/operation_logs/eval_runs/models 行数

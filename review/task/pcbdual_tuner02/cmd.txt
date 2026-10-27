@@ -1,0 +1,2 @@
+$env:QT_QPA_PLATFORM='offscreen'; py -3.11 -m unittest tests.test_tuner_preview -v
+py -3.11 -m tests.tuner02_real_cases --output "d:\CGAIC\AOI_SSOCL\review\task\pcbdual_tuner02"

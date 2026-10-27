@@ -1,0 +1,346 @@
+{
+  "crack_pair1": {
+    "images": {
+      "test": "d:\\CGAIC\\AOI_CV\\Dev_solder_smt_Alg\\test_images\\cold_solder_pair\\pair1\\PixPin_2026-07-01_08-41-22.png",
+      "std": "d:\\CGAIC\\AOI_CV\\Dev_solder_smt_Alg\\test_images\\cold_solder_pair\\pair1\\PixPin_2026-07-01_08-41-56_OK.png",
+      "test_sha16": "6a51afc892227ed8",
+      "std_sha16": "39682686712c41e0"
+    },
+    "pads": [
+      [
+        12,
+        63,
+        195,
+        156
+      ],
+      [
+        582,
+        60,
+        172,
+        155
+      ],
+      [
+        1,
+        1,
+        216,
+        8
+      ],
+      [
+        542,
+        1,
+        177,
+        6
+      ],
+      [
+        723,
+        17,
+        22,
+        13
+      ],
+      [
+        733,
+        240,
+        20,
+        18
+      ],
+      [
+        480,
+        37,
+        8,
+        194
+      ],
+      [
+        382,
+        96,
+        2,
+        76
+      ],
+      [
+        355,
+        107,
+        2,
+        48
+      ],
+      [
+        1,
+        21,
+        211,
+        27
+      ],
+      [
+        2,
+        229,
+        214,
+        36
+      ],
+      [
+        247,
+        2,
+        279,
+        7
+      ],
+      [
+        573,
+        224,
+        107,
+        32
+      ],
+      [
+        565,
+        27,
+        116,
+        23
+      ],
+      [
+        121,
+        118,
+        80,
+        53
+      ],
+      [
+        590,
+        116,
+        89,
+        56
+      ],
+      [
+        96,
+        97,
+        99,
+        98
+      ],
+      [
+        602,
+        96,
+        97,
+        100
+      ]
+    ],
+    "params_file_sha16": "331e67185593defa",
+    "code": 0,
+    "message": "ok",
+    "crack_diag_executed": true,
+    "crack_diag_preview": {
+      "0": {
+        "executed": true,
+        "detected": false,
+        "hough": {
+          "lines": [],
+          "roi_origin": [
+            6,
+            33
+          ]
+        },
+        "unavailable_reason": ""
+      },
+      "1": {
+        "executed": true,
+        "detected": false,
+        "hough": {
+          "lines": [],
+          "roi_origin": [
+            307,
+            31
+          ]
+        },
+        "unavailable_reason": ""
+      },
+      "2": {
+        "executed": false,
+        "detected": null,
+        "hough": "不可用：未执行或C++批量接口不返回线段",
+        "unavailable_reason": "规则1提前判定/缺输入/ROI不足"
+      },
+      "3": {
+        "executed": false,
+        "detected": null,
+        "hough": "不可用：未执行或C++批量接口不返回线段",
+        "unavailable_reason": "规则1提前判定/缺输入/ROI不足"
+      },
+      "4": {
+        "executed": false,
+        "detected": null,
+        "hough": "不可用：未执行或C++批量接口不返回线段",
+        "unavailable_reason": "规则1提前判定/缺输入/ROI不足"
+      },
+      "5": {
+        "executed": false,
+        "detected": null,
+        "hough": "不可用：未执行或C++批量接口不返回线段",
+        "unavailable_reason": "规则1提前判定/缺输入/ROI不足"
+      },
+      "6": {
+        "executed": false,
+        "detected": null,
+        "hough": "不可用：未执行或C++批量接口不返回线段",
+        "unavailable_reason": "规则1提前判定/缺输入/ROI不足"
+      },
+      "7": {
+        "executed": false,
+        "detected": null,
+        "hough": "不可用：未执行或C++批量接口不返回线段",
+        "unavailable_reason": "规则1提前判定/缺输入/ROI不足"
+      },
+      "8": {
+        "executed": true,
+        "detected": false,
+        "hough": {
+          "lines": [],
+          "roi_origin": [
+            63,
+            62
+          ]
+        },
+        "unavailable_reason": ""
+      },
+      "9": {
+        "executed": true,
+        "detected": false,
+        "hough": {
+          "lines": [],
+          "roi_origin": [
+            311,
+            61
+          ]
+        },
+        "unavailable_reason": ""
+      },
+      "10": {
+        "executed": true,
+        "detected": false,
+        "hough": {
+          "lines": [],
+          "roi_origin": [
+            50,
+            51
+          ]
+        },
+        "unavailable_reason": ""
+      },
+      "11": {
+        "executed": true,
+        "detected": false,
+        "hough": {
+          "lines": [],
+          "roi_origin": [
+            318,
+            50
+          ]
+        },
+        "unavailable_reason": ""
+      }
+    },
+    "diag_keys": [
+      "bridge_components",
+      "cold_results",
+      "coordinates",
+      "crack",
+      "diff_cold",
+      "diff_excess",
+      "excess_components",
+      "pad_coverage",
+      "rim_toe",
+      "ring_geometry",
+      "ring_mask",
+      "solder_mask"
+    ],
+    "rim_toe_diag": "不可用：缺toe/rim或当前判定路径不支持",
+    "parts_count": 0,
+    "parts": [],
+    "verdict": "PASS:Crack分支实际执行且未检出",
+    "adapter": {
+      "status": "OK",
+      "boxes": [],
+      "crack_diag_executed": true,
+      "message": "虚焊 判定=OK，缺陷数=0，焊盘数=12"
+    }
+  },
+  "th_mismatch": {
+    "construction": "真实图片构造错配：std=templ_2(单焊点板) vs test=3-1(双焊点板)，非自然产线配准失败样本",
+    "std_sha16": "30868e4fb47f468e",
+    "test_sha16": "ffef2e10cb462a20",
+    "results": {
+      "tht_孔洞": {
+        "status": "OK",
+        "ok": true,
+        "skipped": false,
+        "skip_reason": null,
+        "error_code": null,
+        "message": "孔洞 判定=OK，缺陷数=0，配准有效区域覆盖率=1.00",
+        "boxes": 0
+      },
+      "tht_少锡": {
+        "status": "NG",
+        "ok": false,
+        "skipped": false,
+        "skip_reason": null,
+        "error_code": null,
+        "message": "少锡 判定=NG，缺陷数=1，配准有效区域覆盖率=1.00",
+        "boxes": 1
+      },
+      "tht_多锡包锡": {
+        "status": "OK",
+        "ok": true,
+        "skipped": false,
+        "skip_reason": null,
+        "error_code": null,
+        "message": "多锡(包锡) 判定=OK，缺陷数=0，配准有效区域覆盖率=1.00",
+        "boxes": 0
+      },
+      "tht_连锡": {
+        "status": "SKIP",
+        "ok": true,
+        "skipped": true,
+        "skip_reason": "连锡需要在「标定」中框选至少 2 个焊点区域",
+        "error_code": null,
+        "message": "[跳过] 连锡：连锡需要在「标定」中框选至少 2 个焊点区域",
+        "boxes": 0
+      },
+      "tht_不出脚": {
+        "status": "OK",
+        "ok": true,
+        "skipped": false,
+        "skip_reason": null,
+        "error_code": null,
+        "message": "不出脚 判定=OK，缺陷数=0，配准有效区域覆盖率=1.00",
+        "boxes": 0
+      }
+    },
+    "fake_ok_items": [
+      "tht_孔洞",
+      "tht_多锡包锡",
+      "tht_不出脚"
+    ],
+    "verdict": "FAIL:伪OK ['tht_孔洞', 'tht_多锡包锡', 'tht_不出脚']",
+    "align_evidence": {
+      "mismatch_align_method": "标准相位/pad_ring warp dx=0.2 dy=2.7 (resp=0.311)",
+      "mismatch_coverage": 0.9953545734840699,
+      "matched_align_method": "零位相位/pad_ring resp=0.819",
+      "root_cause": "phase_min_response=0.12 阈值远低于错配实测 resp=0.311（匹配对 0.819），低置信不触发 REVIEW；coverage 语义为配准有效区与模板锡面 mask 自身重合度（错配下仍 0.995），不能识别跨板错配；check_reliability 只门禁位移幅度与 coverage，不门禁 resp"
+    }
+  },
+  "th_matched_registration": {
+    "pair": "std=templ_2 vs test=2-1（同源板）",
+    "test_sha16": "c1679aedb384e6a0",
+    "status": "OK",
+    "message": "少锡 判定=OK，缺陷数=0，配准有效区域覆盖率=1.00",
+    "registration_keys": {
+      "coverage": 1.0,
+      "align_method": "零位相位/pad_ring resp=0.819"
+    },
+    "metadata_keys": [
+      "align_method",
+      "coverage",
+      "defect_ids",
+      "diagnostics",
+      "image_shape",
+      "num_defects",
+      "output_image",
+      "review_reason",
+      "solder_mode",
+      "status",
+      "template_id",
+      "total_ms"
+    ]
+  }
+}

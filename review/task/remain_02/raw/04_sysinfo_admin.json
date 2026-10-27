@@ -1,0 +1,142 @@
+{
+  "name": "sysinfo_admin",
+  "method": "GET",
+  "path": "/api/system/info",
+  "role": "admin",
+  "request_body": null,
+  "status_code": 200,
+  "response": {
+    "device": "cuda",
+    "gpu_name": "NVIDIA GeForce GTX 1660 SUPER",
+    "torch_version": "2.5.1+cu121",
+    "n_images": 18,
+    "n_videos": 0,
+    "n_detections": 1,
+    "n_feedback_pending": 0,
+    "categories": [
+      {
+        "category": "gold_finger",
+        "engine": "builtin",
+        "prepared": true,
+        "versions": [
+          1,
+          2
+        ],
+        "current_version": 2,
+        "n_images": 18
+      }
+    ],
+    "latency_budget_ms": 200,
+    "role": "admin",
+    "features": {
+      "webhook": false,
+      "plc_trigger": false,
+      "auto_archive": false,
+      "auth": true
+    },
+    "business_budget": {
+      "g2_max_fpr_pct": 5.0,
+      "g2_min_recall_pct": 95.0,
+      "g6_max_old_recall_drop_pt": 2.0,
+      "max_gray_ratio_pct": 15.0,
+      "raw_hot_days": 90,
+      "raw_cold_months": 12,
+      "heatmap_overlay_days": 30,
+      "snapshot_keep_recent": 10,
+      "snapshot_keep_activated": true,
+      "evalrun_audit_months": 12,
+      "label_late_tolerance_days": 7,
+      "feedback_event_wal_retention": "永久"
+    },
+    "governance_decisions": {
+      "gt_threshold_frozen": false,
+      "gt_threshold_frozen_at": "",
+      "gt_dataset_ref": "",
+      "ac045_l1_real_training_enabled": false,
+      "ac046_l1_pollution_exit_enabled": false,
+      "candidate_release_mode": "manual",
+      "calibration_isolation": "auto",
+      "dependency_lock_policy": "warn",
+      "ac062_legacy_artifact_dir": "",
+      "sync28_29_accepted": false,
+      "production_acceptance_signed": false,
+      "blob_gpu_enabled": false,
+      "approved_extra_good_batches": ""
+    },
+    "dependency_lock": {
+      "ok": false,
+      "lock_found": true,
+      "lock_path": "D:\\CGAIC\\AOI_SSOCL\\stable_AOI_tree\\AOI_Core\\requirements-lock.txt",
+      "mismatches": [
+        {
+          "package": "fastapi",
+          "locked": "0.142.2",
+          "installed": "0.141.1"
+        },
+        {
+          "package": "numpy",
+          "locked": "2.5.2",
+          "installed": "2.4.6"
+        },
+        {
+          "package": "pillow",
+          "locked": "12.3.0",
+          "installed": "12.2.0"
+        },
+        {
+          "package": "pydantic",
+          "locked": "2.13.5",
+          "installed": "2.13.4"
+        },
+        {
+          "package": "PySide6",
+          "locked": "6.11.2",
+          "installed": "6.8.3"
+        },
+        {
+          "package": "scikit-learn",
+          "locked": "1.9.1",
+          "installed": "1.9.0"
+        },
+        {
+          "package": "SQLAlchemy",
+          "locked": "2.1.3",
+          "installed": "2.0.51"
+        },
+        {
+          "package": "timm",
+          "locked": "1.0.30",
+          "installed": "1.0.29"
+        },
+        {
+          "package": "torch",
+          "locked": "2.14.0+cu126",
+          "installed": "2.5.1+cu121"
+        },
+        {
+          "package": "torchvision",
+          "locked": "0.29.0+cu126",
+          "installed": "0.20.1+cu121"
+        },
+        {
+          "package": "uvicorn",
+          "locked": "0.54.0",
+          "installed": "0.52.1"
+        },
+        {
+          "package": "websocket-client",
+          "locked": "1.9.2",
+          "installed": "1.9.0"
+        },
+        {
+          "package": "websockets",
+          "locked": "17.2",
+          "installed": "17.0.1"
+        }
+      ],
+      "missing": [],
+      "policy": "warn"
+    }
+  },
+  "note": "回显角色与依赖锁/治理决策"
+}

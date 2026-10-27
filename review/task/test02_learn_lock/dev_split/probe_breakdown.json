@@ -1,0 +1,494 @@
+[
+  {
+    "i": 0,
+    "lock": {
+      "yield_ms": 78.0,
+      "prefetch_ms": 0.015,
+      "lock_wait_ms": 0.002,
+      "lock_hold_ms": 1282.943,
+      "prefetched": false
+    },
+    "feedback_ms": 1282.89,
+    "action": "reflow_labeled_accepted",
+    "deepcopy_ms": 247.27910000365227,
+    "deepcopy_err": null,
+    "parts": {
+      "_record": 537.3,
+      "_labeled_defect_recall": 0.0,
+      "_recalibrate_on_reflow": 6.7,
+      "_sem_add": 4.2,
+      "check": 585.7,
+      "recenter": 552.0,
+      "_reflow_labeled": 1151.9,
+      "_add_labeled": 0.0,
+      "_maybe_thresh_recal": 0.0,
+      "_maybe_pair_thresh": 0.0,
+      "_maybe_head_ft": 0.0,
+      "_maybe_disc_ft": 0.0
+    },
+    "calls": {
+      "_record": 41,
+      "_labeled_defect_recall": 2,
+      "_recalibrate_on_reflow": 1,
+      "_sem_add": 1,
+      "check": 1,
+      "recenter": 1,
+      "_reflow_labeled": 1,
+      "_add_labeled": 1,
+      "_maybe_thresh_recal": 1,
+      "_maybe_pair_thresh": 1,
+      "_maybe_head_ft": 1,
+      "_maybe_disc_ft": 1
+    }
+  },
+  {
+    "i": 1,
+    "lock": {
+      "yield_ms": 15.0,
+      "prefetch_ms": 0.014,
+      "lock_wait_ms": 0.001,
+      "lock_hold_ms": 773.292,
+      "prefetched": false
+    },
+    "feedback_ms": 773.23,
+    "action": "reflow_rolled_back",
+    "deepcopy_ms": 299.8098999960348,
+    "deepcopy_err": null,
+    "parts": {
+      "_record": 318.6,
+      "_labeled_defect_recall": 0.0,
+      "_recalibrate_on_reflow": 9.0,
+      "_sem_add": 4.9,
+      "check": 627.5,
+      "_reflow_labeled": 646.0,
+      "_add_labeled": 0.0,
+      "_maybe_thresh_recal": 0.0,
+      "_maybe_pair_thresh": 0.0,
+      "_maybe_head_ft": 0.0,
+      "_maybe_disc_ft": 0.0
+    },
+    "calls": {
+      "_record": 21,
+      "_labeled_defect_recall": 2,
+      "_recalibrate_on_reflow": 1,
+      "_sem_add": 1,
+      "check": 1,
+      "_reflow_labeled": 1,
+      "_add_labeled": 1,
+      "_maybe_thresh_recal": 1,
+      "_maybe_pair_thresh": 1,
+      "_maybe_head_ft": 1,
+      "_maybe_disc_ft": 1
+    }
+  },
+  {
+    "i": 2,
+    "lock": {
+      "yield_ms": 0.0,
+      "prefetch_ms": 0.005,
+      "lock_wait_ms": 0.001,
+      "lock_hold_ms": 976.263,
+      "prefetched": false
+    },
+    "feedback_ms": 976.2,
+    "action": "reflow_rolled_back",
+    "deepcopy_ms": 316.1901999847032,
+    "deepcopy_err": null,
+    "parts": {
+      "_record": 503.6,
+      "_labeled_defect_recall": 0.0,
+      "_recalibrate_on_reflow": 16.6,
+      "_sem_add": 5.5,
+      "check": 820.5,
+      "_reflow_labeled": 846.7,
+      "_add_labeled": 0.0,
+      "_maybe_thresh_recal": 0.0,
+      "_maybe_pair_thresh": 0.0,
+      "_maybe_head_ft": 0.0,
+      "_maybe_disc_ft": 0.0
+    },
+    "calls": {
+      "_record": 21,
+      "_labeled_defect_recall": 2,
+      "_recalibrate_on_reflow": 1,
+      "_sem_add": 1,
+      "check": 1,
+      "_reflow_labeled": 1,
+      "_add_labeled": 1,
+      "_maybe_thresh_recal": 1,
+      "_maybe_pair_thresh": 1,
+      "_maybe_head_ft": 1,
+      "_maybe_disc_ft": 1
+    }
+  },
+  {
+    "i": 3,
+    "lock": {
+      "yield_ms": 0.0,
+      "prefetch_ms": 0.007,
+      "lock_wait_ms": 0.001,
+      "lock_hold_ms": 897.12,
+      "prefetched": false
+    },
+    "feedback_ms": 897.08,
+    "action": "reflow_rolled_back",
+    "deepcopy_ms": 414.68749998603016,
+    "deepcopy_err": null,
+    "parts": {
+      "_record": 395.3,
+      "_labeled_defect_recall": 0.0,
+      "_recalibrate_on_reflow": 11.4,
+      "_sem_add": 3.6,
+      "check": 742.8,
+      "_reflow_labeled": 762.4,
+      "_add_labeled": 0.0,
+      "_maybe_thresh_recal": 0.0,
+      "_maybe_pair_thresh": 0.0,
+      "_maybe_head_ft": 0.0,
+      "_maybe_disc_ft": 0.0
+    },
+    "calls": {
+      "_record": 21,
+      "_labeled_defect_recall": 2,
+      "_recalibrate_on_reflow": 1,
+      "_sem_add": 1,
+      "check": 1,
+      "_reflow_labeled": 1,
+      "_add_labeled": 1,
+      "_maybe_thresh_recal": 1,
+      "_maybe_pair_thresh": 1,
+      "_maybe_head_ft": 1,
+      "_maybe_disc_ft": 1
+    }
+  },
+  {
+    "i": 4,
+    "lock": {
+      "yield_ms": 0.0,
+      "prefetch_ms": 0.005,
+      "lock_wait_ms": 0.001,
+      "lock_hold_ms": 892.377,
+      "prefetched": false
+    },
+    "feedback_ms": 892.35,
+    "action": "reflow_rolled_back",
+    "deepcopy_ms": 368.6500000185333,
+    "deepcopy_err": null,
+    "parts": {
+      "_record": 447.7,
+      "_labeled_defect_recall": 0.0,
+      "_recalibrate_on_reflow": 15.6,
+      "_sem_add": 6.3,
+      "check": 726.9,
+      "_reflow_labeled": 753.0,
+      "_add_labeled": 0.0,
+      "_maybe_thresh_recal": 0.0,
+      "_maybe_pair_thresh": 0.0,
+      "_maybe_head_ft": 0.0,
+      "_maybe_disc_ft": 0.0
+    },
+    "calls": {
+      "_record": 21,
+      "_labeled_defect_recall": 2,
+      "_recalibrate_on_reflow": 1,
+      "_sem_add": 1,
+      "check": 1,
+      "_reflow_labeled": 1,
+      "_add_labeled": 1,
+      "_maybe_thresh_recal": 1,
+      "_maybe_pair_thresh": 1,
+      "_maybe_head_ft": 1,
+      "_maybe_disc_ft": 1
+    }
+  },
+  {
+    "i": 5,
+    "lock": {
+      "yield_ms": 0.0,
+      "prefetch_ms": 0.015,
+      "lock_wait_ms": 0.001,
+      "lock_hold_ms": 1615.619,
+      "prefetched": false
+    },
+    "feedback_ms": 1613.63,
+    "action": "reflow_rolled_back",
+    "deepcopy_ms": 1674.3542000185698,
+    "deepcopy_err": null,
+    "parts": {
+      "_record": 707.3,
+      "_labeled_defect_recall": 0.0,
+      "_recalibrate_on_reflow": 80.8,
+      "_sem_add": 46.7,
+      "check": 1069.5,
+      "_reflow_labeled": 1232.5,
+      "_add_labeled": 0.1,
+      "_maybe_thresh_recal": 0.0,
+      "_maybe_pair_thresh": 0.2,
+      "_maybe_head_ft": 0.1,
+      "_maybe_disc_ft": 0.1
+    },
+    "calls": {
+      "_record": 21,
+      "_labeled_defect_recall": 2,
+      "_recalibrate_on_reflow": 1,
+      "_sem_add": 1,
+      "check": 1,
+      "_reflow_labeled": 1,
+      "_add_labeled": 1,
+      "_maybe_thresh_recal": 1,
+      "_maybe_pair_thresh": 1,
+      "_maybe_head_ft": 1,
+      "_maybe_disc_ft": 1
+    }
+  },
+  {
+    "i": 6,
+    "lock": {
+      "yield_ms": 0.0,
+      "prefetch_ms": 0.009,
+      "lock_wait_ms": 0.001,
+      "lock_hold_ms": 1012.204,
+      "prefetched": false
+    },
+    "feedback_ms": 1012.17,
+    "action": "reflow_rolled_back",
+    "deepcopy_ms": 1508.8447000016458,
+    "deepcopy_err": null,
+    "parts": {
+      "_record": 446.6,
+      "_labeled_defect_recall": 0.0,
+      "_recalibrate_on_reflow": 7.3,
+      "_sem_add": 2.8,
+      "check": 852.5,
+      "_reflow_labeled": 866.8,
+      "_add_labeled": 0.0,
+      "_maybe_thresh_recal": 0.0,
+      "_maybe_pair_thresh": 0.0,
+      "_maybe_head_ft": 0.0,
+      "_maybe_disc_ft": 0.0
+    },
+    "calls": {
+      "_record": 21,
+      "_labeled_defect_recall": 2,
+      "_recalibrate_on_reflow": 1,
+      "_sem_add": 1,
+      "check": 1,
+      "_reflow_labeled": 1,
+      "_add_labeled": 1,
+      "_maybe_thresh_recal": 1,
+      "_maybe_pair_thresh": 1,
+      "_maybe_head_ft": 1,
+      "_maybe_disc_ft": 1
+    }
+  },
+  {
+    "i": 7,
+    "lock": {
+      "yield_ms": 0.0,
+      "prefetch_ms": 0.009,
+      "lock_wait_ms": 0.001,
+      "lock_hold_ms": 999.062,
+      "prefetched": false
+    },
+    "feedback_ms": 999.02,
+    "action": "reflow_rolled_back",
+    "deepcopy_ms": 1550.0796000123955,
+    "deepcopy_err": null,
+    "parts": {
+      "_record": 512.7,
+      "_labeled_defect_recall": 0.0,
+      "_recalibrate_on_reflow": 7.9,
+      "_sem_add": 5.3,
+      "check": 832.0,
+      "_reflow_labeled": 851.3,
+      "_add_labeled": 0.0,
+      "_maybe_thresh_recal": 0.0,
+      "_maybe_apply_weights": 0.9,
+      "_maybe_pair_thresh": 0.0,
+      "_maybe_head_ft": 0.0,
+      "_maybe_disc_ft": 0.2
+    },
+    "calls": {
+      "_record": 21,
+      "_labeled_defect_recall": 2,
+      "_recalibrate_on_reflow": 1,
+      "_sem_add": 1,
+      "check": 1,
+      "_reflow_labeled": 1,
+      "_add_labeled": 1,
+      "_maybe_thresh_recal": 1,
+      "_maybe_apply_weights": 1,
+      "_maybe_pair_thresh": 1,
+      "_maybe_head_ft": 1,
+      "_maybe_disc_ft": 1
+    }
+  },
+  {
+    "i": 8,
+    "lock": {
+      "yield_ms": 0.0,
+      "prefetch_ms": 0.027,
+      "lock_wait_ms": 0.002,
+      "lock_hold_ms": 1087.025,
+      "prefetched": false
+    },
+    "feedback_ms": 1086.97,
+    "action": "reflow_rolled_back",
+    "deepcopy_ms": 1376.0315999970771,
+    "deepcopy_err": null,
+    "parts": {
+      "_record": 571.0,
+      "_labeled_defect_recall": 0.0,
+      "_recalibrate_on_reflow": 17.3,
+      "_sem_add": 6.8,
+      "check": 892.8,
+      "_reflow_labeled": 921.6,
+      "_add_labeled": 0.0,
+      "_maybe_thresh_recal": 0.0,
+      "_maybe_apply_weights": 0.0,
+      "_maybe_pair_thresh": 0.0,
+      "_maybe_head_ft": 0.0,
+      "_maybe_disc_ft": 0.0
+    },
+    "calls": {
+      "_record": 21,
+      "_labeled_defect_recall": 2,
+      "_recalibrate_on_reflow": 1,
+      "_sem_add": 1,
+      "check": 1,
+      "_reflow_labeled": 1,
+      "_add_labeled": 1,
+      "_maybe_thresh_recal": 1,
+      "_maybe_apply_weights": 1,
+      "_maybe_pair_thresh": 1,
+      "_maybe_head_ft": 1,
+      "_maybe_disc_ft": 1
+    }
+  },
+  {
+    "i": 9,
+    "lock": {
+      "yield_ms": 0.0,
+      "prefetch_ms": 0.006,
+      "lock_wait_ms": 0.001,
+      "lock_hold_ms": 902.517,
+      "prefetched": false
+    },
+    "feedback_ms": 902.48,
+    "action": "reflow_rolled_back",
+    "deepcopy_ms": 344.621800002642,
+    "deepcopy_err": null,
+    "parts": {
+      "_record": 455.9,
+      "_labeled_defect_recall": 0.0,
+      "_recalibrate_on_reflow": 16.4,
+      "_sem_add": 5.2,
+      "check": 741.4,
+      "_reflow_labeled": 767.6,
+      "_add_labeled": 0.0,
+      "_maybe_thresh_recal": 0.0,
+      "_maybe_apply_weights": 0.0,
+      "_maybe_pair_thresh": 0.0,
+      "_maybe_head_ft": 0.0,
+      "_maybe_disc_ft": 0.0
+    },
+    "calls": {
+      "_record": 21,
+      "_labeled_defect_recall": 2,
+      "_recalibrate_on_reflow": 1,
+      "_sem_add": 1,
+      "check": 1,
+      "_reflow_labeled": 1,
+      "_add_labeled": 1,
+      "_maybe_thresh_recal": 1,
+      "_maybe_apply_weights": 1,
+      "_maybe_pair_thresh": 1,
+      "_maybe_head_ft": 1,
+      "_maybe_disc_ft": 1
+    }
+  },
+  {
+    "i": 10,
+    "lock": {
+      "yield_ms": 0.0,
+      "prefetch_ms": 0.004,
+      "lock_wait_ms": 0.001,
+      "lock_hold_ms": 746.658,
+      "prefetched": false
+    },
+    "feedback_ms": 746.63,
+    "action": "reflow_rolled_back",
+    "deepcopy_ms": 356.69179999968037,
+    "deepcopy_err": null,
+    "parts": {
+      "_record": 296.1,
+      "_labeled_defect_recall": 0.0,
+      "_recalibrate_on_reflow": 7.5,
+      "_sem_add": 4.2,
+      "check": 601.2,
+      "_reflow_labeled": 617.4,
+      "_add_labeled": 0.0,
+      "_maybe_thresh_recal": 0.0,
+      "_maybe_apply_weights": 0.0,
+      "_maybe_pair_thresh": 0.0,
+      "_maybe_head_ft": 0.0,
+      "_maybe_disc_ft": 0.0
+    },
+    "calls": {
+      "_record": 21,
+      "_labeled_defect_recall": 2,
+      "_recalibrate_on_reflow": 1,
+      "_sem_add": 1,
+      "check": 1,
+      "_reflow_labeled": 1,
+      "_add_labeled": 1,
+      "_maybe_thresh_recal": 1,
+      "_maybe_apply_weights": 1,
+      "_maybe_pair_thresh": 1,
+      "_maybe_head_ft": 1,
+      "_maybe_disc_ft": 1
+    }
+  },
+  {
+    "i": 11,
+    "lock": {
+      "yield_ms": 0.0,
+      "prefetch_ms": 0.014,
+      "lock_wait_ms": 0.001,
+      "lock_hold_ms": 909.829,
+      "prefetched": false
+    },
+    "feedback_ms": 909.74,
+    "action": "reflow_rolled_back",
+    "deepcopy_ms": 370.743700012099,
+    "deepcopy_err": null,
+    "parts": {
+      "_record": 450.3,
+      "_labeled_defect_recall": 0.0,
+      "_recalibrate_on_reflow": 18.9,
+      "_sem_add": 6.1,
+      "check": 749.6,
+      "_reflow_labeled": 778.8,
+      "_add_labeled": 0.0,
+      "_maybe_thresh_recal": 0.0,
+      "_maybe_apply_weights": 0.0,
+      "_maybe_pair_thresh": 0.0,
+      "_maybe_head_ft": 0.0,
+      "_maybe_disc_ft": 0.0
+    },
+    "calls": {
+      "_record": 21,
+      "_labeled_defect_recall": 2,
+      "_recalibrate_on_reflow": 1,
+      "_sem_add": 1,
+      "check": 1,
+      "_reflow_labeled": 1,
+      "_add_labeled": 1,
+      "_maybe_thresh_recal": 1,
+      "_maybe_apply_weights": 1,
+      "_maybe_pair_thresh": 1,
+      "_maybe_head_ft": 1,
+      "_maybe_disc_ft": 1
+    }
+  }
+]

@@ -1,0 +1,662 @@
+[
+  {
+    "name": "health_no_key",
+    "method": "GET",
+    "path": "/api/health",
+    "role": "NONE",
+    "status": 200,
+    "expect": [
+      200
+    ],
+    "verdict": "PASS",
+    "note": "探活豁免"
+  },
+  {
+    "name": "sysinfo_no_key",
+    "method": "GET",
+    "path": "/api/system/info",
+    "role": "NONE",
+    "status": 401,
+    "expect": [
+      401
+    ],
+    "verdict": "PASS",
+    "note": "鉴权开启后无密钥一律 401"
+  },
+  {
+    "name": "sysinfo_wrong_key",
+    "method": "GET",
+    "path": "/api/system/info",
+    "role": "WRONG",
+    "status": 401,
+    "expect": [
+      401
+    ],
+    "verdict": "PASS",
+    "note": "错误密钥 401"
+  },
+  {
+    "name": "sysinfo_operator",
+    "method": "GET",
+    "path": "/api/system/info",
+    "role": "operator",
+    "status": 200,
+    "expect": [
+      200
+    ],
+    "verdict": "PASS",
+    "note": "回显角色与依赖锁/治理决策"
+  },
+  {
+    "name": "sysinfo_engineer",
+    "method": "GET",
+    "path": "/api/system/info",
+    "role": "engineer",
+    "status": 200,
+    "expect": [
+      200
+    ],
+    "verdict": "PASS",
+    "note": "回显角色与依赖锁/治理决策"
+  },
+  {
+    "name": "sysinfo_admin",
+    "method": "GET",
+    "path": "/api/system/info",
+    "role": "admin",
+    "status": 200,
+    "expect": [
+      200
+    ],
+    "verdict": "PASS",
+    "note": "回显角色与依赖锁/治理决策"
+  },
+  {
+    "name": "revisions_list_operator",
+    "method": "GET",
+    "path": "/api/models/feature-revisions",
+    "role": "operator",
+    "status": 200,
+    "expect": [
+      200
+    ],
+    "verdict": "PASS",
+    "note": "含 production_binding/changes_production_extractor 字段"
+  },
+  {
+    "name": "revisions_list_engineer",
+    "method": "GET",
+    "path": "/api/models/feature-revisions",
+    "role": "engineer",
+    "status": 200,
+    "expect": [
+      200
+    ],
+    "verdict": "PASS",
+    "note": "含 production_binding/changes_production_extractor 字段"
+  },
+  {
+    "name": "revisions_list_admin",
+    "method": "GET",
+    "path": "/api/models/feature-revisions",
+    "role": "admin",
+    "status": 200,
+    "expect": [
+      200
+    ],
+    "verdict": "PASS",
+    "note": "含 production_binding/changes_production_extractor 字段"
+  },
+  {
+    "name": "feature_set_get_operator",
+    "method": "GET",
+    "path": "/api/models/feature-set/gold_finger",
+    "role": "operator",
+    "status": 200,
+    "expect": [
+      200
+    ],
+    "verdict": "PASS",
+    "note": "操作员只读 can_edit=false"
+  },
+  {
+    "name": "feature_set_get_engineer",
+    "method": "GET",
+    "path": "/api/models/feature-set/gold_finger",
+    "role": "engineer",
+    "status": 200,
+    "expect": [
+      200
+    ],
+    "verdict": "PASS",
+    "note": "操作员只读 can_edit=false"
+  },
+  {
+    "name": "feature_set_get_admin",
+    "method": "GET",
+    "path": "/api/models/feature-set/gold_finger",
+    "role": "admin",
+    "status": 200,
+    "expect": [
+      200
+    ],
+    "verdict": "PASS",
+    "note": "操作员只读 can_edit=false"
+  },
+  {
+    "name": "feature_set_unknown_cat",
+    "method": "GET",
+    "path": "/api/models/feature-set/__no_such_cat__",
+    "role": "operator",
+    "status": 200,
+    "expect": [
+      200
+    ],
+    "verdict": "PASS",
+    "note": "未准备品类 enabled=false"
+  },
+  {
+    "name": "hard_pool_operator",
+    "method": "GET",
+    "path": "/api/models/feature-set/gold_finger/hard-pool",
+    "role": "operator",
+    "status": 403,
+    "expect": [
+      403
+    ],
+    "verdict": "PASS",
+    "note": "难例池 engineer 起"
+  },
+  {
+    "name": "hard_pool_engineer",
+    "method": "GET",
+    "path": "/api/models/feature-set/gold_finger/hard-pool",
+    "role": "engineer",
+    "status": 200,
+    "expect": [
+      200
+    ],
+    "verdict": "PASS",
+    "note": ""
+  },
+  {
+    "name": "slot_health_operator",
+    "method": "GET",
+    "path": "/api/models/gold_finger/slot-health",
+    "role": "operator",
+    "status": 403,
+    "expect": [
+      403
+    ],
+    "verdict": "PASS",
+    "note": "槽位健康 engineer 起"
+  },
+  {
+    "name": "slot_health_engineer",
+    "method": "GET",
+    "path": "/api/models/gold_finger/slot-health",
+    "role": "engineer",
+    "status": 200,
+    "expect": [
+      200
+    ],
+    "verdict": "PASS",
+    "note": ""
+  },
+  {
+    "name": "draft_operator",
+    "method": "POST",
+    "path": "/api/models/feature-set/gold_finger/draft",
+    "role": "operator",
+    "status": 403,
+    "expect": [
+      403
+    ],
+    "verdict": "PASS",
+    "note": ""
+  },
+  {
+    "name": "draft_bad_groups",
+    "method": "POST",
+    "path": "/api/models/feature-set/gold_finger/draft",
+    "role": "engineer",
+    "status": 400,
+    "expect": [
+      400
+    ],
+    "verdict": "PASS",
+    "note": ""
+  },
+  {
+    "name": "draft_bad_scoring",
+    "method": "POST",
+    "path": "/api/models/feature-set/gold_finger/draft",
+    "role": "engineer",
+    "status": 400,
+    "expect": [
+      400
+    ],
+    "verdict": "PASS",
+    "note": ""
+  },
+  {
+    "name": "draft_engineer",
+    "method": "POST",
+    "path": "/api/models/feature-set/gold_finger/draft",
+    "role": "engineer",
+    "status": 200,
+    "expect": [
+      200
+    ],
+    "verdict": "PASS",
+    "note": "changes_production 必须为 false"
+  },
+  {
+    "name": "draft_admin_idempotent",
+    "method": "POST",
+    "path": "/api/models/feature-set/gold_finger/draft",
+    "role": "admin",
+    "status": 200,
+    "expect": [
+      200
+    ],
+    "verdict": "PASS",
+    "note": "幂等：同 manifest 同 revision_id"
+  },
+  {
+    "name": "feature_set_after_draft",
+    "method": "GET",
+    "path": "/api/models/feature-set/gold_finger",
+    "role": "operator",
+    "status": 200,
+    "expect": [
+      200
+    ],
+    "verdict": "PASS",
+    "note": "draft 后生产特征集不变"
+  },
+  {
+    "name": "revisions_list_after_draft",
+    "method": "GET",
+    "path": "/api/models/feature-revisions",
+    "role": "operator",
+    "status": 200,
+    "expect": [
+      200
+    ],
+    "verdict": "PASS",
+    "note": "draft 已登记；production_binding 保持 unknown"
+  },
+  {
+    "name": "report_operator",
+    "method": "POST",
+    "path": "/api/models/feature-set/gold_finger/report",
+    "role": "operator",
+    "status": 403,
+    "expect": [
+      403
+    ],
+    "verdict": "PASS",
+    "note": ""
+  },
+  {
+    "name": "report_engineer",
+    "method": "POST",
+    "path": "/api/models/feature-set/gold_finger/report",
+    "role": "engineer",
+    "status": 200,
+    "expect": [
+      200
+    ],
+    "verdict": "PASS",
+    "note": "queued -> 后台贡献档案"
+  },
+  {
+    "name": "report_again_running_or_done",
+    "method": "POST",
+    "path": "/api/models/feature-set/gold_finger/report",
+    "role": "engineer",
+    "status": 200,
+    "expect": [
+      200
+    ],
+    "verdict": "PASS",
+    "note": "完成后再次请求（应重新排队或提示）"
+  },
+  {
+    "name": "feature_set_after_report",
+    "method": "GET",
+    "path": "/api/models/feature-set/gold_finger",
+    "role": "engineer",
+    "status": 200,
+    "expect": [
+      200
+    ],
+    "verdict": "PASS",
+    "note": "档案状态应转 current"
+  },
+  {
+    "name": "admission_operator",
+    "method": "POST",
+    "path": "/api/models/feature-revisions/ba47d05c566a175eb8728a6aeece4c23d130dbd1af396f56e2b5866ae4ac8df8/admission",
+    "role": "operator",
+    "status": 403,
+    "expect": [
+      403
+    ],
+    "verdict": "PASS",
+    "note": ""
+  },
+  {
+    "name": "admission_no_such",
+    "method": "POST",
+    "path": "/api/models/feature-revisions/nope/admission",
+    "role": "engineer",
+    "status": 409,
+    "expect": [
+      409
+    ],
+    "verdict": "PASS",
+    "note": ""
+  },
+  {
+    "name": "admission_engineer",
+    "method": "POST",
+    "path": "/api/models/feature-revisions/ba47d05c566a175eb8728a6aeece4c23d130dbd1af396f56e2b5866ae4ac8df8/admission",
+    "role": "engineer",
+    "status": 200,
+    "expect": [
+      200
+    ],
+    "verdict": "PASS",
+    "note": "只产证据 activated=false"
+  },
+  {
+    "name": "transition_engineer",
+    "method": "POST",
+    "path": "/api/models/feature-revisions/ba47d05c566a175eb8728a6aeece4c23d130dbd1af396f56e2b5866ae4ac8df8/transition",
+    "role": "engineer",
+    "status": 403,
+    "expect": [
+      403
+    ],
+    "verdict": "PASS",
+    "note": "门禁 transition 需 admin"
+  },
+  {
+    "name": "transition_admin_no_evidence",
+    "method": "POST",
+    "path": "/api/models/feature-revisions/ba47d05c566a175eb8728a6aeece4c23d130dbd1af396f56e2b5866ae4ac8df8/transition",
+    "role": "admin",
+    "status": 409,
+    "expect": [
+      409
+    ],
+    "verdict": "PASS",
+    "note": "无独立评估证据 → 拒绝"
+  },
+  {
+    "name": "transition_admin_skip_level",
+    "method": "POST",
+    "path": "/api/models/feature-revisions/ba47d05c566a175eb8728a6aeece4c23d130dbd1af396f56e2b5866ae4ac8df8/transition",
+    "role": "admin",
+    "status": 409,
+    "expect": [
+      409
+    ],
+    "verdict": "PASS",
+    "note": "禁止越级激活"
+  },
+  {
+    "name": "register_operator",
+    "method": "POST",
+    "path": "/api/models/feature-revisions",
+    "role": "operator",
+    "status": 403,
+    "expect": [
+      403
+    ],
+    "verdict": "PASS",
+    "note": ""
+  },
+  {
+    "name": "register_engineer_invalid",
+    "method": "POST",
+    "path": "/api/models/feature-revisions",
+    "role": "engineer",
+    "status": 409,
+    "expect": [
+      409
+    ],
+    "verdict": "PASS",
+    "note": "manifest 血缘不全 → 409"
+  },
+  {
+    "name": "config_freeze_operator",
+    "method": "POST",
+    "path": "/api/system/config",
+    "role": "operator",
+    "status": 403,
+    "expect": [
+      403
+    ],
+    "verdict": "PASS",
+    "note": ""
+  },
+  {
+    "name": "config_freeze_engineer",
+    "method": "POST",
+    "path": "/api/system/config",
+    "role": "engineer",
+    "status": 403,
+    "expect": [
+      403
+    ],
+    "verdict": "PASS",
+    "note": ""
+  },
+  {
+    "name": "config_freeze_admin",
+    "method": "POST",
+    "path": "/api/system/config",
+    "role": "admin",
+    "status": 200,
+    "expect": [
+      200
+    ],
+    "verdict": "PASS",
+    "note": ""
+  },
+  {
+    "name": "config_threshold_frozen_409",
+    "method": "POST",
+    "path": "/api/system/config",
+    "role": "admin",
+    "status": 409,
+    "expect": [
+      409
+    ],
+    "verdict": "PASS",
+    "note": "冻结期改阈值 → 409 THRESHOLD_FROZEN"
+  },
+  {
+    "name": "config_unfreeze_admin",
+    "method": "POST",
+    "path": "/api/system/config",
+    "role": "admin",
+    "status": 200,
+    "expect": [
+      200
+    ],
+    "verdict": "PASS",
+    "note": ""
+  },
+  {
+    "name": "config_threshold_after_unfreeze",
+    "method": "POST",
+    "path": "/api/system/config",
+    "role": "admin",
+    "status": 200,
+    "expect": [
+      200
+    ],
+    "verdict": "PASS",
+    "note": "解冻后可改"
+  },
+  {
+    "name": "candidates_prepared_operator",
+    "method": "GET",
+    "path": "/api/candidates/recovery/prepared",
+    "role": "operator",
+    "status": 403,
+    "expect": [
+      403
+    ],
+    "verdict": "PASS",
+    "note": ""
+  },
+  {
+    "name": "candidates_prepared_engineer",
+    "method": "GET",
+    "path": "/api/candidates/recovery/prepared",
+    "role": "engineer",
+    "status": 200,
+    "expect": [
+      200
+    ],
+    "verdict": "PASS",
+    "note": ""
+  },
+  {
+    "name": "candidates_decision_operator",
+    "method": "POST",
+    "path": "/api/candidates/gold_finger/1/decision",
+    "role": "operator",
+    "status": 403,
+    "expect": [
+      403
+    ],
+    "verdict": "PASS",
+    "note": ""
+  },
+  {
+    "name": "candidates_decision_engineer",
+    "method": "POST",
+    "path": "/api/candidates/gold_finger/1/decision",
+    "role": "engineer",
+    "status": 403,
+    "expect": [
+      403
+    ],
+    "verdict": "PASS",
+    "note": "decision 需 admin"
+  },
+  {
+    "name": "candidates_decision_admin_bogus",
+    "method": "POST",
+    "path": "/api/candidates/gold_finger/999/decision",
+    "role": "admin",
+    "status": 409,
+    "expect": [
+      409
+    ],
+    "verdict": "PASS",
+    "note": "不存在的候选 → 409"
+  },
+  {
+    "name": "sysinfo_deplock",
+    "method": "GET",
+    "path": "/api/system/info",
+    "role": "admin",
+    "status": 200,
+    "expect": [
+      200
+    ],
+    "verdict": "PASS",
+    "note": "读取 dependency_lock 状态"
+  },
+  {
+    "name": "config_deplock_block",
+    "method": "POST",
+    "path": "/api/system/config",
+    "role": "admin",
+    "status": 200,
+    "expect": [
+      200
+    ],
+    "verdict": "PASS",
+    "note": ""
+  },
+  {
+    "name": "candidates_activate_deplock_409",
+    "method": "POST",
+    "path": "/api/candidates/gold_finger/1/activate",
+    "role": "admin",
+    "status": 409,
+    "expect": [
+      409
+    ],
+    "verdict": "PASS",
+    "note": "锁不一致+block → DEPENDENCY_LOCK_MISMATCH；指针不得变"
+  },
+  {
+    "name": "config_deplock_warn",
+    "method": "POST",
+    "path": "/api/system/config",
+    "role": "admin",
+    "status": 200,
+    "expect": [
+      200
+    ],
+    "verdict": "PASS",
+    "note": ""
+  },
+  {
+    "name": "rebuild_operator",
+    "method": "POST",
+    "path": "/api/models/feature-set/gold_finger/rebuild",
+    "role": "operator",
+    "status": 403,
+    "expect": [
+      403
+    ],
+    "verdict": "PASS",
+    "note": ""
+  },
+  {
+    "name": "rebuild_no_active_cat",
+    "method": "POST",
+    "path": "/api/models/feature-set/__no_such_cat__/rebuild",
+    "role": "engineer",
+    "status": 409,
+    "expect": [
+      409
+    ],
+    "verdict": "PASS",
+    "note": "无激活版本 → 409"
+  },
+  {
+    "name": "rebuild_engineer",
+    "method": "POST",
+    "path": "/api/models/feature-set/gold_finger/rebuild",
+    "role": "engineer",
+    "status": 200,
+    "expect": [
+      200
+    ],
+    "verdict": "PASS",
+    "note": "activated=false；parent=当前版本"
+  },
+  {
+    "name": "feature_set_after_rebuild",
+    "method": "GET",
+    "path": "/api/models/feature-set/gold_finger",
+    "role": "engineer",
+    "status": 200,
+    "expect": [
+      200
+    ],
+    "verdict": "PASS",
+    "note": "version 仍为旧版；pending_rebuild_version 出现"
+  }
+]

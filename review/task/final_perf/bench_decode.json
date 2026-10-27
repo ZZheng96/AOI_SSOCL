@@ -1,0 +1,272 @@
+{
+  "temp": "C:\\Users\\imia\\AppData\\Local\\Temp\\aoi_finalperf_dec_s7d_3meg",
+  "cv2": "5.0.0",
+  "pil": "12.2.0",
+  "has_IMREAD_COLOR_RGB": true,
+  "decode": [
+    {
+      "image": "real1024_png",
+      "shape": [
+        2500,
+        2500,
+        3
+      ],
+      "bytes": 9869878,
+      "pil_ms": 120.2,
+      "cv2_bgr2rgb_ms": 107.6,
+      "cv2_rgb_ms": 97.5,
+      "decode_rgb_ms": 100.5,
+      "decode_rgb_maxdiff": 0,
+      "reduced2_ms": 98.5,
+      "reduced2_shape": [
+        1250,
+        1250,
+        3
+      ],
+      "reduced2_up_maxdiff": 55,
+      "pil_png_encode_ms": 557.1
+    },
+    {
+      "image": "real1024_jpg",
+      "shape": [
+        2500,
+        2500,
+        3
+      ],
+      "bytes": 1855650,
+      "pil_ms": 76.7,
+      "cv2_bgr2rgb_ms": 48.6,
+      "cv2_rgb_ms": 37.4,
+      "decode_rgb_ms": 43.1,
+      "decode_rgb_maxdiff": 0,
+      "reduced2_ms": 26.2,
+      "reduced2_shape": [
+        1250,
+        1250,
+        3
+      ],
+      "reduced2_up_maxdiff": 56,
+      "pil_png_encode_ms": 638.5
+    },
+    {
+      "image": "syn2500_png",
+      "shape": [
+        2500,
+        2500,
+        3
+      ],
+      "bytes": 12418477,
+      "pil_ms": 245.1,
+      "cv2_bgr2rgb_ms": 117.3,
+      "cv2_rgb_ms": 112.2,
+      "decode_rgb_ms": 114.1,
+      "decode_rgb_maxdiff": 0,
+      "reduced2_ms": 108.0,
+      "reduced2_shape": [
+        1250,
+        1250,
+        3
+      ],
+      "reduced2_up_maxdiff": 37,
+      "pil_png_encode_ms": 640.8
+    },
+    {
+      "image": "syn2500_jpg",
+      "shape": [
+        2500,
+        2500,
+        3
+      ],
+      "bytes": 3542669,
+      "pil_ms": 77.2,
+      "cv2_bgr2rgb_ms": 53.7,
+      "cv2_rgb_ms": 45.7,
+      "decode_rgb_ms": 44.8,
+      "decode_rgb_maxdiff": 0,
+      "reduced2_ms": 32.2,
+      "reduced2_shape": [
+        1250,
+        1250,
+        3
+      ],
+      "reduced2_up_maxdiff": 28,
+      "pil_png_encode_ms": 589.0
+    }
+  ],
+  "warmup": {
+    "version": 2,
+    "load_ms": 625.8,
+    "replay_ms": 0.12,
+    "budget": {
+      "max_load_ms": 30000,
+      "max_replay_ms": 10000,
+      "max_first_infer_ms": 5000,
+      "max_warm_ms": 1000
+    },
+    "violations": [],
+    "within_budget": true,
+    "first_infer_ms": 341.18,
+    "warmup_runs": 3,
+    "warm_ms": 280.57,
+    "warm_samples_ms": [
+      298.09,
+      275.26,
+      280.57
+    ]
+  },
+  "reduced_gate": {
+    "rows": [
+      {
+        "image": "det776_det14_bench_02.png",
+        "full": 2.0,
+        "reduced": 2.0,
+        "abs_diff": 0.0,
+        "decision_same": true
+      },
+      {
+        "image": "det385_det28_bench_00.png",
+        "full": 2.0,
+        "reduced": 2.0,
+        "abs_diff": 0.0,
+        "decision_same": true
+      },
+      {
+        "image": "det588_det61_bench_07.png",
+        "full": 2.0,
+        "reduced": 2.0,
+        "abs_diff": 0.0,
+        "decision_same": true
+      },
+      {
+        "image": "det7_bench_03.png",
+        "full": 2.0,
+        "reduced": 2.0,
+        "abs_diff": 0.0,
+        "decision_same": true
+      },
+      {
+        "image": "det245_det14_bench_02.png",
+        "full": 2.0,
+        "reduced": 2.0,
+        "abs_diff": 0.0,
+        "decision_same": true
+      },
+      {
+        "image": "det711_det28_bench_00.png",
+        "full": 2.0,
+        "reduced": 2.0,
+        "abs_diff": 0.0,
+        "decision_same": true
+      }
+    ],
+    "bit_identical": true,
+    "decision_flips": 0
+  },
+  "overlap": {
+    "serial_total_ms": 8315.8,
+    "pipelined_total_ms": 6710.1,
+    "serial_per_img": {
+      "n": 20,
+      "p50": 404.3,
+      "p95": 803.1,
+      "max": 845.6
+    },
+    "throughput_gain": 1.239,
+    "scores_identical": true
+  },
+  "idle": {
+    "svc_e2e": {
+      "n": 20,
+      "p50": 376.3,
+      "p95": 609.0,
+      "max": 624.1
+    },
+    "svc_wall": {
+      "n": 20,
+      "p50": 393.0,
+      "p95": 628.3,
+      "max": 645.7
+    },
+    "infer": {
+      "n": 20,
+      "p50": 278.0,
+      "p95": 428.6,
+      "max": 438.1
+    }
+  },
+  "http_idle": {
+    "upload_png": {
+      "n": 10,
+      "p50": 1086.7,
+      "p95": 1971.0,
+      "max": 1971.0
+    },
+    "frame_png": {
+      "n": 10,
+      "p50": 472.3,
+      "p95": 702.6,
+      "max": 702.6
+    },
+    "frame_jpg": {
+      "n": 10,
+      "p50": 334.4,
+      "p95": 721.7,
+      "max": 721.7
+    },
+    "frame_jpg_e2e": {
+      "n": 10,
+      "p50": 274.2,
+      "p95": 606.7,
+      "max": 606.7
+    }
+  },
+  "syn2500_png_idle": {
+    "e2e": {
+      "n": 5,
+      "p50": 481.9,
+      "p95": 504.2,
+      "max": 504.2
+    },
+    "wall": {
+      "n": 5,
+      "p50": 483.5,
+      "p95": 507.6,
+      "max": 507.6
+    },
+    "infer": {
+      "n": 5,
+      "p50": 353.1,
+      "p95": 373.5,
+      "max": 373.5
+    }
+  },
+  "load": {
+    "svc_e2e": {
+      "n": 20,
+      "p50": 810.5,
+      "p95": 1163.6,
+      "max": 1403.4
+    },
+    "svc_wall": {
+      "n": 20,
+      "p50": 850.3,
+      "p95": 1203.7,
+      "max": 1443.4
+    },
+    "infer": {
+      "n": 20,
+      "p50": 302.3,
+      "p95": 491.9,
+      "max": 573.0
+    },
+    "lock_wait": {
+      "n": 20,
+      "p50": 437.9,
+      "p95": 695.3,
+      "max": 853.6
+    },
+    "bg_requests": 43
+  },
+  "over_1s": 6,
+  "scope": "G1 / AC-066 / AC-007：解码构成 + e2e P95（空闲/负载）。\n\n开发版代码 + 稳定版快照只读 TEMP 副本；真实图随机 <=20 张，2500² 用合成图。\n口径：\n  svc_e2e_ms   = detect_image 内部 latency_e2e_ms（解码+推理+热图同步段，不含 HTTP/落库）\n  svc_wall_ms  = detect_image 调用墙钟（含落库 commit 与 IO join，不含 HTTP）\n  http_*_ms    = TestClient 进程内 ASGI 往返（含 multipart 解析，不含真实网络）\n  负载         = 另 2 线程持续同品类推理；含排队（lock_wait_ms 单列）\n"
+}

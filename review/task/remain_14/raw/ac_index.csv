@@ -1,0 +1,81 @@
+AC编号,主题,实现状态,定向证据,真实验收状态,缺口备注
+AC-001,分辨率选择,部分实现,V§89 scheme_compare 协议（合成）；task\final_model,模拟待实机,真实品类档案（最小缺陷像素/对比度/域差）仍缺
+AC-002,全局上下文,部分实现,V§89 三方案对照含整图专家（合成）,模拟待实机,真实结构/布局/大范围异常独立验证缺
+AC-003,单级局部覆盖,部分实现,V§89 确定性覆盖测试（合成）,模拟待实机,真实 ROI 覆盖目标缺陷未验
+AC-004,块与坐标,已实现,V§89 随机尺寸/末行末列回移/跨块并集/原图反解（合成）,模拟待实机,生产验收 0
+AC-005,粒度与标签,部分实现,V§89 面积占比标签逻辑（合成）,模拟待实机,训练/建库/校准/推理全链视图一致未验
+AC-006,块图误报预算,部分实现,V§89 块/图两层校准+Šidák 4000 合成图,模拟待实机,真实分支预算冻结缺（依赖用户冻结 G2 数值）
+AC-007,预算细判,部分实现,V§86(final_perf) upload p50/p95 1086.7/1971.0→513.9/894.3ms；task\final_perf,FAIL,纯推理 p95 428.6ms；200ms 本机不可达
+AC-008,细判副作用,已实现,V§89 分报追加检出/误报确认/否决新增漏检（离线合成）,模拟待实机,生产验收 0
+AC-009,三方案验收,部分实现,V§89 三方案同数据对照协议（块数 0/24/6 合成）,模拟待实机,真实 G1/G2 对照缺；旧 1 秒口径已废止
+AC-010,统一注册表,部分实现,V§24 manifest 底座；V§89 parity harness 组级切片,模拟待实机,生产 trad 与评价共用实现未统一
+AC-011,特征启用,部分实现,V§91 group_selection_plan（模拟）,模拟待实机,未接入 UI/API；组级生产选择缺
+AC-012,贡献档案,部分实现,V§91 profile_completeness/report_status（模拟）,模拟待实机,stamp_profile_lineage 未自动调用；强血缘/CI 不足
+AC-013,独立方向与归一,已实现,V§91 trad_protocol_audit（文档化审计 模拟）,模拟待实机,生产 trad 打分协议未改
+AC-014,单图与逐框解释,部分实现,V§20 反馈归因持久契约；V§91 box_evidence/box_attribution_audit,模拟待实机,dominant_slot 仍整图复制；审计结果未在 UI 展示
+AC-015,特征版本血缘,部分实现,V§24 最小 revision/证据门禁；V§91 representation_change_plan,模拟待实机,表示变更重提/重建/隔离只生成计划不执行
+AC-016,特征操作闭环,部分实现,V§91 feature_ops_view/submit_toggle（模拟）,模拟待实机,未接入 API/UI 权限体系；发布入口缺
+AC-017,难例特征准入,部分实现,V§26 难例候选准入；V§89 等价证据+激活门禁（模拟）,模拟待实机,真实难例池试算与独立增益/冗余评估缺
+AC-018,CDF契约,已实现,V§89 small_sample 标注/bootstrap 尾部稳定性/self_match_bias（合成）,模拟待实机,真实品类尾部下限待真实正常集
+AC-019,校准隔离,部分实现,V§87 holdout 开关；V§90 默认 auto；V§95 设置页 calibration_isolation,模拟待实机,真实数据 holdout vs self 对比缺；已有快照需重建才生效
+AC-020,固定融合基线,已实现,V§89 sanity≤0.5 槽不进基线（合成）；V§98 shead 置零诊断（非 bug）,模拟待实机,独立集准入结果待真实数据
+AC-021,软路由准入,已实现,V§89 准入逻辑（分层三集/trace_only/n_params 合成）,模拟待实机,真实数据无 permitted 证据；主融合未接管
+AC-022,域差能力,已实现,V§89 域差指标定义（normal_drift/shift/尾部 FPR 膨胀 合成）,模拟待实机,阈值为候选、真实新域缺
+AC-023,路由训练修正,部分实现,V§89 stratified_split/overfit_gap/collapsed（合成）,模拟待实机,U15 真实数据 mil−λH 重评未做
+AC-024,冷启动训练角色,部分实现,无近期定向证据（engine_fast 冻结头有）,待复核,头冻结预训练/微调/从零各配置独立验缺
+AC-025,槽位能力清单,部分实现,无近期定向证据（V§31/§33 相关）,待复核,能力健康页缺；inp/open 说明未齐
+AC-026,更新准入,部分实现,V§87 legacy_online_guard 默认封禁旧在线即学（模拟）,模拟待实机,每轮快照/前后独立 FPR/召回/G1 闭环缺
+AC-027,实际/候选权重语义,部分实现,V§20/§21 归因透传部分覆盖,待复核,全前端联调缺
+AC-028,记忆资产分层,已实现,V§91 memory_asset_inventory + test_bank_lineage_incubate（模拟）,模拟待实机,条目血缘缺；生产验收 0
+AC-029,正常入库与成簇,已实现,V§29 严格成簇；V§91 bank lineage（模拟）,模拟待实机,严格聚类门禁缺；人工样本独立回归缺
+AC-030,四类反馈,已实现,V§30 四类分路；V§91 feedback.route_of（模拟）,模拟待实机,自动回流门控未闭环
+AC-031,缺陷近邻止血,已实现,V§30 锚定/FPR 门控；V§91 seed_init_defect 失败整批撤销（模拟）,模拟待实机,初始化和独立门禁待真实证据
+AC-032,孵育头,已实现,V§29 纯 patch/独立批准；V§91 血缘测试 #8（模拟）,模拟待实机,独立与锚定通过再替换未真实验
+AC-033,槽与新头职责,部分实现,V§31；V§91 capability_card（模拟）,模拟待实机,capability_card 未接入 UI
+AC-034,E_open难例学习,部分实现,V§31 原因归类；V§91 admission_registration_gate（模拟）,模拟待实机,未接入 E_open 实际流程
+AC-035,完整快照,部分实现,V§32 快照组件清单；V§91 snapshot_completeness,模拟待实机,feature_revision_binding 仍 unknown；缓存/RNG/hash 盘点不全
+AC-036,发布/漂移回滚,部分实现,V§32 固定初始尾部+累计上限+连续违规冻结；V§85 合成复验,模拟待实机,独立缺陷/域外/G1 锚与按更新类型容忍缺
+AC-037,分机制收益,部分实现,V§33 mechanism_gain_report 四口径/消融 CI；V§85 复验,模拟待实机,真实取分开关与 API 缺
+AC-038,工作/候选隔离,已实现,V§34 隔离守卫+AST 守卫；V§87 legacy_online_guard（TEMP 模拟）,模拟待实机,真实训练并发拒绝不改工作态未在真实环境验
+AC-039,事件与水位,部分实现,V§16/17/19 receipt/fsync/幂等；V§36 WAL 回放审计；V§85 复验,模拟待实机,跨文件事务非 exactly-once；完整 G3 缺
+AC-040,可恢复短锁发布,部分实现,V§19/§38 只读发现 39 tests OK；V§88 snapshot_prepare/commit+release_audit（模拟）,模拟待实机,跨介质非原子；业务镜像/自动恢复/多进程缺
+AC-041,学习态/RNG恢复,部分实现,V§38 RNG 严格预验证 26 tests OK（TEMP/CPU）,模拟待实机,真实 GPU/跨环境/完整回放轨迹一致性缺
+AC-042,L0时序和数据身份,部分实现,V§35 n_tiles 最小契约；V§90 audit_label_order（模拟）,模拟待实机,未接候选构建前自动过滤及 UI/API；批次近重复隔离缺
+AC-043,独立回放门控,部分实现,V§37 回放证据绑定；V§85 复验,模拟待实机,跨域分层独立训练回放及 G1/G2/G3/G6 缺
+AC-044,L1标签身份,部分实现,V§90 LabelRecord/resolve_labels（模拟）,模拟待实机,未落 DB 表、未接训练样本组装
+AC-045,L1真实训练,未实现,V§95 仅设置页登记开关（默认 false 无运行时行为）,缺口（开发前置）,teacher/student 真损失训练能力不存在
+AC-046,L1污染与退出,未实现,V§95 仅登记开关（默认 false）,缺口（开发前置）,同预算研究门禁未执行；能力未实现
+AC-047,L2争议隔离,部分实现,V§40 candidate_guard 最小修复 45 项通过,模拟待实机,完整争议修订链/独立参考标签/撤错可信重建缺
+AC-048,撤错可信重建,部分实现,V§41 结构化 reason_code+fail-closed 45 tests OK,模拟待实机,完整撤错重建/参考标签重算/库头 CDF 阈值重放未实现
+AC-049,六臂同预算评估,部分实现,V§42 paired_prediction_delta 5 项测试通过,模拟待实机,完整独立六臂/配对 CI/多流多种子未验
+AC-050,学习可见状态,部分实现,V§39/§42 候选事件归属修复 52 tests OK,模拟待实机,生命周期时间线/水位/取消续接缺
+AC-051,alert/warn契约,已实现,V§84 TEST-04 真实桌面 open 告警与 API 逐字段一致；task\test04_desktop_ui,PASS（桌面覆盖场景 待复核）,产线联调缺；alert/warn 同屏排序未覆盖；生产框未勾
+AC-052,未知信号中心,部分实现,V§79(E_open队列续验) 21 项组合；V§90 open_alerts/summary（TEMP）,模拟待实机,缺 UI 面板及候选发布回链；真实桌面缺
+AC-053,检测版本事实,部分实现,V§84 TEST-04 附带验证 legacy_unknown 保留,部分 PASS（待复核）,全血缘未全；并发切版不重读 current 未验
+AC-054,归因证据透传,部分实现,V§20 契约 14 组合；V§21 异步反馈终态回写 22 项 TEMP 回归,模拟待实机,独立 evidence/confidence/source_slot 缺
+AC-055,四时点追溯,部分实现,V§43 三处 OperationLog 结构化 extra 41 tests OK；V§88 release_audit（模拟）,模拟待实机,候选/批准/激活时点关联及日志与业务同事务缺
+AC-056,Gauge唯一判定,已实现,V§11 离屏 8 项；V§84 TEST-04 桌面 Gauge 空态契约 PASS,部分 PASS（待复核）,Gauge 有值态未覆盖；生产框未勾
+AC-057,三态与open分离,已实现,V§84 TEST-04 桌面 open 徽标/预警与 API 一致 PASS,部分 PASS（待复核）,真实闭环全场景缺；生产框未勾
+AC-058,统计和游标,部分实现,V§47/49/61/67/74 游标/口径/null 契约；V§84 口径卡桌面 PASS,部分 PASS（待复核）,接收→落库率/backlog 无数据源；timeseries 不能按工单拆分
+AC-059,PCB资产统一,部分实现,V§87 保留期 preview/execute 间接覆盖（TEMP）,模拟待实机,三来源统一/RTSP 原图可追溯生命周期缺
+AC-060,七槽编排,部分实现,V§91 orchestration_table（模拟 数据层）,模拟待实机,无统一 UI 编排页（final_sim 与 round2_release 冲突取较新）
+AC-061,FeatureSetRevision,部分实现,V§24 manifest 19 项回归；V§88 EvalRun 绑定校验；V§91 revision_binding（模拟）,模拟待实机,persist 未调用 revision_binding；REMAIN-03 有实现前置缺口
+AC-062,Trad接入前等价,部分实现,V§83 TEST-06 8 项过 2 败 6 verdict=new_candidate；V§89 parity harness；task\test06_trad_parity,FAIL（new_candidate）,唯一根因 selfsim RNG 口径；待 REMAIN-01 复测修复版本
+AC-063,定位来源契约,已实现,V§46/53/54/55/68/71/74/87/90 元数据/mask/raw 热图/消费回写/复算 UI（离屏）,模拟待实机,真实桌面与真实留存 raw 热图端到端未验（REMAIN-11）
+AC-064,多框复核,已实现,V§48/51/55/70/71/74/85 争议隔离/绘框/角点/删除/撤销/redo（离屏 smoke）,模拟待实机,实机桌面验收缺；与 used/stale 组合未单独断言
+AC-065,后处理与定位验收,已实现,V§52 版本化；V§85 冻结 pp-2f54c2e670 dev recall 0.923（合成标注）,模拟待实机,无真实标注定位集；生产验收 0
+AC-066,原生端到端200ms,部分实现,TEST-01 V§57/65/80 三轮 FAIL（295.8→216.3→204.1ms）；V§94 纯推理 316.8ms（GPU 开关 181.8ms 待 AUROC 复核）,FAIL,默认路径仍 >200ms；原生 2500 正式口径缺（REMAIN-04）
+AC-067,独立精度强门禁,已实现,TEST-07 V§81 FPR 100% FAIL；V§84 生产 v2 同 FPR 100%；V§88 门禁链 9 项 OK（模拟）；V§96/§100 FPR 仍 100%/0.333,FAIL,固定阈值 FPR 远超 ≤5%；瓶颈在模型缺陷敏感度 开发排查中
+AC-068,学习资源上界,部分实现,V§22 候选全轮预算与合作式取消（TEMP 小测）,模拟待实机,真实墙钟/显存/最大库未保证
+AC-069,GPU并发与前台,部分实现,TEST-02 V§62 FAIL；V§66/72/78 让行/锁粒度/锁内缩短；V§80 复测 c1 394.1ms 仍 FAIL,FAIL,前台 P95 仍不满足 G1；TEST-02 口径复测待 REMAIN-06
+AC-070,显存上界,已实现,TEST-03 V§58 整卡峰值 926MiB PASS（OOM 子项未做）；V§86(final_perf) 候选 127.7MiB/上限 5222.1MiB,部分 PASS（待复核）,OOM 后工作态/事件不破坏未验（REMAIN-07）；上限待用户定
+AC-071,冷启动预算,已实现,V§13 冷载 2063.6ms；V§23 冷首请求 2658.9/2201.6ms；V§86(final_perf) COLD_START_BUDGET_DEFAULTS（模拟）,模拟待实机,生产可冷载路径预算未在产线验
+AC-072,业务预算与保留期,已实现,TEST-08 用户定值 2026-10-13；V§79 可配置化 SYNC-27；V§87 retention.py+late_excluded（TEMP）；V§95 gt_threshold_frozen,部分 PASS（待复核）,保留期不自动删除/删除审批未做；迟到入训仅开发版模拟（REMAIN-12）
+AC-073,角色工作区与证据面板,部分实现,V§43 STALE_OVERRIDE_FORBIDDEN 9 tests OK；V§85 三角色越权 401/403（模拟）；V§88 check_recovery_authorization,模拟待实机,完整工作区/权限操作联调缺（REMAIN-08）
+AC-074,对比与回滚审计,部分实现,V§43/§45 候选四操作结构化 OperationLog 55 tests OK；V§88 release_audit（模拟）,模拟待实机,事务批准链缺；普通快照激活不强制走 CandidateRelease
+AC-075,权重加载回退,已实现,TEST-05 V§82 A/B PASS、C FAIL（180s 挂起）；V§85 dino.py 修复 deploy 4 项 OK（模拟）；SYNC-28 已同步,待复核（历史部分 FAIL 修复经模拟验证）,真实断网干净缓存复测未重做（REMAIN-10）
+AC-076,部署与兼容资产,部分实现,V§43 stale 门禁；V§85 19 pkl 0 加载错误但锁文件不一致未修；V§95 deplock warn/block,模拟待实机,锁文件与环境不一致未修；真实干净部署缺
+AC-077,历史双轨纠偏,部分实现,V§85 合成复验；权威已知事实节已写勘误,模拟待实机,后续运行报告遵循情况待持续核对
+AC-078,实机视频多域,部分实现,TEST-09 BLOCKED（缺授权）；V§85 合成 3 域×3 种子（非实机）,BLOCKED,需授权实机/视频 ≥3 品类×3 种子（REMAIN-12）
+AC-079,泄漏与残留治理,部分实现,V§85 _protected_versions dry-run 136 项 0 删除,模拟待实机,旧新代码同流量化泄漏未跑；未清任何资产
+AC-080,夹具与严格输出,部分实现,V§12/§14 定向 5 项+合成 22 断言；V§85 复验,模拟待实机,真实数据重训/历史污染专项验证缺

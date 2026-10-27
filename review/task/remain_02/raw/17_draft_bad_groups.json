@@ -1,0 +1,16 @@
+{
+  "name": "draft_bad_groups",
+  "method": "POST",
+  "path": "/api/models/feature-set/gold_finger/draft",
+  "role": "engineer",
+  "request_body": {
+    "groups": [
+      "nope"
+    ]
+  },
+  "status_code": 400,
+  "response": {
+    "detail": "未知特征组: ['nope']"
+  },
+  "note": ""
+}

@@ -1,0 +1,15 @@
+{
+  "task_check": "显式default_rng(42)行为",
+  "tree": "dev",
+  "candidate_mode": "explicit_rng42",
+  "harness_check_key": "rng",
+  "pass": true,
+  "evidence": {
+    "harness_repeat_max_abs_diff": 0.0,
+    "harness_global_rng_mutated": false,
+    "candidate_rng_semantics": "显式 np.random.default_rng(42)（Generator，不碰全局 RNG）",
+    "production_rng_semantics": "extractor 显式 default_rng(42)",
+    "semantics_match_production": true,
+    "rng_snapshots_file": "rng_snapshots.json"
+  }
+}

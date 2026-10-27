@@ -1,0 +1,14 @@
+{
+  "name": "revisions_list_operator",
+  "method": "GET",
+  "path": "/api/models/feature-revisions",
+  "role": "operator",
+  "request_body": null,
+  "status_code": 200,
+  "response": {
+    "items": {},
+    "production_binding": "unknown",
+    "changes_production_extractor": false
+  },
+  "note": "含 production_binding/changes_production_extractor 字段"
+}

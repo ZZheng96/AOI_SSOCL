@@ -15,11 +15,19 @@ import sys
 from pathlib import Path
 
 AOI_CORE = Path(__file__).resolve().parent.parent / "AOI_Core"
+EXPS_SRC = Path(__file__).resolve().parent.parent / "EXPs" / "src"
 
 
 def ensure_core_importable():
-    """把 AOI_Core 加入 sys.path（幂等），之后可 `from algo.xxx import ...`。"""
+    """把 AOI_Core 加入 sys.path（幂等），之后可 `from algo.xxx import ...`。
+
+    2026-10-11 复现链修复：AOI_SSOCL 已移除 AOI_Core/algo/data（数据加载收口
+    backend/core/dataset_adapter），数据协议加载器改由 EXPs/src/data 提供（只读）。
+    此处把 EXPs/src 一并加入 sys.path，使 `from data import mvtec_like` 可用。"""
     p = str(AOI_CORE)
     if p not in sys.path:
         sys.path.insert(0, p)
+    e = str(EXPS_SRC)
+    if EXPS_SRC.exists() and e not in sys.path:
+        sys.path.append(e)   # append：AOI_Core 的 algo.* 优先，EXPs 仅补 data.*
     return AOI_CORE

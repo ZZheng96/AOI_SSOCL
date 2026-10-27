@@ -1,0 +1,49 @@
+[e8] storage C:\Users\imia\AppData\Local\Temp\fcr_e8_2ke7wp5i
+[dino] 使用随包 vendor 权重: D:\CGAIC\AOI_SSOCL\AOI_tree\assets\dinov2\dinov2_vits14_pretrain.pth
+[disc] 加载预训练头 D:\CGAIC\AOI_SSOCL\AOI_tree\AOI_Core\assets\disc_pretrain.pt
+    [extract] 20/30 (1s)
+  [fit] init_normal 提取 30 张完成 (1s)
+  [fit] init_defect 提取 6 张完成 (2s)
+  [fit] 加载全局类型判别器（D:\CGAIC\AOI_SSOCL\AOI_tree\assets\defect_clf.pkl）
+  [fit] 槽位 sem 完成 (3s)
+  [fit] 槽位 disc 完成 (3s)
+[shead] epoch 10/50 loss_n=7.5655 loss_a=5.3185
+[shead] epoch 20/50 loss_n=6.4289 loss_a=6.2848
+[shead] epoch 30/50 loss_n=5.6107 loss_a=6.6177
+[shead] epoch 40/50 loss_n=6.0204 loss_a=6.2532
+[shead] epoch 50/50 loss_n=6.4881 loss_a=5.9136
+[shead] fit 完成: normal=24 pseudo=72 real_defect=6 pos_total=78 X=102 batch=32 lr=0.001
+  [fit] 槽位 shead 完成 (5s)
+  [fit] 槽位 blob 完成 (5s)
+  [fit] 槽位 trad 完成 (8s)
+  [fit] 槽位 layout 完成 (8s)
+  [fit] 槽位 inp 完成 (8s)
+[fusion] sanity 加权: sem=0.178 disc=0.178 shead=0.178 blob=0.178 trad=0.149 layout=0.064 inp=0.074
+[fusion] train 域 fused AUROC=1.0（初始权重质量，协议内）
+[route] base=1.0000 router=1.0000 enabled=False (margin=0.005)
+[route] 准入=trace_only（样本不足（每集正/负 <3），只做追溯）
+  [fit] 视图模式 profile_missing（min_defect_px 未提供，保持整图） 局部分支=关（auto_profile）
+    [extract] 20/20 (1s)
+[e8] prepared v 1
+[e8] A 1/10
+[e8] A 2/10
+[e8] A 3/10
+[e8] A 4/10
+[e8] A 5/10
+[e8] A 6/10
+[e8] A 7/10
+[e8] A 8/10
+[e8] A 9/10
+[e8] A 10/10
+[disc] 加载预训练头 D:\CGAIC\AOI_SSOCL\AOI_tree\AOI_Core\assets\disc_pretrain.pt
+[e8] B 1/10 d=0.000e+00 dslot=0.000e+00
+[e8] B 2/10 d=0.000e+00 dslot=0.000e+00
+[e8] B 3/10 d=0.000e+00 dslot=0.000e+00
+[e8] B 4/10 d=0.000e+00 dslot=0.000e+00
+[e8] B 5/10 d=0.000e+00 dslot=0.000e+00
+[e8] B 6/10 d=0.000e+00 dslot=0.000e+00
+[e8] B 7/10 d=0.000e+00 dslot=0.000e+00
+[e8] B 8/10 d=0.000e+00 dslot=0.000e+00
+[e8] B 9/10 d=0.000e+00 dslot=0.000e+00
+[e8] B 10/10 d=0.000e+00 dslot=0.000e+00
+[e8] max|delta| = 0.0 PASS

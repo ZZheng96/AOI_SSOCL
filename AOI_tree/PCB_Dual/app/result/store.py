@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import json
+import shutil
 from dataclasses import asdict
 from datetime import datetime
 from pathlib import Path
@@ -36,6 +37,8 @@ def _result_dict(r) -> dict:
         "param_schema_version": r.param_schema_version,
         "boxes": [_box_dict(b) for b in r.boxes],
         "manual_verdict": r.manual_verdict,
+        "execution_mode": r.metadata.get("execution_mode", "unknown"),
+        "request_snapshot": r.metadata.get("request_snapshot"),
     }
 
 
@@ -68,6 +71,18 @@ class ResultStore:
         vis_name = "result_vis.png"
         if summary.vis_image is not None:
             imwrite_unicode(folder / vis_name, summary.vis_image)
+        aux = dict(summary.metadata.get("aux_pair") or {})
+        if aux:
+            archived = {}
+            for key in ("heatmap_path", "overlay_path", "raw_path"):
+                src = aux.get(key)
+                if src and Path(str(src)).is_file():
+                    dst = folder / Path(str(src)).name
+                    shutil.copy2(src, dst)
+                    archived[key] = dst.name
+            if archived:
+                aux["archived_paths"] = archived
+                summary.metadata["aux_pair"] = aux
 
         overall = summary.overall or ("ERROR" if summary.gate_blocked else ("OK" if summary.overall_ok else "NG"))
         payload = {
@@ -79,6 +94,7 @@ class ResultStore:
             "test_image": test_image,
             "category": category,
             "overall": overall,
+            "requires_review": summary.requires_review,
             "elapsed_ms": summary.elapsed_ms,
             "ng_count": summary.ng_count,
             "source": source or summary.source or "inspect",
@@ -101,6 +117,7 @@ class ResultStore:
             "gate_blocked": summary.gate_blocked,
             "gate_message": summary.gate_message,
             "gate_note": summary.gate_note,
+            "metadata": summary.metadata,
             "manual_overall_verdict": None,
         }
         (folder / "result.json").write_text(
@@ -108,6 +125,38 @@ class ResultStore:
             encoding="utf-8",
         )
         return folder
+
+    def archive_aux_pair(self, folder: str | Path, aux: dict) -> dict:
+        folder = Path(folder)
+        archived = dict(aux or {})
+        for key in ("heatmap_path", "overlay_path", "raw_path"):
+            src = archived.get(key)
+            if src and Path(str(src)).is_file():
+                dst = folder / Path(str(src)).name
+                if Path(str(src)).resolve() != dst.resolve():
+                    shutil.copy2(src, dst)
+                archived.setdefault("archived_paths", {})[key] = dst.name
+        return archived
+
+    def attach_aux_pair(self, folder: str | Path, aux: dict) -> dict:
+        """复制配对产物并安全更新对应归档的 metadata。"""
+        folder = Path(folder)
+        try:
+            archived = self.archive_aux_pair(folder, aux)
+        except OSError:
+            return dict(aux or {})
+        json_path = folder / "result.json"
+        if not json_path.exists():
+            return archived
+        try:
+            payload = json.loads(json_path.read_text(encoding="utf-8"))
+            metadata = dict(payload.get("metadata") or {})
+            metadata["aux_pair"] = archived
+            payload["metadata"] = metadata
+            json_path.write_text(json.dumps(payload, ensure_ascii=False, indent=2), encoding="utf-8")
+        except (json.JSONDecodeError, OSError):
+            return archived
+        return archived
 
     def list_records(self, *, include_debug: bool = False,
                      limit: int | None = None) -> list[dict]:

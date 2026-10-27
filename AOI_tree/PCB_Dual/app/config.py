@@ -122,11 +122,20 @@ WRINKLE_REPO_DIR = ALG_REPO_DIR / "wrinkle"
 BODY_REPO_DIR = ALG_REPO_DIR / "body"
 SHIFT_REPO_DIR = ALG_REPO_DIR / "shift_smt"
 
+DEFAULT_ACCEPTANCE_SETTINGS = {
+    "recall_min": 0.99,
+    "false_positive_rate_max": 0.01,
+    "iou_min": 0.50,
+    "wilson_confidence": 0.95,
+    "report_indeterminate_separately": True,
+}
+
 DEFAULT_SETTINGS = {
     "outputs_dir": str(OUTPUTS_DIR),
     "gate_enabled": True,
     "size_gate_max_diff_px": 10,
     "stop_on_error": False,
+    "acceptance": dict(DEFAULT_ACCEPTANCE_SETTINGS),
 }
 
 DEFAULT_CATEGORIES = ["电阻", "电容", "二极管", "LED", "IC", "插件器件", "其他"]
@@ -171,7 +180,14 @@ def json_loads(text: str) -> Any:
 
 def get_outputs_dir() -> Path:
     settings = load_settings()
-    path = Path(settings.get("outputs_dir") or OUTPUTS_DIR)
+    raw = settings.get("outputs_dir")
+    path = Path(raw) if raw else OUTPUTS_DIR
+    # 2026-10-11 修复：持久化设置可能带开发机绝对路径（如 E:\CPIPC\...），
+    # 换机/移动目录后 mkdir 链式崩溃——驱动器不存在时回退树内默认目录并修正设置。
+    if path.is_absolute() and not Path(path.anchor).exists():
+        path = OUTPUTS_DIR
+        settings["outputs_dir"] = str(path)
+        save_settings(settings)
     path.mkdir(parents=True, exist_ok=True)
     return path
 
@@ -197,6 +213,47 @@ def set_gate_settings(gate_enabled: bool, size_gate_max_diff_px: int) -> None:
     settings = load_settings()
     settings["gate_enabled"] = bool(gate_enabled)
     settings["size_gate_max_diff_px"] = int(size_gate_max_diff_px)
+    save_settings(settings)
+
+
+def get_acceptance_settings() -> dict:
+    raw = load_settings().get("acceptance")
+    values = dict(DEFAULT_ACCEPTANCE_SETTINGS)
+    if isinstance(raw, dict):
+        values.update(raw)
+    return {
+        "recall_min": min(max(float(values["recall_min"]), 0.0), 1.0),
+        "false_positive_rate_max": min(max(float(values["false_positive_rate_max"]), 0.0), 1.0),
+        "iou_min": min(max(float(values["iou_min"]), 0.0), 1.0),
+        "wilson_confidence": min(max(float(values["wilson_confidence"]), 0.5), 0.999),
+        "report_indeterminate_separately": bool(values["report_indeterminate_separately"]),
+    }
+
+
+def set_acceptance_settings(
+    recall_min: float,
+    false_positive_rate_max: float,
+    iou_min: float,
+    wilson_confidence: float,
+    report_indeterminate_separately: bool = True,
+) -> None:
+    values = {
+        "recall_min": float(recall_min),
+        "false_positive_rate_max": float(false_positive_rate_max),
+        "iou_min": float(iou_min),
+        "wilson_confidence": float(wilson_confidence),
+        "report_indeterminate_separately": bool(report_indeterminate_separately),
+    }
+    if not 0.0 <= values["recall_min"] <= 1.0:
+        raise ValueError("recall_min 必须在 0 到 1 之间")
+    if not 0.0 <= values["false_positive_rate_max"] <= 1.0:
+        raise ValueError("false_positive_rate_max 必须在 0 到 1 之间")
+    if not 0.0 <= values["iou_min"] <= 1.0:
+        raise ValueError("iou_min 必须在 0 到 1 之间")
+    if not 0.5 <= values["wilson_confidence"] <= 0.999:
+        raise ValueError("wilson_confidence 必须在 0.5 到 0.999 之间")
+    settings = load_settings()
+    settings["acceptance"] = values
     save_settings(settings)
 
 

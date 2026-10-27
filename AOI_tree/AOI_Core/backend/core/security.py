@@ -18,7 +18,6 @@
 """
 from __future__ import annotations
 
-import contextvars
 import hmac
 import logging
 import os
@@ -28,16 +27,13 @@ from fastapi import HTTPException, Request
 from fastapi.responses import JSONResponse
 from starlette.middleware.base import BaseHTTPMiddleware
 
+from .audit import current_actor
 from .config import get_settings
+from .rate_limit import RateLimiter
 
 logger = logging.getLogger(__name__)
 
-# A13（2026-10-03）：请求级操作者上下文——ApiKeyMiddleware 解析角色后
-# 写入，审计日志（db.database.log_action）缺省读取，业务调用点零改动。
-# contextvars 经 anyio 任务树传播到同步端点线程；后台 worker 线程
-# （threading 直接 spawn）不继承，读默认值 "operator"（系统任务口径）。
-current_actor: contextvars.ContextVar[str] = contextvars.ContextVar(
-    "aoi_current_actor", default="operator")
+# 保留 security.current_actor 兼容入口，与轻量审计模块使用同一个 ContextVar。
 
 _EXEMPT_PATHS = ("/api/health",)          # 探活豁免（文档兼容常量）
 
@@ -81,11 +77,35 @@ def _resolve_role(key_header: str) -> str | None:
 class ApiKeyMiddleware(BaseHTTPMiddleware):
     """X-API-Key 校验 + 角色解析（request.state.role）。"""
 
+    _limiter: RateLimiter | None = None
+    _limiter_config: tuple[int, float] | None = None
+
+    @classmethod
+    def _rate_limiter(cls, sec: dict) -> RateLimiter | None:
+        try:
+            limit = int(sec.get("rate_limit_per_window", 0))
+            window = float(sec.get("rate_limit_window_s", 60))
+        except (TypeError, ValueError):
+            return None
+        if limit <= 0:
+            return None
+        config = (limit, window)
+        if cls._limiter is None or cls._limiter_config != config:
+            cls._limiter, cls._limiter_config = RateLimiter(limit, window), config
+        return cls._limiter
+
     async def dispatch(self, request: Request, call_next):
         sec = get_settings().section("security") or {}
         auth_on = bool(get_configured_api_key(sec) or sec.get("keys"))
         path = request.url.path
         protected_path = path.startswith("/api") or path.startswith("/ws") or path in ("/docs", "/redoc", "/openapi.json")
+        limiter = self._rate_limiter(sec)
+        if limiter and protected_path and path not in _EXEMPT_PATHS:
+            key = request.headers.get("X-API-Key", "")
+            allowed, retry_after = limiter.allow(key or (request.client.host if request.client else "unknown"))
+            if not allowed:
+                return JSONResponse(status_code=429, content={"detail": "请求过于频繁，请稍后重试"},
+                                    headers={"Retry-After": str(retry_after)})
         if auth_on and protected_path and path not in _EXEMPT_PATHS:
             role = _resolve_role(request.headers.get("X-API-Key", ""))
             if role is None:
@@ -186,6 +206,14 @@ def is_path_allowed(path: str) -> bool:
                 | (func.lower(Detection.overlay_path) == p_lower))
             if q.first():
                 return True
+            # AC-063：热图 mask / 原始热图不单独登记，按同目录同前缀的已登记
+            # overlay 放行（p 已 resolve，仅后缀替换，不会跨出 overlay 所在目录）
+            for suf in ("_mask.png", "_raw.npy"):
+                if p_lower.endswith(suf):
+                    ov = p_lower[:-len(suf)] + "_overlay.jpg"
+                    if sess.query(Detection.id).filter(
+                            func.lower(Detection.overlay_path) == ov).first():
+                        return True
     except Exception:  # noqa: BLE001 DB 异常时保守拒绝
         logger.warning("/file 白名单 DB 查询失败，按拒绝处理: %s", path)
     return False

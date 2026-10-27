@@ -1,0 +1,217 @@
+{
+  "name": "feature_set_get_engineer",
+  "method": "GET",
+  "path": "/api/models/feature-set/gold_finger",
+  "role": "engineer",
+  "request_body": null,
+  "status_code": 200,
+  "response": {
+    "category": "gold_finger",
+    "enabled": true,
+    "version": 2,
+    "status": "available",
+    "groups": [
+      {
+        "key": "glcm",
+        "name": "GLCM 纹理",
+        "category": "texture",
+        "dim": 4,
+        "enabled": true,
+        "weight": null,
+        "scale": null
+      },
+      {
+        "key": "selfsim",
+        "name": "区域自相似",
+        "category": "texture",
+        "dim": 5,
+        "enabled": true,
+        "weight": null,
+        "scale": null
+      },
+      {
+        "key": "edge",
+        "name": "边缘梯度+LBP",
+        "category": "texture",
+        "dim": 28,
+        "enabled": true,
+        "weight": null,
+        "scale": null
+      },
+      {
+        "key": "hog",
+        "name": "HOG",
+        "category": "geometry",
+        "dim": 11,
+        "enabled": true,
+        "weight": null,
+        "scale": null
+      },
+      {
+        "key": "shape",
+        "name": "形状/Hu/轮廓",
+        "category": "geometry",
+        "dim": 11,
+        "enabled": true,
+        "weight": null,
+        "scale": null
+      },
+      {
+        "key": "gray",
+        "name": "灰度统计",
+        "category": "material",
+        "dim": 12,
+        "enabled": true,
+        "weight": null,
+        "scale": null
+      },
+      {
+        "key": "gloss",
+        "name": "材质反光/高光",
+        "category": "material",
+        "dim": 4,
+        "enabled": true,
+        "weight": null,
+        "scale": null
+      },
+      {
+        "key": "color",
+        "name": "HSV 直方图+色彩矩+RGB 相关",
+        "category": "color",
+        "dim": 36,
+        "enabled": true,
+        "weight": null,
+        "scale": null
+      },
+      {
+        "key": "fft",
+        "name": "FFT 频域",
+        "category": "freq",
+        "dim": 13,
+        "enabled": true,
+        "weight": null,
+        "scale": null
+      },
+      {
+        "key": "wavelet",
+        "name": "Haar 小波",
+        "category": "freq",
+        "dim": 40,
+        "enabled": true,
+        "weight": null,
+        "scale": null
+      },
+      {
+        "key": "logic",
+        "name": "逻辑关系代理(连通域/对称)",
+        "category": "logic",
+        "dim": 6,
+        "enabled": true,
+        "weight": null,
+        "scale": null
+      },
+      {
+        "key": "gabor",
+        "name": "Gabor",
+        "category": "texture",
+        "dim": 8,
+        "enabled": true,
+        "weight": null,
+        "scale": null
+      },
+      {
+        "key": "log",
+        "name": "LoG 斑点",
+        "category": "blob",
+        "dim": 5,
+        "enabled": true,
+        "weight": null,
+        "scale": null
+      },
+      {
+        "key": "pc",
+        "name": "相位一致性",
+        "category": "blob",
+        "dim": 3,
+        "enabled": true,
+        "weight": null,
+        "scale": null
+      },
+      {
+        "key": "surf",
+        "name": "SURF 多尺度 Hessian 斑点",
+        "category": "blob",
+        "dim": 14,
+        "enabled": true,
+        "weight": null,
+        "scale": null
+      }
+    ],
+    "enabled_groups": [
+      "glcm",
+      "selfsim",
+      "edge",
+      "hog",
+      "shape",
+      "gray",
+      "gloss",
+      "color",
+      "fft",
+      "wavelet",
+      "logic",
+      "gabor",
+      "log",
+      "pc",
+      "surf"
+    ],
+    "enabled_dim": 200,
+    "total_dim": 200,
+    "scoring": "legacy",
+    "group_spec": "all",
+    "signature": {
+      "registry_sha256": "e372b79cddf47ffb2a131a55ea6b67a6e6d4553122b09c4e8fb134af5528f9e4",
+      "groups": [
+        "glcm",
+        "selfsim",
+        "edge",
+        "hog",
+        "shape",
+        "gray",
+        "gloss",
+        "color",
+        "fft",
+        "wavelet",
+        "logic",
+        "gabor",
+        "log",
+        "pc",
+        "surf"
+      ],
+      "group_spec": "all",
+      "scoring": "legacy",
+      "dimension": 200
+    },
+    "feature_representation": {
+      "status": "legacy_unsigned",
+      "drift": [
+        "missing"
+      ],
+      "action": null
+    },
+    "rebuild_required": false,
+    "selection_report": null,
+    "snapshot_signature": null,
+    "can_edit": true,
+    "role": "engineer",
+    "report": {
+      "running_task_id": null,
+      "test_counts": {
+        "normal": 4,
+        "anomaly": 4
+      },
+      "status": "not_generated"
+    },
+    "pending_rebuild_version": null
+  },
+  "note": "操作员只读 can_edit=false"
+}

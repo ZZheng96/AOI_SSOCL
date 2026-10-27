@@ -1,0 +1,34 @@
+# 摘录自 backend/engine/__init__.py（稳定版，只读）
+
+L1-5（启动恢复机制）:
+"""检测引擎适配层：把 algo.Pipeline 包装成系统级服务。
+职责：
+1. 引擎启动时按 storage/snapshots/{category}/current.json 激活快照；
+   未激活/目录空时返回"未准备"友好态，不崩溃。
+→ 重启恢复只读模型版本指针 current.json，无特征生产指针（registry.production.json）对账。
+
+L39-66 DetectionResult 结果契约：无 feature_revision/hash/seed/维度字段（见 detection_schema_excerpt.txt）。
+
+L883-921 activate()：
+    pipe = load_snapshot(self._v_dir(category, version), self.device)
+    rep = getattr(pipe, "feature_representation", None) or {}
+    if rep.get("status") == "stale" and not allow_stale: raise ...   # AC-073/074
+    release = CandidateRelease(self)                                  # 发布账本 prepared→committed
+    event = release.snapshot_prepare(category, self.current_version(category), version, ...)
+    set_current_version(self._cat_dir(category), version)             # 写 current.json
+    self._cache_put(category, pipe, version)
+    release.snapshot_commit(category, event)
+→ 激活只切模型快照指针；不读/不写 FeatureSetRevision 生产指针。
+
+L923-957 rollback()：回滚=activate(次新版本/指定版本)，同样无特征指针对账。
+
+# tests/smoke/test_feature_revision.py L151-156（静态设计契约，固化「生产 trad 不引用 revision」）:
+def test_production_and_frontdoor_contract_static(self):
+    trad = (core / "algo/slots/trad.py").read_text(encoding="utf-8")
+    self.assertNotIn("AOI_feature", trad)
+    self.assertNotIn("feature_revision", trad)     # L155：契约禁止生产 trad 引用 revision
+    self.assertIn("np.random.seed(0)", trad)
+
+# 生产推理路径 grep 结果：algo/slots/trad.py、algo/vendor/traditional.py、algo/decide.py、
+# backend/engine predict 路径 —— 无 feature_revision/production_pointer/detection_stamp 任何引用。
+# 生产 trad 特征来源 = algo/features/registry.py 常量 _SPEC（L19-35，15 组 200 维）+ 快照 cfg.yaml。

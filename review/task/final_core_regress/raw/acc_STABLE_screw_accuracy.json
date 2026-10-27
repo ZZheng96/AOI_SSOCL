@@ -1,0 +1,36 @@
+{
+  "dataset": "mvtec",
+  "profile": "accuracy",
+  "scenario": "L1a",
+  "base_cfg": "engine_fast.yaml",
+  "seed": 42,
+  "max_test": 150,
+  "device": "cuda",
+  "started": "2026-10-14 13:53:20",
+  "categories": {
+    "screw": {
+      "version": 1,
+      "n_test": 114,
+      "fused_auroc": 0.9415730337078652,
+      "fused_ap": 0.9813014620140417,
+      "ms_per_image": 228.44085567875914,
+      "slots": {
+        "sem": 0.9157303370786517,
+        "disc": 0.5867415730337079,
+        "shead": 0.9382022471910112,
+        "inp": 0.5292134831460674,
+        "blob": 0.742247191011236,
+        "trad": 0.09752808988764045,
+        "layout": 0.43460674157303375
+      },
+      "fused_max_auroc": 0.5334831460674158,
+      "elapsed_s": 90.8
+    }
+  },
+  "summary": {
+    "n": 1,
+    "avg_auroc": 0.9416,
+    "ge09": 1,
+    "min": 0.9416
+  }
+}

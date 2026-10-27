@@ -36,14 +36,17 @@ def _load_dinov2_from_cache(model_name="vits14"):
     vend = _vendored_dir()
     if vend:
         weights = os.path.join(vend, f"dinov2_{model_name}_pretrain.pth")
-        if not os.path.exists(weights):
-            raise FileNotFoundError(f"随包 dinov2 目录缺权重文件: {weights}")
-        if vend not in sys.path:
-            sys.path.insert(0, vend)
-        import importlib
-        backbones = importlib.import_module("dinov2.hub.backbones")
-        print(f"[dino] 使用随包 vendor 权重: {weights}")
-        return getattr(backbones, f"dinov2_{model_name}")(pretrained=True, weights=weights)
+        # 2026-10-11 复现链修复（同步 AOI_Core algo/backbone/dino.py 2026-10-06 修复）：
+        # vendor 目录存在但缺权重时不再直接抛错，回退本地 hub 缓存/在线下载，
+        # 避免"缓存里有可用权重却被 vendor 目录堵死"。
+        if os.path.exists(weights):
+            if vend not in sys.path:
+                sys.path.insert(0, vend)
+            import importlib
+            backbones = importlib.import_module("dinov2.hub.backbones")
+            print(f"[dino] 使用随包 vendor 权重: {weights}")
+            return getattr(backbones, f"dinov2_{model_name}")(pretrained=True, weights=weights)
+        print(f"[dino] vendor 目录缺权重，回退 hub 缓存/在线下载: {weights}")
     hubconf_path = os.path.join(DINOV2_CACHE_DIR, "hubconf.py")
     if not os.path.exists(hubconf_path):
         return torch.hub.load("facebookresearch/dinov2", f"dinov2_{model_name}")

@@ -1,6 +1,7 @@
 """主干预设：与 algo/vendor/traditional.py TraditionalFeatureExtractor 逐位一致
 
-默认参数即主干行为（经 manage.py parity 逐图校验）。维度合计 200。
+默认参数即主干行为（经 Core parity 逐图校验）。selfsim 采用显式
+default_rng(42)，与生产提取器保持同一抽样口径。维度合计 200。
 """
 from .feature_lib import FEATURE_FUNCS
 

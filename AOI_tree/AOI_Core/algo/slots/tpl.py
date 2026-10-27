@@ -1,7 +1,9 @@
 """tpl 槽位（§4.4 热插拔示例，L3 场景）：模板差分（域不变）
 
 核心（demo4 s_r 的 L3 合法化版本）：
-- 用户**显式**提供模板图（L3 场景，红线：任何从文件名推断配对的行为=泄漏，禁用）
+- 用户**显式**提供模板图（L3 场景）。红线（round5 修订）：L3 下由用户/上游**显式**
+  提供的修复图配对（pair_template / resolve_pair_template 作为上游配对契约）合法；
+  非 L3 场景仍禁止任何从文件名推断配对的行为（=泄漏）。pair_mode 默认关闭。
 - 检测图与模板**同一管线提特征**（同域），逐位置差分 → 域不变
 - 差分 = DINO patch 特征 L2 + 像素/色彩差分 加权融合（双通道互补）
 
@@ -40,6 +42,27 @@ class TplSlot(Slot):
         # 自匹配排除：与某模板逐位置差分均值 < self_eps（同一张图）时不参与 min，
         # 否则 fit 域正常图在自身模板上≈0，校准分布退化。
         self.self_eps = float(cfg.get("self_eps", 0.05))
+        # round5 加速：配准候选预筛（模板特征均值余弦相似 top-k 才做相位相关）。
+        # 0=关闭（默认，逐模板相位相关，数值与原路径一致）。差分 min 仍对全部模板。
+        self.align_prefilter_k = int(cfg.get("align_prefilter_k", 0))
+        # round5 L3 配对模式：score_image 显式给 pair_template 时只与该模板配准+差分
+        # （不做全局 min / self_eps 排除）。默认关闭，关闭时行为与数值不变。
+        self.pair_mode = bool(cfg.get("pair_mode", False))
+        self._pair_cache = {}         # path -> (feat (1,384,G,G) cpu, gray448 f32)
+        self._cache_key = None        # 懒缓存键（templates 列表 id + 长度；快照还原后自动重建）
+        self._T = None                # (N,384,G,G) device 堆叠模板特征
+        self._T_mean = None           # (N,384) 归一化模板均值特征（预筛用）
+        self._gray_f32 = None         # list[float32 448 灰度 | None]
+
+    def _ensure_cache(self):
+        key = (id(self.templates), len(self.templates))
+        if getattr(self, "_cache_key", None) == key:   # 旧快照对象无该属性
+            return
+        self._T = torch.stack([t["feat"] for t in self.templates]).float().to(self.device)
+        self._T_mean = F.normalize(self._T.mean(dim=(2, 3)), dim=1)
+        self._gray_f32 = [None if t.get("gray_small") is None
+                          else t["gray_small"].astype(np.float32) for t in self.templates]
+        self._cache_key = key
 
     def fit(self, ctx):
         """ctx["templates"]: list[path]（L3 显式模板图）；
@@ -82,16 +105,22 @@ class TplSlot(Slot):
         相关性过低（不同产品/低纹理）或偏移过小则原样返回。"""
         if not self.templates:
             return img
+        self._ensure_cache()
         g = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY) if img.ndim == 3 else img
-        small = cv2.resize(g, (448, 448))
+        small = cv2.resize(g, (448, 448)).astype(np.float32)
+        cand = range(len(self.templates))
+        k = getattr(self, "align_prefilter_k", 0)
+        if k and mean_feat is not None and k < len(self.templates):
+            q = F.normalize(mean_feat.float().to(self.device).reshape(1, -1), dim=1)
+            sim = (self._T_mean @ q.t()).squeeze(1)
+            cand = sorted(sim.topk(k).indices.tolist())
         best_idx, best_resp, best_shift = 0, -1.0, (0.0, 0.0)
-        for i, t in enumerate(self.templates):
-            rg = t.get("gray_small")
+        for i in cand:
+            rg = self._gray_f32[i]
             if rg is None:
                 continue
             try:
-                sh, rs = cv2.phaseCorrelate(
-                    rg.astype(np.float32), small.astype(np.float32))
+                sh, rs = cv2.phaseCorrelate(rg, small)
             except cv2.error:
                 continue
             if rs > best_resp:
@@ -111,17 +140,81 @@ class TplSlot(Slot):
         return cv2.warpAffine(img, M, (w, h), flags=cv2.INTER_LINEAR,
                               borderMode=cv2.BORDER_REPLICATE)
 
-    def score_image(self, img):
+    def _pair_entry(self, tpl):
+        """配对模板 → (feat (1,384,G,G) cpu, gray448 float32)；路径按 key 缓存。"""
+        key = tpl if isinstance(tpl, str) else None
+        cache = getattr(self, "_pair_cache", None)
+        if cache is None:
+            cache = self._pair_cache = {}
+        if key is not None and key in cache:
+            return cache[key]
+        if isinstance(tpl, np.ndarray):
+            img = tpl
+        else:
+            from ..common.io import load_image
+            img = load_image(tpl)
+        feat = self.backbone.extract_tiles([img]).cpu()
+        g = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY) if img.ndim == 3 else img
+        gray = cv2.resize(g, (448, 448)).astype(np.float32)
+        ent = (feat, gray)
+        if key is not None:
+            if len(cache) > 256:
+                cache.clear()
+            cache[key] = ent
+        return ent
+
+    def _score_pair(self, img, feats, pair_template):
+        """配对打分：单模板相位相关配准 → 逐位置特征 L2 差分 → top-k 均值。"""
+        tf, tg = self._pair_entry(pair_template)
+        img_a = img
+        if self.align:
+            g = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY) if img.ndim == 3 else img
+            small = cv2.resize(g, (448, 448)).astype(np.float32)
+            try:
+                (dx, dy), rs = cv2.phaseCorrelate(tg, small)
+            except cv2.error:
+                rs, dx, dy = -1.0, 0.0, 0.0
+            if rs >= self.align_min_resp and (abs(dx) >= self.align_min_shift
+                                              or abs(dy) >= self.align_min_shift):
+                h, w = img.shape[:2]
+                M = np.float32([[1, 0, -dx * w / 448.0], [0, 1, -dy * h / 448.0]])
+                img_a = cv2.warpAffine(img, M, (w, h), flags=cv2.INTER_LINEAR,
+                                       borderMode=cv2.BORDER_REPLICATE)
+        if img_a is img and feats is not None:
+            f = feats
+        else:
+            f = self.backbone.extract_tiles([img_a]).cpu()
+        f = f.float().to(self.device)
+        d = (f - tf.float().to(self.device)).norm(dim=1)          # (1,G,G)
+        G = d.shape[-1]
+        k = max(1, int(G * G * self.topk_ratio))
+        s = d.flatten(1).topk(k, dim=1).values.mean(dim=1).cpu().numpy()
+        return float(s[0]), s, [d[0].cpu().numpy()]
+
+    def score_image(self, img, feats=None, pair_template=None):
         """整图打分（配准路径）：相位相关选参考模板 → 配准 → 差分。
         返回 (image_score, tile_scores, heatmaps)；未启用配准/无模板时 None
-        （回退 score_tiles 路径，复用管线已提取特征，零额外前向）。"""
+        （回退 score_tiles 路径，复用管线已提取特征，零额外前向）。
+        feats：调用方已提取的整图特征 (1,384,G,G)（round5：未配准移动时直接复用，
+        省去原路径无条件的一次前向；数值与原路径一致）。
+        pair_template：L3 显式配对模板（路径/图像）；仅 pair_mode 开启时生效，
+        None 时回退原全局模板库路径。"""
+        if pair_template is not None and getattr(self, "pair_mode", False):
+            return self._score_pair(img, feats, pair_template)
         if not self.templates or not self.align:
             return None
-        feats0 = self.backbone.extract_tiles([img]).cpu()
-        img_a = self._align_to_ref(img)
-        feats = feats0 if img_a is img else \
-            self.backbone.extract_tiles([img_a]).cpu()
-        ts, hms = self.score_tiles(feats, [img_a])
+        k = getattr(self, "align_prefilter_k", 0)
+        mean_feat = None
+        if k and k < len(self.templates):
+            if feats is None:
+                feats = self.backbone.extract_tiles([img]).cpu()
+            mean_feat = feats[0].float().mean(dim=(1, 2))
+        img_a = self._align_to_ref(img, mean_feat=mean_feat)
+        if img_a is img:
+            f = feats if feats is not None else self.backbone.extract_tiles([img]).cpu()
+        else:
+            f = self.backbone.extract_tiles([img_a]).cpu()
+        ts, hms = self.score_tiles(f, [img_a])
         return float(ts[0]), ts, hms
 
     def score_tiles(self, tile_feats, tile_imgs=None):
@@ -132,15 +225,19 @@ class TplSlot(Slot):
         f = tile_feats.float().to(self.device)          # (T,384,G,G)
         G = f.shape[-1]
         # DINO 特征差分 (T,G,G)
+        # round5 加速：模板特征懒缓存在 device 上，按模板分块批量差分
+        # （逐位置 L2 → 自匹配排除 → 沿模板取 min，与逐模板循环数值一致）
+        self._ensure_cache()
         best_feat = None
-        for t in self.templates:
-            tf = t["feat"].float().to(self.device)      # (384,G,G)
-            diff = (f - tf.unsqueeze(0)).norm(dim=1)    # (T,G,G) L2 逐位置
-            same = diff.flatten(1).mean(dim=1) < self.self_eps   # 自匹配排除
+        chunk = 16
+        for s0 in range(0, self._T.shape[0], chunk):
+            Tc = self._T[s0:s0 + chunk]                                  # (n,384,G,G)
+            diff = (f.unsqueeze(1) - Tc.unsqueeze(0)).norm(dim=2)        # (T,n,G,G)
+            same = diff.flatten(2).mean(dim=2) < self.self_eps           # (T,n) 自匹配排除
             if bool(same.any()):
-                diff = diff.clone()
                 diff[same] = float("inf")
-            best_feat = diff if best_feat is None else torch.minimum(best_feat, diff)
+            m = diff.min(dim=1).values                                   # (T,G,G)
+            best_feat = m if best_feat is None else torch.minimum(best_feat, m)
         if torch.isinf(best_feat).any():          # 仅有自身模板时退化为 0
             best_feat = torch.nan_to_num(best_feat, posinf=0.0)
         best_pix = None
@@ -169,3 +266,23 @@ class TplSlot(Slot):
         scores = combined.flatten(1).topk(k, dim=1).values.mean(dim=1)
         heatmaps = [combined[i].cpu().numpy() for i in range(combined.shape[0])]
         return scores.cpu().numpy(), heatmaps
+
+
+_PAIR_EXTS = (".jpg", ".png", ".jpeg", ".bmp")
+
+
+def resolve_pair_template(path, tpl_dirs=None):
+    """L3 上游配对契约：主干 X → X_repaired.*（同目录优先，其次 tpl_dirs 顺序）。
+    口径：输入本身是 *_repaired（正常/修复图）→ None（调用方回退原全局模板库逻辑）；
+    找不到 → None。仅 L3 显式启用 pair_mode 时使用。"""
+    import os
+    stem, _ = os.path.splitext(os.path.basename(str(path)))
+    if stem.endswith("_repaired"):
+        return None
+    dirs = [os.path.dirname(str(path))] + [str(d) for d in (tpl_dirs or [])]
+    for d in dirs:
+        for ext in _PAIR_EXTS:
+            c = os.path.join(d, f"{stem}_repaired{ext}")
+            if os.path.isfile(c):
+                return c
+    return None

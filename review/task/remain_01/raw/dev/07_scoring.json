@@ -1,0 +1,49 @@
+{
+  "task_check": "评分",
+  "tree": "dev",
+  "candidate_mode": "explicit_rng42",
+  "harness_check_key": "scoring",
+  "pass": false,
+  "evidence": {
+    "max_abs_diff": 6.300780205492629e-05,
+    "atol": 1e-06,
+    "rows": [
+      {
+        "image": "train0",
+        "candidate_score": 16.541630609506846,
+        "production_score": 16.5416316986084,
+        "abs_diff": 1.0891015520542169e-06
+      },
+      {
+        "image": "train1",
+        "candidate_score": 17.137790863273793,
+        "production_score": 17.137792587280273,
+        "abs_diff": 1.7240064806856026e-06
+      },
+      {
+        "image": "train2",
+        "candidate_score": 21.43423957939196,
+        "production_score": 21.434240341186523,
+        "abs_diff": 7.617945634308398e-07
+      },
+      {
+        "image": "probe0",
+        "candidate_score": 74.1024570932506,
+        "production_score": 74.10245513916016,
+        "abs_diff": 1.954090450340118e-06
+      },
+      {
+        "image": "probe1",
+        "candidate_score": 68.28681748536201,
+        "production_score": 68.28688049316406,
+        "abs_diff": 6.300780205492629e-05
+      },
+      {
+        "image": "probe2",
+        "candidate_score": 22.60780943254933,
+        "production_score": 22.60780906677246,
+        "abs_diff": 3.657768701259556e-07
+      }
+    ]
+  }
+}

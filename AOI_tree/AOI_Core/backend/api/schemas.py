@@ -4,7 +4,46 @@ from __future__ import annotations
 from datetime import date, datetime
 from typing import Any, Dict, List, Optional
 
-from pydantic import BaseModel
+from pydantic import BaseModel, Field, field_validator
+
+from ..core.config import get_settings
+
+
+class FeatureSpaceRequest(BaseModel):
+    category: str = Field(min_length=1, max_length=64)
+    datasource_id: Optional[int] = Field(default=None, gt=0)
+    dataset_id: Optional[int] = Field(default=None, gt=0)
+    sample_limit: int = Field(default=8, ge=3, le=12)
+    pseudo: Dict[str, Any] = Field(default_factory=dict)
+    preprocess: Dict[str, Any] = Field(default_factory=dict)
+
+    @field_validator('category')
+    @classmethod
+    def concrete_category(cls, value):
+        value = value.strip()
+        if not value or value.lower() in {'all', '*', '全部', '所有品类'}:
+            raise ValueError('必须指定具体品类')
+        return value
+
+    @field_validator('pseudo')
+    @classmethod
+    def valid_pseudo(cls, value):
+        methods = value.get('methods', [])
+        if not isinstance(methods, list) or any(m not in ('defect_transplant', 'cutpaste', 'color_blot') for m in methods):
+            raise ValueError('不支持的伪异常方式')
+        if 'feather' in value and not isinstance(value['feather'], bool):
+            raise ValueError('feather必须为布尔值')
+        return value
+
+    @field_validator('preprocess')
+    @classmethod
+    def valid_preprocess(cls, value):
+        if not 0 <= float(value.get('clahe') or 0) <= 8 or value.get('median', 0) not in (0, 3, 5):
+            raise ValueError('预处理仅支持clahe 0~8、median 0/3/5')
+        for key in ('enabled', 'gray'):
+            if key in value and not isinstance(value[key], bool):
+                raise ValueError(f'{key}必须为布尔值')
+        return value
 
 
 # ── 通用辅助 ─────────────────────────────────────────────────
@@ -45,7 +84,16 @@ def to_dict(obj: Any, extra: Optional[Dict] = None) -> Dict:
         nt = d.get("n_tiles")
         if not isinstance(nt, dict):
             nt = {}
+        rv = nt.get("region_review")
+        if isinstance(rv, dict):  # AC-063：与 /regions 同一派生视图（存储不变）
+            from algo.decision.localization import annotate_review
+            rv = annotate_review(rv)
         d.update({
+            "open_alert": bool(nt.get("open_alert")),
+            "e_open_score": nt.get("e_open_score"),
+            "e_open_threshold": nt.get("e_open_threshold"),
+            "open_alert_item": nt.get("open_alert_item"),
+            "model_version": nt.get("model_version"),
             "threshold": nt.get("threshold"),
             "gray_threshold": nt.get("gray_threshold"),
             "defect_boxes": nt.get("boxes") or [],
@@ -53,7 +101,16 @@ def to_dict(obj: Any, extra: Optional[Dict] = None) -> Dict:
             "decision": nt.get("decision"),
             "slots": nt.get("slots") or {},
             "weights": nt.get("weights") or {},
+            "raw_scores": nt.get("raw") or {},
+            "cal_scores": nt.get("cal") or nt.get("slots") or {},
+            "actual_router": nt.get("actual_router") or nt.get("router_w") or {},
+            "candidate_router": nt.get("candidate_router"),
+            "feature_metadata": nt.get("feature_metadata"),
             "triggered_slot": nt.get("triggered_slot"),
+            "box_evidence": nt.get("box_evidence") or [],
+            "localization": nt.get("localization") or {"status": "legacy_unknown"},
+            "region_review": rv,
+            "decision_trace": nt.get("decision_trace") or [],
             "detection_id": d.get("id"),
             "persisted": True,
             "feedback_supported": True,
@@ -63,18 +120,128 @@ def to_dict(obj: Any, extra: Optional[Dict] = None) -> Dict:
     return d
 
 
+# ── 推理算力探测（顶栏「算力」徽标）────────────────────────────
+# 赛题指定硬件：RTX 2060（30 SM / 1920 CUDA 核心 / boost 1.68GHz）。
+# 本机算力占该基准的百分比 = 同口径估算峰值之比，用于一眼判断"这台机器够不够"。
+_BASELINE = {"name": "RTX 2060", "sm": 30, "cores_per_sm": 64, "clock_ghz": 1.68}
+_PROFILE_CACHE: Dict[str, Any] | None = None
+
+
+def _gpu_max_clock_ghz() -> float | None:
+    """读 GPU 最大 SM 主频（nvidia-smi，MHz→GHz）；读不到返回 None。
+
+    只在首次探测时调用（结果被 compute_profile 缓存），不会随 /api/health
+    轮询反复拉起子进程。
+    """
+    try:
+        import shutil
+        import subprocess
+        exe = shutil.which("nvidia-smi")
+        if not exe:
+            return None
+        r = subprocess.run(
+            [exe, "--query-gpu=clocks.max.sm", "--format=csv,noheader,nounits"],
+            capture_output=True, text=True, timeout=3)
+        mhz = float((r.stdout or "").strip().splitlines()[0].strip())
+        return mhz / 1000.0 if mhz > 0 else None
+    except Exception:  # noqa: BLE001
+        return None
+
+
+def _short_gpu_name(raw: str) -> str:
+    """去掉厂商前缀，得到专业简洁的型号名（NVIDIA GeForce GTX 1660 SUPER → GTX 1660 SUPER）。"""
+    s = str(raw or "").strip()
+    for prefix in ("NVIDIA GeForce ", "NVIDIA ", "GeForce "):
+        if s.startswith(prefix):
+            s = s[len(prefix):]
+            break
+    return s or "GPU"
+
+
+def compute_profile() -> Dict[str, Any]:
+    """探测推理算力（首次调用后缓存；不触发模型加载）。
+
+    输出**专业可核对的口径**，不使用「算力 高/中/低」这类含义模糊的分级：
+    - gpu_short：简洁型号名（如 `GTX 1660 SUPER`）；
+    - tops_int8：估算 INT8 吞吐（SM × 每 SM FP32 核心 × 2 × 主频 × 2 打包）；
+    - baseline_ratio_pct：相对赛题基准 `RTX 2060` 的同口径估算算力占比；
+    - tflops_fp32 / vram_gb / compute_capability / sm_count / clock_ghz：硬件事实或估算值。
+    所有吞吐/占比均为**估算值**，非厂商标称值（tooltip 会如实标注）。
+    """
+    global _PROFILE_CACHE
+    if _PROFILE_CACHE is not None:
+        return _PROFILE_CACHE
+
+    out: Dict[str, Any] = {
+        "device": "unknown", "gpu_short": None, "tops_int8": None,
+        "baseline_name": _BASELINE["name"], "baseline_ratio_pct": None,
+        "tflops_fp32": None, "vram_gb": None,
+        "compute_capability": None, "sm_count": None, "clock_ghz": None,
+    }
+    try:
+        import torch
+        if not torch.cuda.is_available():
+            out["device"] = "cpu"
+            _PROFILE_CACHE = out
+            return out
+        props = torch.cuda.get_device_properties(0)
+        major = int(getattr(props, "major", 0) or 0)
+        minor = int(getattr(props, "minor", 0) or 0)
+        sm = int(getattr(props, "multi_processor_count", 0) or 0)
+        vram = getattr(props, "total_memory", None)
+        # 每 SM 的 FP32 核心数：Volta/Turing 及更早为 64，Ampere/Ada 为 128
+        cores_per_sm = 64 if major < 8 else 128
+        clock = _gpu_max_clock_ghz()
+        if not clock:
+            clock = float(getattr(props, "clock_rate", 0) or 0) / 1e6  # kHz → GHz
+        clock_from_smi = bool(clock)
+        if not clock or clock <= 0:
+            clock = 1.5  # 读不到主频时的保守默认值（仅用于估算）
+        base_flops = sm * cores_per_sm * 2 * clock / 1000.0 if sm else None
+        base_ref = (_BASELINE["sm"] * _BASELINE["cores_per_sm"] * 2
+                    * _BASELINE["clock_ghz"] / 1000.0)
+        out.update({
+            "device": "cuda",
+            "gpu_short": _short_gpu_name(torch.cuda.get_device_name(0)),
+            "tops_int8": round(base_flops * 2, 1) if base_flops else None,
+            "baseline_ratio_pct": (round(base_flops / base_ref * 100)
+                                   if base_flops else None),
+            # 耗时系数：基准硬件耗时 × 该系数 ≈ 本机耗时（>1 表示本机比基准慢）
+            "latency_factor": (round(base_ref / base_flops, 2)
+                               if base_flops else None),
+            "tflops_fp32": round(base_flops, 1) if base_flops else None,
+            "vram_gb": round(vram / (1024 ** 3), 1) if vram else None,
+            "compute_capability": f"{major}.{minor}" if major else None,
+            "sm_count": sm or None,
+            "clock_ghz": round(clock, 2),
+            "clock_source": "nvidia-smi" if clock_from_smi else "默认估算",
+        })
+        _PROFILE_CACHE = out
+        return out
+    except Exception:  # noqa: BLE001
+        _PROFILE_CACHE = out
+        return out
+
+
 def device_info() -> Dict[str, Any]:
-    """探测运行设备：{"device","gpu_name","torch_version"}（不触发模型加载）。"""
+    """探测运行设备：{"device","gpu_name","torch_version", + 算力字段}
+    （不触发模型加载）。"""
     try:
         import torch
         if torch.cuda.is_available():
-            return {"device": "cuda",
+            info = {"device": "cuda",
                     "gpu_name": torch.cuda.get_device_name(0),
                     "torch_version": torch.__version__}
-        return {"device": "cpu", "gpu_name": None,
-                "torch_version": torch.__version__}
+        else:
+            info = {"device": "cpu", "gpu_name": None,
+                    "torch_version": torch.__version__}
     except Exception:  # noqa: BLE001
-        return {"device": "unknown", "gpu_name": None, "torch_version": None}
+        info = {"device": "unknown", "gpu_name": None, "torch_version": None}
+    profile = compute_profile()
+    info.update({k: v for k, v in profile.items() if k != "device"})
+    if info["device"] == "unknown" and profile["device"] != "unknown":
+        info["device"] = profile["device"]
+    return info
 
 
 # ── 图片 / 视频导入 ─────────────────────────────────────────
@@ -259,11 +426,48 @@ class PseudoPreviewRequest(BaseModel):
     params: Optional[Dict] = None
 
 
+class PreprocessPreviewRequest(BaseModel):
+    image_id: int
+    preprocess: Dict[str, Any]
+
+
 class AugmentConfigUpdateRequest(BaseModel):
     """数据增强配置写回（augment 节：pseudo/preprocess/enhance，§15.29）。"""
     pseudo: Optional[Dict] = None       # 伪异常合成（methods/transplant_scale/feather）
     preprocess: Optional[Dict] = None   # 图像预处理（enabled/gray/clahe/median）
     enhance: Optional[Dict] = None      # 训练增强（flip/rot90/brightness）
+
+
+class AugmentAblationRequest(AugmentConfigUpdateRequest):
+    category: str = Field(min_length=1, max_length=64)
+    factor: str
+    split: str = 'test'
+    train_limit: int = Field(default=8, ge=2, le=100)
+    defect_limit: int = Field(default=4, ge=0, le=30)
+    eval_limit: int = Field(default=12, ge=2, le=100)
+
+    @field_validator('category')
+    @classmethod
+    def concrete_category(cls, value):
+        if not value.strip() or value.strip() == '*':
+            raise ValueError('请选择具体品类')
+        return value.strip()
+
+    @field_validator('split')
+    @classmethod
+    def heldout_split(cls, value):
+        if value not in ('test', 'holdout'):
+            raise ValueError('只允许 test/holdout 留出集')
+        return value
+
+    @field_validator('factor')
+    @classmethod
+    def supported_factor(cls, value):
+        if value not in ('pseudo.enabled', 'preprocess.enabled', 'preprocess.gray',
+                         'preprocess.clahe', 'preprocess.median', 'enhance.flip',
+                         'enhance.rot90', 'enhance.brightness'):
+            raise ValueError('未知消融因素')
+        return value
 
 
 # ── 检测 / 监控 ─────────────────────────────────────────────
@@ -272,6 +476,7 @@ class DetectImageRequest(BaseModel):
     path: Optional[str] = None
     category: str
     with_heatmap: bool = True               # False=高速模式（跳过热力图生成/存盘）
+    pair_template: Optional[str] = None     # 仅使用显式指定的配对模板路径
 
 
 class DetectVideoRequest(BaseModel):
@@ -302,6 +507,9 @@ class ModelPrepareRequest(BaseModel):
     note: str = ""
     datasource_id: Optional[int] = None  # 前端反馈 v9：从数据源预训练组取样本
     allow_experimental: bool = False    # 显式实验拟合：不进入生产激活
+    # AC-015 表示重建：按当前代码/注册表重提特征、重建库、重校准，生成未激活新版本，
+    # 须经激活门控（G2/锚定 AUROC）后才上线；旧版本保留可回滚
+    rebuild_representation: bool = False
 
 
 # ── 反馈 / 自学习 ───────────────────────────────────────────
@@ -321,12 +529,13 @@ class SelfUpdateRequest(BaseModel):
     note: Optional[str] = None          # 巩固备注（写入快照 meta）
     # 以下字段为旧 EWC 语义遗留，引擎巩固落盘不再使用
     epochs: Optional[int] = None
-    auto_activate: Optional[bool] = None
+    auto_activate: Optional[bool] = None  # False=仅生成候选版本，不切换激活指针
 
 
 # ── 模型 / 评估 ─────────────────────────────────────────────
 class RollbackRequest(BaseModel):
     category: str
+    allow_stale: bool = False   # AC-015/073：保留兼容；HTTP 生产入口传 true 返回 409 STALE_OVERRIDE_FORBIDDEN
 
 
 class EvalAccuracyRequest(BaseModel):
@@ -339,8 +548,10 @@ class EvalAccuracyRequest(BaseModel):
 
 class EvalBenchmarkRequest(BaseModel):
     category: str
-    n_images: int = 30
-    warmup: int = 5
+    n_images: int = Field(default_factory=lambda: int(get_settings().get(
+        "evaluation", "benchmark_n_images", 30)), gt=0)
+    warmup: int = Field(default_factory=lambda: int(get_settings().get(
+        "evaluation", "benchmark_warmup", 5)), ge=0)
 
 
 class EvalCompareRequest(BaseModel):

@@ -1,0 +1,18 @@
+REMAIN-14 只读缺口审计 — 命令/操作摘要（2026-10-14）
+
+本任务为只读审计，未运行任何测试、未修改任何生产文件。以下为实际执行的读取/检索操作：
+
+1. LS d:\CGAIC\commit\repo\review                     # 定位权威规范文件
+2. LS d:\CGAIC\AOI_SSOCL\review                      # 定位台账/验证记录/task 产物目录结构
+3. Read d:\CGAIC\commit\repo\review\简明改进建议.md   # 全读 196 行（AC-001~080 + G1~G6 骨架）
+4. Glob d:\CGAIC\AOI_SSOCL\**\协同.md                # 定位协同.md（review\协同.md）
+5. Glob d:\CGAIC\AOI_SSOCL\review\task\*\result.md   # 枚举定向验收产物（29 个 result.md）
+6. Read d:\CGAIC\AOI_SSOCL\review\协同.md             # 全读 1002 行（SYNC/TEST/PCB-ACCEPT/REMAIN/§4.5/§4.6）
+7. Read d:\CGAIC\AOI_SSOCL\review\AOI_tree全量改进任务清单.md (limit 120)  # 进度快照与统计口径
+8. Grep "^##\s|^#\s" AOI_tree首批改进与验证记录.md    # 定位 §1~§104 全部小节标题（110 行）
+9. Read AOI_tree首批改进与验证记录.md offset=2006 limit=130   # §81~§90（TEST-07/05/06/04、PCB-ACCEPT、final_*）
+10. Read AOI_tree首批改进与验证记录.md offset=2268 limit=80   # §101~§104（PCB 第三/四轮、SYNC-30/31 稳定版第 9 轮）
+11. PowerShell: Get-Content 计数 4 个输入文件行数     # 196 / 312 / 2319 / 1002 行（写入 env.json）
+12. Write task\remain_14\{result.md, env.json, cmd.txt, raw\ac_index.csv}  # 本任务产物（仅新增目录）
+
+备注：验证记录其余小节（§1~§80、§91~§100）未逐段打开，其内容经权威清单「证据或缺口」列与台账进度快照的既有引用间接核对；task 产物目录下各 result.md 未逐一打开，仅作证据索引。

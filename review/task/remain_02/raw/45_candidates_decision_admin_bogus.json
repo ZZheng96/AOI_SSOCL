@@ -1,0 +1,16 @@
+{
+  "name": "candidates_decision_admin_bogus",
+  "method": "POST",
+  "path": "/api/candidates/gold_finger/999/decision",
+  "role": "admin",
+  "request_body": {
+    "approved": true,
+    "report_hash": "0000000000000000000000000000000000000000000000000000000000000000",
+    "reason": "REMAIN-02  bogus"
+  },
+  "status_code": 409,
+  "response": {
+    "detail": "候选尚未完成或缺少持久意图"
+  },
+  "note": "不存在的候选 → 409"
+}

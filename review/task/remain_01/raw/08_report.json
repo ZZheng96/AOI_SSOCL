@@ -1,0 +1,178 @@
+{
+  "task_check": "报告",
+  "tree": "stable",
+  "candidate_mode": "legacy_u27",
+  "harness_check_key": "report",
+  "pass": false,
+  "evidence": {
+    "per_probe_equal": [
+      false,
+      false,
+      false
+    ],
+    "rows": [
+      {
+        "probe": 0,
+        "candidate": {
+          "score": 73.7890672576403,
+          "neighbors": [
+            0,
+            1,
+            2
+          ],
+          "enabled_groups": [
+            "glcm",
+            "selfsim",
+            "edge",
+            "hog",
+            "shape",
+            "gray",
+            "gloss",
+            "color",
+            "fft",
+            "wavelet",
+            "logic",
+            "gabor",
+            "log",
+            "pc",
+            "surf"
+          ]
+        },
+        "production": {
+          "score": 74.10245513916016,
+          "neighbors": [
+            0,
+            1,
+            2
+          ],
+          "enabled_groups": [
+            "glcm",
+            "selfsim",
+            "edge",
+            "hog",
+            "shape",
+            "gray",
+            "gloss",
+            "color",
+            "fft",
+            "wavelet",
+            "logic",
+            "gabor",
+            "log",
+            "pc",
+            "surf"
+          ]
+        },
+        "equal": false
+      },
+      {
+        "probe": 1,
+        "candidate": {
+          "score": 67.91096260927401,
+          "neighbors": [
+            3,
+            1,
+            2
+          ],
+          "enabled_groups": [
+            "glcm",
+            "selfsim",
+            "edge",
+            "hog",
+            "shape",
+            "gray",
+            "gloss",
+            "color",
+            "fft",
+            "wavelet",
+            "logic",
+            "gabor",
+            "log",
+            "pc",
+            "surf"
+          ]
+        },
+        "production": {
+          "score": 68.28688049316406,
+          "neighbors": [
+            3,
+            1,
+            2
+          ],
+          "enabled_groups": [
+            "glcm",
+            "selfsim",
+            "edge",
+            "hog",
+            "shape",
+            "gray",
+            "gloss",
+            "color",
+            "fft",
+            "wavelet",
+            "logic",
+            "gabor",
+            "log",
+            "pc",
+            "surf"
+          ]
+        },
+        "equal": false
+      },
+      {
+        "probe": 2,
+        "candidate": {
+          "score": 22.591892545924765,
+          "neighbors": [
+            1,
+            3,
+            5
+          ],
+          "enabled_groups": [
+            "glcm",
+            "selfsim",
+            "edge",
+            "hog",
+            "shape",
+            "gray",
+            "gloss",
+            "color",
+            "fft",
+            "wavelet",
+            "logic",
+            "gabor",
+            "log",
+            "pc",
+            "surf"
+          ]
+        },
+        "production": {
+          "score": 22.60780906677246,
+          "neighbors": [
+            1,
+            3,
+            5
+          ],
+          "enabled_groups": [
+            "glcm",
+            "selfsim",
+            "edge",
+            "hog",
+            "shape",
+            "gray",
+            "gloss",
+            "color",
+            "fft",
+            "wavelet",
+            "logic",
+            "gabor",
+            "log",
+            "pc",
+            "surf"
+          ]
+        },
+        "equal": false
+      }
+    ]
+  }
+}

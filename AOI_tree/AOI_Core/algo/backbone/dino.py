@@ -32,8 +32,13 @@ def _vendored_dir():
     return None
 
 
-def _load_dinov2_from_cache(model_name="vits14"):
-    vend = _vendored_dir()
+def _load_dinov2_from_cache(model_name="vits14", local_dir=None, allow_download=True):
+    vend = local_dir or _vendored_dir()
+    if local_dir:
+        hubconf = os.path.join(vend, "hubconf.py")
+        weights = os.path.join(vend, f"dinov2_{model_name}_pretrain.pth")
+        if not (os.path.isfile(hubconf) and os.path.isfile(weights)):
+            raise RuntimeError(f"指定 DINOv2 本地目录不完整: {vend}（需含 hubconf.py 与 {os.path.basename(weights)}）")
     if vend:
         weights = os.path.join(vend, f"dinov2_{model_name}_pretrain.pth")
         # 2026-10-06 修复：vendor 目录存在但缺权重文件时原实现直接抛错，把可用
@@ -48,25 +53,81 @@ def _load_dinov2_from_cache(model_name="vits14"):
             import importlib
             backbones = importlib.import_module("dinov2.hub.backbones")
             print(f"[dino] 使用随包 vendor 权重: {weights}")
-            return getattr(backbones, f"dinov2_{model_name}")(pretrained=True, weights=weights)
+            # AC-075：直接 torch.load 本地权重；原 pretrained=True 走 file:// 的
+            # load_state_dict_from_url，会把 88MB 权重再拷进 ~/.cache/torch/hub/checkpoints
+            # （只读用户目录的干净机会失败）。同一 state_dict，strict 加载，特征不变。
+            model = getattr(backbones, f"dinov2_{model_name}")(pretrained=False)
+            model.load_state_dict(torch.load(weights, map_location="cpu", weights_only=True), strict=True)
+            return model
     hubconf_path = os.path.join(DINOV2_CACHE_DIR, "hubconf.py")
-    if not os.path.exists(hubconf_path):
-        return torch.hub.load("facebookresearch/dinov2", f"dinov2_{model_name}")
-    sys.path.insert(0, DINOV2_CACHE_DIR)
-    import importlib
-    hubconf = importlib.import_module("hubconf")
-    return getattr(hubconf, f"dinov2_{model_name}")(pretrained=True)
+    if not allow_download:
+        raise RuntimeError(f"DINOv2 未找到指定本地 vendor，已禁止下载: {vend or '<未找到 hubconf.py>'}")
+    # AC-075：离线/断网缺权重时给出明确失败（列出已查找路径），不再抛裸网络异常
+    try:
+        if not os.path.exists(hubconf_path):
+            return torch.hub.load("facebookresearch/dinov2", f"dinov2_{model_name}")
+        sys.path.insert(0, DINOV2_CACHE_DIR)
+        import importlib
+        hubconf = importlib.import_module("hubconf")
+        return getattr(hubconf, f"dinov2_{model_name}")(pretrained=True)
+    except Exception as e:
+        raise RuntimeError(
+            f"DINOv2 权重缺失且无法在线获取（离线部署需随包 vendor）：已查找 "
+            f"vendor={vend or '<未找到 hubconf.py>'}（需含 dinov2_{model_name}_pretrain.pth，"
+            f"可用 DINOV2_LOCAL_DIR 指定）、hub 缓存={DINOV2_CACHE_DIR}；原因: "
+            f"{type(e).__name__}: {e}") from e
+
+
+def _rng_state():
+    cuda = tuple(s.numpy().tobytes() for s in torch.cuda.get_rng_state_all()) \
+        if torch.cuda.is_available() else ()
+    return torch.get_rng_state().numpy().tobytes(), cuda
+
+
+def _set_rng_state(state):
+    cpu, cuda = state
+    torch.set_rng_state(torch.frombuffer(bytearray(cpu), dtype=torch.uint8))
+    if cuda:
+        torch.cuda.set_rng_state_all(
+            [torch.frombuffer(bytearray(s), dtype=torch.uint8) for s in cuda])
+
+
+# 冻结主干进程级共享：候选学习每轮两次 load_snapshot 原各重建一次 ViT（约数秒+显存）。
+# 主干只读（no_grad/eval/无可变状态），共享不改变特征；构建会消耗 torch RNG，
+# 命中时按“构建前 RNG 态 → 构建后 RNG 态”重放，后续槽位初始化随机序列与重建完全一致。
+_SHARED_MODELS = {}
+_SHARED_LOCK = __import__("threading").Lock()
+
+
+def _shared_dinov2(model_name, device, local_dir=None, allow_download=True):
+    key = (model_name, str(torch.device(device)), local_dir, allow_download)
+    before = _rng_state()
+    with _SHARED_LOCK:
+        entry = _SHARED_MODELS.get(key)
+        if entry is not None and before in entry["rng"]:
+            _set_rng_state(entry["rng"][before])
+            return entry["model"]
+        model = _load_dinov2_from_cache(model_name, local_dir=local_dir,
+                                         allow_download=allow_download)
+        model.eval()
+        for p in model.parameters():
+            p.requires_grad = False
+        model.to(device)
+        after = _rng_state()
+        if entry is None:
+            entry = _SHARED_MODELS[key] = {"model": model, "rng": {}}
+        entry["rng"][before] = after
+        return entry["model"]
 
 
 class FrozenDINO(nn.Module):
-    def __init__(self, model_name="vits14", output_layer=9, grid=32, device="cuda"):
+    def __init__(self, model_name="vits14", output_layer=9, grid=32, device="cuda",
+                 local_dir=None, allow_download=True):
         super().__init__()
         self.output_layer = output_layer
         self.grid = grid
-        self.model = _load_dinov2_from_cache(model_name)
-        self.model.eval()
-        for p in self.model.parameters():
-            p.requires_grad = False
+        self.model = _shared_dinov2(model_name, device, local_dir=local_dir,
+                                    allow_download=allow_download)
         self.dim = self.model.embed_dim  # 384
         self.register_buffer("mean", torch.tensor([0.485, 0.456, 0.406]).view(1, 3, 1, 1))
         self.register_buffer("std", torch.tensor([0.229, 0.224, 0.225]).view(1, 3, 1, 1))

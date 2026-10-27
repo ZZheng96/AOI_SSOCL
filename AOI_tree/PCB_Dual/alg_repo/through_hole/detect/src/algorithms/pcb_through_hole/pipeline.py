@@ -64,6 +64,7 @@ class InspectResult:
     original: np.ndarray
     aligned: np.ndarray
     masks: Masks
+    diagnostics: dict = field(default_factory=dict)
     test_roi: PadROI | None = None
     void_mask: np.ndarray | None = None
     align_method: str = ""
@@ -284,7 +285,7 @@ def align_preview(test_bgr: np.ndarray, std: TemplateModel) -> tuple[AlignMeta, 
 
 
 def inspect(test_bgr: np.ndarray, std: TemplateModel, name: str = "",
-            *, enable_review: bool = True) -> InspectResult:
+            *, enable_review: bool = True, diagnostics: bool = False) -> InspectResult:
     """单流水线：配准匹配窗上分割 + 五条规则"""
     t0 = time.perf_counter()
     original = test_bgr
@@ -299,6 +300,9 @@ def inspect(test_bgr: np.ndarray, std: TemplateModel, name: str = "",
         method = "未校准"
     std_ot, valid_e, tmpl_solder_warped = _build_std_on_test(std, test_work, dx, dy)
     test_roi = std_ot.roi
+    debug = {"registered_standard": std_ot.bgr,
+             "difference": cv2.absdiff(test_work, std_ot.bgr),
+             "difference_meaning": "已配准工作图绝对像素差，仅诊断，不作为缺陷判定"} if diagnostics else {}
 
     coverage_val = None
     if enable_review:
@@ -307,7 +311,7 @@ def inspect(test_bgr: np.ndarray, std: TemplateModel, name: str = "",
             dx, dy, coverage_val, std_dx=meta.std_dx, std_dy=meta.std_dy)
         if not reliable:
             return InspectResult(
-                name=name, original=original, aligned=test_work, masks=std_ot.masks,
+                name=name, original=original, aligned=test_work, masks=std_ot.masks, diagnostics=debug,
                 test_roi=test_roi, align_method=method, align_meta=meta, valid=valid_e,
                 detections=[], total_ms=(time.perf_counter() - t0) * 1000,
                 status=STATUS_REVIEW, coverage=coverage_val, review_reason=review_reason,
@@ -369,6 +373,7 @@ def inspect(test_bgr: np.ndarray, std: TemplateModel, name: str = "",
         original=original,
         aligned=test_work,
         masks=masks_t,
+        diagnostics=debug,
         test_roi=test_roi,
         void_mask=void_mask,
         align_method=method,

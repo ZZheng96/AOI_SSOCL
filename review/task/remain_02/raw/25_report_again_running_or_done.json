@@ -1,0 +1,13 @@
+{
+  "name": "report_again_running_or_done",
+  "method": "POST",
+  "path": "/api/models/feature-set/gold_finger/report",
+  "role": "engineer",
+  "request_body": null,
+  "status_code": 200,
+  "response": {
+    "task_id": 4,
+    "status": "queued"
+  },
+  "note": "完成后再次请求（应重新排队或提示）"
+}

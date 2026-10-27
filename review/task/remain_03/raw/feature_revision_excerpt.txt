@@ -1,0 +1,39 @@
+# 摘录自 algo/feature_revision.py（稳定版，只读）
+
+L1:   """不可变特征 manifest 的前门禁；不切换生产 extractor 或模型指针。"""
+
+L38-40:
+def production_hashes():
+    root = Path(__file__).parent
+    return {name: file_hash(root / name) for name in ("vendor/traditional.py", "slots/trad.py")}
+
+L70:  class FeatureSetRevision:
+
+L234: # —— 生产指针（AC-061）：active 只是“可绑定”，绑定须显式 bind_production ——
+L236-243:
+    @property
+    def pointer_path(self):
+        return self.path.with_name(self.path.stem + ".production.json")
+
+    def production_pointer(self):
+        if not self.pointer_path.exists():
+            return None
+        ...
+
+L257: def bind_production(self, rid, *, actor, model_snapshot):   # 无 HTTP API 调用方，仅测试
+L272: def rollback_production(self, *, actor, model_snapshot):    # 无 HTTP API 调用方，仅测试
+
+L298-307（detection_stamp，生产零调用）:
+    def detection_stamp(self, model_snapshot=None):
+        """写入 Detection.extra 的特征集关联；未绑定时如实标 unbound。"""
+        ptr = self.production_pointer()
+        if not ptr or not ptr.get("current"):
+            return {"feature_revision": None, "status": "unbound"}
+        stamp = {"feature_revision": ptr["current"], "status": "bound",
+                 "model_snapshot": ptr.get("model_snapshot")}
+        if model_snapshot is not None and model_snapshot != ptr.get("model_snapshot"):
+            stamp["status"] = "snapshot_mismatch"
+        return stamp
+
+# 注：Detection 表并无 extra 列（models.py:351 的 extra 属 OperationLog），
+# detection_stamp docstring 所述「写入 Detection.extra」的落点不存在；且该函数在生产代码中无调用方。

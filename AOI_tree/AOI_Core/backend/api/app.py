@@ -10,8 +10,9 @@ from fastapi.middleware.cors import CORSMiddleware
 
 from ..core.config import get_settings
 from . import routes_data, routes_detect, routes_feedback, routes_learning
+from . import routes_pair_heatmap
 from . import routes_models, routes_review, routes_stats, routes_system, ws
-from . import routes_workorder
+from . import routes_workorder, routes_candidates
 
 logger = logging.getLogger(__name__)
 
@@ -81,9 +82,9 @@ def create_app() -> FastAPI:
     # /api/file?path=，见 ui/api_client.py），故直接删除而非豁免。
 
     # REST 路由（统一 /api 前缀）
-    for mod in (routes_system, routes_data, routes_detect, routes_feedback,
-                routes_models, routes_stats, routes_learning, routes_review,
-                routes_workorder):
+    for mod in (routes_system, routes_data, routes_detect, routes_pair_heatmap,
+                routes_feedback, routes_models, routes_stats, routes_learning, routes_review,
+                routes_workorder, routes_candidates):
         app.include_router(mod.router, prefix="/api")
 
     # WebSocket 路由（不带前缀）

@@ -1,0 +1,37 @@
+{
+  "mode": "domain",
+  "version": 1,
+  "weights": {
+    "sem": 0.0,
+    "disc": 1.0,
+    "shead": 0.0
+  },
+  "score_slots": [
+    "sem",
+    "disc",
+    "shead"
+  ],
+  "train_auroc": 0.6429,
+  "tau_high": 0.989921875,
+  "tau_gray": 0.9496093749999999,
+  "calibrators": {
+    "sem": {
+      "type": "CDFCalibrator",
+      "lo": 0.45046357188956637,
+      "hi": 0.6350539926439523
+    },
+    "disc": {
+      "type": "CDFCalibrator",
+      "lo": 0.9876559027715197,
+      "hi": 0.9969703547656535
+    },
+    "shead": {
+      "type": "CDFCalibrator",
+      "lo": 2.0117130269541015,
+      "hi": 2.7505106925964355
+    }
+  },
+  "isolation": null,
+  "n_train_normal": 36,
+  "n_train_defect": 30
+}

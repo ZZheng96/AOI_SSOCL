@@ -84,10 +84,11 @@ def glcm(ctx, p):
 
 @feature("selfsim", "② 区域自相似",
          "正常工业品纹理/布局具重复性，块间均距破坏即异常信号；"
-         ">max_blocks 时子采样（调用方负责播种，U27）",
+         ">max_blocks 时使用显式 Generator 子采样（与 Core Trad 一致）",
          "重复纹理破坏、局部结构错乱",
          {"scales": [4, 8, 16], "max_blocks": 100})
-def selfsim(ctx, p):
+def selfsim(ctx, p, rng=None):
+    rng = rng or np.random.default_rng(42)
     gray = ctx["gray"]
     h, w = gray.shape
     out = []
@@ -98,7 +99,7 @@ def selfsim(ctx, p):
         if len(blocks) > 1:
             blocks = np.array(blocks, dtype=np.float32)
             if len(blocks) > p["max_blocks"]:
-                idx = np.random.choice(len(blocks), p["max_blocks"], replace=False)
+                idx = rng.choice(len(blocks), p["max_blocks"], replace=False)
                 blocks = blocks[idx]
             bnorm = (blocks ** 2).sum(axis=1)
             dist2 = bnorm[:, None] + bnorm[None, :] - 2 * (blocks @ blocks.T)

@@ -68,10 +68,13 @@ class TraceAPI:
         """更新日志：三类反馈 + 回滚 + 回归门控历史（M3 SSOCL）。"""
         h = self.p.handler
         if h is None:
-            return {"feedback": [], "rollback": [], "gate": []}
+            return {"feedback": [], "rollback": [], "gate": [], "audit": None}
         return {"feedback": _jsonable(h.feedback_log),
                 "rollback": _jsonable(h.rollback_log),
-                "gate": _jsonable(h.gate.history)}
+                "gate": _jsonable(h.gate.history),
+                # AC-026 更新准入审计（每轮快照/前后 FPR/灰区/域外/G1 估算/结局）
+                "audit": _jsonable(h.update_audit_report())
+                if hasattr(h, "update_audit_report") else None}
 
     def contribution(self, split_items):
         """槽位贡献档案（§3.2 三层评价）。"""

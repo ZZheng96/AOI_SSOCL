@@ -1,0 +1,3874 @@
+{
+ "report": {
+  "dev_root": "d:\\CGAIC\\AOI_SSOCL\\AOI_tree\\PCB_Dual",
+  "stable_root": "d:\\CGAIC\\AOI_SSOCL\\stable_AOI_tree\\PCB_Dual",
+  "counts": {
+   "dev_files": 478,
+   "stable_files": 478,
+   "identical": 475,
+   "diff": 2,
+   "new_in_dev": 1,
+   "only_in_stable": 1
+  },
+  "diff": [
+   "app/config.py",
+   "app/ui/settings_dialog.py"
+  ],
+  "new_in_dev": [
+   "tests/test_acceptance_settings.py"
+  ],
+  "only_in_stable": [
+   "ui_state.json"
+  ],
+  "excluded_dirs": [
+   ".git",
+   "__pycache__",
+   "cache",
+   "caches",
+   "data",
+   "database",
+   "db",
+   "log",
+   "logs",
+   "output",
+   "outputs",
+   "param_lib",
+   "params",
+   "snapshot",
+   "snapshots",
+   "temp",
+   "template",
+   "templates",
+   "test_images",
+   "tmp"
+  ]
+ },
+ "dev": {
+  "main.py": {
+   "sha256": "490fa28096f9f8309ba02518fccac7379a481ea6b6de40b27d2e1e7b64aaef0d",
+   "size": 2761
+  },
+  "README.md": {
+   "sha256": "d8486b261c692d813824b4c28c5128cb70af7e6ef6092ffc92e9ad1b84d22fe6",
+   "size": 3590
+  },
+  "requirements-lock.txt": {
+   "sha256": "671b1df08f8c6e245e9462dde2ce444a3b4021819b25381a4ba4997dda29b8a9",
+   "size": 696
+  },
+  "requirements.txt": {
+   "sha256": "5520ebca8bf7e0d00ce9c72507115e5706682096a87d6ceef6748f07bcc30cc8",
+   "size": 371
+  },
+  "server.py": {
+   "sha256": "d0d8b799d2956416172cd45280c5f35b8471b4c7c20b2025901b4f53d147cd0a",
+   "size": 2628
+  },
+  "alg_repo/body/PCB_APP/README.md": {
+   "sha256": "1c1517893437ea981d03ce9cc1acd518f755671b99a1337fc3afc9992e9e72b8",
+   "size": 4785
+  },
+  "alg_repo/body/PCB_APP/requirements.txt": {
+   "sha256": "eadba89e7c31305125107db397cd7fc1015c1c34ed5e1194d3ae53a42b085e9b",
+   "size": 167
+  },
+  "alg_repo/body/PCB_APP/run.py": {
+   "sha256": "a25602b514263690d07185baa26ea88181ff1e4af19cc550fb34442ba1468233",
+   "size": 404
+  },
+  "alg_repo/body/PCB_APP/pcb_app/config.py": {
+   "sha256": "a0d1902bdf62c84b6f33dc4724d8c2c1c8481f2bbbce80853ccc6b0f3eea8c04",
+   "size": 2264
+  },
+  "alg_repo/body/PCB_APP/pcb_app/main.py": {
+   "sha256": "5ed0566e311e863232ed556625178a12bc3c1e0fdffcf2eb6a761731a038c9b0",
+   "size": 661
+  },
+  "alg_repo/body/PCB_APP/pcb_app/metadata.py": {
+   "sha256": "63e8768e660f66b975a04b8180a6bd3a2ded15675f9d6109847c441b38a56c21",
+   "size": 12172
+  },
+  "alg_repo/body/PCB_APP/pcb_app/__init__.py": {
+   "sha256": "0703c1352f025a7376e4a18154210379891d05c70bd85673d0f2c3fa3d9ccaa6",
+   "size": 290
+  },
+  "alg_repo/body/PCB_APP/pcb_app/core/detector_service.py": {
+   "sha256": "de6f5eface9678b89d0960e7c7fb60baac67dc14c84c61ef057386b2e8316bbe",
+   "size": 19795
+  },
+  "alg_repo/body/PCB_APP/pcb_app/core/models.py": {
+   "sha256": "6b088730dc1bc191eb9abd4bfec12ac9041fba82a5ace3b3128cdd2e77bacaca",
+   "size": 5288
+  },
+  "alg_repo/body/PCB_APP/pcb_app/core/roi_util.py": {
+   "sha256": "02f82359548515ff8857eda9e7f5ff5ccaca48bc2fbbbdc57928292126cb31fa",
+   "size": 2496
+  },
+  "alg_repo/body/PCB_APP/pcb_app/core/__init__.py": {
+   "sha256": "d4be91973fb94d45b1f60a832580022f3b094583ac834ac2f53bb23371fae283",
+   "size": 62
+  },
+  "alg_repo/body/PCB_APP/pcb_app/ui/defect_panel.py": {
+   "sha256": "844c1df66f1bbe2c5661234736d7035761b5cecf895bd76dc91ea5825d25d69b",
+   "size": 4085
+  },
+  "alg_repo/body/PCB_APP/pcb_app/ui/image_canvas.py": {
+   "sha256": "f2ec3ec8bd2cd28567a6b7790a59adeea0f31362a3852f5ad56b23300c23d55f",
+   "size": 14301
+  },
+  "alg_repo/body/PCB_APP/pcb_app/ui/main_window.py": {
+   "sha256": "26ac27ff7bdadd46c59db9ec7ca29949ea480175e59a0977875a0bcf3614cf87",
+   "size": 21277
+  },
+  "alg_repo/body/PCB_APP/pcb_app/ui/params_state.py": {
+   "sha256": "0fea2f1791c9aed500bc243a1e6bff9985cf5e54318d548f1dfb86b1bd7a3ac8",
+   "size": 295
+  },
+  "alg_repo/body/PCB_APP/pcb_app/ui/param_panel.py": {
+   "sha256": "6f91a9b1aa2893abb30b0456f7c091c5729d7f0dcda8be5672d19b4f6d415342",
+   "size": 10087
+  },
+  "alg_repo/body/PCB_APP/pcb_app/ui/resize_grips.py": {
+   "sha256": "c14bff46278ea055819a0424171d2459eaebb0f7fa735359ddf07ec04105a325",
+   "size": 4135
+  },
+  "alg_repo/body/PCB_APP/pcb_app/ui/result_panel.py": {
+   "sha256": "7983b359b91091f4ff7bda0cbdb1ce3669c23e3d4d98d5b43c8cab1170e42830",
+   "size": 6911
+  },
+  "alg_repo/body/PCB_APP/pcb_app/ui/roi_panel.py": {
+   "sha256": "dab83b576bb561e4e281f6fb724bd51326546bc2a17f2dd85419edc7fabb0b23",
+   "size": 5901
+  },
+  "alg_repo/body/PCB_APP/pcb_app/ui/theme.py": {
+   "sha256": "87f86395504850ad15b51ada3cfe55a95261c1976671403309f286acc4263216",
+   "size": 6700
+  },
+  "alg_repo/body/PCB_APP/pcb_app/ui/title_bar.py": {
+   "sha256": "953430d7e839aed2768b55e84c55a4c11aaa7a24919b60a074bcf21dd1385a4d",
+   "size": 2327
+  },
+  "alg_repo/body/PCB_APP/pcb_app/ui/widgets.py": {
+   "sha256": "991646e79e680e57bc1f47758917bf23cb0eadc8e5384e28a5ffb9a53584fc09",
+   "size": 7012
+  },
+  "alg_repo/body/PCB_APP/pcb_app/ui/workers.py": {
+   "sha256": "9b65417ef16ed355c98de1396a4fda263facf477966636f1c0541e79c06341d7",
+   "size": 2325
+  },
+  "alg_repo/body/PCB_APP/pcb_app/ui/__init__.py": {
+   "sha256": "429a1adbd4c8ee329e4432530a77a172bcc870dc6bc6c93e042ed20f56ac9d82",
+   "size": 55
+  },
+  "alg_repo/body/pcb_defect/pcb_defect_detector/detect_cli-2.py": {
+   "sha256": "59b626893c2ae69745b9d78e9ef090cf57922a868d9d6f0f5eb091f00bc745cc",
+   "size": 5248
+  },
+  "alg_repo/body/pcb_defect/pcb_defect_detector/detect_cli.py": {
+   "sha256": "59b626893c2ae69745b9d78e9ef090cf57922a868d9d6f0f5eb091f00bc745cc",
+   "size": 5248
+  },
+  "alg_repo/body/pcb_defect/pcb_defect_detector/README-2.md": {
+   "sha256": "c4ddb0a4569204beec1f1bdf7c5d8342207d058c71f741c9f1722eaf4b6cd01f",
+   "size": 4685
+  },
+  "alg_repo/body/pcb_defect/pcb_defect_detector/README.md": {
+   "sha256": "c4ddb0a4569204beec1f1bdf7c5d8342207d058c71f741c9f1722eaf4b6cd01f",
+   "size": 4685
+  },
+  "alg_repo/body/pcb_defect/pcb_defect_detector/requirements-2.txt": {
+   "sha256": "5c7a67d3ef726cd3b2fcdf5037423ab433187fca50b29a90bb319dcacc67e678",
+   "size": 166
+  },
+  "alg_repo/body/pcb_defect/pcb_defect_detector/requirements.txt": {
+   "sha256": "5c7a67d3ef726cd3b2fcdf5037423ab433187fca50b29a90bb319dcacc67e678",
+   "size": 166
+  },
+  "alg_repo/body/pcb_defect/pcb_defect_detector/pcb_defect_detector/detector-2.py": {
+   "sha256": "90ac8cbc821b265a7ff3b0967a6bf3adb85210e8890e0ab71fc33f08301bc317",
+   "size": 14110
+  },
+  "alg_repo/body/pcb_defect/pcb_defect_detector/pcb_defect_detector/detector.py": {
+   "sha256": "6964f031521b8c44a382a409d8d202e12d7a3f8553773834339a9cd34c876bad",
+   "size": 10624
+  },
+  "alg_repo/body/pcb_defect/pcb_defect_detector/pcb_defect_detector/image_io-2.py": {
+   "sha256": "c88c78bafbe5f1045a719c7ac63b58cee0c6ff601f64840e22edf352745d38a9",
+   "size": 1242
+  },
+  "alg_repo/body/pcb_defect/pcb_defect_detector/pcb_defect_detector/image_io.py": {
+   "sha256": "694707e08023a1313e7b2a19480b531c4a89a31f58bdc4081e16ddf5e20f146d",
+   "size": 1776
+  },
+  "alg_repo/body/pcb_defect/pcb_defect_detector/pcb_defect_detector/results-2.py": {
+   "sha256": "cbbb556ce56657253110d342a79ff3b4aebcd29ed6b3d419542235e4f78e9341",
+   "size": 2143
+  },
+  "alg_repo/body/pcb_defect/pcb_defect_detector/pcb_defect_detector/results.py": {
+   "sha256": "cbbb556ce56657253110d342a79ff3b4aebcd29ed6b3d419542235e4f78e9341",
+   "size": 2143
+  },
+  "alg_repo/body/pcb_defect/pcb_defect_detector/pcb_defect_detector/__init__-2.py": {
+   "sha256": "3d75f18b47019bad190ba14e74bc103a569b11c16892301e947742bad6583979",
+   "size": 414
+  },
+  "alg_repo/body/pcb_defect/pcb_defect_detector/pcb_defect_detector/__init__.py": {
+   "sha256": "3d75f18b47019bad190ba14e74bc103a569b11c16892301e947742bad6583979",
+   "size": 414
+  },
+  "alg_repo/body/pcb_defect/pcb_defect_detector/pcb_defect_detector/_engine/__init__-2.py": {
+   "sha256": "7eb70257593da06f682a3ddda54a9d260d4fc514f645237f5ca74b08f8da61a6",
+   "size": 2
+  },
+  "alg_repo/body/pcb_defect/pcb_defect_detector/pcb_defect_detector/_engine/__init__.py": {
+   "sha256": "7eb70257593da06f682a3ddda54a9d260d4fc514f645237f5ca74b08f8da61a6",
+   "size": 2
+  },
+  "alg_repo/body/pcb_defect/pcb_defect_detector/pcb_defect_detector/_engine/algorithms/__init__-2.py": {
+   "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+   "size": 0
+  },
+  "alg_repo/body/pcb_defect/pcb_defect_detector/pcb_defect_detector/_engine/algorithms/__init__.py": {
+   "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+   "size": 0
+  },
+  "alg_repo/body/pcb_defect/pcb_defect_detector/pcb_defect_detector/_engine/algorithms/component/adapter_shell-2.py": {
+   "sha256": "04a556018cb6da2302151458a161fe9c73915548155d230a0055b1b0449139e2",
+   "size": 8603
+  },
+  "alg_repo/body/pcb_defect/pcb_defect_detector/pcb_defect_detector/_engine/algorithms/component/adapter_shell.py": {
+   "sha256": "04a556018cb6da2302151458a161fe9c73915548155d230a0055b1b0449139e2",
+   "size": 8603
+  },
+  "alg_repo/body/pcb_defect/pcb_defect_detector/pcb_defect_detector/_engine/algorithms/component/common-2.py": {
+   "sha256": "aa0fe2a8b6f5096ee6293b7d643545cac81f2ef85c77c20de431042c43fda45d",
+   "size": 42741
+  },
+  "alg_repo/body/pcb_defect/pcb_defect_detector/pcb_defect_detector/_engine/algorithms/component/common.py": {
+   "sha256": "198a3e82c3f4a16af4b38a6b90b8abf7b139ff08bfa8564c07b3297b7b56bef3",
+   "size": 61838
+  },
+  "alg_repo/body/pcb_defect/pcb_defect_detector/pcb_defect_detector/_engine/algorithms/component/__init__-2.py": {
+   "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+   "size": 0
+  },
+  "alg_repo/body/pcb_defect/pcb_defect_detector/pcb_defect_detector/_engine/algorithms/component/__init__.py": {
+   "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+   "size": 0
+  },
+  "alg_repo/body/pcb_defect/pcb_defect_detector/pcb_defect_detector/_engine/algorithms/component/damage/algo_trad-2.py": {
+   "sha256": "3a3966851dcb5e48c4cc63ac7b3bcf2d23fac2933e843454c1a7d20f7431952a",
+   "size": 5744
+  },
+  "alg_repo/body/pcb_defect/pcb_defect_detector/pcb_defect_detector/_engine/algorithms/component/damage/algo_trad.py": {
+   "sha256": "3a3966851dcb5e48c4cc63ac7b3bcf2d23fac2933e843454c1a7d20f7431952a",
+   "size": 5744
+  },
+  "alg_repo/body/pcb_defect/pcb_defect_detector/pcb_defect_detector/_engine/algorithms/component/damage/__init__-2.py": {
+   "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+   "size": 0
+  },
+  "alg_repo/body/pcb_defect/pcb_defect_detector/pcb_defect_detector/_engine/algorithms/component/damage/__init__.py": {
+   "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+   "size": 0
+  },
+  "alg_repo/body/pcb_defect/pcb_defect_detector/pcb_defect_detector/_engine/algorithms/component/flipped/algo_trad-2.py": {
+   "sha256": "833717e35fc36cb20a840fbe1d685f3dd38b78db496b650f7a771d5ef09810db",
+   "size": 3982
+  },
+  "alg_repo/body/pcb_defect/pcb_defect_detector/pcb_defect_detector/_engine/algorithms/component/flipped/algo_trad.py": {
+   "sha256": "92a354661b891ce9bffb7c3c72f477f821f2547c91ef580bed4ce5b506b18c9e",
+   "size": 3191
+  },
+  "alg_repo/body/pcb_defect/pcb_defect_detector/pcb_defect_detector/_engine/algorithms/component/flipped/__init__-2.py": {
+   "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+   "size": 0
+  },
+  "alg_repo/body/pcb_defect/pcb_defect_detector/pcb_defect_detector/_engine/algorithms/component/flipped/__init__.py": {
+   "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+   "size": 0
+  },
+  "alg_repo/body/pcb_defect/pcb_defect_detector/pcb_defect_detector/_engine/algorithms/component/missing/algo_trad-2.py": {
+   "sha256": "9937fd2a444b01babccc4d70db8300cf109c47a9f85fe167ab3f5bc326998dfe",
+   "size": 9645
+  },
+  "alg_repo/body/pcb_defect/pcb_defect_detector/pcb_defect_detector/_engine/algorithms/component/missing/algo_trad.py": {
+   "sha256": "1d12628a59b1103270f2931e13562fc525047eb66ed176b6864d588806cfcff9",
+   "size": 10948
+  },
+  "alg_repo/body/pcb_defect/pcb_defect_detector/pcb_defect_detector/_engine/algorithms/component/missing/__init__-2.py": {
+   "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+   "size": 0
+  },
+  "alg_repo/body/pcb_defect/pcb_defect_detector/pcb_defect_detector/_engine/algorithms/component/missing/__init__.py": {
+   "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+   "size": 0
+  },
+  "alg_repo/body/pcb_defect/pcb_defect_detector/pcb_defect_detector/_engine/algorithms/component/reverse_polarity/algo_trad-2.py": {
+   "sha256": "180cd203f4014bdb4a6faa1027576de99574abf32534fd565112134410bede7c",
+   "size": 6420
+  },
+  "alg_repo/body/pcb_defect/pcb_defect_detector/pcb_defect_detector/_engine/algorithms/component/reverse_polarity/algo_trad.py": {
+   "sha256": "ece3af5dd10511cc793f1a60dfc09279c00946858f163b4879291f9d7c210573",
+   "size": 8148
+  },
+  "alg_repo/body/pcb_defect/pcb_defect_detector/pcb_defect_detector/_engine/algorithms/component/reverse_polarity/__init__-2.py": {
+   "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+   "size": 0
+  },
+  "alg_repo/body/pcb_defect/pcb_defect_detector/pcb_defect_detector/_engine/algorithms/component/reverse_polarity/__init__.py": {
+   "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+   "size": 0
+  },
+  "alg_repo/body/pcb_defect/pcb_defect_detector/pcb_defect_detector/_engine/algorithms/component/shift/algo_trad-2.py": {
+   "sha256": "cf572d886059e584bfe2015f01efc6721bb123ebd0147f6eff9b3d5c3d661941",
+   "size": 4254
+  },
+  "alg_repo/body/pcb_defect/pcb_defect_detector/pcb_defect_detector/_engine/algorithms/component/shift/algo_trad.py": {
+   "sha256": "2744b03de63ca34dd4423ef281394979190498844c4678f7f43ffa9cab1be34e",
+   "size": 4180
+  },
+  "alg_repo/body/pcb_defect/pcb_defect_detector/pcb_defect_detector/_engine/algorithms/component/shift/__init__-2.py": {
+   "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+   "size": 0
+  },
+  "alg_repo/body/pcb_defect/pcb_defect_detector/pcb_defect_detector/_engine/algorithms/component/shift/__init__.py": {
+   "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+   "size": 0
+  },
+  "alg_repo/body/pcb_defect/pcb_defect_detector/pcb_defect_detector/_engine/algorithms/component/tombstone/algo_trad-2.py": {
+   "sha256": "2137f5702a527e42459cb2902b9846b12ded831e97c3310c8717d3b37e7c4a02",
+   "size": 5759
+  },
+  "alg_repo/body/pcb_defect/pcb_defect_detector/pcb_defect_detector/_engine/algorithms/component/tombstone/algo_trad.py": {
+   "sha256": "2137f5702a527e42459cb2902b9846b12ded831e97c3310c8717d3b37e7c4a02",
+   "size": 5759
+  },
+  "alg_repo/body/pcb_defect/pcb_defect_detector/pcb_defect_detector/_engine/algorithms/component/tombstone/__init__-2.py": {
+   "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+   "size": 0
+  },
+  "alg_repo/body/pcb_defect/pcb_defect_detector/pcb_defect_detector/_engine/algorithms/component/tombstone/__init__.py": {
+   "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+   "size": 0
+  },
+  "alg_repo/body/pcb_defect/pcb_defect_detector/pcb_defect_detector/_engine/algorithms/component/wrongpart/algo_trad-2.py": {
+   "sha256": "a76eab64fd05e6ec5a791472dbc3bf37a4d74fd13e1ad71e50d496de1e945db1",
+   "size": 5814
+  },
+  "alg_repo/body/pcb_defect/pcb_defect_detector/pcb_defect_detector/_engine/algorithms/component/wrongpart/algo_trad.py": {
+   "sha256": "1002815fe3d889d48dd8fb8e461f2dade56690cca4542f0d995e91cd2c45bd6d",
+   "size": 4672
+  },
+  "alg_repo/body/pcb_defect/pcb_defect_detector/pcb_defect_detector/_engine/algorithms/component/wrongpart/__init__-2.py": {
+   "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+   "size": 0
+  },
+  "alg_repo/body/pcb_defect/pcb_defect_detector/pcb_defect_detector/_engine/algorithms/component/wrongpart/__init__.py": {
+   "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+   "size": 0
+  },
+  "alg_repo/body/pcb_defect/pcb_defect_detector/pcb_defect_detector/_engine/core/adapter_runtime-2.py": {
+   "sha256": "6311075fcbca950515ee664b333ac28993df91cbedcd45557920bfcfb60d3a0c",
+   "size": 5605
+  },
+  "alg_repo/body/pcb_defect/pcb_defect_detector/pcb_defect_detector/_engine/core/adapter_runtime.py": {
+   "sha256": "6311075fcbca950515ee664b333ac28993df91cbedcd45557920bfcfb60d3a0c",
+   "size": 5605
+  },
+  "alg_repo/body/pcb_defect/pcb_defect_detector/pcb_defect_detector/_engine/core/interfaces-2.py": {
+   "sha256": "04f89886c5d560a2b71bc2ddea858ec1234993cd58da11871323c91b8dad3a61",
+   "size": 810
+  },
+  "alg_repo/body/pcb_defect/pcb_defect_detector/pcb_defect_detector/_engine/core/interfaces.py": {
+   "sha256": "04f89886c5d560a2b71bc2ddea858ec1234993cd58da11871323c91b8dad3a61",
+   "size": 810
+  },
+  "alg_repo/body/pcb_defect/pcb_defect_detector/pcb_defect_detector/_engine/core/load_class-2.py": {
+   "sha256": "e0667b4ef64d0cfbfdd5112a9d62b34c8a654fcfa04eafbec0657f3e5879d307",
+   "size": 637
+  },
+  "alg_repo/body/pcb_defect/pcb_defect_detector/pcb_defect_detector/_engine/core/load_class.py": {
+   "sha256": "e0667b4ef64d0cfbfdd5112a9d62b34c8a654fcfa04eafbec0657f3e5879d307",
+   "size": 637
+  },
+  "alg_repo/body/pcb_defect/pcb_defect_detector/pcb_defect_detector/_engine/core/models-2.py": {
+   "sha256": "9ce68016da5159a132619090d01c956f5e8676a3561ff0b491dd06b3ccdec5fb",
+   "size": 1129
+  },
+  "alg_repo/body/pcb_defect/pcb_defect_detector/pcb_defect_detector/_engine/core/models.py": {
+   "sha256": "9ce68016da5159a132619090d01c956f5e8676a3561ff0b491dd06b3ccdec5fb",
+   "size": 1129
+  },
+  "alg_repo/body/pcb_defect/pcb_defect_detector/pcb_defect_detector/_engine/core/__init__-2.py": {
+   "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+   "size": 0
+  },
+  "alg_repo/body/pcb_defect/pcb_defect_detector/pcb_defect_detector/_engine/core/__init__.py": {
+   "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+   "size": 0
+  },
+  "alg_repo/body/pcb_defect/pcb_defect_detector/pcb_defect_detector/_engine/core/entities/algorithms-2.py": {
+   "sha256": "c111e9fa2817c3e8d71f601bd7b0f3029d305ddca5df6b198a2b3e1065e454b6",
+   "size": 3976
+  },
+  "alg_repo/body/pcb_defect/pcb_defect_detector/pcb_defect_detector/_engine/core/entities/algorithms.py": {
+   "sha256": "c111e9fa2817c3e8d71f601bd7b0f3029d305ddca5df6b198a2b3e1065e454b6",
+   "size": 3976
+  },
+  "alg_repo/body/pcb_defect/pcb_defect_detector/pcb_defect_detector/_engine/core/entities/detect-2.py": {
+   "sha256": "97802f42d1a4fae32cd4c75d29db200fcf5cfe468ee96e4dfe978a57a23f0d29",
+   "size": 1961
+  },
+  "alg_repo/body/pcb_defect/pcb_defect_detector/pcb_defect_detector/_engine/core/entities/detect.py": {
+   "sha256": "97802f42d1a4fae32cd4c75d29db200fcf5cfe468ee96e4dfe978a57a23f0d29",
+   "size": 1961
+  },
+  "alg_repo/body/pcb_defect/pcb_defect_detector/pcb_defect_detector/_engine/core/entities/__init__-2.py": {
+   "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+   "size": 0
+  },
+  "alg_repo/body/pcb_defect/pcb_defect_detector/pcb_defect_detector/_engine/core/entities/__init__.py": {
+   "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+   "size": 0
+  },
+  "alg_repo/body/pcb_defect/pcb_defect_detector/pcb_defect_detector/_engine/core/utils/alg_config-2.py": {
+   "sha256": "057f819e343da9b5ca19db49441af926565b745b19fdd6afb6c7681ef1e15dde",
+   "size": 1202
+  },
+  "alg_repo/body/pcb_defect/pcb_defect_detector/pcb_defect_detector/_engine/core/utils/alg_config.py": {
+   "sha256": "057f819e343da9b5ca19db49441af926565b745b19fdd6afb6c7681ef1e15dde",
+   "size": 1202
+  },
+  "alg_repo/body/pcb_defect/pcb_defect_detector/pcb_defect_detector/_engine/core/utils/__init__-2.py": {
+   "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+   "size": 0
+  },
+  "alg_repo/body/pcb_defect/pcb_defect_detector/pcb_defect_detector/_engine/core/utils/__init__.py": {
+   "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+   "size": 0
+  },
+  "alg_repo/body/pcb_defect/pcb_defect_detector/pcb_defect_detector/_engine/resources/config/alg/component/component_damage-2.json": {
+   "sha256": "bdc8d4cbba8b8b26cc97f2bd624e97c9ed3c3ce0f6300902a54e81987c380a71",
+   "size": 457
+  },
+  "alg_repo/body/pcb_defect/pcb_defect_detector/pcb_defect_detector/_engine/resources/config/alg/component/component_damage.json": {
+   "sha256": "bdc8d4cbba8b8b26cc97f2bd624e97c9ed3c3ce0f6300902a54e81987c380a71",
+   "size": 457
+  },
+  "alg_repo/body/pcb_defect/pcb_defect_detector/pcb_defect_detector/_engine/resources/config/alg/component/component_flipped-2.json": {
+   "sha256": "11c95cfa0ba9ec0f1209df98c97ab8aca468eb52805834c28abf85e9f718c82d",
+   "size": 361
+  },
+  "alg_repo/body/pcb_defect/pcb_defect_detector/pcb_defect_detector/_engine/resources/config/alg/component/component_flipped.json": {
+   "sha256": "11c95cfa0ba9ec0f1209df98c97ab8aca468eb52805834c28abf85e9f718c82d",
+   "size": 361
+  },
+  "alg_repo/body/pcb_defect/pcb_defect_detector/pcb_defect_detector/_engine/resources/config/alg/component/component_missing-2.json": {
+   "sha256": "8d75834020daaa8d0bae36cc103f913ebe1ff415f1a5a3ffaaea165823a457d6",
+   "size": 560
+  },
+  "alg_repo/body/pcb_defect/pcb_defect_detector/pcb_defect_detector/_engine/resources/config/alg/component/component_missing.json": {
+   "sha256": "8d75834020daaa8d0bae36cc103f913ebe1ff415f1a5a3ffaaea165823a457d6",
+   "size": 560
+  },
+  "alg_repo/body/pcb_defect/pcb_defect_detector/pcb_defect_detector/_engine/resources/config/alg/component/component_reverse_polarity-2.json": {
+   "sha256": "867ecbf33caf87f1bab41eaf4639411fb5026fdddd55cae1fad45d21df862e32",
+   "size": 546
+  },
+  "alg_repo/body/pcb_defect/pcb_defect_detector/pcb_defect_detector/_engine/resources/config/alg/component/component_reverse_polarity.json": {
+   "sha256": "9a5de0014ed2636f82d7f52492af36255d08537124bfa00ac00e2949ede8013f",
+   "size": 528
+  },
+  "alg_repo/body/pcb_defect/pcb_defect_detector/pcb_defect_detector/_engine/resources/config/alg/component/component_shift-2.json": {
+   "sha256": "1728104bd4617c79e047e2449a9084afd2a4b9d86960bd602ea998621e989e8f",
+   "size": 371
+  },
+  "alg_repo/body/pcb_defect/pcb_defect_detector/pcb_defect_detector/_engine/resources/config/alg/component/component_shift.json": {
+   "sha256": "c5b1be813b8107b91957a6485e55b47fbe88b8e54ce0919cb46f922713399c7d",
+   "size": 358
+  },
+  "alg_repo/body/pcb_defect/pcb_defect_detector/pcb_defect_detector/_engine/resources/config/alg/component/component_tombstone-2.json": {
+   "sha256": "03a6124bc03741d42782356c514c4aeae3d5d6a34f588f16ca0d3509d84b4b6f",
+   "size": 524
+  },
+  "alg_repo/body/pcb_defect/pcb_defect_detector/pcb_defect_detector/_engine/resources/config/alg/component/component_tombstone.json": {
+   "sha256": "03a6124bc03741d42782356c514c4aeae3d5d6a34f588f16ca0d3509d84b4b6f",
+   "size": 524
+  },
+  "alg_repo/body/pcb_defect/pcb_defect_detector/pcb_defect_detector/_engine/resources/config/alg/component/component_wrong_part-2.json": {
+   "sha256": "caa6a0ec18ef80b07690696f5723cc4358f6c29e0a74964826ab106e31441ff0",
+   "size": 441
+  },
+  "alg_repo/body/pcb_defect/pcb_defect_detector/pcb_defect_detector/_engine/resources/config/alg/component/component_wrong_part.json": {
+   "sha256": "caa6a0ec18ef80b07690696f5723cc4358f6c29e0a74964826ab106e31441ff0",
+   "size": 441
+  },
+  "alg_repo/body/pcb_defect/pcb_defect_detector/pcb_defect_detector/_engine/resources/config/alg_pool/component_algs-2.json": {
+   "sha256": "8817a7d53f2edc52af2375d4ebc9412761e47378f467466d88ca9dd32b01f7d5",
+   "size": 2787
+  },
+  "alg_repo/body/pcb_defect/pcb_defect_detector/pcb_defect_detector/_engine/resources/config/alg_pool/component_algs.json": {
+   "sha256": "8817a7d53f2edc52af2375d4ebc9412761e47378f467466d88ca9dd32b01f7d5",
+   "size": 2787
+  },
+  "alg_repo/body/pcb_defect/pcb_defect_detector/pcb_defect_detector/_engine/utils/compat-2.py": {
+   "sha256": "c61fa8c199f9b71dd53a28d7b130292308bb1cf4f8bf8c2365f3558c325822ff",
+   "size": 845
+  },
+  "alg_repo/body/pcb_defect/pcb_defect_detector/pcb_defect_detector/_engine/utils/compat.py": {
+   "sha256": "c61fa8c199f9b71dd53a28d7b130292308bb1cf4f8bf8c2365f3558c325822ff",
+   "size": 845
+  },
+  "alg_repo/body/pcb_defect/pcb_defect_detector/pcb_defect_detector/_engine/utils/__init__-2.py": {
+   "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+   "size": 0
+  },
+  "alg_repo/body/pcb_defect/pcb_defect_detector/pcb_defect_detector/_engine/utils/__init__.py": {
+   "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+   "size": 0
+  },
+  "alg_repo/body/pcb_defect/pcb_defect_detector/tests/test_roi_match.py": {
+   "sha256": "4aae92126094565914335b676b0e8ddb4f21f027088f072fe32193cd3e46ab3c",
+   "size": 4871
+  },
+  "alg_repo/body/pcb_defect/pcb_defect_detector/tests/test_smoke-2.py": {
+   "sha256": "897b5e54f09c27df37c1019ebf84d4fa2a4bbf5ed1d4a624dade60804f7d06ef",
+   "size": 3138
+  },
+  "alg_repo/body/pcb_defect/pcb_defect_detector/tests/test_smoke.py": {
+   "sha256": "897b5e54f09c27df37c1019ebf84d4fa2a4bbf5ed1d4a624dade60804f7d06ef",
+   "size": 3138
+  },
+  "alg_repo/body/pcb_defect/pcb_defect_detector/tools/validate_defect_samples-2.py": {
+   "sha256": "e8dc346101fa34d440bc63519def259663905052b4b586886a72870850f3a8e8",
+   "size": 1543
+  },
+  "alg_repo/body/pcb_defect/pcb_defect_detector/tools/validate_defect_samples.py": {
+   "sha256": "e8dc346101fa34d440bc63519def259663905052b4b586886a72870850f3a8e8",
+   "size": 1543
+  },
+  "alg_repo/gold_finger/defect_classifier.joblib": {
+   "sha256": "a7ccaa7e57e0813053f3b8094b73477b45e77f5b9b0a65d849e39f707d37d587",
+   "size": 6320001
+  },
+  "alg_repo/gold_finger/defect_classifier.npz": {
+   "sha256": "38a3b03739785c16e04bac68a416cad60d43cf7652bf71e7ce49a3954d68c8b1",
+   "size": 2286072
+  },
+  "alg_repo/gold_finger/defect_features.py": {
+   "sha256": "d2f9102148d8e16a58ad34adc96c8a53fb0268b36dba3a0b144c73cd1146d1ad",
+   "size": 8374
+  },
+  "alg_repo/gold_finger/extract_features.py": {
+   "sha256": "f7fc82c37e696d4e1221571e81a1c771339b727cee5052e5a98df099429918cf",
+   "size": 3693
+  },
+  "alg_repo/gold_finger/features_dataset.npz": {
+   "sha256": "9b4970c86c0fa82185f0845ab9abc366d96326355550d54ffd19d2b54bc815b7",
+   "size": 490962
+  },
+  "alg_repo/gold_finger/forest_infer.py": {
+   "sha256": "59197497fb2aa1fe5754059c9d0111c99afeedfcecd37b7a61a0eff71b3c7ce3",
+   "size": 3224
+  },
+  "alg_repo/gold_finger/main_pipeline.md": {
+   "sha256": "e9ab742fe5552799ba5750862115b86d206b471fb945e1f33be466adeaaa83f2",
+   "size": 16113
+  },
+  "alg_repo/gold_finger/main_pipeline.py": {
+   "sha256": "be6c39e1241f884e1b51ab74d98d718215a2c9e3e1cce5af14c962ee3dc078e5",
+   "size": 40389
+  },
+  "alg_repo/gold_finger/peizhun.py": {
+   "sha256": "af62f7b3d992a61918b798a90c2089f533a40410d2f5790de9db7cfd806d42fc",
+   "size": 22487
+  },
+  "alg_repo/gold_finger/seed_extract.py": {
+   "sha256": "510298c6dd088ba5d483c8ae2b3d0a49b08b40dffb7c9521c6d0537327805ad1",
+   "size": 13997
+  },
+  "alg_repo/gold_finger/train_classifier.py": {
+   "sha256": "f5811ebbadff6f648bc8c886259c2724138037cbb9afba6783f4905dd4809d0c",
+   "size": 4206
+  },
+  "alg_repo/gold_finger/修复记录_金手指边缘误检与配准.md": {
+   "sha256": "d74643b67df6ede4d4455280a1d07273391b8f5bdd3ba5dfe96edf49a89ad56a",
+   "size": 9539
+  },
+  "alg_repo/shift_smt/contract_reference/core/load_class.py": {
+   "sha256": "c7c129bcb1e0ef94ac7233d967286d5443c8543e70fb7a351bd8ecb592079bfd",
+   "size": 610
+  },
+  "alg_repo/shift_smt/contract_reference/core/entities/algorithms.py": {
+   "sha256": "96a28219a8ccb02524d0a0e96250acff36b31a4f89eeadb0ab00f3e4237cf5e5",
+   "size": 4203
+  },
+  "alg_repo/shift_smt/contract_reference/core/entities/detect.py": {
+   "sha256": "f89a2954ed6c8402b36a9d22e853f8b050e0185101a2ccef8ea26f0a52619d94",
+   "size": 2259
+  },
+  "alg_repo/shift_smt/contract_reference/core/utils/alg_config.py": {
+   "sha256": "31aa837622e8fed2777b0cfeaee92295d1d2a97e39e2b465db129307626176dd",
+   "size": 3474
+  },
+  "alg_repo/shift_smt/src/algorithms/__init__.py": {
+   "sha256": "ce5994d599436c511352e5fbea3913ba42a74e1c4713e4e92ed97cedf0bc694a",
+   "size": 55
+  },
+  "alg_repo/shift_smt/src/algorithms/color_extractor/color_extractor.py": {
+   "sha256": "266d6c4245dffa21b18c1c716af4004914c1a298e42f1f1ed82d1b96b970d51d",
+   "size": 10690
+  },
+  "alg_repo/shift_smt/src/algorithms/color_extractor/__init__.py": {
+   "sha256": "2fc5d1a44c178935c743239b0606c5cae44639eb163ac827c6daf695dfd6d127",
+   "size": 28
+  },
+  "alg_repo/shift_smt/src/algorithms/component_detect/shift_smt_all_alg.py": {
+   "sha256": "b69702f80c79d3c2e5ac0813cc19da212922bfd7e8b23a5ab0621f9d01ff2dff",
+   "size": 37143
+  },
+  "alg_repo/shift_smt/src/algorithms/component_detect/__init__.py": {
+   "sha256": "acc1857794895af7994a8f1ec5ae22fe613dfb5e0383daaea1907b8057b2fcd6",
+   "size": 34
+  },
+  "alg_repo/shift_smt/src/algorithms/gamma/gamma.py": {
+   "sha256": "b13f9be1726106895ca6360cb851b3383a43e4813cd507d52cff44e1b4e6b7e4",
+   "size": 1245
+  },
+  "alg_repo/shift_smt/src/algorithms/gamma/__init__.py": {
+   "sha256": "8c16d7642cfde257cc7e84e803bfeeb957eece509057a6547abf7843f12ade64",
+   "size": 37
+  },
+  "alg_repo/shift_smt/src/resources/config/alg/shift_smt_all_alg.json": {
+   "sha256": "707bfd9520053b6a4cc6efbde5c971bf9d83d71faba37bfcc6173b4afb6c189d",
+   "size": 685
+  },
+  "alg_repo/shift_smt/src/resources/config/alg_pool/cv_detect_algs.json": {
+   "sha256": "51da7da872f2fd454ca504634b4f36f7cc5d7e8414dcd0a8b19e5eae5ed1ed0b",
+   "size": 330
+  },
+  "alg_repo/smt/conftest.py": {
+   "sha256": "e8a748195ab52cf8c02f85a59b51b794be933b43a77a765c8a40f7e00242c83c",
+   "size": 249
+  },
+  "alg_repo/smt/README.md": {
+   "sha256": "93af0830c742ad327c27d303e16713f7a56f7712404c19f34a27c4bc6263d8e3",
+   "size": 15444
+  },
+  "alg_repo/smt/requirements.txt": {
+   "sha256": "de0bfc38223406d6ecfae34fb8e302b4435cced0833a59e3cf052ea5e2393142",
+   "size": 315
+  },
+  "alg_repo/smt/contract_reference/core/load_class.py": {
+   "sha256": "c7c129bcb1e0ef94ac7233d967286d5443c8543e70fb7a351bd8ecb592079bfd",
+   "size": 610
+  },
+  "alg_repo/smt/contract_reference/core/entities/algorithms.py": {
+   "sha256": "96a28219a8ccb02524d0a0e96250acff36b31a4f89eeadb0ab00f3e4237cf5e5",
+   "size": 4203
+  },
+  "alg_repo/smt/contract_reference/core/entities/detect.py": {
+   "sha256": "f89a2954ed6c8402b36a9d22e853f8b050e0185101a2ccef8ea26f0a52619d94",
+   "size": 2259
+  },
+  "alg_repo/smt/contract_reference/core/utils/alg_config.py": {
+   "sha256": "31aa837622e8fed2777b0cfeaee92295d1d2a97e39e2b465db129307626176dd",
+   "size": 3474
+  },
+  "alg_repo/smt/csrc/setup.py": {
+   "sha256": "bdba2de4732f051f52e3dcc03986354c79c562a5bbfcea75745a64ba2a8d6a60",
+   "size": 2146
+  },
+  "alg_repo/smt/csrc/_fast_core.cpp": {
+   "sha256": "2cb29a68ecf353f294754f394c6baa40cc9fb2f72370a096f837baf12c04e9a5",
+   "size": 15843
+  },
+  "alg_repo/smt/docs/command.md": {
+   "sha256": "5c7534a2597f70453e7467fd339ec4fd5b7ece4af781ddb08893804c3c0b4e0c",
+   "size": 3201
+  },
+  "alg_repo/smt/docs/design.md": {
+   "sha256": "126bd3195c0d4934ff470015181ef6a9a1283d0edada90f43e7ed8852b056588",
+   "size": 17254
+  },
+  "alg_repo/smt/docs/pad.md": {
+   "sha256": "bb616079fbd07deb7cdb8fd7c848136bd23a7ef3842b4ee7059e25f214a7f374",
+   "size": 6059
+  },
+  "alg_repo/smt/docs/params.md": {
+   "sha256": "96e65e6f6ff5571b3e5455a43f473b17147d2ae8b9784e09d850ca412141e701",
+   "size": 12249
+  },
+  "alg_repo/smt/docs/solder_smt_all_alg.json": {
+   "sha256": "026b9d230f89e4909c5a409d11db8a1a9b8f4accd07959e80949519453b5814d",
+   "size": 3242
+  },
+  "alg_repo/smt/docs/tuner.md": {
+   "sha256": "c25434a29a7558b125336a7548fd7e73d8113bb68b1e61a549cab03df402a2ad",
+   "size": 6828
+  },
+  "alg_repo/smt/src/algorithms/__init__.py": {
+   "sha256": "56a7e597d8779a4f7641425fdfbf8ef9080d9dd1900b9cc32ed870ff29784d94",
+   "size": 332
+  },
+  "alg_repo/smt/src/algorithms/solder_smt/__init__.py": {
+   "sha256": "300b49959f0930a4a418e44142ac3f288bb2f884bba999494a3aa0de7d8faaba",
+   "size": 19
+  },
+  "alg_repo/smt/src/algorithms/solder_smt/composite_smt_all/solder_smt_all_alg.py": {
+   "sha256": "0657d234ae8b1aa507d5e05be90f8b4124e7efdeb996a4d6aacf709fd78bb88e",
+   "size": 49203
+  },
+  "alg_repo/smt/src/algorithms/solder_smt/composite_smt_all/_solder_core.py": {
+   "sha256": "9b0e86683cc278296ff32365e15de9c86de4b41cc2bc4651323552842b735634",
+   "size": 73838
+  },
+  "alg_repo/smt/src/algorithms/solder_smt/composite_smt_all/__init__.py": {
+   "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+   "size": 0
+  },
+  "alg_repo/smt/src/resources/config/alg/solder_smt/solder_smt_all_alg.json": {
+   "sha256": "b17f48b869735ac40ba5e5cfe0d9913830546fa22c901294246fa743c210d343",
+   "size": 3274
+  },
+  "alg_repo/smt/src/resources/config/alg_pool/cv_algorithms.json": {
+   "sha256": "986bf837ce48cee0f9a7a9b5131167ab3a084c58febb4654e7477126844a9e9e",
+   "size": 390
+  },
+  "alg_repo/smt/test_src/algorithms/solder_smt/solder_smt_all_alg_test.py": {
+   "sha256": "4b66660f728acf8e2de17a46265f586f1e29125f02f205239b345ce9f3796836",
+   "size": 4580
+  },
+  "alg_repo/smt/tuner/pcba_tuner.py": {
+   "sha256": "1ae10092e7175af234a96b8053cddb3d27d1aab7b958471ba02727b61c68cb3d",
+   "size": 100189
+  },
+  "alg_repo/smt/tuner/pcba_tuner_real.py": {
+   "sha256": "4e1caaf2288555b7f5f581c1e0e481cc2c6adb277ebcec13adab0faf7cd8a83c",
+   "size": 122794
+  },
+  "alg_repo/through_hole/app/requirements.txt": {
+   "sha256": "efbfc5910b7c9d43ba190af03d4c70b532fcd58957feb316d5bbc280ef8d5931",
+   "size": 175
+  },
+  "alg_repo/through_hole/app/run_app.py": {
+   "sha256": "071cf22726c4562067f97f67a55f8e1296289bbf8efdf0f8829c8d97ff014e8f",
+   "size": 436
+  },
+  "alg_repo/through_hole/app/pcb_solder_app/config.py": {
+   "sha256": "20fb53565c99cfaf4aeaffd396aac30e38f893df7b4cdd1411cc6bab04dd61c8",
+   "size": 2627
+  },
+  "alg_repo/through_hole/app/pcb_solder_app/main.py": {
+   "sha256": "13eb6fa5e7293f5374c03bf84681736df0b3594c2085a75c4df5f1e0e82915a6",
+   "size": 705
+  },
+  "alg_repo/through_hole/app/pcb_solder_app/metadata.py": {
+   "sha256": "427c05a1d4e7cd7a586fed26d59a50b78e24342cb87495994f6e6e90188d287e",
+   "size": 5392
+  },
+  "alg_repo/through_hole/app/pcb_solder_app/__init__.py": {
+   "sha256": "2842d937941d447b84d45fa1fd8b55af341aa6c361380609c83767e58c7c3047",
+   "size": 53
+  },
+  "alg_repo/through_hole/app/pcb_solder_app/core/detector_service.py": {
+   "sha256": "548ac6ccc590726e30bcac082d908767e4093f445b52c24bebfe87aba05f9978",
+   "size": 3214
+  },
+  "alg_repo/through_hole/app/pcb_solder_app/core/models.py": {
+   "sha256": "83b0e1ef2a31f88dbd77a2d5b8b6ebd1c92100777ce46577e6f841fbbb509c25",
+   "size": 9888
+  },
+  "alg_repo/through_hole/app/pcb_solder_app/core/template_store.py": {
+   "sha256": "589dae595b01eace58224320547eb16f6707bf3e067664e6576262ee3c43a5a9",
+   "size": 1806
+  },
+  "alg_repo/through_hole/app/pcb_solder_app/core/__init__.py": {
+   "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+   "size": 0
+  },
+  "alg_repo/through_hole/app/pcb_solder_app/ui/defect_panel.py": {
+   "sha256": "49c3e5a06bfb87052d185483ec5a699c588361769b4261160434837660f665a2",
+   "size": 5555
+  },
+  "alg_repo/through_hole/app/pcb_solder_app/ui/image_canvas.py": {
+   "sha256": "b318dbffe5c8194a46194d980583f3b2005a32217d45c358a0d0e3c5e90ef1ae",
+   "size": 22518
+  },
+  "alg_repo/through_hole/app/pcb_solder_app/ui/main_window.py": {
+   "sha256": "4545afa2cfd1c3aa6928705948ec9c2be471c0f167e5df29b12410870d526e44",
+   "size": 27131
+  },
+  "alg_repo/through_hole/app/pcb_solder_app/ui/param_panel.py": {
+   "sha256": "e643e989fcc52a49e7ada457d64144975019cc7692d06c75b96c5d9d9cff781a",
+   "size": 7827
+  },
+  "alg_repo/through_hole/app/pcb_solder_app/ui/resize_grips.py": {
+   "sha256": "27501947ee6da77b168f9114ce30bc4e6f19a7f7a16bc8cac4a13c126f0aff52",
+   "size": 4253
+  },
+  "alg_repo/through_hole/app/pcb_solder_app/ui/result_panel.py": {
+   "sha256": "2765422b22603aa77a79c60c5812d3cfd3a73d9f884e72dbefd0b7676c8ea699",
+   "size": 7896
+  },
+  "alg_repo/through_hole/app/pcb_solder_app/ui/solder_area_panel.py": {
+   "sha256": "5bbfab3fb66457a5ed53b8070fdebbcce61473a82fbf57f6eb3d64f281f83c27",
+   "size": 4678
+  },
+  "alg_repo/through_hole/app/pcb_solder_app/ui/theme.py": {
+   "sha256": "75ae3f17ed5a3b5543dcd2093bd68ac37ea83076f181a08e30afc8dd2c819269",
+   "size": 8647
+  },
+  "alg_repo/through_hole/app/pcb_solder_app/ui/title_bar.py": {
+   "sha256": "191174e94911768434368b1845ec22b7d0e902a78db02d7eb5c64ecef0189de5",
+   "size": 2391
+  },
+  "alg_repo/through_hole/app/pcb_solder_app/ui/widgets.py": {
+   "sha256": "ccf72aeb8c297d75ff22d37524329e0ba9c8f2a36f246e70f873c1349fb39347",
+   "size": 9639
+  },
+  "alg_repo/through_hole/app/pcb_solder_app/ui/workers.py": {
+   "sha256": "4d073afe5aaae3b5b7ac1c3f8bf8e8963bf51e5c7c7df46fdb54f99895c3111a",
+   "size": 2927
+  },
+  "alg_repo/through_hole/app/pcb_solder_app/ui/__init__.py": {
+   "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+   "size": 0
+  },
+  "alg_repo/through_hole/detect/config.yaml": {
+   "sha256": "c3259cbf61540ffd2ee5141399b20e2bb1632176212e35031ad9c18d99fb1791",
+   "size": 12174
+  },
+  "alg_repo/through_hole/detect/conftest.py": {
+   "sha256": "915afcf556dfed19063dadcab57e5f4a7ed0c866da4636dcef34b67efe664128",
+   "size": 447
+  },
+  "alg_repo/through_hole/detect/README.md": {
+   "sha256": "6e19aa3b44fd47ea4fc0b6a4c33819915e61136f705b1b0acee339916276389e",
+   "size": 2351
+  },
+  "alg_repo/through_hole/detect/requirements.txt": {
+   "sha256": "247aef8f15455ace7b341fcb321266a5a47d38b2111735360c2b8bf57a2aba7f",
+   "size": 251
+  },
+  "alg_repo/through_hole/detect/run.py": {
+   "sha256": "34aaf3542abc1d110344f54c955abb05368ad5d088dc208bafa47ce9afdfe8f1",
+   "size": 6960
+  },
+  "alg_repo/through_hole/detect/contract_reference/README.md": {
+   "sha256": "696ab138197f717f2b09a6fb8e47eda7db522ef5dc347704c027483ceda43ec5",
+   "size": 196
+  },
+  "alg_repo/through_hole/detect/contract_reference/core/load_class.py": {
+   "sha256": "6bf6546e19267a6b4315a104716ff75190f2094e97edc5a919dbe668707d030b",
+   "size": 771
+  },
+  "alg_repo/through_hole/detect/contract_reference/core/__init__.py": {
+   "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+   "size": 0
+  },
+  "alg_repo/through_hole/detect/contract_reference/core/entities/algorithms.py": {
+   "sha256": "a883a15d1551e81a20da07011b3c961f2545c4d1afae65da520bb0e724d7f280",
+   "size": 4052
+  },
+  "alg_repo/through_hole/detect/contract_reference/core/entities/detect.py": {
+   "sha256": "2b41eb3e9d1087531bd8a188de912e7990c16407e738cfa71a86aa5f80f55790",
+   "size": 2145
+  },
+  "alg_repo/through_hole/detect/contract_reference/core/entities/__init__.py": {
+   "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+   "size": 0
+  },
+  "alg_repo/through_hole/detect/contract_reference/core/utils/alg_config.py": {
+   "sha256": "81f118a95428e5e7551c7114254c3220cf0bbdb638b11c0d9dff21d67c2448eb",
+   "size": 3540
+  },
+  "alg_repo/through_hole/detect/contract_reference/core/utils/__init__.py": {
+   "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+   "size": 0
+  },
+  "alg_repo/through_hole/detect/docs/插件焊点接入说明.md": {
+   "sha256": "8e3df791ffa59d72bd8c32d613eceddda13e6764612dffcefe36af2d9f228ac6",
+   "size": 4719
+  },
+  "alg_repo/through_hole/detect/input/roi/10-1.png": {
+   "sha256": "6e547396437a5dc174cdb61ca5dee2aa38287c25df1df36b9daeff666c76ac8b",
+   "size": 88681
+  },
+  "alg_repo/through_hole/detect/input/roi/11-1.png": {
+   "sha256": "56fcd0580cd55c78f83f531bd8e9937752c00aa7042fd7025c66fb506d958fcc",
+   "size": 92490
+  },
+  "alg_repo/through_hole/detect/input/roi/12-1.png": {
+   "sha256": "8c3bfe6e57970ea5fbde78cdf369af7543c212d184d8e3c50430300e6cbad98f",
+   "size": 34637
+  },
+  "alg_repo/through_hole/detect/input/roi/12-2.png": {
+   "sha256": "f76277ec1f6a2d33932be02c307636bc3896814aed5c8d511d51f4d2bacb8c0b",
+   "size": 35684
+  },
+  "alg_repo/through_hole/detect/input/roi/13-1.png": {
+   "sha256": "4090f15f4fe077e944af5bf176252edec897dfddd6b88a08b82384eb5628f05d",
+   "size": 38601
+  },
+  "alg_repo/through_hole/detect/input/roi/13-2.png": {
+   "sha256": "cd6f6801267b00eee936a8e6b6671514fa6c01137b08725c7f961daf37877d77",
+   "size": 39597
+  },
+  "alg_repo/through_hole/detect/input/roi/14-1.png": {
+   "sha256": "486f2fad5547523d1ba29b3cdf74e64a683e772d04691f143615ab7a6be7d07b",
+   "size": 30278
+  },
+  "alg_repo/through_hole/detect/input/roi/14-2.png": {
+   "sha256": "38e03ffe5c6ffc7387a410a2b195caeeaf64e96f40f96fe5fe329928b48ffccd",
+   "size": 28951
+  },
+  "alg_repo/through_hole/detect/input/roi/15-1.png": {
+   "sha256": "18a3f6783cfd6d40cb4ecf4baf874b76cfa75ada346e01e6c7838cfaa5c3f260",
+   "size": 70648
+  },
+  "alg_repo/through_hole/detect/input/roi/15-2.png": {
+   "sha256": "efd086bb9e1c47f2b3815a578a2db970f8325ac432323b54380aaa91d9631433",
+   "size": 72314
+  },
+  "alg_repo/through_hole/detect/input/roi/2-1.png": {
+   "sha256": "c1679aedb384e6a09f2f82f27eb9b479135013f20753421e51c4e621fb59eee8",
+   "size": 21974
+  },
+  "alg_repo/through_hole/detect/input/roi/2-10.png": {
+   "sha256": "6e0bee9081b02777e4aae10ebb239579f073d711e97b72ce49a019c11105a6e3",
+   "size": 32340
+  },
+  "alg_repo/through_hole/detect/input/roi/2-11.png": {
+   "sha256": "2a016a075ceaed35af69ddb905eec3a038ae5359f05e608d4ae2f3b73a7a42eb",
+   "size": 33116
+  },
+  "alg_repo/through_hole/detect/input/roi/2-12.png": {
+   "sha256": "da3090d279b64cf299f68d60ae2c10788824131f9f57d5253387b15ca34c76fe",
+   "size": 30899
+  },
+  "alg_repo/through_hole/detect/input/roi/2-13.png": {
+   "sha256": "e856f96bb5253815b772f36aba616d3ed98a8aa5cfc19e9fececa578555b1959",
+   "size": 26752
+  },
+  "alg_repo/through_hole/detect/input/roi/2-2.png": {
+   "sha256": "0b88a1f4ffec35cdd55f84d44a5b151f8598fa56cb79f144ef10335cca55718f",
+   "size": 22416
+  },
+  "alg_repo/through_hole/detect/input/roi/2-3.png": {
+   "sha256": "78a4479163d6e689e1f9bd98f53915c87e67a7d8bc38d9e905949f2fa3bd6984",
+   "size": 22408
+  },
+  "alg_repo/through_hole/detect/input/roi/2-4.png": {
+   "sha256": "8ef39871d0557e7a4a60878c6ec1d14d278725ebfbf80c1159c0e2d748abaca6",
+   "size": 22505
+  },
+  "alg_repo/through_hole/detect/input/roi/2-5.png": {
+   "sha256": "074227f3a9935cd79d44fa246492aba843aecdf3176cc8a68ec7ac91785d79f9",
+   "size": 22590
+  },
+  "alg_repo/through_hole/detect/input/roi/2-6.png": {
+   "sha256": "6a2fb50bba577034dc8cd8e8e5a4e66cf733753c7a15d6a94a797f6b97f72954",
+   "size": 21301
+  },
+  "alg_repo/through_hole/detect/input/roi/2-7.png": {
+   "sha256": "b461e2b14e4fa986550ec7ee333e1a56c720431702b8ca3062e5efb9b882a3cf",
+   "size": 22505
+  },
+  "alg_repo/through_hole/detect/input/roi/2-8.png": {
+   "sha256": "5b93b000404a652f3eced796868907deb7995856ac332aa4a457157844f09d37",
+   "size": 32500
+  },
+  "alg_repo/through_hole/detect/input/roi/2-9.png": {
+   "sha256": "a439045dfe7f8e9152b0072e44f0b9337adf89f0bd7dec1aad95893088217209",
+   "size": 31019
+  },
+  "alg_repo/through_hole/detect/input/roi/3-1.png": {
+   "sha256": "ffef2e10cb462a20a6c3162f31a7aea1d97fb2e9a6a5b1cbf5055a11a5afda3e",
+   "size": 57830
+  },
+  "alg_repo/through_hole/detect/input/roi/3-2.png": {
+   "sha256": "454b690ec741c491b53574deab81c2608913b388bfcec946faba0c409e8f36bd",
+   "size": 56321
+  },
+  "alg_repo/through_hole/detect/input/roi/4-1.png": {
+   "sha256": "cef1d0749376a869d8ea9b90bee9a1927980c2ac083788393a565171120f7b41",
+   "size": 19756
+  },
+  "alg_repo/through_hole/detect/input/roi/4-2.png": {
+   "sha256": "75bf2bd84e66a4866079de045aff2de88df32b8901addcc154229b94b50980ef",
+   "size": 20709
+  },
+  "alg_repo/through_hole/detect/input/roi/4-3.png": {
+   "sha256": "71b5d749cabef434cbff8975907c91af6deeecfab17741443616ac2287ffec62",
+   "size": 20295
+  },
+  "alg_repo/through_hole/detect/input/roi/4-4.png": {
+   "sha256": "df8d9249fd42670b7afc05965efb8517cf5e93ee80927c219a1224efdb012335",
+   "size": 19582
+  },
+  "alg_repo/through_hole/detect/input/roi/4-5.png": {
+   "sha256": "08104035faf6f9e2192e1a5772e3c6e76d6b1b6e7cf6176a94f37fcbaf5f97ed",
+   "size": 17210
+  },
+  "alg_repo/through_hole/detect/input/roi/4-6.png": {
+   "sha256": "be3f260721ec51160219ac4494338dd98de5761e5a35f354d9af03ba4c159f9f",
+   "size": 20719
+  },
+  "alg_repo/through_hole/detect/input/roi/4-7.png": {
+   "sha256": "5a4b7e191d0321f38f75fd76dd6da395d67c8254c8433f5dda2078595e9ad414",
+   "size": 19272
+  },
+  "alg_repo/through_hole/detect/input/roi/4-8.png": {
+   "sha256": "d5e8dcdc75bf3246eb3db6a1695642fac5fdab5bd8636f5c0121c173db4c9ca2",
+   "size": 20412
+  },
+  "alg_repo/through_hole/detect/input/roi/6-1.png": {
+   "sha256": "0ac79219ab808ed141bc02dad1fe0ff425b61fe71469db2ffb91fd30505bda47",
+   "size": 50188
+  },
+  "alg_repo/through_hole/detect/input/roi/7-1.png": {
+   "sha256": "1badab447f3831c56a3f4effc8ead4f8d2ba6da0555048b3b118322c39934488",
+   "size": 42890
+  },
+  "alg_repo/through_hole/detect/input/roi/8-1.png": {
+   "sha256": "4cdfddfb6f76f38a3294dd5e846d2ab940399aba4e70d132eeb81143c608f4fe",
+   "size": 68368
+  },
+  "alg_repo/through_hole/detect/input/roi/9-1.png": {
+   "sha256": "2e3af9b5d42632451005e09cdffd1ecf404209dc9fc1ed95bd8b630e866107aa",
+   "size": 82880
+  },
+  "alg_repo/through_hole/detect/input/standard_roi/templ_10.json": {
+   "sha256": "d2746157a337c4b4514d6d9b5a86cfd6b87211e36581cd559d1bb80d3349d283",
+   "size": 34
+  },
+  "alg_repo/through_hole/detect/input/standard_roi/templ_10.png": {
+   "sha256": "a7169485134aef8c51002410564fdc5152f015707c5a94cd271a54a8f393cf73",
+   "size": 89431
+  },
+  "alg_repo/through_hole/detect/input/standard_roi/templ_11.json": {
+   "sha256": "60d9e3fd72f226081881ebb8a7af940ad786b018a380e2f2d93d1c5e1ad414cb",
+   "size": 34
+  },
+  "alg_repo/through_hole/detect/input/standard_roi/templ_11.png": {
+   "sha256": "1818c86ba9d90a925fac56c398c015c3cc1d7d5661a6eed42908aec94e2cc86d",
+   "size": 86023
+  },
+  "alg_repo/through_hole/detect/input/standard_roi/templ_12.json": {
+   "sha256": "9e8a079bf56e4baecbd90437ff3768eb3768936884915114c91a6dd64dc8b607",
+   "size": 31
+  },
+  "alg_repo/through_hole/detect/input/standard_roi/templ_12.png": {
+   "sha256": "3d79019e596e661c3b7677d16b5b6aa2c1f75469a617bdd6c7a6da028b145fa6",
+   "size": 35776
+  },
+  "alg_repo/through_hole/detect/input/standard_roi/templ_13.json": {
+   "sha256": "9e8a079bf56e4baecbd90437ff3768eb3768936884915114c91a6dd64dc8b607",
+   "size": 31
+  },
+  "alg_repo/through_hole/detect/input/standard_roi/templ_13.png": {
+   "sha256": "4090f15f4fe077e944af5bf176252edec897dfddd6b88a08b82384eb5628f05d",
+   "size": 38601
+  },
+  "alg_repo/through_hole/detect/input/standard_roi/templ_14.json": {
+   "sha256": "9e8a079bf56e4baecbd90437ff3768eb3768936884915114c91a6dd64dc8b607",
+   "size": 31
+  },
+  "alg_repo/through_hole/detect/input/standard_roi/templ_14.png": {
+   "sha256": "afa3f849dd5dad291d5177210b0cefca4741102326f8d3a80198f517085d7e54",
+   "size": 29808
+  },
+  "alg_repo/through_hole/detect/input/standard_roi/templ_15.json": {
+   "sha256": "9e8a079bf56e4baecbd90437ff3768eb3768936884915114c91a6dd64dc8b607",
+   "size": 31
+  },
+  "alg_repo/through_hole/detect/input/standard_roi/templ_15.png": {
+   "sha256": "86347680cb0d2e08083e55c873f36ebf17f311baef85667ac71045ff964ec6b5",
+   "size": 68199
+  },
+  "alg_repo/through_hole/detect/input/standard_roi/templ_2.json": {
+   "sha256": "60d9e3fd72f226081881ebb8a7af940ad786b018a380e2f2d93d1c5e1ad414cb",
+   "size": 34
+  },
+  "alg_repo/through_hole/detect/input/standard_roi/templ_2.png": {
+   "sha256": "30868e4fb47f468e7a8b8cc9a7b8462b95435a58ff2852d813a9cc915342d911",
+   "size": 21272
+  },
+  "alg_repo/through_hole/detect/input/standard_roi/templ_3.json": {
+   "sha256": "60d9e3fd72f226081881ebb8a7af940ad786b018a380e2f2d93d1c5e1ad414cb",
+   "size": 34
+  },
+  "alg_repo/through_hole/detect/input/standard_roi/templ_3.png": {
+   "sha256": "36e50e583b45dca854f35c4ceedfb5dfcf8af0f6013e1e63c251e8b4a9b1700e",
+   "size": 53991
+  },
+  "alg_repo/through_hole/detect/input/standard_roi/templ_4.json": {
+   "sha256": "60d9e3fd72f226081881ebb8a7af940ad786b018a380e2f2d93d1c5e1ad414cb",
+   "size": 34
+  },
+  "alg_repo/through_hole/detect/input/standard_roi/templ_4.png": {
+   "sha256": "4cce5b8a091764c8f975b84dd8d0e178d7ff637f813ea06f418172143fa7b6ed",
+   "size": 18785
+  },
+  "alg_repo/through_hole/detect/input/standard_roi/templ_6.json": {
+   "sha256": "60d9e3fd72f226081881ebb8a7af940ad786b018a380e2f2d93d1c5e1ad414cb",
+   "size": 34
+  },
+  "alg_repo/through_hole/detect/input/standard_roi/templ_6.png": {
+   "sha256": "2e13d0538e720afe644b64348befb4b8d506ee5fe8f0530227bd49806846a4e1",
+   "size": 42231
+  },
+  "alg_repo/through_hole/detect/input/standard_roi/templ_7.json": {
+   "sha256": "60d9e3fd72f226081881ebb8a7af940ad786b018a380e2f2d93d1c5e1ad414cb",
+   "size": 34
+  },
+  "alg_repo/through_hole/detect/input/standard_roi/templ_7.png": {
+   "sha256": "fa951660ad800877995399f2d351691fa536ae0c1c16d839c8666a0cc08b4889",
+   "size": 41615
+  },
+  "alg_repo/through_hole/detect/input/standard_roi/templ_8.json": {
+   "sha256": "60d9e3fd72f226081881ebb8a7af940ad786b018a380e2f2d93d1c5e1ad414cb",
+   "size": 34
+  },
+  "alg_repo/through_hole/detect/input/standard_roi/templ_8.png": {
+   "sha256": "35f838a7a9ecbe2bbbcd256202ae0b33296f27dff3b8b844067017314726d48e",
+   "size": 128291
+  },
+  "alg_repo/through_hole/detect/input/standard_roi/templ_9.json": {
+   "sha256": "d2746157a337c4b4514d6d9b5a86cfd6b87211e36581cd559d1bb80d3349d283",
+   "size": 34
+  },
+  "alg_repo/through_hole/detect/input/standard_roi/templ_9.png": {
+   "sha256": "449ab4b05c7bb80cc6a8abff20350fc85b6459f389d3c6fcc2f4552a272dbe90",
+   "size": 73014
+  },
+  "alg_repo/through_hole/detect/src/algorithms/__init__.py": {
+   "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+   "size": 0
+  },
+  "alg_repo/through_hole/detect/src/algorithms/pcb_through_hole/align.py": {
+   "sha256": "d7219086907be54a3671d77056369ef30efeeb4c01ef309998e187a3e5c6f5dd",
+   "size": 18427
+  },
+  "alg_repo/through_hole/detect/src/algorithms/pcb_through_hole/bridge.py": {
+   "sha256": "dc995c350aac401b865d3632aa2521f422e2de358b85b7aa06d136a97cc70323",
+   "size": 10280
+  },
+  "alg_repo/through_hole/detect/src/algorithms/pcb_through_hole/bridge_color.py": {
+   "sha256": "130b6a302ed235b08b696c9a471695e61ac01c8fa315bafbe858daf47ec0ba2a",
+   "size": 6309
+  },
+  "alg_repo/through_hole/detect/src/algorithms/pcb_through_hole/bridge_joints.py": {
+   "sha256": "34ed0ecb9b52394de080e669fc07bcf087f87ad6e2b52af1b99e98a053c5270d",
+   "size": 4430
+  },
+  "alg_repo/through_hole/detect/src/algorithms/pcb_through_hole/config.py": {
+   "sha256": "8da233b3f3338c0dade5feb57b04506dce65700aa46442f8f791fe2b340a1f39",
+   "size": 9822
+  },
+  "alg_repo/through_hole/detect/src/algorithms/pcb_through_hole/defect_mode.py": {
+   "sha256": "0bb2f35a23e53d143f90c847d98169e1dbec9db3ec44dead495b1384c34e4470",
+   "size": 650
+  },
+  "alg_repo/through_hole/detect/src/algorithms/pcb_through_hole/detection.py": {
+   "sha256": "70bc3f6bcea339f3e35672be05722936b9e7d076dbfcf5bbd2b63797ffbe7407",
+   "size": 792
+  },
+  "alg_repo/through_hole/detect/src/algorithms/pcb_through_hole/excess.py": {
+   "sha256": "8962ce898e72f693eb83f9f3e1fb85eaad00156208fda04712aef72905bf9b36",
+   "size": 6951
+  },
+  "alg_repo/through_hole/detect/src/algorithms/pcb_through_hole/features.py": {
+   "sha256": "31fbbde8f93bac58ac9c2bc1b292ded5999f61ebc80ce77333049891371be1b1",
+   "size": 3353
+  },
+  "alg_repo/through_hole/detect/src/algorithms/pcb_through_hole/insufficient.py": {
+   "sha256": "0c695e6b6cefd053ec68d036240025d9c09dc53806eb97b9c4ebf0ef6b9643a2",
+   "size": 8342
+  },
+  "alg_repo/through_hole/detect/src/algorithms/pcb_through_hole/mask_stats.py": {
+   "sha256": "10feb116f5b7d0bc1f84611e9169330bf1d6ee16d537913043fad81f427df20f",
+   "size": 7703
+  },
+  "alg_repo/through_hole/detect/src/algorithms/pcb_through_hole/nolead.py": {
+   "sha256": "c133c7c2b3f971a32ae394fab60a98bfc244943e3e44344f1206f367d09d8aa5",
+   "size": 12731
+  },
+  "alg_repo/through_hole/detect/src/algorithms/pcb_through_hole/pcb_through_hole_solder_alg.py": {
+   "sha256": "3a7561771dc32d3294bae6de7524ff52d1645a4544a34dbc6d5abf583bcd1b43",
+   "size": 24963
+  },
+  "alg_repo/through_hole/detect/src/algorithms/pcb_through_hole/pipeline.py": {
+   "sha256": "dfff21570b3bc454fd7631f8f13eaf26d431e2365a6ec1f2c7d3fb6eaa4ffba2",
+   "size": 15098
+  },
+  "alg_repo/through_hole/detect/src/algorithms/pcb_through_hole/segment.py": {
+   "sha256": "d1658007f422b7b24793b1b3625460c3d938fbe84206a355c97bcfe9544415cf",
+   "size": 10711
+  },
+  "alg_repo/through_hole/detect/src/algorithms/pcb_through_hole/solder_extract.py": {
+   "sha256": "19db381949be60b6f938761337a37993784faf29e68bde885f4e02635b445786",
+   "size": 25774
+  },
+  "alg_repo/through_hole/detect/src/algorithms/pcb_through_hole/template.py": {
+   "sha256": "85e71c294fccdd203d36714f4ec9cb1c7b8cf06e3abd1b11e758931e97eb890a",
+   "size": 4259
+  },
+  "alg_repo/through_hole/detect/src/algorithms/pcb_through_hole/tuning.py": {
+   "sha256": "78edd6b177c6bd677c329809d0b056fa1b79e3c9dca8737e9e89aa162d2b1bb0",
+   "size": 3557
+  },
+  "alg_repo/through_hole/detect/src/algorithms/pcb_through_hole/visualize.py": {
+   "sha256": "f665dab7f9098d71948c2258b76b72abb0ed239a67b9d0868c35d7bac9750288",
+   "size": 9059
+  },
+  "alg_repo/through_hole/detect/src/algorithms/pcb_through_hole/void.py": {
+   "sha256": "b05f48bd3be9f9d6f7d3e24833e94e668994610f8a53978b89e5fbed70e19793",
+   "size": 11686
+  },
+  "alg_repo/through_hole/detect/src/algorithms/pcb_through_hole/yaml_config.py": {
+   "sha256": "93b452a0642fc4a503adfcb69b18e805fc1402fe4ac71df1e1710f68d2bc5182",
+   "size": 7929
+  },
+  "alg_repo/through_hole/detect/src/algorithms/pcb_through_hole/__init__.py": {
+   "sha256": "baa0d61394b04367595ac549033671b674b62eb07706034e483ce31994da1449",
+   "size": 518
+  },
+  "alg_repo/through_hole/detect/src/resources/config/alg/pcb_through_hole/pcb_through_hole_solder_alg.json": {
+   "sha256": "faba65a2fa8539b5cde2db071bdf9d40fa254bbc402f75d8ec9bb50ab5fa121b",
+   "size": 633
+  },
+  "alg_repo/through_hole/detect/src/resources/config/alg_pool/pcb_through_hole_algs.json": {
+   "sha256": "b0c384dcfc18a20adcb7bc11b71d4a61291daef0f1ad45d31eb54ef59c2da40d",
+   "size": 537
+  },
+  "alg_repo/through_hole/detect/test_src/algorithms/pcb_through_hole/align_test.py": {
+   "sha256": "f991a56fe73c82c3b6e8378aff02c6c7aae34366acaecb210034e1bfa8de443f",
+   "size": 7768
+  },
+  "alg_repo/through_hole/detect/test_src/algorithms/pcb_through_hole/bridge_test.py": {
+   "sha256": "3dabf50484fb1e8fab7cdb4190ff7aae30697ab788b461ffb92abc39cb1a02cb",
+   "size": 1847
+  },
+  "alg_repo/through_hole/detect/test_src/algorithms/pcb_through_hole/defect_mode_test.py": {
+   "sha256": "ae3b7d4da3dc67f63c4f6497a0d916f3220168dd46e5ad57ffedc9acc38ed2d3",
+   "size": 906
+  },
+  "alg_repo/through_hole/detect/test_src/algorithms/pcb_through_hole/pcb_through_hole_solder_alg_test.py": {
+   "sha256": "93da22e56f91d06bc2d39bae1ae86dca02d575c82a5adbade6cda08f476f9b34",
+   "size": 23483
+  },
+  "alg_repo/wrinkle/src/algorithms/__init__.py": {
+   "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+   "size": 0
+  },
+  "alg_repo/wrinkle/src/algorithms/surface_wrinkle/algo_trad.py": {
+   "sha256": "3ad741cb8c6a776793d9d2a1fa8ff9449c5ac224f376fccadf369289246e75d2",
+   "size": 8628
+  },
+  "alg_repo/wrinkle/src/algorithms/surface_wrinkle/surface_wrinkle_alg.py": {
+   "sha256": "6ddf9957f2ef1ec0eb07cfe3e331684b5e9aa99d03bfc083bb72f7aeae13ca76",
+   "size": 7298
+  },
+  "alg_repo/wrinkle/src/algorithms/surface_wrinkle/__init__.py": {
+   "sha256": "bffd99cb04950b21c0c0e49fd8ddd424f86fbb37df7b4a75866ba075364180ee",
+   "size": 87
+  },
+  "alg_repo/wrinkle/src/core/load_class.py": {
+   "sha256": "c7c129bcb1e0ef94ac7233d967286d5443c8543e70fb7a351bd8ecb592079bfd",
+   "size": 610
+  },
+  "alg_repo/wrinkle/src/core/__init__.py": {
+   "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+   "size": 0
+  },
+  "alg_repo/wrinkle/src/core/entities/algorithms.py": {
+   "sha256": "c94d081177846cd882d5fdc4b9380a6185c922e3501f5703c282df5a970c0b2e",
+   "size": 3702
+  },
+  "alg_repo/wrinkle/src/core/entities/detect.py": {
+   "sha256": "788e73df973cf3ce286f2f55985b05ca7aca96e16f4c4f4f2e25148570021f9b",
+   "size": 1851
+  },
+  "alg_repo/wrinkle/src/core/entities/__init__.py": {
+   "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+   "size": 0
+  },
+  "alg_repo/wrinkle/src/core/utils/alg_config.py": {
+   "sha256": "4a72a324dece8ccd03f81f8ff2fc92dfa490cec21f6e7bbfa590adfebc09db8c",
+   "size": 3340
+  },
+  "alg_repo/wrinkle/src/core/utils/__init__.py": {
+   "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+   "size": 0
+  },
+  "alg_repo/wrinkle/src/resources/config/alg/surface_wrinkle/surface_wrinkle_alg.json": {
+   "sha256": "a891b29156e5ff583c85aa4543efb14047e4d2584aa7f5aa7cf41269ec979650",
+   "size": 538
+  },
+  "alg_repo/wrinkle/src/resources/config/alg_pool/surface_wrinkle_algs.json": {
+   "sha256": "fc523418ef04e72093b462b4e063ca12bb736b876f1f7fa9f75801b5ac4b5c30",
+   "size": 382
+  },
+  "alg_repo/wrinkle/src/utils/image_io.py": {
+   "sha256": "5bdcd44eb0d51203d4aa30551a7be27e6467cc3302e1f28030d56cc8c3583c32",
+   "size": 1575
+  },
+  "alg_repo/wrinkle/src/utils/__init__.py": {
+   "sha256": "d8e3b29ec73b2f2a62cd7442c4013b4a5a5f1f2c938b6615a1834242d35fa9d4",
+   "size": 106
+  },
+  "app/config.py": {
+   "sha256": "1914dee5bd57ab5abc190a7ecc3295e1132fca9013fb013340888c2c00227325",
+   "size": 9191
+  },
+  "app/api/app.py": {
+   "sha256": "df98f9f52ac9e09679c4bb6ec5d9cbc6ecf028f81ddcbdbba93a273810659b4d",
+   "size": 2556
+  },
+  "app/api/routes_async.py": {
+   "sha256": "15c31cc5d8e45b25e9c2c60bb30b834a8cb3bdf625ea05197c690a380a351161",
+   "size": 7878
+  },
+  "app/api/routes_cad.py": {
+   "sha256": "cdd2924f23e1bfb83b14328196c95dffde10cb166626c7a6e45d62e97239c108",
+   "size": 3752
+  },
+  "app/api/routes_detect.py": {
+   "sha256": "65b549cb2af6bb00c7caa80762cb43345ce48fac23f2539290adf8c3146109b0",
+   "size": 9957
+  },
+  "app/api/routes_feedback.py": {
+   "sha256": "ddf08c68753b3c82685a5d552a43b84ccca171b270a8ef4fc553e86450c27913",
+   "size": 5686
+  },
+  "app/api/routes_filter.py": {
+   "sha256": "0363839b121778c75edb0d074ebf81d57f1c24cfc035d5b7cc1f2b4c3de6b228",
+   "size": 5504
+  },
+  "app/api/routes_models.py": {
+   "sha256": "fa2f0e0ead35c20159e0bf0b8376f5653ee9b17e4d809beba2d547134a6bdf56",
+   "size": 4689
+  },
+  "app/api/routes_stats.py": {
+   "sha256": "7953eca99df8511dd61584c0f68e935a8fa16afa650b26197c70f1a505447ed2",
+   "size": 11391
+  },
+  "app/api/routes_templates.py": {
+   "sha256": "68f922e1f82d45aa81a67051f85c97f1307fcb125d575ce5c2cb4807c2fb3919",
+   "size": 3549
+  },
+  "app/api/routes_workorder.py": {
+   "sha256": "66eada6e8830fe954f6014f072bf6fe07038b85cfd11a958f318ca42892703d3",
+   "size": 14206
+  },
+  "app/api/__init__.py": {
+   "sha256": "52c6730d0116e4fccb1fb6a16674aec453bb30bfbd817ee506f8dbaa1dca3169",
+   "size": 52
+  },
+  "app/calibration/body_roi.py": {
+   "sha256": "192a2dd609e94f166b7213ce6647cf35b5ddfb3b375312fbdce1ae05fb40ff40",
+   "size": 1875
+  },
+  "app/calibration/gold_seed.py": {
+   "sha256": "ae9a051be16d2d65d84dd654fcf7ea80ef9f173b0a1708b069d83eb5aa97608d",
+   "size": 986
+  },
+  "app/calibration/shift_base.py": {
+   "sha256": "ff7cfe07bbefb885482599332dacf1a9cf713dec96efa8a5a04cbb7f495bebb2",
+   "size": 1359
+  },
+  "app/calibration/smt_pads.py": {
+   "sha256": "377178be50d5b9f255844f996c64e6eab461427ce575bbdb166cc7e206fc25a5",
+   "size": 2360
+  },
+  "app/calibration/store.py": {
+   "sha256": "f98989d3b5473182458c556033676aa1dfa47c8ff03cb8c0d9c4e9ebec53c82f",
+   "size": 1143
+  },
+  "app/calibration/th_roi.py": {
+   "sha256": "02688b5aa1112eccb4e9f99992bd02fa0cb9bd9ec8113193e5e86e5b6009d935",
+   "size": 5017
+  },
+  "app/calibration/__init__.py": {
+   "sha256": "4e4e61f577d7e1a1fff0c1959368321141f41f5e7d565067f7f3f17d5106a874",
+   "size": 114
+  },
+  "app/core/aoi_core_launcher.py": {
+   "sha256": "cc7e647e23b7faa7d8bdcd94928b0e0b8f6641971aa4868866f6be9b62628b65",
+   "size": 3527
+  },
+  "app/core/cad.py": {
+   "sha256": "6846827eabf687da77cba52f6c288064ddeadd6e71580d392dfbdd87695125bf",
+   "size": 5625
+  },
+  "app/core/coords.py": {
+   "sha256": "f14ac3343fa62d95fdb4054733e97a9edf48670ff656d7099df2d86d18a2ab11",
+   "size": 3482
+  },
+  "app/core/datasets.py": {
+   "sha256": "0bac92fd121ac769c469f2996786aba631a07b337f235f16a19ff4de6abec837",
+   "size": 12433
+  },
+  "app/core/dataset_adapter.py": {
+   "sha256": "7d8398ee7a023804776be994c35b5ee991f6a7c7870e5a72977da0b7c8867c58",
+   "size": 27331
+  },
+  "app/core/ingest.py": {
+   "sha256": "570adc2d85f96fb3e18c38ae14ae445e261e160ce8f1b3e53989e1634dcf37a7",
+   "size": 12707
+  },
+  "app/core/mes.py": {
+   "sha256": "858bc0f52317f2c500873b077bd83dce51dd51752c2b92fa8e9f74cc83f96ddc",
+   "size": 6254
+  },
+  "app/core/ng_filter.py": {
+   "sha256": "3eb62d6160d68a15675ec38e1aa25df460ec4e1aa523433dace0f233563b6296",
+   "size": 2589
+  },
+  "app/core/pipeline_service.py": {
+   "sha256": "2ac5844e124af4a0d8e489170fded7ffdca22f9c2012ed7a8c7852f3a3cbfc22",
+   "size": 12580
+  },
+  "app/core/single_instance.py": {
+   "sha256": "d09f75932489965c9e8641b8c0be7d4ed48f2c89ef737e0a1ad42212b237de27",
+   "size": 1586
+  },
+  "app/core/task_queue.py": {
+   "sha256": "ad490c783823af3969e45aea0bf259682770d1b95d150938659da662668e7583",
+   "size": 14413
+  },
+  "app/core/__init__.py": {
+   "sha256": "92337d6d075698386362f12b4be4b433695d8caf3d8cab6a46dca53adc17757d",
+   "size": 86
+  },
+  "app/detect/catalog.py": {
+   "sha256": "0eae893f8982928595b6a0c1fbc8d04fbe86c3b23defd16b84d9ae4122f07a5b",
+   "size": 5340
+  },
+  "app/detect/contract.py": {
+   "sha256": "23360b8d4538ec92a47505ecaaf8cd1812c163400c49af2520b279f179c43d04",
+   "size": 3295
+  },
+  "app/detect/gate.py": {
+   "sha256": "d7b7b3f0cb29d59f406fb130fd28d9c103093f1f2c445fb3839082f0fbf37bad",
+   "size": 2602
+  },
+  "app/detect/registry.py": {
+   "sha256": "f0c3c0f2fc96a3292c525a2883728bdd3b96926fa08a868fbf45e6c88508ccee",
+   "size": 4590
+  },
+  "app/detect/roi.py": {
+   "sha256": "9ffa08e6d26253aa8001dd8812d07d3aa4e1804bde2f0f0114ed1396db1dd2f5",
+   "size": 2118
+  },
+  "app/detect/scheduler.py": {
+   "sha256": "a8320b8284ec17164789ec7eaa3a3d58ba474f576da6ef53064ddc2d0550826c",
+   "size": 30832
+  },
+  "app/detect/types.py": {
+   "sha256": "3fc1318e59cf8043190b7204edbdfd7eb326c2aae70336b55a3ebb17c05891db",
+   "size": 4041
+  },
+  "app/detect/__init__.py": {
+   "sha256": "95927b38a8b9240a8601a7711c2408198498dd9a45045b5675f0eba70a81cb3a",
+   "size": 185
+  },
+  "app/detect/adapters/base.py": {
+   "sha256": "544449ee572bf32b1c48750c407468498529b0f2e076a12eae8755c936c979ed",
+   "size": 3205
+  },
+  "app/detect/adapters/body_adapter.py": {
+   "sha256": "650730a580dab4871b2dad0a1ab44c67b9fdd14aa0fb947dcc1016b343955ab6",
+   "size": 18401
+  },
+  "app/detect/adapters/gold_finger_adapter.py": {
+   "sha256": "e6e53945ac54f126fd0b80e5434098e82c400afcc9aa580ff3a1c6795190653d",
+   "size": 12153
+  },
+  "app/detect/adapters/path_bootstrap.py": {
+   "sha256": "ec6c64b568a0fa0a39f7d73d82a7eb3f5c00e466a6e6fc4f905a3665446d5565",
+   "size": 2754
+  },
+  "app/detect/adapters/shift_adapter.py": {
+   "sha256": "3573a06b668d6b6b77d269b8e234ed560e55c9881528d795ff83828e695aa24c",
+   "size": 14199
+  },
+  "app/detect/adapters/smt_adapter.py": {
+   "sha256": "0ad0822e5c280e020a399382c22a3b2b4e5db364ed88c06d7528501c456acc26",
+   "size": 21199
+  },
+  "app/detect/adapters/through_hole_adapter.py": {
+   "sha256": "219558e4f25b010b5b8b9dd199177a81ff2021b4af2d441319a240d1b4e4a3d1",
+   "size": 10929
+  },
+  "app/detect/adapters/wrinkle_adapter.py": {
+   "sha256": "574ea95d1613d1a56e599cc01a1145af61b771a29ef5ff56d97f33c120bb3b5d",
+   "size": 5152
+  },
+  "app/detect/adapters/__init__.py": {
+   "sha256": "cc1c2239fdbd72e88af6b2f6f10b8c60b5d56c8b613cbf4d5367e45afcf2951b",
+   "size": 98
+  },
+  "app/detect/modules/example_ok.py": {
+   "sha256": "006bf8bc3865a2c089f4f264280a164a2faf3bcc5a12ac961ee318881853311c",
+   "size": 1853
+  },
+  "app/detect/modules/__init__.py": {
+   "sha256": "7146ced032d185910735c6ae5c951955cb7b4db31b5caed327dbfaa340d16950",
+   "size": 178
+  },
+  "app/engines/feature.py": {
+   "sha256": "4074712febba56e4ea750ad828dd82dabfcaac36082641d53bba5e8572c3e92f",
+   "size": 2176
+  },
+  "app/engines/feature_client.py": {
+   "sha256": "72b6f75dc0133adbbce632c320f09520227e72526646825417e2f3305c5fd40f",
+   "size": 14988
+  },
+  "app/engines/__init__.py": {
+   "sha256": "ac33b967fcb33e704c07372efed027dbfe457d7571d9d20b360d1bd0d1a50189",
+   "size": 94
+  },
+  "app/inspect/align.py": {
+   "sha256": "2b2ac95d14de3cc033ced1b20e90e7ff75e1433f902ae96daf965b44d0fe859f",
+   "size": 2197
+  },
+  "app/inspect/detect_service.py": {
+   "sha256": "abae97d1968b88c82e3a68fa841c9cc31fc51e4d2673f811a84d719f3e28fd27",
+   "size": 9586
+  },
+  "app/inspect/fusion.py": {
+   "sha256": "d7bdbb9faeb7225f364428676c09ed60d298361807d346e730ec4f992a05d844",
+   "size": 9241
+  },
+  "app/inspect/service.py": {
+   "sha256": "6912cd01c8133b8cc789cd67eff266df76bc5d218c648a5605cdf70f667f8e57",
+   "size": 25247
+  },
+  "app/inspect/worker.py": {
+   "sha256": "b90288ba9129f510982d5af1ef1b1537d75e3ca99415e381a83036fbb1663e53",
+   "size": 1697
+  },
+  "app/inspect/__init__.py": {
+   "sha256": "e01bcab97f05da3e39a4c3d63ab90bb317b7615bffb16daf9de8d108113db0e4",
+   "size": 223
+  },
+  "app/preprocess/engine.py": {
+   "sha256": "43a029ba2728ef4b4e6529c7e7269560ed2e440f96ace26bf94cf273a9978dc0",
+   "size": 5634
+  },
+  "app/preprocess/__init__.py": {
+   "sha256": "a6b192a721dd9fed3ccd04720e494c882da28bfaa3494835f3a58b4a2c67a185",
+   "size": 106
+  },
+  "app/recipe/param_store.py": {
+   "sha256": "d4d3938f7e540b7d77c1be9359b02a0fde7d351a0da3cd613f26f39780138cb6",
+   "size": 6504
+  },
+  "app/recipe/store.py": {
+   "sha256": "e5f8e547d69a7c2df9a0914bea195df3b7d8772d1103ca15bb42ffd7f45162bb",
+   "size": 6022
+  },
+  "app/recipe/__init__.py": {
+   "sha256": "d55ffd2977b5711d1b5b22015647d5d025f780039645a8726f2e94366dc27f66",
+   "size": 91
+  },
+  "app/result/store.py": {
+   "sha256": "337fe0839e9a2f0131c6247a06fc48f6d7c14be6a97f3dba81d487ec3cc8ed7a",
+   "size": 6740
+  },
+  "app/result/__init__.py": {
+   "sha256": "020a934d01dd62aa49066df199476c88d60a9110195a440a2cfa12ba839f6192",
+   "size": 61
+  },
+  "app/tools/tuner.py": {
+   "sha256": "f7bcb247624f117c5d1dc919a092c305c54f35dea6e89700c932fca601353f71",
+   "size": 16400
+  },
+  "app/tools/__init__.py": {
+   "sha256": "c241a899ebd29d23c80c0b54eb1c988953492b40cb0d83694714fe9a6d3337e0",
+   "size": 46
+  },
+  "app/ui/algo_param_panel.py": {
+   "sha256": "5418f0f8cea1f8067690bbf1f5a340d584779a8ec007b598fe1ab65c2f41fb15",
+   "size": 17420
+  },
+  "app/ui/calibration_dialog.py": {
+   "sha256": "8606b736d9f33a3c3f927dd90f9d85ea2cd82f560284cc6c6d7e2c1149747770",
+   "size": 16280
+  },
+  "app/ui/core_pages.py": {
+   "sha256": "e750ec4fed3f1c8ceef5fdf194e68834f443f2d1ee40f2f3141a6e2130fd18bc",
+   "size": 8586
+  },
+  "app/ui/defect_table.py": {
+   "sha256": "33e0ca6ac5f1048449af0e1d1f201f8b313f501eaff1acbc956813f1cd985e37",
+   "size": 6022
+  },
+  "app/ui/detect_page.py": {
+   "sha256": "2d6797230238baca755309d42db6fa056dd6fecbaed7be139e2ee43d8f05c4da",
+   "size": 36744
+  },
+  "app/ui/history_page.py": {
+   "sha256": "185431f8d2b04c62f0f9f7676c116639a0edc4e07507a39a1ac40cab2074c26a",
+   "size": 14450
+  },
+  "app/ui/image_canvas.py": {
+   "sha256": "9691881bb2b7df1fa6de3a06a3b826bcdc71c4869ad83819551e44fc23ead813",
+   "size": 26452
+  },
+  "app/ui/inspect_canvas.py": {
+   "sha256": "a1a29cb8336cf09a933c5f77ec075b1957e268282e1bde82ead6f710364b23fa",
+   "size": 4917
+  },
+  "app/ui/inspect_page.py": {
+   "sha256": "063ae5799e0d99dbc8e69f7f536ed26e14a25f8f870212ca5f94665f5d8b9b26",
+   "size": 29363
+  },
+  "app/ui/main_window.py": {
+   "sha256": "4bac154747d5f910b15c5faa2136836bf66ba912afdb6fbd2b187b6a521a88be",
+   "size": 12386
+  },
+  "app/ui/preprocess_page.py": {
+   "sha256": "a08327360675c1f244b9b326fde9058170e7a5400d2e8f2b548619ca359fbc7a",
+   "size": 10729
+  },
+  "app/ui/result_hud.py": {
+   "sha256": "16acfbd19c8c6216ffbe4f0a987b70c444491db0ba930a98ef254dd2e7b556f2",
+   "size": 4193
+  },
+  "app/ui/settings_dialog.py": {
+   "sha256": "e0c86e438e824b6591e0feab1100e0dcb76fe69dac85ffddc157024d8237c83b",
+   "size": 4977
+  },
+  "app/ui/template_picker.py": {
+   "sha256": "d14ca4749a5bdafae08016aa4a31f49a1e89dd36fe48dfa1346a481a1f1204eb",
+   "size": 7269
+  },
+  "app/ui/template_studio_page.py": {
+   "sha256": "1495e5e1e50f9de4234ea08fb609c3c249600aa7ec9c2d60303bb70f7091882e",
+   "size": 54116
+  },
+  "app/ui/theme.py": {
+   "sha256": "9e97849794b46472930808ba1cbb9b78a080202929f40a432a36b9a7a1a6724f",
+   "size": 11747
+  },
+  "app/ui/tuner_dialog.py": {
+   "sha256": "474b3a5b6f5c229f1306d1fed610aef87216f67e30e58ec37181553a94fdec74",
+   "size": 30296
+  },
+  "app/ui/tuner_preview.py": {
+   "sha256": "774a48914c54f01bd1b73b407f1c663e39e2edaca7c41024ce7d943330f58ce6",
+   "size": 2382
+  },
+  "app/ui/widgets.py": {
+   "sha256": "a4936c5de415af9836f5d51d7924aee71b658f022cad81934b38670808f5db5f",
+   "size": 14479
+  },
+  "app/ui/__init__.py": {
+   "sha256": "dd65d00d91edc0a5b718b067d4cc858096f2b1a5dbe55160fa9bba2c7698c94e",
+   "size": 65
+  },
+  "app/utils/cv_io.py": {
+   "sha256": "f5bd8165ae0dbf433a677c4c6b5fc95b3a7ad6782d27c85c52e79df3de2d89cc",
+   "size": 1535
+  },
+  "app/utils/cv_text.py": {
+   "sha256": "439ca11ae36932df53f52eaeab3abbb2b3ebf6e7cbe1f1e7ad57a12f2fab804f",
+   "size": 2303
+  },
+  "app/utils/filename.py": {
+   "sha256": "fce2c1cd241ed3e92976ab50af07b795af71964e73692ba746b4e356a11a6bbe",
+   "size": 735
+  },
+  "app/utils/image_qt.py": {
+   "sha256": "1c2fc71fc2b2c3ba94374d11032ad076e7ddd65431fcbe1da823a81f80c599f6",
+   "size": 1303
+  },
+  "app/utils/__init__.py": {
+   "sha256": "1b4fb1ea1a27a1980a0eaa2c9cbaece6ec715728015f4b529b92d7305c432bf2",
+   "size": 263
+  },
+  "configs/default.yaml": {
+   "sha256": "5f0c13344ccb1e008c3dbc288c99f634f4721033bc1e25018e57a78b50cdc848",
+   "size": 2197
+  },
+  "docs/UI全页面实测报告_data_local.md": {
+   "sha256": "31eeb75a1cf401b212e8c4ed01d226e396ff732d73bc60a63579dee5ad44ec42",
+   "size": 7636
+  },
+  "docs/架构与设计.md": {
+   "sha256": "05a97ffed142ce7bfd5b6374a7c711fdfe0ed8164414884bb6d8d31032e433b9",
+   "size": 43851
+  },
+  "docs/演示视频脚本.md": {
+   "sha256": "21cca8e2f38dc01921dd5858ecf66d81b9cc9fc08f7ade304017d87c43241d3e",
+   "size": 5576
+  },
+  "docs/问题": {
+   "sha256": "4817c4bfe73e82cdea837862d52cb6aaa674f3cf4c26921ffd947ee962fa3d22",
+   "size": 1002
+  },
+  "examples/smoke_cad.csv": {
+   "sha256": "42bfe04a8fe423387344ff1b4f5339cacca25dfc3988e53bbadab88f0a487f5f",
+   "size": 89
+  },
+  "storage/settings.json": {
+   "sha256": "53e7b3a862f1d9065555515e0dcf545b1a17431c1263ff06d2222b4ae76dae19",
+   "size": 167
+  },
+  "storage/core_stage/gold_finger/train/good/225b94a33fb65fa0.jpg": {
+   "sha256": "af8c0a9f99f1d5391b69377345b892ae41cd395ca70908ab74cacf1ebfdeb273",
+   "size": 2481374
+  },
+  "storage/core_stage/gold_finger/train/good/2ba89bb11f7297f7.png": {
+   "sha256": "fd0e216bb321056da00e18dbca1e467ef1aeee9eaafcc3e3f67f3b8af37458f0",
+   "size": 1212467
+  },
+  "storage/core_stage/gold_finger/train/good/3066f25adf34adac.png": {
+   "sha256": "ee28fbad221d8ab06b17524ba6d67ed561ca6f577f9115945c8c91476d1e5c45",
+   "size": 201217
+  },
+  "storage/core_stage/gold_finger/train/good/3257e4cbffc1a902.jpg": {
+   "sha256": "86a5749b6734b6c448e8ac637aec256be7746bc7223054f1781ff8cdfa8d45b0",
+   "size": 2728909
+  },
+  "storage/core_stage/gold_finger/train/good/3a769d47bfcbde5a.png": {
+   "sha256": "11500edb9fe651e13637fa191c179886b065f93964121a02f05d3f1b15678abc",
+   "size": 1204672
+  },
+  "storage/core_stage/gold_finger/train/good/3aabeb166e34dd80.png": {
+   "sha256": "996933313d083cc30f79fb2b76f89712d8cf2a29449b1ed29aad2fedda0c9c29",
+   "size": 192577
+  },
+  "storage/core_stage/gold_finger/train/good/3c9a98307321a106.jpg": {
+   "sha256": "62c1c61e7f44f4a0f19230a90eb1b13afb312f02b75e63b5f4ad31f0899aefd6",
+   "size": 2188569
+  },
+  "storage/core_stage/gold_finger/train/good/3eb044b7dd60ed0f.png": {
+   "sha256": "3cf7e236836b6873da77a918cb93b341b3b0ba683dd9c8b82e12ad004265531e",
+   "size": 1062010
+  },
+  "storage/core_stage/gold_finger/train/good/578de177120d6ced.png": {
+   "sha256": "03ac3fb4bf658685a6fb285ee78a1e7532dcd5650577ffecf91a50ec7c62f880",
+   "size": 1216935
+  },
+  "storage/core_stage/gold_finger/train/good/5aadae895b4f3035.png": {
+   "sha256": "98059282a314e640f645f41a752aa6c9c753ec158426236aeb0574bb52d2141b",
+   "size": 1165393
+  },
+  "storage/core_stage/gold_finger/train/good/5c8e1391478b6cae.jpg": {
+   "sha256": "396fcbaa547397cdd60f9cef79ab3ea4f0a99941ab57da21bf292f35edc67928",
+   "size": 2951792
+  },
+  "storage/core_stage/gold_finger/train/good/655f61171f721f4c.png": {
+   "sha256": "9b7077079541fa12f324d6854a6cff15c3dd2ac02f426855b3000c628f5aefe3",
+   "size": 1213755
+  },
+  "storage/core_stage/gold_finger/train/good/67a6fddcf541f160.png": {
+   "sha256": "dbfb8c8b14027f4c6eba30b7f68d189454eb91907bb97c129a98ec186f77bfd5",
+   "size": 1239402
+  },
+  "storage/core_stage/gold_finger/train/good/8616fac228d532d6.png": {
+   "sha256": "f3ff8c2705445cf226110af7938f0ebe7445c73a0959b5959105312f1cc3dd2a",
+   "size": 1208337
+  },
+  "storage/core_stage/gold_finger/train/good/91940b19fa3ba96d.png": {
+   "sha256": "334fd4a65d10974992b9cefa5118569d1ca56ab5f30359a8a7f2f024cd56c0c7",
+   "size": 230693
+  },
+  "storage/core_stage/gold_finger/train/good/aa5b131c4a0e1c18.png": {
+   "sha256": "af58cf2fbb83e7614bc4be14a470d4a1340a0ac87bffb6c0e8fa9a8e174e9a9c",
+   "size": 1207845
+  },
+  "storage/core_stage/gold_finger/train/good/b82200d925c9cbbd.png": {
+   "sha256": "25196a549eb92fac338b8c9f6e99e761dddf9a293e5368f1ccbe166138c2e060",
+   "size": 1183988
+  },
+  "storage/core_stage/gold_finger/train/good/cd917648b3af1ede.jpg": {
+   "sha256": "99533ae21e56a3f507acccac86418e73c11fcb7fc7da5a10b500524e1c2eba09",
+   "size": 2706973
+  },
+  "storage/core_stage/gold_finger/train/good/f38146f330ae3371.png": {
+   "sha256": "707d15bd5f037fe1f2222635246ce8564b4d1c35bc6ffeaee3ead10ed157a2c3",
+   "size": 1202086
+  },
+  "storage/core_stage/gold_finger/train/good/fede589a58fc5dc9.jpg": {
+   "sha256": "b4edc42810a763bbdc5bec69120776145c59b1a7a2026bb50683a11125a511db",
+   "size": 2475610
+  },
+  "storage/core_stage/smt_solder/train/good/2de7dd0f234b5922.png": {
+   "sha256": "39682686712c41e01a0c1e8cbce88ac7ea4619377bc788c87f7c9e89e259b385",
+   "size": 293594
+  },
+  "storage/core_stage/smt_solder/train/good/70bd33c957e01772.png": {
+   "sha256": "eb4c929e79526842f2e1f24b038e5afbb5d7473652e97d420cfbc7d8de5d40d7",
+   "size": 534511
+  },
+  "storage/core_stage/smt_solder/train/good/8c28b2311df9f0ba.png": {
+   "sha256": "2bfc4a2326cddd0aec1d8f540477a41f3816c74ed48729157cc6e0cf64f673ef",
+   "size": 673903
+  },
+  "storage/core_stage/smt_solder/train/good/9fa4d1f54480592a.png": {
+   "sha256": "98fc4e658466d6b133f060eb82495666612f150dad2620499607802715cb698f",
+   "size": 620718
+  },
+  "storage/core_stage/smt_solder/train_anomaly/defect/2db4bdf4999c307a.png": {
+   "sha256": "8c48c8ace800f603e3dbeb3c1986cceb466f70fc503e30ec03be8cc55d9e188a",
+   "size": 669548
+  },
+  "storage/core_stage/smt_solder/train_anomaly/defect/55fdc5ef447723e7.png": {
+   "sha256": "6a51afc892227ed8d26d989b826fd2d5626124ae76cb128e8d7c74e0ce3acfa7",
+   "size": 286576
+  },
+  "storage/core_stage/smt_solder/train_anomaly/defect/5dd972ebf62cd53d.png": {
+   "sha256": "cb88fcc67dd067b2e5dfad6dc26d67274f401df0ee226642f931c5775b9466ee",
+   "size": 547505
+  },
+  "storage/core_stage/smt_solder/train_anomaly/defect/d6b14199e5c6e6f3.png": {
+   "sha256": "7626a9fbe03366ce86820bb73f61ddb1b9cbbd55f157570768aa06683d3e1b4b",
+   "size": 785248
+  },
+  "storage/core_stage/smt_solder/train_anomaly/defect/df5875fd89ad3b0e.png": {
+   "sha256": "9d55e1633bfb8736729a85dea0c226231efca80dc4d54e46819367a47f8e0ee3",
+   "size": 677184
+  },
+  "storage/core_stage/smt_solder/train_anomaly/defect/eb0935b3bbae5fa3.png": {
+   "sha256": "e91f46bd92470dc75ec33ea06e77d4af2ac71aa77f8dcbace06ad3d5642d640d",
+   "size": 612377
+  },
+  "storage/locks/pcbins_ui.lock": {
+   "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+   "size": 0
+  },
+  "storage/recipes/global_default.json": {
+   "sha256": "b87e300e7bc89c748370d8febac321d0ab2a82826a985c30f819dab1e67833c0",
+   "size": 215
+  },
+  "storage/template_calib/PixPin_2026-07-01_11-21-15_OK.json": {
+   "sha256": "3012fbfa1aa4cd54cdf829394872d1c9cd9553fe9d934048ede0db619df61ea3",
+   "size": 266
+  },
+  "tests/eval_traditional.py": {
+   "sha256": "80473bf138aac944eb9e4ba464f804f76efdae2388576bd529fa076c8a472017",
+   "size": 8290
+  },
+  "tests/test_acceptance_settings.py": {
+   "sha256": "374c104e6c49dcdb1b8ce062a5f7ed1f606e5d8955698d73a2841bd61faadbb2",
+   "size": 3014
+  },
+  "tests/test_adapter_batch.py": {
+   "sha256": "684c44f9037e8642cd1c4e202ccef5eb4c47f8d21d832824a928ddf317091398",
+   "size": 15863
+  },
+  "tests/test_async_template_snapshot.py": {
+   "sha256": "bc3174606dd1332e2084232437656d0c2258831314d69b73d448866f632a457a",
+   "size": 5659
+  },
+  "tests/test_pcbdual04.py": {
+   "sha256": "cd0f01017a3755e9b1b29f9cc303096abb73ed5360d1a9e8ff17ca37b6d510bb",
+   "size": 10632
+  },
+  "tests/test_shift_batch.py": {
+   "sha256": "2a78596d32157d341549c1ccc90979d88ab43788f91edf521963988950a60bd7",
+   "size": 3605
+  },
+  "tests/test_template_delete_cascade.py": {
+   "sha256": "b69b1897cd95c745430a1d313f06d3cfcd1564339b7a2eb3eae816fde5d31a8b",
+   "size": 1788
+  },
+  "tests/test_tuner_preview.py": {
+   "sha256": "8e90f26cfffd484fac57a9a997471c7ba0f03742c25586e16f7068258bd1b784",
+   "size": 12358
+  },
+  "tests/tuner02_real_cases.py": {
+   "sha256": "9d1d16d75bbf122e59ed8819680dc6c7916e8643f6a1aea96cc76ae452f92f73",
+   "size": 13648
+  },
+  "tests/_demo_record.py": {
+   "sha256": "230b5ce1d3af38094a9e0c513df63a98dee0c0ba3d78315b10019f467fbf4cf0",
+   "size": 19670
+  },
+  "tests/_dual_demo.py": {
+   "sha256": "5e76fb872d823354caf50f078ad84ed7373d61cb0d037fe530428a9bbb435581",
+   "size": 3220
+  },
+  "tests/_smoke_api.py": {
+   "sha256": "319b5ce0acb1563753227146adbf71cd854acb9c1cfc4113c678b9b0b461ef62",
+   "size": 2224
+  },
+  "tests/_smoke_dataset_adapter.py": {
+   "sha256": "a99e37d82eafb30ace92ef65986473e605c6b630f903b82918a8e313e6b85c7f",
+   "size": 5061
+  },
+  "tests/_smoke_ds_cascade.py": {
+   "sha256": "b3bec377225742f6d9f94061670e97a4e0b1f3b7e5c495cf1356ef95443a47e3",
+   "size": 5035
+  },
+  "tests/_smoke_full.py": {
+   "sha256": "825e465ed1833ec29657ecf049f78346cfce61fbb9848fc0532339b3cc6e43b2",
+   "size": 4446
+  },
+  "tests/_smoke_p02.py": {
+   "sha256": "1c6c4ddb636773d8e47918cf656a761d0c8bbe26692e22a0f80b2a334867fbaf",
+   "size": 4456
+  },
+  "tests/_ui_full_datalocal.py": {
+   "sha256": "77db3b750f3bd6b8ec139a059b9ee1ccd378381d77713b6a1aa2452bd00a6fa6",
+   "size": 60371
+  },
+  "tests/_verify_dual.py": {
+   "sha256": "2810db55c9a6ecc525605488a42306d87195fa8b9a267da4e53dde64e27db55f",
+   "size": 2210
+  },
+  "tests/_verify_feature.py": {
+   "sha256": "6428528a989bc63019c497ee3e3bfd8afb8e4b41388d7a72b2356b0ef56f86fc",
+   "size": 3271
+  },
+  "tests/_verify_new_algs.py": {
+   "sha256": "ba2810ab2f76bf153c5b6d5110885c23727f36e65878e308076e6f8e683cc957",
+   "size": 3023
+  },
+  "tests/_verify_p0_board.py": {
+   "sha256": "160e848bc17fdd07ba4f1fbaed076c589c0bbd1bae17de72b5a0fba8158712ab",
+   "size": 1914
+  },
+  "tests/_verify_pipeline.py": {
+   "sha256": "2b82eb2253dd41bccea451c49ab7c9b605fd091b5aeaba831b0fba98922615fe",
+   "size": 3778
+  },
+  "tests/_verify_smt_alg.py": {
+   "sha256": "c2f338c6b01fbd6ece4d4b6f5639efa95c437f7368f05fa7ca718cc399f7928a",
+   "size": 2276
+  },
+  "tests/_verify_traditional.py": {
+   "sha256": "a4b3e918437ffdeeae5500e564a8352400af41018b41b5d7dbc025da2050fab1",
+   "size": 4063
+  },
+  "tests/results/eval_traditional_latest.json": {
+   "sha256": "44a06c44b91807d35c9b657291530ba279c74d5245158a68eadae0c304443db0",
+   "size": 1677
+  },
+  "tools/cleanup_data.py": {
+   "sha256": "1b5ab58eb749f3e81b6bf27c75b9c9d32385d42245ad671ad09b318395d796be",
+   "size": 5248
+  }
+ },
+ "stable": {
+  "main.py": {
+   "sha256": "490fa28096f9f8309ba02518fccac7379a481ea6b6de40b27d2e1e7b64aaef0d",
+   "size": 2761
+  },
+  "README.md": {
+   "sha256": "d8486b261c692d813824b4c28c5128cb70af7e6ef6092ffc92e9ad1b84d22fe6",
+   "size": 3590
+  },
+  "requirements-lock.txt": {
+   "sha256": "671b1df08f8c6e245e9462dde2ce444a3b4021819b25381a4ba4997dda29b8a9",
+   "size": 696
+  },
+  "requirements.txt": {
+   "sha256": "5520ebca8bf7e0d00ce9c72507115e5706682096a87d6ceef6748f07bcc30cc8",
+   "size": 371
+  },
+  "server.py": {
+   "sha256": "d0d8b799d2956416172cd45280c5f35b8471b4c7c20b2025901b4f53d147cd0a",
+   "size": 2628
+  },
+  "ui_state.json": {
+   "sha256": "c237e896f07aa7674d878193067a175715f42255fc62337b571dd9ed20ce1300",
+   "size": 118
+  },
+  "alg_repo/body/PCB_APP/README.md": {
+   "sha256": "1c1517893437ea981d03ce9cc1acd518f755671b99a1337fc3afc9992e9e72b8",
+   "size": 4785
+  },
+  "alg_repo/body/PCB_APP/requirements.txt": {
+   "sha256": "eadba89e7c31305125107db397cd7fc1015c1c34ed5e1194d3ae53a42b085e9b",
+   "size": 167
+  },
+  "alg_repo/body/PCB_APP/run.py": {
+   "sha256": "a25602b514263690d07185baa26ea88181ff1e4af19cc550fb34442ba1468233",
+   "size": 404
+  },
+  "alg_repo/body/PCB_APP/pcb_app/config.py": {
+   "sha256": "a0d1902bdf62c84b6f33dc4724d8c2c1c8481f2bbbce80853ccc6b0f3eea8c04",
+   "size": 2264
+  },
+  "alg_repo/body/PCB_APP/pcb_app/main.py": {
+   "sha256": "5ed0566e311e863232ed556625178a12bc3c1e0fdffcf2eb6a761731a038c9b0",
+   "size": 661
+  },
+  "alg_repo/body/PCB_APP/pcb_app/metadata.py": {
+   "sha256": "63e8768e660f66b975a04b8180a6bd3a2ded15675f9d6109847c441b38a56c21",
+   "size": 12172
+  },
+  "alg_repo/body/PCB_APP/pcb_app/__init__.py": {
+   "sha256": "0703c1352f025a7376e4a18154210379891d05c70bd85673d0f2c3fa3d9ccaa6",
+   "size": 290
+  },
+  "alg_repo/body/PCB_APP/pcb_app/core/detector_service.py": {
+   "sha256": "de6f5eface9678b89d0960e7c7fb60baac67dc14c84c61ef057386b2e8316bbe",
+   "size": 19795
+  },
+  "alg_repo/body/PCB_APP/pcb_app/core/models.py": {
+   "sha256": "6b088730dc1bc191eb9abd4bfec12ac9041fba82a5ace3b3128cdd2e77bacaca",
+   "size": 5288
+  },
+  "alg_repo/body/PCB_APP/pcb_app/core/roi_util.py": {
+   "sha256": "02f82359548515ff8857eda9e7f5ff5ccaca48bc2fbbbdc57928292126cb31fa",
+   "size": 2496
+  },
+  "alg_repo/body/PCB_APP/pcb_app/core/__init__.py": {
+   "sha256": "d4be91973fb94d45b1f60a832580022f3b094583ac834ac2f53bb23371fae283",
+   "size": 62
+  },
+  "alg_repo/body/PCB_APP/pcb_app/ui/defect_panel.py": {
+   "sha256": "844c1df66f1bbe2c5661234736d7035761b5cecf895bd76dc91ea5825d25d69b",
+   "size": 4085
+  },
+  "alg_repo/body/PCB_APP/pcb_app/ui/image_canvas.py": {
+   "sha256": "f2ec3ec8bd2cd28567a6b7790a59adeea0f31362a3852f5ad56b23300c23d55f",
+   "size": 14301
+  },
+  "alg_repo/body/PCB_APP/pcb_app/ui/main_window.py": {
+   "sha256": "26ac27ff7bdadd46c59db9ec7ca29949ea480175e59a0977875a0bcf3614cf87",
+   "size": 21277
+  },
+  "alg_repo/body/PCB_APP/pcb_app/ui/params_state.py": {
+   "sha256": "0fea2f1791c9aed500bc243a1e6bff9985cf5e54318d548f1dfb86b1bd7a3ac8",
+   "size": 295
+  },
+  "alg_repo/body/PCB_APP/pcb_app/ui/param_panel.py": {
+   "sha256": "6f91a9b1aa2893abb30b0456f7c091c5729d7f0dcda8be5672d19b4f6d415342",
+   "size": 10087
+  },
+  "alg_repo/body/PCB_APP/pcb_app/ui/resize_grips.py": {
+   "sha256": "c14bff46278ea055819a0424171d2459eaebb0f7fa735359ddf07ec04105a325",
+   "size": 4135
+  },
+  "alg_repo/body/PCB_APP/pcb_app/ui/result_panel.py": {
+   "sha256": "7983b359b91091f4ff7bda0cbdb1ce3669c23e3d4d98d5b43c8cab1170e42830",
+   "size": 6911
+  },
+  "alg_repo/body/PCB_APP/pcb_app/ui/roi_panel.py": {
+   "sha256": "dab83b576bb561e4e281f6fb724bd51326546bc2a17f2dd85419edc7fabb0b23",
+   "size": 5901
+  },
+  "alg_repo/body/PCB_APP/pcb_app/ui/theme.py": {
+   "sha256": "87f86395504850ad15b51ada3cfe55a95261c1976671403309f286acc4263216",
+   "size": 6700
+  },
+  "alg_repo/body/PCB_APP/pcb_app/ui/title_bar.py": {
+   "sha256": "953430d7e839aed2768b55e84c55a4c11aaa7a24919b60a074bcf21dd1385a4d",
+   "size": 2327
+  },
+  "alg_repo/body/PCB_APP/pcb_app/ui/widgets.py": {
+   "sha256": "991646e79e680e57bc1f47758917bf23cb0eadc8e5384e28a5ffb9a53584fc09",
+   "size": 7012
+  },
+  "alg_repo/body/PCB_APP/pcb_app/ui/workers.py": {
+   "sha256": "9b65417ef16ed355c98de1396a4fda263facf477966636f1c0541e79c06341d7",
+   "size": 2325
+  },
+  "alg_repo/body/PCB_APP/pcb_app/ui/__init__.py": {
+   "sha256": "429a1adbd4c8ee329e4432530a77a172bcc870dc6bc6c93e042ed20f56ac9d82",
+   "size": 55
+  },
+  "alg_repo/body/pcb_defect/pcb_defect_detector/detect_cli-2.py": {
+   "sha256": "59b626893c2ae69745b9d78e9ef090cf57922a868d9d6f0f5eb091f00bc745cc",
+   "size": 5248
+  },
+  "alg_repo/body/pcb_defect/pcb_defect_detector/detect_cli.py": {
+   "sha256": "59b626893c2ae69745b9d78e9ef090cf57922a868d9d6f0f5eb091f00bc745cc",
+   "size": 5248
+  },
+  "alg_repo/body/pcb_defect/pcb_defect_detector/README-2.md": {
+   "sha256": "c4ddb0a4569204beec1f1bdf7c5d8342207d058c71f741c9f1722eaf4b6cd01f",
+   "size": 4685
+  },
+  "alg_repo/body/pcb_defect/pcb_defect_detector/README.md": {
+   "sha256": "c4ddb0a4569204beec1f1bdf7c5d8342207d058c71f741c9f1722eaf4b6cd01f",
+   "size": 4685
+  },
+  "alg_repo/body/pcb_defect/pcb_defect_detector/requirements-2.txt": {
+   "sha256": "5c7a67d3ef726cd3b2fcdf5037423ab433187fca50b29a90bb319dcacc67e678",
+   "size": 166
+  },
+  "alg_repo/body/pcb_defect/pcb_defect_detector/requirements.txt": {
+   "sha256": "5c7a67d3ef726cd3b2fcdf5037423ab433187fca50b29a90bb319dcacc67e678",
+   "size": 166
+  },
+  "alg_repo/body/pcb_defect/pcb_defect_detector/pcb_defect_detector/detector-2.py": {
+   "sha256": "90ac8cbc821b265a7ff3b0967a6bf3adb85210e8890e0ab71fc33f08301bc317",
+   "size": 14110
+  },
+  "alg_repo/body/pcb_defect/pcb_defect_detector/pcb_defect_detector/detector.py": {
+   "sha256": "6964f031521b8c44a382a409d8d202e12d7a3f8553773834339a9cd34c876bad",
+   "size": 10624
+  },
+  "alg_repo/body/pcb_defect/pcb_defect_detector/pcb_defect_detector/image_io-2.py": {
+   "sha256": "c88c78bafbe5f1045a719c7ac63b58cee0c6ff601f64840e22edf352745d38a9",
+   "size": 1242
+  },
+  "alg_repo/body/pcb_defect/pcb_defect_detector/pcb_defect_detector/image_io.py": {
+   "sha256": "694707e08023a1313e7b2a19480b531c4a89a31f58bdc4081e16ddf5e20f146d",
+   "size": 1776
+  },
+  "alg_repo/body/pcb_defect/pcb_defect_detector/pcb_defect_detector/results-2.py": {
+   "sha256": "cbbb556ce56657253110d342a79ff3b4aebcd29ed6b3d419542235e4f78e9341",
+   "size": 2143
+  },
+  "alg_repo/body/pcb_defect/pcb_defect_detector/pcb_defect_detector/results.py": {
+   "sha256": "cbbb556ce56657253110d342a79ff3b4aebcd29ed6b3d419542235e4f78e9341",
+   "size": 2143
+  },
+  "alg_repo/body/pcb_defect/pcb_defect_detector/pcb_defect_detector/__init__-2.py": {
+   "sha256": "3d75f18b47019bad190ba14e74bc103a569b11c16892301e947742bad6583979",
+   "size": 414
+  },
+  "alg_repo/body/pcb_defect/pcb_defect_detector/pcb_defect_detector/__init__.py": {
+   "sha256": "3d75f18b47019bad190ba14e74bc103a569b11c16892301e947742bad6583979",
+   "size": 414
+  },
+  "alg_repo/body/pcb_defect/pcb_defect_detector/pcb_defect_detector/_engine/__init__-2.py": {
+   "sha256": "7eb70257593da06f682a3ddda54a9d260d4fc514f645237f5ca74b08f8da61a6",
+   "size": 2
+  },
+  "alg_repo/body/pcb_defect/pcb_defect_detector/pcb_defect_detector/_engine/__init__.py": {
+   "sha256": "7eb70257593da06f682a3ddda54a9d260d4fc514f645237f5ca74b08f8da61a6",
+   "size": 2
+  },
+  "alg_repo/body/pcb_defect/pcb_defect_detector/pcb_defect_detector/_engine/algorithms/__init__-2.py": {
+   "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+   "size": 0
+  },
+  "alg_repo/body/pcb_defect/pcb_defect_detector/pcb_defect_detector/_engine/algorithms/__init__.py": {
+   "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+   "size": 0
+  },
+  "alg_repo/body/pcb_defect/pcb_defect_detector/pcb_defect_detector/_engine/algorithms/component/adapter_shell-2.py": {
+   "sha256": "04a556018cb6da2302151458a161fe9c73915548155d230a0055b1b0449139e2",
+   "size": 8603
+  },
+  "alg_repo/body/pcb_defect/pcb_defect_detector/pcb_defect_detector/_engine/algorithms/component/adapter_shell.py": {
+   "sha256": "04a556018cb6da2302151458a161fe9c73915548155d230a0055b1b0449139e2",
+   "size": 8603
+  },
+  "alg_repo/body/pcb_defect/pcb_defect_detector/pcb_defect_detector/_engine/algorithms/component/common-2.py": {
+   "sha256": "aa0fe2a8b6f5096ee6293b7d643545cac81f2ef85c77c20de431042c43fda45d",
+   "size": 42741
+  },
+  "alg_repo/body/pcb_defect/pcb_defect_detector/pcb_defect_detector/_engine/algorithms/component/common.py": {
+   "sha256": "198a3e82c3f4a16af4b38a6b90b8abf7b139ff08bfa8564c07b3297b7b56bef3",
+   "size": 61838
+  },
+  "alg_repo/body/pcb_defect/pcb_defect_detector/pcb_defect_detector/_engine/algorithms/component/__init__-2.py": {
+   "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+   "size": 0
+  },
+  "alg_repo/body/pcb_defect/pcb_defect_detector/pcb_defect_detector/_engine/algorithms/component/__init__.py": {
+   "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+   "size": 0
+  },
+  "alg_repo/body/pcb_defect/pcb_defect_detector/pcb_defect_detector/_engine/algorithms/component/damage/algo_trad-2.py": {
+   "sha256": "3a3966851dcb5e48c4cc63ac7b3bcf2d23fac2933e843454c1a7d20f7431952a",
+   "size": 5744
+  },
+  "alg_repo/body/pcb_defect/pcb_defect_detector/pcb_defect_detector/_engine/algorithms/component/damage/algo_trad.py": {
+   "sha256": "3a3966851dcb5e48c4cc63ac7b3bcf2d23fac2933e843454c1a7d20f7431952a",
+   "size": 5744
+  },
+  "alg_repo/body/pcb_defect/pcb_defect_detector/pcb_defect_detector/_engine/algorithms/component/damage/__init__-2.py": {
+   "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+   "size": 0
+  },
+  "alg_repo/body/pcb_defect/pcb_defect_detector/pcb_defect_detector/_engine/algorithms/component/damage/__init__.py": {
+   "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+   "size": 0
+  },
+  "alg_repo/body/pcb_defect/pcb_defect_detector/pcb_defect_detector/_engine/algorithms/component/flipped/algo_trad-2.py": {
+   "sha256": "833717e35fc36cb20a840fbe1d685f3dd38b78db496b650f7a771d5ef09810db",
+   "size": 3982
+  },
+  "alg_repo/body/pcb_defect/pcb_defect_detector/pcb_defect_detector/_engine/algorithms/component/flipped/algo_trad.py": {
+   "sha256": "92a354661b891ce9bffb7c3c72f477f821f2547c91ef580bed4ce5b506b18c9e",
+   "size": 3191
+  },
+  "alg_repo/body/pcb_defect/pcb_defect_detector/pcb_defect_detector/_engine/algorithms/component/flipped/__init__-2.py": {
+   "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+   "size": 0
+  },
+  "alg_repo/body/pcb_defect/pcb_defect_detector/pcb_defect_detector/_engine/algorithms/component/flipped/__init__.py": {
+   "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+   "size": 0
+  },
+  "alg_repo/body/pcb_defect/pcb_defect_detector/pcb_defect_detector/_engine/algorithms/component/missing/algo_trad-2.py": {
+   "sha256": "9937fd2a444b01babccc4d70db8300cf109c47a9f85fe167ab3f5bc326998dfe",
+   "size": 9645
+  },
+  "alg_repo/body/pcb_defect/pcb_defect_detector/pcb_defect_detector/_engine/algorithms/component/missing/algo_trad.py": {
+   "sha256": "1d12628a59b1103270f2931e13562fc525047eb66ed176b6864d588806cfcff9",
+   "size": 10948
+  },
+  "alg_repo/body/pcb_defect/pcb_defect_detector/pcb_defect_detector/_engine/algorithms/component/missing/__init__-2.py": {
+   "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+   "size": 0
+  },
+  "alg_repo/body/pcb_defect/pcb_defect_detector/pcb_defect_detector/_engine/algorithms/component/missing/__init__.py": {
+   "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+   "size": 0
+  },
+  "alg_repo/body/pcb_defect/pcb_defect_detector/pcb_defect_detector/_engine/algorithms/component/reverse_polarity/algo_trad-2.py": {
+   "sha256": "180cd203f4014bdb4a6faa1027576de99574abf32534fd565112134410bede7c",
+   "size": 6420
+  },
+  "alg_repo/body/pcb_defect/pcb_defect_detector/pcb_defect_detector/_engine/algorithms/component/reverse_polarity/algo_trad.py": {
+   "sha256": "ece3af5dd10511cc793f1a60dfc09279c00946858f163b4879291f9d7c210573",
+   "size": 8148
+  },
+  "alg_repo/body/pcb_defect/pcb_defect_detector/pcb_defect_detector/_engine/algorithms/component/reverse_polarity/__init__-2.py": {
+   "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+   "size": 0
+  },
+  "alg_repo/body/pcb_defect/pcb_defect_detector/pcb_defect_detector/_engine/algorithms/component/reverse_polarity/__init__.py": {
+   "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+   "size": 0
+  },
+  "alg_repo/body/pcb_defect/pcb_defect_detector/pcb_defect_detector/_engine/algorithms/component/shift/algo_trad-2.py": {
+   "sha256": "cf572d886059e584bfe2015f01efc6721bb123ebd0147f6eff9b3d5c3d661941",
+   "size": 4254
+  },
+  "alg_repo/body/pcb_defect/pcb_defect_detector/pcb_defect_detector/_engine/algorithms/component/shift/algo_trad.py": {
+   "sha256": "2744b03de63ca34dd4423ef281394979190498844c4678f7f43ffa9cab1be34e",
+   "size": 4180
+  },
+  "alg_repo/body/pcb_defect/pcb_defect_detector/pcb_defect_detector/_engine/algorithms/component/shift/__init__-2.py": {
+   "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+   "size": 0
+  },
+  "alg_repo/body/pcb_defect/pcb_defect_detector/pcb_defect_detector/_engine/algorithms/component/shift/__init__.py": {
+   "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+   "size": 0
+  },
+  "alg_repo/body/pcb_defect/pcb_defect_detector/pcb_defect_detector/_engine/algorithms/component/tombstone/algo_trad-2.py": {
+   "sha256": "2137f5702a527e42459cb2902b9846b12ded831e97c3310c8717d3b37e7c4a02",
+   "size": 5759
+  },
+  "alg_repo/body/pcb_defect/pcb_defect_detector/pcb_defect_detector/_engine/algorithms/component/tombstone/algo_trad.py": {
+   "sha256": "2137f5702a527e42459cb2902b9846b12ded831e97c3310c8717d3b37e7c4a02",
+   "size": 5759
+  },
+  "alg_repo/body/pcb_defect/pcb_defect_detector/pcb_defect_detector/_engine/algorithms/component/tombstone/__init__-2.py": {
+   "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+   "size": 0
+  },
+  "alg_repo/body/pcb_defect/pcb_defect_detector/pcb_defect_detector/_engine/algorithms/component/tombstone/__init__.py": {
+   "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+   "size": 0
+  },
+  "alg_repo/body/pcb_defect/pcb_defect_detector/pcb_defect_detector/_engine/algorithms/component/wrongpart/algo_trad-2.py": {
+   "sha256": "a76eab64fd05e6ec5a791472dbc3bf37a4d74fd13e1ad71e50d496de1e945db1",
+   "size": 5814
+  },
+  "alg_repo/body/pcb_defect/pcb_defect_detector/pcb_defect_detector/_engine/algorithms/component/wrongpart/algo_trad.py": {
+   "sha256": "1002815fe3d889d48dd8fb8e461f2dade56690cca4542f0d995e91cd2c45bd6d",
+   "size": 4672
+  },
+  "alg_repo/body/pcb_defect/pcb_defect_detector/pcb_defect_detector/_engine/algorithms/component/wrongpart/__init__-2.py": {
+   "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+   "size": 0
+  },
+  "alg_repo/body/pcb_defect/pcb_defect_detector/pcb_defect_detector/_engine/algorithms/component/wrongpart/__init__.py": {
+   "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+   "size": 0
+  },
+  "alg_repo/body/pcb_defect/pcb_defect_detector/pcb_defect_detector/_engine/core/adapter_runtime-2.py": {
+   "sha256": "6311075fcbca950515ee664b333ac28993df91cbedcd45557920bfcfb60d3a0c",
+   "size": 5605
+  },
+  "alg_repo/body/pcb_defect/pcb_defect_detector/pcb_defect_detector/_engine/core/adapter_runtime.py": {
+   "sha256": "6311075fcbca950515ee664b333ac28993df91cbedcd45557920bfcfb60d3a0c",
+   "size": 5605
+  },
+  "alg_repo/body/pcb_defect/pcb_defect_detector/pcb_defect_detector/_engine/core/interfaces-2.py": {
+   "sha256": "04f89886c5d560a2b71bc2ddea858ec1234993cd58da11871323c91b8dad3a61",
+   "size": 810
+  },
+  "alg_repo/body/pcb_defect/pcb_defect_detector/pcb_defect_detector/_engine/core/interfaces.py": {
+   "sha256": "04f89886c5d560a2b71bc2ddea858ec1234993cd58da11871323c91b8dad3a61",
+   "size": 810
+  },
+  "alg_repo/body/pcb_defect/pcb_defect_detector/pcb_defect_detector/_engine/core/load_class-2.py": {
+   "sha256": "e0667b4ef64d0cfbfdd5112a9d62b34c8a654fcfa04eafbec0657f3e5879d307",
+   "size": 637
+  },
+  "alg_repo/body/pcb_defect/pcb_defect_detector/pcb_defect_detector/_engine/core/load_class.py": {
+   "sha256": "e0667b4ef64d0cfbfdd5112a9d62b34c8a654fcfa04eafbec0657f3e5879d307",
+   "size": 637
+  },
+  "alg_repo/body/pcb_defect/pcb_defect_detector/pcb_defect_detector/_engine/core/models-2.py": {
+   "sha256": "9ce68016da5159a132619090d01c956f5e8676a3561ff0b491dd06b3ccdec5fb",
+   "size": 1129
+  },
+  "alg_repo/body/pcb_defect/pcb_defect_detector/pcb_defect_detector/_engine/core/models.py": {
+   "sha256": "9ce68016da5159a132619090d01c956f5e8676a3561ff0b491dd06b3ccdec5fb",
+   "size": 1129
+  },
+  "alg_repo/body/pcb_defect/pcb_defect_detector/pcb_defect_detector/_engine/core/__init__-2.py": {
+   "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+   "size": 0
+  },
+  "alg_repo/body/pcb_defect/pcb_defect_detector/pcb_defect_detector/_engine/core/__init__.py": {
+   "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+   "size": 0
+  },
+  "alg_repo/body/pcb_defect/pcb_defect_detector/pcb_defect_detector/_engine/core/entities/algorithms-2.py": {
+   "sha256": "c111e9fa2817c3e8d71f601bd7b0f3029d305ddca5df6b198a2b3e1065e454b6",
+   "size": 3976
+  },
+  "alg_repo/body/pcb_defect/pcb_defect_detector/pcb_defect_detector/_engine/core/entities/algorithms.py": {
+   "sha256": "c111e9fa2817c3e8d71f601bd7b0f3029d305ddca5df6b198a2b3e1065e454b6",
+   "size": 3976
+  },
+  "alg_repo/body/pcb_defect/pcb_defect_detector/pcb_defect_detector/_engine/core/entities/detect-2.py": {
+   "sha256": "97802f42d1a4fae32cd4c75d29db200fcf5cfe468ee96e4dfe978a57a23f0d29",
+   "size": 1961
+  },
+  "alg_repo/body/pcb_defect/pcb_defect_detector/pcb_defect_detector/_engine/core/entities/detect.py": {
+   "sha256": "97802f42d1a4fae32cd4c75d29db200fcf5cfe468ee96e4dfe978a57a23f0d29",
+   "size": 1961
+  },
+  "alg_repo/body/pcb_defect/pcb_defect_detector/pcb_defect_detector/_engine/core/entities/__init__-2.py": {
+   "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+   "size": 0
+  },
+  "alg_repo/body/pcb_defect/pcb_defect_detector/pcb_defect_detector/_engine/core/entities/__init__.py": {
+   "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+   "size": 0
+  },
+  "alg_repo/body/pcb_defect/pcb_defect_detector/pcb_defect_detector/_engine/core/utils/alg_config-2.py": {
+   "sha256": "057f819e343da9b5ca19db49441af926565b745b19fdd6afb6c7681ef1e15dde",
+   "size": 1202
+  },
+  "alg_repo/body/pcb_defect/pcb_defect_detector/pcb_defect_detector/_engine/core/utils/alg_config.py": {
+   "sha256": "057f819e343da9b5ca19db49441af926565b745b19fdd6afb6c7681ef1e15dde",
+   "size": 1202
+  },
+  "alg_repo/body/pcb_defect/pcb_defect_detector/pcb_defect_detector/_engine/core/utils/__init__-2.py": {
+   "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+   "size": 0
+  },
+  "alg_repo/body/pcb_defect/pcb_defect_detector/pcb_defect_detector/_engine/core/utils/__init__.py": {
+   "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+   "size": 0
+  },
+  "alg_repo/body/pcb_defect/pcb_defect_detector/pcb_defect_detector/_engine/resources/config/alg/component/component_damage-2.json": {
+   "sha256": "bdc8d4cbba8b8b26cc97f2bd624e97c9ed3c3ce0f6300902a54e81987c380a71",
+   "size": 457
+  },
+  "alg_repo/body/pcb_defect/pcb_defect_detector/pcb_defect_detector/_engine/resources/config/alg/component/component_damage.json": {
+   "sha256": "bdc8d4cbba8b8b26cc97f2bd624e97c9ed3c3ce0f6300902a54e81987c380a71",
+   "size": 457
+  },
+  "alg_repo/body/pcb_defect/pcb_defect_detector/pcb_defect_detector/_engine/resources/config/alg/component/component_flipped-2.json": {
+   "sha256": "11c95cfa0ba9ec0f1209df98c97ab8aca468eb52805834c28abf85e9f718c82d",
+   "size": 361
+  },
+  "alg_repo/body/pcb_defect/pcb_defect_detector/pcb_defect_detector/_engine/resources/config/alg/component/component_flipped.json": {
+   "sha256": "11c95cfa0ba9ec0f1209df98c97ab8aca468eb52805834c28abf85e9f718c82d",
+   "size": 361
+  },
+  "alg_repo/body/pcb_defect/pcb_defect_detector/pcb_defect_detector/_engine/resources/config/alg/component/component_missing-2.json": {
+   "sha256": "8d75834020daaa8d0bae36cc103f913ebe1ff415f1a5a3ffaaea165823a457d6",
+   "size": 560
+  },
+  "alg_repo/body/pcb_defect/pcb_defect_detector/pcb_defect_detector/_engine/resources/config/alg/component/component_missing.json": {
+   "sha256": "8d75834020daaa8d0bae36cc103f913ebe1ff415f1a5a3ffaaea165823a457d6",
+   "size": 560
+  },
+  "alg_repo/body/pcb_defect/pcb_defect_detector/pcb_defect_detector/_engine/resources/config/alg/component/component_reverse_polarity-2.json": {
+   "sha256": "867ecbf33caf87f1bab41eaf4639411fb5026fdddd55cae1fad45d21df862e32",
+   "size": 546
+  },
+  "alg_repo/body/pcb_defect/pcb_defect_detector/pcb_defect_detector/_engine/resources/config/alg/component/component_reverse_polarity.json": {
+   "sha256": "9a5de0014ed2636f82d7f52492af36255d08537124bfa00ac00e2949ede8013f",
+   "size": 528
+  },
+  "alg_repo/body/pcb_defect/pcb_defect_detector/pcb_defect_detector/_engine/resources/config/alg/component/component_shift-2.json": {
+   "sha256": "1728104bd4617c79e047e2449a9084afd2a4b9d86960bd602ea998621e989e8f",
+   "size": 371
+  },
+  "alg_repo/body/pcb_defect/pcb_defect_detector/pcb_defect_detector/_engine/resources/config/alg/component/component_shift.json": {
+   "sha256": "c5b1be813b8107b91957a6485e55b47fbe88b8e54ce0919cb46f922713399c7d",
+   "size": 358
+  },
+  "alg_repo/body/pcb_defect/pcb_defect_detector/pcb_defect_detector/_engine/resources/config/alg/component/component_tombstone-2.json": {
+   "sha256": "03a6124bc03741d42782356c514c4aeae3d5d6a34f588f16ca0d3509d84b4b6f",
+   "size": 524
+  },
+  "alg_repo/body/pcb_defect/pcb_defect_detector/pcb_defect_detector/_engine/resources/config/alg/component/component_tombstone.json": {
+   "sha256": "03a6124bc03741d42782356c514c4aeae3d5d6a34f588f16ca0d3509d84b4b6f",
+   "size": 524
+  },
+  "alg_repo/body/pcb_defect/pcb_defect_detector/pcb_defect_detector/_engine/resources/config/alg/component/component_wrong_part-2.json": {
+   "sha256": "caa6a0ec18ef80b07690696f5723cc4358f6c29e0a74964826ab106e31441ff0",
+   "size": 441
+  },
+  "alg_repo/body/pcb_defect/pcb_defect_detector/pcb_defect_detector/_engine/resources/config/alg/component/component_wrong_part.json": {
+   "sha256": "caa6a0ec18ef80b07690696f5723cc4358f6c29e0a74964826ab106e31441ff0",
+   "size": 441
+  },
+  "alg_repo/body/pcb_defect/pcb_defect_detector/pcb_defect_detector/_engine/resources/config/alg_pool/component_algs-2.json": {
+   "sha256": "8817a7d53f2edc52af2375d4ebc9412761e47378f467466d88ca9dd32b01f7d5",
+   "size": 2787
+  },
+  "alg_repo/body/pcb_defect/pcb_defect_detector/pcb_defect_detector/_engine/resources/config/alg_pool/component_algs.json": {
+   "sha256": "8817a7d53f2edc52af2375d4ebc9412761e47378f467466d88ca9dd32b01f7d5",
+   "size": 2787
+  },
+  "alg_repo/body/pcb_defect/pcb_defect_detector/pcb_defect_detector/_engine/utils/compat-2.py": {
+   "sha256": "c61fa8c199f9b71dd53a28d7b130292308bb1cf4f8bf8c2365f3558c325822ff",
+   "size": 845
+  },
+  "alg_repo/body/pcb_defect/pcb_defect_detector/pcb_defect_detector/_engine/utils/compat.py": {
+   "sha256": "c61fa8c199f9b71dd53a28d7b130292308bb1cf4f8bf8c2365f3558c325822ff",
+   "size": 845
+  },
+  "alg_repo/body/pcb_defect/pcb_defect_detector/pcb_defect_detector/_engine/utils/__init__-2.py": {
+   "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+   "size": 0
+  },
+  "alg_repo/body/pcb_defect/pcb_defect_detector/pcb_defect_detector/_engine/utils/__init__.py": {
+   "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+   "size": 0
+  },
+  "alg_repo/body/pcb_defect/pcb_defect_detector/tests/test_roi_match.py": {
+   "sha256": "4aae92126094565914335b676b0e8ddb4f21f027088f072fe32193cd3e46ab3c",
+   "size": 4871
+  },
+  "alg_repo/body/pcb_defect/pcb_defect_detector/tests/test_smoke-2.py": {
+   "sha256": "897b5e54f09c27df37c1019ebf84d4fa2a4bbf5ed1d4a624dade60804f7d06ef",
+   "size": 3138
+  },
+  "alg_repo/body/pcb_defect/pcb_defect_detector/tests/test_smoke.py": {
+   "sha256": "897b5e54f09c27df37c1019ebf84d4fa2a4bbf5ed1d4a624dade60804f7d06ef",
+   "size": 3138
+  },
+  "alg_repo/body/pcb_defect/pcb_defect_detector/tools/validate_defect_samples-2.py": {
+   "sha256": "e8dc346101fa34d440bc63519def259663905052b4b586886a72870850f3a8e8",
+   "size": 1543
+  },
+  "alg_repo/body/pcb_defect/pcb_defect_detector/tools/validate_defect_samples.py": {
+   "sha256": "e8dc346101fa34d440bc63519def259663905052b4b586886a72870850f3a8e8",
+   "size": 1543
+  },
+  "alg_repo/gold_finger/defect_classifier.joblib": {
+   "sha256": "a7ccaa7e57e0813053f3b8094b73477b45e77f5b9b0a65d849e39f707d37d587",
+   "size": 6320001
+  },
+  "alg_repo/gold_finger/defect_classifier.npz": {
+   "sha256": "38a3b03739785c16e04bac68a416cad60d43cf7652bf71e7ce49a3954d68c8b1",
+   "size": 2286072
+  },
+  "alg_repo/gold_finger/defect_features.py": {
+   "sha256": "d2f9102148d8e16a58ad34adc96c8a53fb0268b36dba3a0b144c73cd1146d1ad",
+   "size": 8374
+  },
+  "alg_repo/gold_finger/extract_features.py": {
+   "sha256": "f7fc82c37e696d4e1221571e81a1c771339b727cee5052e5a98df099429918cf",
+   "size": 3693
+  },
+  "alg_repo/gold_finger/features_dataset.npz": {
+   "sha256": "9b4970c86c0fa82185f0845ab9abc366d96326355550d54ffd19d2b54bc815b7",
+   "size": 490962
+  },
+  "alg_repo/gold_finger/forest_infer.py": {
+   "sha256": "59197497fb2aa1fe5754059c9d0111c99afeedfcecd37b7a61a0eff71b3c7ce3",
+   "size": 3224
+  },
+  "alg_repo/gold_finger/main_pipeline.md": {
+   "sha256": "e9ab742fe5552799ba5750862115b86d206b471fb945e1f33be466adeaaa83f2",
+   "size": 16113
+  },
+  "alg_repo/gold_finger/main_pipeline.py": {
+   "sha256": "be6c39e1241f884e1b51ab74d98d718215a2c9e3e1cce5af14c962ee3dc078e5",
+   "size": 40389
+  },
+  "alg_repo/gold_finger/peizhun.py": {
+   "sha256": "af62f7b3d992a61918b798a90c2089f533a40410d2f5790de9db7cfd806d42fc",
+   "size": 22487
+  },
+  "alg_repo/gold_finger/seed_extract.py": {
+   "sha256": "510298c6dd088ba5d483c8ae2b3d0a49b08b40dffb7c9521c6d0537327805ad1",
+   "size": 13997
+  },
+  "alg_repo/gold_finger/train_classifier.py": {
+   "sha256": "f5811ebbadff6f648bc8c886259c2724138037cbb9afba6783f4905dd4809d0c",
+   "size": 4206
+  },
+  "alg_repo/gold_finger/修复记录_金手指边缘误检与配准.md": {
+   "sha256": "d74643b67df6ede4d4455280a1d07273391b8f5bdd3ba5dfe96edf49a89ad56a",
+   "size": 9539
+  },
+  "alg_repo/shift_smt/contract_reference/core/load_class.py": {
+   "sha256": "c7c129bcb1e0ef94ac7233d967286d5443c8543e70fb7a351bd8ecb592079bfd",
+   "size": 610
+  },
+  "alg_repo/shift_smt/contract_reference/core/entities/algorithms.py": {
+   "sha256": "96a28219a8ccb02524d0a0e96250acff36b31a4f89eeadb0ab00f3e4237cf5e5",
+   "size": 4203
+  },
+  "alg_repo/shift_smt/contract_reference/core/entities/detect.py": {
+   "sha256": "f89a2954ed6c8402b36a9d22e853f8b050e0185101a2ccef8ea26f0a52619d94",
+   "size": 2259
+  },
+  "alg_repo/shift_smt/contract_reference/core/utils/alg_config.py": {
+   "sha256": "31aa837622e8fed2777b0cfeaee92295d1d2a97e39e2b465db129307626176dd",
+   "size": 3474
+  },
+  "alg_repo/shift_smt/src/algorithms/__init__.py": {
+   "sha256": "ce5994d599436c511352e5fbea3913ba42a74e1c4713e4e92ed97cedf0bc694a",
+   "size": 55
+  },
+  "alg_repo/shift_smt/src/algorithms/color_extractor/color_extractor.py": {
+   "sha256": "266d6c4245dffa21b18c1c716af4004914c1a298e42f1f1ed82d1b96b970d51d",
+   "size": 10690
+  },
+  "alg_repo/shift_smt/src/algorithms/color_extractor/__init__.py": {
+   "sha256": "2fc5d1a44c178935c743239b0606c5cae44639eb163ac827c6daf695dfd6d127",
+   "size": 28
+  },
+  "alg_repo/shift_smt/src/algorithms/component_detect/shift_smt_all_alg.py": {
+   "sha256": "b69702f80c79d3c2e5ac0813cc19da212922bfd7e8b23a5ab0621f9d01ff2dff",
+   "size": 37143
+  },
+  "alg_repo/shift_smt/src/algorithms/component_detect/__init__.py": {
+   "sha256": "acc1857794895af7994a8f1ec5ae22fe613dfb5e0383daaea1907b8057b2fcd6",
+   "size": 34
+  },
+  "alg_repo/shift_smt/src/algorithms/gamma/gamma.py": {
+   "sha256": "b13f9be1726106895ca6360cb851b3383a43e4813cd507d52cff44e1b4e6b7e4",
+   "size": 1245
+  },
+  "alg_repo/shift_smt/src/algorithms/gamma/__init__.py": {
+   "sha256": "8c16d7642cfde257cc7e84e803bfeeb957eece509057a6547abf7843f12ade64",
+   "size": 37
+  },
+  "alg_repo/shift_smt/src/resources/config/alg/shift_smt_all_alg.json": {
+   "sha256": "707bfd9520053b6a4cc6efbde5c971bf9d83d71faba37bfcc6173b4afb6c189d",
+   "size": 685
+  },
+  "alg_repo/shift_smt/src/resources/config/alg_pool/cv_detect_algs.json": {
+   "sha256": "51da7da872f2fd454ca504634b4f36f7cc5d7e8414dcd0a8b19e5eae5ed1ed0b",
+   "size": 330
+  },
+  "alg_repo/smt/conftest.py": {
+   "sha256": "e8a748195ab52cf8c02f85a59b51b794be933b43a77a765c8a40f7e00242c83c",
+   "size": 249
+  },
+  "alg_repo/smt/README.md": {
+   "sha256": "93af0830c742ad327c27d303e16713f7a56f7712404c19f34a27c4bc6263d8e3",
+   "size": 15444
+  },
+  "alg_repo/smt/requirements.txt": {
+   "sha256": "de0bfc38223406d6ecfae34fb8e302b4435cced0833a59e3cf052ea5e2393142",
+   "size": 315
+  },
+  "alg_repo/smt/contract_reference/core/load_class.py": {
+   "sha256": "c7c129bcb1e0ef94ac7233d967286d5443c8543e70fb7a351bd8ecb592079bfd",
+   "size": 610
+  },
+  "alg_repo/smt/contract_reference/core/entities/algorithms.py": {
+   "sha256": "96a28219a8ccb02524d0a0e96250acff36b31a4f89eeadb0ab00f3e4237cf5e5",
+   "size": 4203
+  },
+  "alg_repo/smt/contract_reference/core/entities/detect.py": {
+   "sha256": "f89a2954ed6c8402b36a9d22e853f8b050e0185101a2ccef8ea26f0a52619d94",
+   "size": 2259
+  },
+  "alg_repo/smt/contract_reference/core/utils/alg_config.py": {
+   "sha256": "31aa837622e8fed2777b0cfeaee92295d1d2a97e39e2b465db129307626176dd",
+   "size": 3474
+  },
+  "alg_repo/smt/csrc/setup.py": {
+   "sha256": "bdba2de4732f051f52e3dcc03986354c79c562a5bbfcea75745a64ba2a8d6a60",
+   "size": 2146
+  },
+  "alg_repo/smt/csrc/_fast_core.cpp": {
+   "sha256": "2cb29a68ecf353f294754f394c6baa40cc9fb2f72370a096f837baf12c04e9a5",
+   "size": 15843
+  },
+  "alg_repo/smt/docs/command.md": {
+   "sha256": "5c7534a2597f70453e7467fd339ec4fd5b7ece4af781ddb08893804c3c0b4e0c",
+   "size": 3201
+  },
+  "alg_repo/smt/docs/design.md": {
+   "sha256": "126bd3195c0d4934ff470015181ef6a9a1283d0edada90f43e7ed8852b056588",
+   "size": 17254
+  },
+  "alg_repo/smt/docs/pad.md": {
+   "sha256": "bb616079fbd07deb7cdb8fd7c848136bd23a7ef3842b4ee7059e25f214a7f374",
+   "size": 6059
+  },
+  "alg_repo/smt/docs/params.md": {
+   "sha256": "96e65e6f6ff5571b3e5455a43f473b17147d2ae8b9784e09d850ca412141e701",
+   "size": 12249
+  },
+  "alg_repo/smt/docs/solder_smt_all_alg.json": {
+   "sha256": "026b9d230f89e4909c5a409d11db8a1a9b8f4accd07959e80949519453b5814d",
+   "size": 3242
+  },
+  "alg_repo/smt/docs/tuner.md": {
+   "sha256": "c25434a29a7558b125336a7548fd7e73d8113bb68b1e61a549cab03df402a2ad",
+   "size": 6828
+  },
+  "alg_repo/smt/src/algorithms/__init__.py": {
+   "sha256": "56a7e597d8779a4f7641425fdfbf8ef9080d9dd1900b9cc32ed870ff29784d94",
+   "size": 332
+  },
+  "alg_repo/smt/src/algorithms/solder_smt/__init__.py": {
+   "sha256": "300b49959f0930a4a418e44142ac3f288bb2f884bba999494a3aa0de7d8faaba",
+   "size": 19
+  },
+  "alg_repo/smt/src/algorithms/solder_smt/composite_smt_all/solder_smt_all_alg.py": {
+   "sha256": "0657d234ae8b1aa507d5e05be90f8b4124e7efdeb996a4d6aacf709fd78bb88e",
+   "size": 49203
+  },
+  "alg_repo/smt/src/algorithms/solder_smt/composite_smt_all/_solder_core.py": {
+   "sha256": "9b0e86683cc278296ff32365e15de9c86de4b41cc2bc4651323552842b735634",
+   "size": 73838
+  },
+  "alg_repo/smt/src/algorithms/solder_smt/composite_smt_all/__init__.py": {
+   "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+   "size": 0
+  },
+  "alg_repo/smt/src/resources/config/alg/solder_smt/solder_smt_all_alg.json": {
+   "sha256": "b17f48b869735ac40ba5e5cfe0d9913830546fa22c901294246fa743c210d343",
+   "size": 3274
+  },
+  "alg_repo/smt/src/resources/config/alg_pool/cv_algorithms.json": {
+   "sha256": "986bf837ce48cee0f9a7a9b5131167ab3a084c58febb4654e7477126844a9e9e",
+   "size": 390
+  },
+  "alg_repo/smt/test_src/algorithms/solder_smt/solder_smt_all_alg_test.py": {
+   "sha256": "4b66660f728acf8e2de17a46265f586f1e29125f02f205239b345ce9f3796836",
+   "size": 4580
+  },
+  "alg_repo/smt/tuner/pcba_tuner.py": {
+   "sha256": "1ae10092e7175af234a96b8053cddb3d27d1aab7b958471ba02727b61c68cb3d",
+   "size": 100189
+  },
+  "alg_repo/smt/tuner/pcba_tuner_real.py": {
+   "sha256": "4e1caaf2288555b7f5f581c1e0e481cc2c6adb277ebcec13adab0faf7cd8a83c",
+   "size": 122794
+  },
+  "alg_repo/through_hole/app/requirements.txt": {
+   "sha256": "efbfc5910b7c9d43ba190af03d4c70b532fcd58957feb316d5bbc280ef8d5931",
+   "size": 175
+  },
+  "alg_repo/through_hole/app/run_app.py": {
+   "sha256": "071cf22726c4562067f97f67a55f8e1296289bbf8efdf0f8829c8d97ff014e8f",
+   "size": 436
+  },
+  "alg_repo/through_hole/app/pcb_solder_app/config.py": {
+   "sha256": "20fb53565c99cfaf4aeaffd396aac30e38f893df7b4cdd1411cc6bab04dd61c8",
+   "size": 2627
+  },
+  "alg_repo/through_hole/app/pcb_solder_app/main.py": {
+   "sha256": "13eb6fa5e7293f5374c03bf84681736df0b3594c2085a75c4df5f1e0e82915a6",
+   "size": 705
+  },
+  "alg_repo/through_hole/app/pcb_solder_app/metadata.py": {
+   "sha256": "427c05a1d4e7cd7a586fed26d59a50b78e24342cb87495994f6e6e90188d287e",
+   "size": 5392
+  },
+  "alg_repo/through_hole/app/pcb_solder_app/__init__.py": {
+   "sha256": "2842d937941d447b84d45fa1fd8b55af341aa6c361380609c83767e58c7c3047",
+   "size": 53
+  },
+  "alg_repo/through_hole/app/pcb_solder_app/core/detector_service.py": {
+   "sha256": "548ac6ccc590726e30bcac082d908767e4093f445b52c24bebfe87aba05f9978",
+   "size": 3214
+  },
+  "alg_repo/through_hole/app/pcb_solder_app/core/models.py": {
+   "sha256": "83b0e1ef2a31f88dbd77a2d5b8b6ebd1c92100777ce46577e6f841fbbb509c25",
+   "size": 9888
+  },
+  "alg_repo/through_hole/app/pcb_solder_app/core/template_store.py": {
+   "sha256": "589dae595b01eace58224320547eb16f6707bf3e067664e6576262ee3c43a5a9",
+   "size": 1806
+  },
+  "alg_repo/through_hole/app/pcb_solder_app/core/__init__.py": {
+   "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+   "size": 0
+  },
+  "alg_repo/through_hole/app/pcb_solder_app/ui/defect_panel.py": {
+   "sha256": "49c3e5a06bfb87052d185483ec5a699c588361769b4261160434837660f665a2",
+   "size": 5555
+  },
+  "alg_repo/through_hole/app/pcb_solder_app/ui/image_canvas.py": {
+   "sha256": "b318dbffe5c8194a46194d980583f3b2005a32217d45c358a0d0e3c5e90ef1ae",
+   "size": 22518
+  },
+  "alg_repo/through_hole/app/pcb_solder_app/ui/main_window.py": {
+   "sha256": "4545afa2cfd1c3aa6928705948ec9c2be471c0f167e5df29b12410870d526e44",
+   "size": 27131
+  },
+  "alg_repo/through_hole/app/pcb_solder_app/ui/param_panel.py": {
+   "sha256": "e643e989fcc52a49e7ada457d64144975019cc7692d06c75b96c5d9d9cff781a",
+   "size": 7827
+  },
+  "alg_repo/through_hole/app/pcb_solder_app/ui/resize_grips.py": {
+   "sha256": "27501947ee6da77b168f9114ce30bc4e6f19a7f7a16bc8cac4a13c126f0aff52",
+   "size": 4253
+  },
+  "alg_repo/through_hole/app/pcb_solder_app/ui/result_panel.py": {
+   "sha256": "2765422b22603aa77a79c60c5812d3cfd3a73d9f884e72dbefd0b7676c8ea699",
+   "size": 7896
+  },
+  "alg_repo/through_hole/app/pcb_solder_app/ui/solder_area_panel.py": {
+   "sha256": "5bbfab3fb66457a5ed53b8070fdebbcce61473a82fbf57f6eb3d64f281f83c27",
+   "size": 4678
+  },
+  "alg_repo/through_hole/app/pcb_solder_app/ui/theme.py": {
+   "sha256": "75ae3f17ed5a3b5543dcd2093bd68ac37ea83076f181a08e30afc8dd2c819269",
+   "size": 8647
+  },
+  "alg_repo/through_hole/app/pcb_solder_app/ui/title_bar.py": {
+   "sha256": "191174e94911768434368b1845ec22b7d0e902a78db02d7eb5c64ecef0189de5",
+   "size": 2391
+  },
+  "alg_repo/through_hole/app/pcb_solder_app/ui/widgets.py": {
+   "sha256": "ccf72aeb8c297d75ff22d37524329e0ba9c8f2a36f246e70f873c1349fb39347",
+   "size": 9639
+  },
+  "alg_repo/through_hole/app/pcb_solder_app/ui/workers.py": {
+   "sha256": "4d073afe5aaae3b5b7ac1c3f8bf8e8963bf51e5c7c7df46fdb54f99895c3111a",
+   "size": 2927
+  },
+  "alg_repo/through_hole/app/pcb_solder_app/ui/__init__.py": {
+   "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+   "size": 0
+  },
+  "alg_repo/through_hole/detect/config.yaml": {
+   "sha256": "c3259cbf61540ffd2ee5141399b20e2bb1632176212e35031ad9c18d99fb1791",
+   "size": 12174
+  },
+  "alg_repo/through_hole/detect/conftest.py": {
+   "sha256": "915afcf556dfed19063dadcab57e5f4a7ed0c866da4636dcef34b67efe664128",
+   "size": 447
+  },
+  "alg_repo/through_hole/detect/README.md": {
+   "sha256": "6e19aa3b44fd47ea4fc0b6a4c33819915e61136f705b1b0acee339916276389e",
+   "size": 2351
+  },
+  "alg_repo/through_hole/detect/requirements.txt": {
+   "sha256": "247aef8f15455ace7b341fcb321266a5a47d38b2111735360c2b8bf57a2aba7f",
+   "size": 251
+  },
+  "alg_repo/through_hole/detect/run.py": {
+   "sha256": "34aaf3542abc1d110344f54c955abb05368ad5d088dc208bafa47ce9afdfe8f1",
+   "size": 6960
+  },
+  "alg_repo/through_hole/detect/contract_reference/README.md": {
+   "sha256": "696ab138197f717f2b09a6fb8e47eda7db522ef5dc347704c027483ceda43ec5",
+   "size": 196
+  },
+  "alg_repo/through_hole/detect/contract_reference/core/load_class.py": {
+   "sha256": "6bf6546e19267a6b4315a104716ff75190f2094e97edc5a919dbe668707d030b",
+   "size": 771
+  },
+  "alg_repo/through_hole/detect/contract_reference/core/__init__.py": {
+   "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+   "size": 0
+  },
+  "alg_repo/through_hole/detect/contract_reference/core/entities/algorithms.py": {
+   "sha256": "a883a15d1551e81a20da07011b3c961f2545c4d1afae65da520bb0e724d7f280",
+   "size": 4052
+  },
+  "alg_repo/through_hole/detect/contract_reference/core/entities/detect.py": {
+   "sha256": "2b41eb3e9d1087531bd8a188de912e7990c16407e738cfa71a86aa5f80f55790",
+   "size": 2145
+  },
+  "alg_repo/through_hole/detect/contract_reference/core/entities/__init__.py": {
+   "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+   "size": 0
+  },
+  "alg_repo/through_hole/detect/contract_reference/core/utils/alg_config.py": {
+   "sha256": "81f118a95428e5e7551c7114254c3220cf0bbdb638b11c0d9dff21d67c2448eb",
+   "size": 3540
+  },
+  "alg_repo/through_hole/detect/contract_reference/core/utils/__init__.py": {
+   "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+   "size": 0
+  },
+  "alg_repo/through_hole/detect/docs/插件焊点接入说明.md": {
+   "sha256": "8e3df791ffa59d72bd8c32d613eceddda13e6764612dffcefe36af2d9f228ac6",
+   "size": 4719
+  },
+  "alg_repo/through_hole/detect/input/roi/10-1.png": {
+   "sha256": "6e547396437a5dc174cdb61ca5dee2aa38287c25df1df36b9daeff666c76ac8b",
+   "size": 88681
+  },
+  "alg_repo/through_hole/detect/input/roi/11-1.png": {
+   "sha256": "56fcd0580cd55c78f83f531bd8e9937752c00aa7042fd7025c66fb506d958fcc",
+   "size": 92490
+  },
+  "alg_repo/through_hole/detect/input/roi/12-1.png": {
+   "sha256": "8c3bfe6e57970ea5fbde78cdf369af7543c212d184d8e3c50430300e6cbad98f",
+   "size": 34637
+  },
+  "alg_repo/through_hole/detect/input/roi/12-2.png": {
+   "sha256": "f76277ec1f6a2d33932be02c307636bc3896814aed5c8d511d51f4d2bacb8c0b",
+   "size": 35684
+  },
+  "alg_repo/through_hole/detect/input/roi/13-1.png": {
+   "sha256": "4090f15f4fe077e944af5bf176252edec897dfddd6b88a08b82384eb5628f05d",
+   "size": 38601
+  },
+  "alg_repo/through_hole/detect/input/roi/13-2.png": {
+   "sha256": "cd6f6801267b00eee936a8e6b6671514fa6c01137b08725c7f961daf37877d77",
+   "size": 39597
+  },
+  "alg_repo/through_hole/detect/input/roi/14-1.png": {
+   "sha256": "486f2fad5547523d1ba29b3cdf74e64a683e772d04691f143615ab7a6be7d07b",
+   "size": 30278
+  },
+  "alg_repo/through_hole/detect/input/roi/14-2.png": {
+   "sha256": "38e03ffe5c6ffc7387a410a2b195caeeaf64e96f40f96fe5fe329928b48ffccd",
+   "size": 28951
+  },
+  "alg_repo/through_hole/detect/input/roi/15-1.png": {
+   "sha256": "18a3f6783cfd6d40cb4ecf4baf874b76cfa75ada346e01e6c7838cfaa5c3f260",
+   "size": 70648
+  },
+  "alg_repo/through_hole/detect/input/roi/15-2.png": {
+   "sha256": "efd086bb9e1c47f2b3815a578a2db970f8325ac432323b54380aaa91d9631433",
+   "size": 72314
+  },
+  "alg_repo/through_hole/detect/input/roi/2-1.png": {
+   "sha256": "c1679aedb384e6a09f2f82f27eb9b479135013f20753421e51c4e621fb59eee8",
+   "size": 21974
+  },
+  "alg_repo/through_hole/detect/input/roi/2-10.png": {
+   "sha256": "6e0bee9081b02777e4aae10ebb239579f073d711e97b72ce49a019c11105a6e3",
+   "size": 32340
+  },
+  "alg_repo/through_hole/detect/input/roi/2-11.png": {
+   "sha256": "2a016a075ceaed35af69ddb905eec3a038ae5359f05e608d4ae2f3b73a7a42eb",
+   "size": 33116
+  },
+  "alg_repo/through_hole/detect/input/roi/2-12.png": {
+   "sha256": "da3090d279b64cf299f68d60ae2c10788824131f9f57d5253387b15ca34c76fe",
+   "size": 30899
+  },
+  "alg_repo/through_hole/detect/input/roi/2-13.png": {
+   "sha256": "e856f96bb5253815b772f36aba616d3ed98a8aa5cfc19e9fececa578555b1959",
+   "size": 26752
+  },
+  "alg_repo/through_hole/detect/input/roi/2-2.png": {
+   "sha256": "0b88a1f4ffec35cdd55f84d44a5b151f8598fa56cb79f144ef10335cca55718f",
+   "size": 22416
+  },
+  "alg_repo/through_hole/detect/input/roi/2-3.png": {
+   "sha256": "78a4479163d6e689e1f9bd98f53915c87e67a7d8bc38d9e905949f2fa3bd6984",
+   "size": 22408
+  },
+  "alg_repo/through_hole/detect/input/roi/2-4.png": {
+   "sha256": "8ef39871d0557e7a4a60878c6ec1d14d278725ebfbf80c1159c0e2d748abaca6",
+   "size": 22505
+  },
+  "alg_repo/through_hole/detect/input/roi/2-5.png": {
+   "sha256": "074227f3a9935cd79d44fa246492aba843aecdf3176cc8a68ec7ac91785d79f9",
+   "size": 22590
+  },
+  "alg_repo/through_hole/detect/input/roi/2-6.png": {
+   "sha256": "6a2fb50bba577034dc8cd8e8e5a4e66cf733753c7a15d6a94a797f6b97f72954",
+   "size": 21301
+  },
+  "alg_repo/through_hole/detect/input/roi/2-7.png": {
+   "sha256": "b461e2b14e4fa986550ec7ee333e1a56c720431702b8ca3062e5efb9b882a3cf",
+   "size": 22505
+  },
+  "alg_repo/through_hole/detect/input/roi/2-8.png": {
+   "sha256": "5b93b000404a652f3eced796868907deb7995856ac332aa4a457157844f09d37",
+   "size": 32500
+  },
+  "alg_repo/through_hole/detect/input/roi/2-9.png": {
+   "sha256": "a439045dfe7f8e9152b0072e44f0b9337adf89f0bd7dec1aad95893088217209",
+   "size": 31019
+  },
+  "alg_repo/through_hole/detect/input/roi/3-1.png": {
+   "sha256": "ffef2e10cb462a20a6c3162f31a7aea1d97fb2e9a6a5b1cbf5055a11a5afda3e",
+   "size": 57830
+  },
+  "alg_repo/through_hole/detect/input/roi/3-2.png": {
+   "sha256": "454b690ec741c491b53574deab81c2608913b388bfcec946faba0c409e8f36bd",
+   "size": 56321
+  },
+  "alg_repo/through_hole/detect/input/roi/4-1.png": {
+   "sha256": "cef1d0749376a869d8ea9b90bee9a1927980c2ac083788393a565171120f7b41",
+   "size": 19756
+  },
+  "alg_repo/through_hole/detect/input/roi/4-2.png": {
+   "sha256": "75bf2bd84e66a4866079de045aff2de88df32b8901addcc154229b94b50980ef",
+   "size": 20709
+  },
+  "alg_repo/through_hole/detect/input/roi/4-3.png": {
+   "sha256": "71b5d749cabef434cbff8975907c91af6deeecfab17741443616ac2287ffec62",
+   "size": 20295
+  },
+  "alg_repo/through_hole/detect/input/roi/4-4.png": {
+   "sha256": "df8d9249fd42670b7afc05965efb8517cf5e93ee80927c219a1224efdb012335",
+   "size": 19582
+  },
+  "alg_repo/through_hole/detect/input/roi/4-5.png": {
+   "sha256": "08104035faf6f9e2192e1a5772e3c6e76d6b1b6e7cf6176a94f37fcbaf5f97ed",
+   "size": 17210
+  },
+  "alg_repo/through_hole/detect/input/roi/4-6.png": {
+   "sha256": "be3f260721ec51160219ac4494338dd98de5761e5a35f354d9af03ba4c159f9f",
+   "size": 20719
+  },
+  "alg_repo/through_hole/detect/input/roi/4-7.png": {
+   "sha256": "5a4b7e191d0321f38f75fd76dd6da395d67c8254c8433f5dda2078595e9ad414",
+   "size": 19272
+  },
+  "alg_repo/through_hole/detect/input/roi/4-8.png": {
+   "sha256": "d5e8dcdc75bf3246eb3db6a1695642fac5fdab5bd8636f5c0121c173db4c9ca2",
+   "size": 20412
+  },
+  "alg_repo/through_hole/detect/input/roi/6-1.png": {
+   "sha256": "0ac79219ab808ed141bc02dad1fe0ff425b61fe71469db2ffb91fd30505bda47",
+   "size": 50188
+  },
+  "alg_repo/through_hole/detect/input/roi/7-1.png": {
+   "sha256": "1badab447f3831c56a3f4effc8ead4f8d2ba6da0555048b3b118322c39934488",
+   "size": 42890
+  },
+  "alg_repo/through_hole/detect/input/roi/8-1.png": {
+   "sha256": "4cdfddfb6f76f38a3294dd5e846d2ab940399aba4e70d132eeb81143c608f4fe",
+   "size": 68368
+  },
+  "alg_repo/through_hole/detect/input/roi/9-1.png": {
+   "sha256": "2e3af9b5d42632451005e09cdffd1ecf404209dc9fc1ed95bd8b630e866107aa",
+   "size": 82880
+  },
+  "alg_repo/through_hole/detect/input/standard_roi/templ_10.json": {
+   "sha256": "d2746157a337c4b4514d6d9b5a86cfd6b87211e36581cd559d1bb80d3349d283",
+   "size": 34
+  },
+  "alg_repo/through_hole/detect/input/standard_roi/templ_10.png": {
+   "sha256": "a7169485134aef8c51002410564fdc5152f015707c5a94cd271a54a8f393cf73",
+   "size": 89431
+  },
+  "alg_repo/through_hole/detect/input/standard_roi/templ_11.json": {
+   "sha256": "60d9e3fd72f226081881ebb8a7af940ad786b018a380e2f2d93d1c5e1ad414cb",
+   "size": 34
+  },
+  "alg_repo/through_hole/detect/input/standard_roi/templ_11.png": {
+   "sha256": "1818c86ba9d90a925fac56c398c015c3cc1d7d5661a6eed42908aec94e2cc86d",
+   "size": 86023
+  },
+  "alg_repo/through_hole/detect/input/standard_roi/templ_12.json": {
+   "sha256": "9e8a079bf56e4baecbd90437ff3768eb3768936884915114c91a6dd64dc8b607",
+   "size": 31
+  },
+  "alg_repo/through_hole/detect/input/standard_roi/templ_12.png": {
+   "sha256": "3d79019e596e661c3b7677d16b5b6aa2c1f75469a617bdd6c7a6da028b145fa6",
+   "size": 35776
+  },
+  "alg_repo/through_hole/detect/input/standard_roi/templ_13.json": {
+   "sha256": "9e8a079bf56e4baecbd90437ff3768eb3768936884915114c91a6dd64dc8b607",
+   "size": 31
+  },
+  "alg_repo/through_hole/detect/input/standard_roi/templ_13.png": {
+   "sha256": "4090f15f4fe077e944af5bf176252edec897dfddd6b88a08b82384eb5628f05d",
+   "size": 38601
+  },
+  "alg_repo/through_hole/detect/input/standard_roi/templ_14.json": {
+   "sha256": "9e8a079bf56e4baecbd90437ff3768eb3768936884915114c91a6dd64dc8b607",
+   "size": 31
+  },
+  "alg_repo/through_hole/detect/input/standard_roi/templ_14.png": {
+   "sha256": "afa3f849dd5dad291d5177210b0cefca4741102326f8d3a80198f517085d7e54",
+   "size": 29808
+  },
+  "alg_repo/through_hole/detect/input/standard_roi/templ_15.json": {
+   "sha256": "9e8a079bf56e4baecbd90437ff3768eb3768936884915114c91a6dd64dc8b607",
+   "size": 31
+  },
+  "alg_repo/through_hole/detect/input/standard_roi/templ_15.png": {
+   "sha256": "86347680cb0d2e08083e55c873f36ebf17f311baef85667ac71045ff964ec6b5",
+   "size": 68199
+  },
+  "alg_repo/through_hole/detect/input/standard_roi/templ_2.json": {
+   "sha256": "60d9e3fd72f226081881ebb8a7af940ad786b018a380e2f2d93d1c5e1ad414cb",
+   "size": 34
+  },
+  "alg_repo/through_hole/detect/input/standard_roi/templ_2.png": {
+   "sha256": "30868e4fb47f468e7a8b8cc9a7b8462b95435a58ff2852d813a9cc915342d911",
+   "size": 21272
+  },
+  "alg_repo/through_hole/detect/input/standard_roi/templ_3.json": {
+   "sha256": "60d9e3fd72f226081881ebb8a7af940ad786b018a380e2f2d93d1c5e1ad414cb",
+   "size": 34
+  },
+  "alg_repo/through_hole/detect/input/standard_roi/templ_3.png": {
+   "sha256": "36e50e583b45dca854f35c4ceedfb5dfcf8af0f6013e1e63c251e8b4a9b1700e",
+   "size": 53991
+  },
+  "alg_repo/through_hole/detect/input/standard_roi/templ_4.json": {
+   "sha256": "60d9e3fd72f226081881ebb8a7af940ad786b018a380e2f2d93d1c5e1ad414cb",
+   "size": 34
+  },
+  "alg_repo/through_hole/detect/input/standard_roi/templ_4.png": {
+   "sha256": "4cce5b8a091764c8f975b84dd8d0e178d7ff637f813ea06f418172143fa7b6ed",
+   "size": 18785
+  },
+  "alg_repo/through_hole/detect/input/standard_roi/templ_6.json": {
+   "sha256": "60d9e3fd72f226081881ebb8a7af940ad786b018a380e2f2d93d1c5e1ad414cb",
+   "size": 34
+  },
+  "alg_repo/through_hole/detect/input/standard_roi/templ_6.png": {
+   "sha256": "2e13d0538e720afe644b64348befb4b8d506ee5fe8f0530227bd49806846a4e1",
+   "size": 42231
+  },
+  "alg_repo/through_hole/detect/input/standard_roi/templ_7.json": {
+   "sha256": "60d9e3fd72f226081881ebb8a7af940ad786b018a380e2f2d93d1c5e1ad414cb",
+   "size": 34
+  },
+  "alg_repo/through_hole/detect/input/standard_roi/templ_7.png": {
+   "sha256": "fa951660ad800877995399f2d351691fa536ae0c1c16d839c8666a0cc08b4889",
+   "size": 41615
+  },
+  "alg_repo/through_hole/detect/input/standard_roi/templ_8.json": {
+   "sha256": "60d9e3fd72f226081881ebb8a7af940ad786b018a380e2f2d93d1c5e1ad414cb",
+   "size": 34
+  },
+  "alg_repo/through_hole/detect/input/standard_roi/templ_8.png": {
+   "sha256": "35f838a7a9ecbe2bbbcd256202ae0b33296f27dff3b8b844067017314726d48e",
+   "size": 128291
+  },
+  "alg_repo/through_hole/detect/input/standard_roi/templ_9.json": {
+   "sha256": "d2746157a337c4b4514d6d9b5a86cfd6b87211e36581cd559d1bb80d3349d283",
+   "size": 34
+  },
+  "alg_repo/through_hole/detect/input/standard_roi/templ_9.png": {
+   "sha256": "449ab4b05c7bb80cc6a8abff20350fc85b6459f389d3c6fcc2f4552a272dbe90",
+   "size": 73014
+  },
+  "alg_repo/through_hole/detect/src/algorithms/__init__.py": {
+   "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+   "size": 0
+  },
+  "alg_repo/through_hole/detect/src/algorithms/pcb_through_hole/align.py": {
+   "sha256": "d7219086907be54a3671d77056369ef30efeeb4c01ef309998e187a3e5c6f5dd",
+   "size": 18427
+  },
+  "alg_repo/through_hole/detect/src/algorithms/pcb_through_hole/bridge.py": {
+   "sha256": "dc995c350aac401b865d3632aa2521f422e2de358b85b7aa06d136a97cc70323",
+   "size": 10280
+  },
+  "alg_repo/through_hole/detect/src/algorithms/pcb_through_hole/bridge_color.py": {
+   "sha256": "130b6a302ed235b08b696c9a471695e61ac01c8fa315bafbe858daf47ec0ba2a",
+   "size": 6309
+  },
+  "alg_repo/through_hole/detect/src/algorithms/pcb_through_hole/bridge_joints.py": {
+   "sha256": "34ed0ecb9b52394de080e669fc07bcf087f87ad6e2b52af1b99e98a053c5270d",
+   "size": 4430
+  },
+  "alg_repo/through_hole/detect/src/algorithms/pcb_through_hole/config.py": {
+   "sha256": "8da233b3f3338c0dade5feb57b04506dce65700aa46442f8f791fe2b340a1f39",
+   "size": 9822
+  },
+  "alg_repo/through_hole/detect/src/algorithms/pcb_through_hole/defect_mode.py": {
+   "sha256": "0bb2f35a23e53d143f90c847d98169e1dbec9db3ec44dead495b1384c34e4470",
+   "size": 650
+  },
+  "alg_repo/through_hole/detect/src/algorithms/pcb_through_hole/detection.py": {
+   "sha256": "70bc3f6bcea339f3e35672be05722936b9e7d076dbfcf5bbd2b63797ffbe7407",
+   "size": 792
+  },
+  "alg_repo/through_hole/detect/src/algorithms/pcb_through_hole/excess.py": {
+   "sha256": "8962ce898e72f693eb83f9f3e1fb85eaad00156208fda04712aef72905bf9b36",
+   "size": 6951
+  },
+  "alg_repo/through_hole/detect/src/algorithms/pcb_through_hole/features.py": {
+   "sha256": "31fbbde8f93bac58ac9c2bc1b292ded5999f61ebc80ce77333049891371be1b1",
+   "size": 3353
+  },
+  "alg_repo/through_hole/detect/src/algorithms/pcb_through_hole/insufficient.py": {
+   "sha256": "0c695e6b6cefd053ec68d036240025d9c09dc53806eb97b9c4ebf0ef6b9643a2",
+   "size": 8342
+  },
+  "alg_repo/through_hole/detect/src/algorithms/pcb_through_hole/mask_stats.py": {
+   "sha256": "10feb116f5b7d0bc1f84611e9169330bf1d6ee16d537913043fad81f427df20f",
+   "size": 7703
+  },
+  "alg_repo/through_hole/detect/src/algorithms/pcb_through_hole/nolead.py": {
+   "sha256": "c133c7c2b3f971a32ae394fab60a98bfc244943e3e44344f1206f367d09d8aa5",
+   "size": 12731
+  },
+  "alg_repo/through_hole/detect/src/algorithms/pcb_through_hole/pcb_through_hole_solder_alg.py": {
+   "sha256": "3a7561771dc32d3294bae6de7524ff52d1645a4544a34dbc6d5abf583bcd1b43",
+   "size": 24963
+  },
+  "alg_repo/through_hole/detect/src/algorithms/pcb_through_hole/pipeline.py": {
+   "sha256": "dfff21570b3bc454fd7631f8f13eaf26d431e2365a6ec1f2c7d3fb6eaa4ffba2",
+   "size": 15098
+  },
+  "alg_repo/through_hole/detect/src/algorithms/pcb_through_hole/segment.py": {
+   "sha256": "d1658007f422b7b24793b1b3625460c3d938fbe84206a355c97bcfe9544415cf",
+   "size": 10711
+  },
+  "alg_repo/through_hole/detect/src/algorithms/pcb_through_hole/solder_extract.py": {
+   "sha256": "19db381949be60b6f938761337a37993784faf29e68bde885f4e02635b445786",
+   "size": 25774
+  },
+  "alg_repo/through_hole/detect/src/algorithms/pcb_through_hole/template.py": {
+   "sha256": "85e71c294fccdd203d36714f4ec9cb1c7b8cf06e3abd1b11e758931e97eb890a",
+   "size": 4259
+  },
+  "alg_repo/through_hole/detect/src/algorithms/pcb_through_hole/tuning.py": {
+   "sha256": "78edd6b177c6bd677c329809d0b056fa1b79e3c9dca8737e9e89aa162d2b1bb0",
+   "size": 3557
+  },
+  "alg_repo/through_hole/detect/src/algorithms/pcb_through_hole/visualize.py": {
+   "sha256": "f665dab7f9098d71948c2258b76b72abb0ed239a67b9d0868c35d7bac9750288",
+   "size": 9059
+  },
+  "alg_repo/through_hole/detect/src/algorithms/pcb_through_hole/void.py": {
+   "sha256": "b05f48bd3be9f9d6f7d3e24833e94e668994610f8a53978b89e5fbed70e19793",
+   "size": 11686
+  },
+  "alg_repo/through_hole/detect/src/algorithms/pcb_through_hole/yaml_config.py": {
+   "sha256": "93b452a0642fc4a503adfcb69b18e805fc1402fe4ac71df1e1710f68d2bc5182",
+   "size": 7929
+  },
+  "alg_repo/through_hole/detect/src/algorithms/pcb_through_hole/__init__.py": {
+   "sha256": "baa0d61394b04367595ac549033671b674b62eb07706034e483ce31994da1449",
+   "size": 518
+  },
+  "alg_repo/through_hole/detect/src/resources/config/alg/pcb_through_hole/pcb_through_hole_solder_alg.json": {
+   "sha256": "faba65a2fa8539b5cde2db071bdf9d40fa254bbc402f75d8ec9bb50ab5fa121b",
+   "size": 633
+  },
+  "alg_repo/through_hole/detect/src/resources/config/alg_pool/pcb_through_hole_algs.json": {
+   "sha256": "b0c384dcfc18a20adcb7bc11b71d4a61291daef0f1ad45d31eb54ef59c2da40d",
+   "size": 537
+  },
+  "alg_repo/through_hole/detect/test_src/algorithms/pcb_through_hole/align_test.py": {
+   "sha256": "f991a56fe73c82c3b6e8378aff02c6c7aae34366acaecb210034e1bfa8de443f",
+   "size": 7768
+  },
+  "alg_repo/through_hole/detect/test_src/algorithms/pcb_through_hole/bridge_test.py": {
+   "sha256": "3dabf50484fb1e8fab7cdb4190ff7aae30697ab788b461ffb92abc39cb1a02cb",
+   "size": 1847
+  },
+  "alg_repo/through_hole/detect/test_src/algorithms/pcb_through_hole/defect_mode_test.py": {
+   "sha256": "ae3b7d4da3dc67f63c4f6497a0d916f3220168dd46e5ad57ffedc9acc38ed2d3",
+   "size": 906
+  },
+  "alg_repo/through_hole/detect/test_src/algorithms/pcb_through_hole/pcb_through_hole_solder_alg_test.py": {
+   "sha256": "93da22e56f91d06bc2d39bae1ae86dca02d575c82a5adbade6cda08f476f9b34",
+   "size": 23483
+  },
+  "alg_repo/wrinkle/src/algorithms/__init__.py": {
+   "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+   "size": 0
+  },
+  "alg_repo/wrinkle/src/algorithms/surface_wrinkle/algo_trad.py": {
+   "sha256": "3ad741cb8c6a776793d9d2a1fa8ff9449c5ac224f376fccadf369289246e75d2",
+   "size": 8628
+  },
+  "alg_repo/wrinkle/src/algorithms/surface_wrinkle/surface_wrinkle_alg.py": {
+   "sha256": "6ddf9957f2ef1ec0eb07cfe3e331684b5e9aa99d03bfc083bb72f7aeae13ca76",
+   "size": 7298
+  },
+  "alg_repo/wrinkle/src/algorithms/surface_wrinkle/__init__.py": {
+   "sha256": "bffd99cb04950b21c0c0e49fd8ddd424f86fbb37df7b4a75866ba075364180ee",
+   "size": 87
+  },
+  "alg_repo/wrinkle/src/core/load_class.py": {
+   "sha256": "c7c129bcb1e0ef94ac7233d967286d5443c8543e70fb7a351bd8ecb592079bfd",
+   "size": 610
+  },
+  "alg_repo/wrinkle/src/core/__init__.py": {
+   "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+   "size": 0
+  },
+  "alg_repo/wrinkle/src/core/entities/algorithms.py": {
+   "sha256": "c94d081177846cd882d5fdc4b9380a6185c922e3501f5703c282df5a970c0b2e",
+   "size": 3702
+  },
+  "alg_repo/wrinkle/src/core/entities/detect.py": {
+   "sha256": "788e73df973cf3ce286f2f55985b05ca7aca96e16f4c4f4f2e25148570021f9b",
+   "size": 1851
+  },
+  "alg_repo/wrinkle/src/core/entities/__init__.py": {
+   "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+   "size": 0
+  },
+  "alg_repo/wrinkle/src/core/utils/alg_config.py": {
+   "sha256": "4a72a324dece8ccd03f81f8ff2fc92dfa490cec21f6e7bbfa590adfebc09db8c",
+   "size": 3340
+  },
+  "alg_repo/wrinkle/src/core/utils/__init__.py": {
+   "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+   "size": 0
+  },
+  "alg_repo/wrinkle/src/resources/config/alg/surface_wrinkle/surface_wrinkle_alg.json": {
+   "sha256": "a891b29156e5ff583c85aa4543efb14047e4d2584aa7f5aa7cf41269ec979650",
+   "size": 538
+  },
+  "alg_repo/wrinkle/src/resources/config/alg_pool/surface_wrinkle_algs.json": {
+   "sha256": "fc523418ef04e72093b462b4e063ca12bb736b876f1f7fa9f75801b5ac4b5c30",
+   "size": 382
+  },
+  "alg_repo/wrinkle/src/utils/image_io.py": {
+   "sha256": "5bdcd44eb0d51203d4aa30551a7be27e6467cc3302e1f28030d56cc8c3583c32",
+   "size": 1575
+  },
+  "alg_repo/wrinkle/src/utils/__init__.py": {
+   "sha256": "d8e3b29ec73b2f2a62cd7442c4013b4a5a5f1f2c938b6615a1834242d35fa9d4",
+   "size": 106
+  },
+  "app/config.py": {
+   "sha256": "e851e09a886607972248039c6c0178434d90a362d30aeeca7a5271a3597fc362",
+   "size": 7242
+  },
+  "app/api/app.py": {
+   "sha256": "df98f9f52ac9e09679c4bb6ec5d9cbc6ecf028f81ddcbdbba93a273810659b4d",
+   "size": 2556
+  },
+  "app/api/routes_async.py": {
+   "sha256": "15c31cc5d8e45b25e9c2c60bb30b834a8cb3bdf625ea05197c690a380a351161",
+   "size": 7878
+  },
+  "app/api/routes_cad.py": {
+   "sha256": "cdd2924f23e1bfb83b14328196c95dffde10cb166626c7a6e45d62e97239c108",
+   "size": 3752
+  },
+  "app/api/routes_detect.py": {
+   "sha256": "65b549cb2af6bb00c7caa80762cb43345ce48fac23f2539290adf8c3146109b0",
+   "size": 9957
+  },
+  "app/api/routes_feedback.py": {
+   "sha256": "ddf08c68753b3c82685a5d552a43b84ccca171b270a8ef4fc553e86450c27913",
+   "size": 5686
+  },
+  "app/api/routes_filter.py": {
+   "sha256": "0363839b121778c75edb0d074ebf81d57f1c24cfc035d5b7cc1f2b4c3de6b228",
+   "size": 5504
+  },
+  "app/api/routes_models.py": {
+   "sha256": "fa2f0e0ead35c20159e0bf0b8376f5653ee9b17e4d809beba2d547134a6bdf56",
+   "size": 4689
+  },
+  "app/api/routes_stats.py": {
+   "sha256": "7953eca99df8511dd61584c0f68e935a8fa16afa650b26197c70f1a505447ed2",
+   "size": 11391
+  },
+  "app/api/routes_templates.py": {
+   "sha256": "68f922e1f82d45aa81a67051f85c97f1307fcb125d575ce5c2cb4807c2fb3919",
+   "size": 3549
+  },
+  "app/api/routes_workorder.py": {
+   "sha256": "66eada6e8830fe954f6014f072bf6fe07038b85cfd11a958f318ca42892703d3",
+   "size": 14206
+  },
+  "app/api/__init__.py": {
+   "sha256": "52c6730d0116e4fccb1fb6a16674aec453bb30bfbd817ee506f8dbaa1dca3169",
+   "size": 52
+  },
+  "app/calibration/body_roi.py": {
+   "sha256": "192a2dd609e94f166b7213ce6647cf35b5ddfb3b375312fbdce1ae05fb40ff40",
+   "size": 1875
+  },
+  "app/calibration/gold_seed.py": {
+   "sha256": "ae9a051be16d2d65d84dd654fcf7ea80ef9f173b0a1708b069d83eb5aa97608d",
+   "size": 986
+  },
+  "app/calibration/shift_base.py": {
+   "sha256": "ff7cfe07bbefb885482599332dacf1a9cf713dec96efa8a5a04cbb7f495bebb2",
+   "size": 1359
+  },
+  "app/calibration/smt_pads.py": {
+   "sha256": "377178be50d5b9f255844f996c64e6eab461427ce575bbdb166cc7e206fc25a5",
+   "size": 2360
+  },
+  "app/calibration/store.py": {
+   "sha256": "f98989d3b5473182458c556033676aa1dfa47c8ff03cb8c0d9c4e9ebec53c82f",
+   "size": 1143
+  },
+  "app/calibration/th_roi.py": {
+   "sha256": "02688b5aa1112eccb4e9f99992bd02fa0cb9bd9ec8113193e5e86e5b6009d935",
+   "size": 5017
+  },
+  "app/calibration/__init__.py": {
+   "sha256": "4e4e61f577d7e1a1fff0c1959368321141f41f5e7d565067f7f3f17d5106a874",
+   "size": 114
+  },
+  "app/core/aoi_core_launcher.py": {
+   "sha256": "cc7e647e23b7faa7d8bdcd94928b0e0b8f6641971aa4868866f6be9b62628b65",
+   "size": 3527
+  },
+  "app/core/cad.py": {
+   "sha256": "6846827eabf687da77cba52f6c288064ddeadd6e71580d392dfbdd87695125bf",
+   "size": 5625
+  },
+  "app/core/coords.py": {
+   "sha256": "f14ac3343fa62d95fdb4054733e97a9edf48670ff656d7099df2d86d18a2ab11",
+   "size": 3482
+  },
+  "app/core/datasets.py": {
+   "sha256": "0bac92fd121ac769c469f2996786aba631a07b337f235f16a19ff4de6abec837",
+   "size": 12433
+  },
+  "app/core/dataset_adapter.py": {
+   "sha256": "7d8398ee7a023804776be994c35b5ee991f6a7c7870e5a72977da0b7c8867c58",
+   "size": 27331
+  },
+  "app/core/ingest.py": {
+   "sha256": "570adc2d85f96fb3e18c38ae14ae445e261e160ce8f1b3e53989e1634dcf37a7",
+   "size": 12707
+  },
+  "app/core/mes.py": {
+   "sha256": "858bc0f52317f2c500873b077bd83dce51dd51752c2b92fa8e9f74cc83f96ddc",
+   "size": 6254
+  },
+  "app/core/ng_filter.py": {
+   "sha256": "3eb62d6160d68a15675ec38e1aa25df460ec4e1aa523433dace0f233563b6296",
+   "size": 2589
+  },
+  "app/core/pipeline_service.py": {
+   "sha256": "2ac5844e124af4a0d8e489170fded7ffdca22f9c2012ed7a8c7852f3a3cbfc22",
+   "size": 12580
+  },
+  "app/core/single_instance.py": {
+   "sha256": "d09f75932489965c9e8641b8c0be7d4ed48f2c89ef737e0a1ad42212b237de27",
+   "size": 1586
+  },
+  "app/core/task_queue.py": {
+   "sha256": "ad490c783823af3969e45aea0bf259682770d1b95d150938659da662668e7583",
+   "size": 14413
+  },
+  "app/core/__init__.py": {
+   "sha256": "92337d6d075698386362f12b4be4b433695d8caf3d8cab6a46dca53adc17757d",
+   "size": 86
+  },
+  "app/detect/catalog.py": {
+   "sha256": "0eae893f8982928595b6a0c1fbc8d04fbe86c3b23defd16b84d9ae4122f07a5b",
+   "size": 5340
+  },
+  "app/detect/contract.py": {
+   "sha256": "23360b8d4538ec92a47505ecaaf8cd1812c163400c49af2520b279f179c43d04",
+   "size": 3295
+  },
+  "app/detect/gate.py": {
+   "sha256": "d7b7b3f0cb29d59f406fb130fd28d9c103093f1f2c445fb3839082f0fbf37bad",
+   "size": 2602
+  },
+  "app/detect/registry.py": {
+   "sha256": "f0c3c0f2fc96a3292c525a2883728bdd3b96926fa08a868fbf45e6c88508ccee",
+   "size": 4590
+  },
+  "app/detect/roi.py": {
+   "sha256": "9ffa08e6d26253aa8001dd8812d07d3aa4e1804bde2f0f0114ed1396db1dd2f5",
+   "size": 2118
+  },
+  "app/detect/scheduler.py": {
+   "sha256": "a8320b8284ec17164789ec7eaa3a3d58ba474f576da6ef53064ddc2d0550826c",
+   "size": 30832
+  },
+  "app/detect/types.py": {
+   "sha256": "3fc1318e59cf8043190b7204edbdfd7eb326c2aae70336b55a3ebb17c05891db",
+   "size": 4041
+  },
+  "app/detect/__init__.py": {
+   "sha256": "95927b38a8b9240a8601a7711c2408198498dd9a45045b5675f0eba70a81cb3a",
+   "size": 185
+  },
+  "app/detect/adapters/base.py": {
+   "sha256": "544449ee572bf32b1c48750c407468498529b0f2e076a12eae8755c936c979ed",
+   "size": 3205
+  },
+  "app/detect/adapters/body_adapter.py": {
+   "sha256": "650730a580dab4871b2dad0a1ab44c67b9fdd14aa0fb947dcc1016b343955ab6",
+   "size": 18401
+  },
+  "app/detect/adapters/gold_finger_adapter.py": {
+   "sha256": "e6e53945ac54f126fd0b80e5434098e82c400afcc9aa580ff3a1c6795190653d",
+   "size": 12153
+  },
+  "app/detect/adapters/path_bootstrap.py": {
+   "sha256": "ec6c64b568a0fa0a39f7d73d82a7eb3f5c00e466a6e6fc4f905a3665446d5565",
+   "size": 2754
+  },
+  "app/detect/adapters/shift_adapter.py": {
+   "sha256": "3573a06b668d6b6b77d269b8e234ed560e55c9881528d795ff83828e695aa24c",
+   "size": 14199
+  },
+  "app/detect/adapters/smt_adapter.py": {
+   "sha256": "0ad0822e5c280e020a399382c22a3b2b4e5db364ed88c06d7528501c456acc26",
+   "size": 21199
+  },
+  "app/detect/adapters/through_hole_adapter.py": {
+   "sha256": "219558e4f25b010b5b8b9dd199177a81ff2021b4af2d441319a240d1b4e4a3d1",
+   "size": 10929
+  },
+  "app/detect/adapters/wrinkle_adapter.py": {
+   "sha256": "574ea95d1613d1a56e599cc01a1145af61b771a29ef5ff56d97f33c120bb3b5d",
+   "size": 5152
+  },
+  "app/detect/adapters/__init__.py": {
+   "sha256": "cc1c2239fdbd72e88af6b2f6f10b8c60b5d56c8b613cbf4d5367e45afcf2951b",
+   "size": 98
+  },
+  "app/detect/modules/example_ok.py": {
+   "sha256": "006bf8bc3865a2c089f4f264280a164a2faf3bcc5a12ac961ee318881853311c",
+   "size": 1853
+  },
+  "app/detect/modules/__init__.py": {
+   "sha256": "7146ced032d185910735c6ae5c951955cb7b4db31b5caed327dbfaa340d16950",
+   "size": 178
+  },
+  "app/engines/feature.py": {
+   "sha256": "4074712febba56e4ea750ad828dd82dabfcaac36082641d53bba5e8572c3e92f",
+   "size": 2176
+  },
+  "app/engines/feature_client.py": {
+   "sha256": "72b6f75dc0133adbbce632c320f09520227e72526646825417e2f3305c5fd40f",
+   "size": 14988
+  },
+  "app/engines/__init__.py": {
+   "sha256": "ac33b967fcb33e704c07372efed027dbfe457d7571d9d20b360d1bd0d1a50189",
+   "size": 94
+  },
+  "app/inspect/align.py": {
+   "sha256": "2b2ac95d14de3cc033ced1b20e90e7ff75e1433f902ae96daf965b44d0fe859f",
+   "size": 2197
+  },
+  "app/inspect/detect_service.py": {
+   "sha256": "abae97d1968b88c82e3a68fa841c9cc31fc51e4d2673f811a84d719f3e28fd27",
+   "size": 9586
+  },
+  "app/inspect/fusion.py": {
+   "sha256": "d7bdbb9faeb7225f364428676c09ed60d298361807d346e730ec4f992a05d844",
+   "size": 9241
+  },
+  "app/inspect/service.py": {
+   "sha256": "6912cd01c8133b8cc789cd67eff266df76bc5d218c648a5605cdf70f667f8e57",
+   "size": 25247
+  },
+  "app/inspect/worker.py": {
+   "sha256": "b90288ba9129f510982d5af1ef1b1537d75e3ca99415e381a83036fbb1663e53",
+   "size": 1697
+  },
+  "app/inspect/__init__.py": {
+   "sha256": "e01bcab97f05da3e39a4c3d63ab90bb317b7615bffb16daf9de8d108113db0e4",
+   "size": 223
+  },
+  "app/preprocess/engine.py": {
+   "sha256": "43a029ba2728ef4b4e6529c7e7269560ed2e440f96ace26bf94cf273a9978dc0",
+   "size": 5634
+  },
+  "app/preprocess/__init__.py": {
+   "sha256": "a6b192a721dd9fed3ccd04720e494c882da28bfaa3494835f3a58b4a2c67a185",
+   "size": 106
+  },
+  "app/recipe/param_store.py": {
+   "sha256": "d4d3938f7e540b7d77c1be9359b02a0fde7d351a0da3cd613f26f39780138cb6",
+   "size": 6504
+  },
+  "app/recipe/store.py": {
+   "sha256": "e5f8e547d69a7c2df9a0914bea195df3b7d8772d1103ca15bb42ffd7f45162bb",
+   "size": 6022
+  },
+  "app/recipe/__init__.py": {
+   "sha256": "d55ffd2977b5711d1b5b22015647d5d025f780039645a8726f2e94366dc27f66",
+   "size": 91
+  },
+  "app/result/store.py": {
+   "sha256": "337fe0839e9a2f0131c6247a06fc48f6d7c14be6a97f3dba81d487ec3cc8ed7a",
+   "size": 6740
+  },
+  "app/result/__init__.py": {
+   "sha256": "020a934d01dd62aa49066df199476c88d60a9110195a440a2cfa12ba839f6192",
+   "size": 61
+  },
+  "app/tools/tuner.py": {
+   "sha256": "f7bcb247624f117c5d1dc919a092c305c54f35dea6e89700c932fca601353f71",
+   "size": 16400
+  },
+  "app/tools/__init__.py": {
+   "sha256": "c241a899ebd29d23c80c0b54eb1c988953492b40cb0d83694714fe9a6d3337e0",
+   "size": 46
+  },
+  "app/ui/algo_param_panel.py": {
+   "sha256": "5418f0f8cea1f8067690bbf1f5a340d584779a8ec007b598fe1ab65c2f41fb15",
+   "size": 17420
+  },
+  "app/ui/calibration_dialog.py": {
+   "sha256": "8606b736d9f33a3c3f927dd90f9d85ea2cd82f560284cc6c6d7e2c1149747770",
+   "size": 16280
+  },
+  "app/ui/core_pages.py": {
+   "sha256": "e750ec4fed3f1c8ceef5fdf194e68834f443f2d1ee40f2f3141a6e2130fd18bc",
+   "size": 8586
+  },
+  "app/ui/defect_table.py": {
+   "sha256": "33e0ca6ac5f1048449af0e1d1f201f8b313f501eaff1acbc956813f1cd985e37",
+   "size": 6022
+  },
+  "app/ui/detect_page.py": {
+   "sha256": "2d6797230238baca755309d42db6fa056dd6fecbaed7be139e2ee43d8f05c4da",
+   "size": 36744
+  },
+  "app/ui/history_page.py": {
+   "sha256": "185431f8d2b04c62f0f9f7676c116639a0edc4e07507a39a1ac40cab2074c26a",
+   "size": 14450
+  },
+  "app/ui/image_canvas.py": {
+   "sha256": "9691881bb2b7df1fa6de3a06a3b826bcdc71c4869ad83819551e44fc23ead813",
+   "size": 26452
+  },
+  "app/ui/inspect_canvas.py": {
+   "sha256": "a1a29cb8336cf09a933c5f77ec075b1957e268282e1bde82ead6f710364b23fa",
+   "size": 4917
+  },
+  "app/ui/inspect_page.py": {
+   "sha256": "063ae5799e0d99dbc8e69f7f536ed26e14a25f8f870212ca5f94665f5d8b9b26",
+   "size": 29363
+  },
+  "app/ui/main_window.py": {
+   "sha256": "4bac154747d5f910b15c5faa2136836bf66ba912afdb6fbd2b187b6a521a88be",
+   "size": 12386
+  },
+  "app/ui/preprocess_page.py": {
+   "sha256": "a08327360675c1f244b9b326fde9058170e7a5400d2e8f2b548619ca359fbc7a",
+   "size": 10729
+  },
+  "app/ui/result_hud.py": {
+   "sha256": "16acfbd19c8c6216ffbe4f0a987b70c444491db0ba930a98ef254dd2e7b556f2",
+   "size": 4193
+  },
+  "app/ui/settings_dialog.py": {
+   "sha256": "58aa18454097443d76a8619c7b312f7ab5108c6ce6d4ecd1ce19ca7a9d634615",
+   "size": 2819
+  },
+  "app/ui/template_picker.py": {
+   "sha256": "d14ca4749a5bdafae08016aa4a31f49a1e89dd36fe48dfa1346a481a1f1204eb",
+   "size": 7269
+  },
+  "app/ui/template_studio_page.py": {
+   "sha256": "1495e5e1e50f9de4234ea08fb609c3c249600aa7ec9c2d60303bb70f7091882e",
+   "size": 54116
+  },
+  "app/ui/theme.py": {
+   "sha256": "9e97849794b46472930808ba1cbb9b78a080202929f40a432a36b9a7a1a6724f",
+   "size": 11747
+  },
+  "app/ui/tuner_dialog.py": {
+   "sha256": "474b3a5b6f5c229f1306d1fed610aef87216f67e30e58ec37181553a94fdec74",
+   "size": 30296
+  },
+  "app/ui/tuner_preview.py": {
+   "sha256": "774a48914c54f01bd1b73b407f1c663e39e2edaca7c41024ce7d943330f58ce6",
+   "size": 2382
+  },
+  "app/ui/widgets.py": {
+   "sha256": "a4936c5de415af9836f5d51d7924aee71b658f022cad81934b38670808f5db5f",
+   "size": 14479
+  },
+  "app/ui/__init__.py": {
+   "sha256": "dd65d00d91edc0a5b718b067d4cc858096f2b1a5dbe55160fa9bba2c7698c94e",
+   "size": 65
+  },
+  "app/utils/cv_io.py": {
+   "sha256": "f5bd8165ae0dbf433a677c4c6b5fc95b3a7ad6782d27c85c52e79df3de2d89cc",
+   "size": 1535
+  },
+  "app/utils/cv_text.py": {
+   "sha256": "439ca11ae36932df53f52eaeab3abbb2b3ebf6e7cbe1f1e7ad57a12f2fab804f",
+   "size": 2303
+  },
+  "app/utils/filename.py": {
+   "sha256": "fce2c1cd241ed3e92976ab50af07b795af71964e73692ba746b4e356a11a6bbe",
+   "size": 735
+  },
+  "app/utils/image_qt.py": {
+   "sha256": "1c2fc71fc2b2c3ba94374d11032ad076e7ddd65431fcbe1da823a81f80c599f6",
+   "size": 1303
+  },
+  "app/utils/__init__.py": {
+   "sha256": "1b4fb1ea1a27a1980a0eaa2c9cbaece6ec715728015f4b529b92d7305c432bf2",
+   "size": 263
+  },
+  "configs/default.yaml": {
+   "sha256": "5f0c13344ccb1e008c3dbc288c99f634f4721033bc1e25018e57a78b50cdc848",
+   "size": 2197
+  },
+  "docs/UI全页面实测报告_data_local.md": {
+   "sha256": "31eeb75a1cf401b212e8c4ed01d226e396ff732d73bc60a63579dee5ad44ec42",
+   "size": 7636
+  },
+  "docs/架构与设计.md": {
+   "sha256": "05a97ffed142ce7bfd5b6374a7c711fdfe0ed8164414884bb6d8d31032e433b9",
+   "size": 43851
+  },
+  "docs/演示视频脚本.md": {
+   "sha256": "21cca8e2f38dc01921dd5858ecf66d81b9cc9fc08f7ade304017d87c43241d3e",
+   "size": 5576
+  },
+  "docs/问题": {
+   "sha256": "4817c4bfe73e82cdea837862d52cb6aaa674f3cf4c26921ffd947ee962fa3d22",
+   "size": 1002
+  },
+  "examples/smoke_cad.csv": {
+   "sha256": "42bfe04a8fe423387344ff1b4f5339cacca25dfc3988e53bbadab88f0a487f5f",
+   "size": 89
+  },
+  "storage/settings.json": {
+   "sha256": "53e7b3a862f1d9065555515e0dcf545b1a17431c1263ff06d2222b4ae76dae19",
+   "size": 167
+  },
+  "storage/core_stage/gold_finger/train/good/225b94a33fb65fa0.jpg": {
+   "sha256": "af8c0a9f99f1d5391b69377345b892ae41cd395ca70908ab74cacf1ebfdeb273",
+   "size": 2481374
+  },
+  "storage/core_stage/gold_finger/train/good/2ba89bb11f7297f7.png": {
+   "sha256": "fd0e216bb321056da00e18dbca1e467ef1aeee9eaafcc3e3f67f3b8af37458f0",
+   "size": 1212467
+  },
+  "storage/core_stage/gold_finger/train/good/3066f25adf34adac.png": {
+   "sha256": "ee28fbad221d8ab06b17524ba6d67ed561ca6f577f9115945c8c91476d1e5c45",
+   "size": 201217
+  },
+  "storage/core_stage/gold_finger/train/good/3257e4cbffc1a902.jpg": {
+   "sha256": "86a5749b6734b6c448e8ac637aec256be7746bc7223054f1781ff8cdfa8d45b0",
+   "size": 2728909
+  },
+  "storage/core_stage/gold_finger/train/good/3a769d47bfcbde5a.png": {
+   "sha256": "11500edb9fe651e13637fa191c179886b065f93964121a02f05d3f1b15678abc",
+   "size": 1204672
+  },
+  "storage/core_stage/gold_finger/train/good/3aabeb166e34dd80.png": {
+   "sha256": "996933313d083cc30f79fb2b76f89712d8cf2a29449b1ed29aad2fedda0c9c29",
+   "size": 192577
+  },
+  "storage/core_stage/gold_finger/train/good/3c9a98307321a106.jpg": {
+   "sha256": "62c1c61e7f44f4a0f19230a90eb1b13afb312f02b75e63b5f4ad31f0899aefd6",
+   "size": 2188569
+  },
+  "storage/core_stage/gold_finger/train/good/3eb044b7dd60ed0f.png": {
+   "sha256": "3cf7e236836b6873da77a918cb93b341b3b0ba683dd9c8b82e12ad004265531e",
+   "size": 1062010
+  },
+  "storage/core_stage/gold_finger/train/good/578de177120d6ced.png": {
+   "sha256": "03ac3fb4bf658685a6fb285ee78a1e7532dcd5650577ffecf91a50ec7c62f880",
+   "size": 1216935
+  },
+  "storage/core_stage/gold_finger/train/good/5aadae895b4f3035.png": {
+   "sha256": "98059282a314e640f645f41a752aa6c9c753ec158426236aeb0574bb52d2141b",
+   "size": 1165393
+  },
+  "storage/core_stage/gold_finger/train/good/5c8e1391478b6cae.jpg": {
+   "sha256": "396fcbaa547397cdd60f9cef79ab3ea4f0a99941ab57da21bf292f35edc67928",
+   "size": 2951792
+  },
+  "storage/core_stage/gold_finger/train/good/655f61171f721f4c.png": {
+   "sha256": "9b7077079541fa12f324d6854a6cff15c3dd2ac02f426855b3000c628f5aefe3",
+   "size": 1213755
+  },
+  "storage/core_stage/gold_finger/train/good/67a6fddcf541f160.png": {
+   "sha256": "dbfb8c8b14027f4c6eba30b7f68d189454eb91907bb97c129a98ec186f77bfd5",
+   "size": 1239402
+  },
+  "storage/core_stage/gold_finger/train/good/8616fac228d532d6.png": {
+   "sha256": "f3ff8c2705445cf226110af7938f0ebe7445c73a0959b5959105312f1cc3dd2a",
+   "size": 1208337
+  },
+  "storage/core_stage/gold_finger/train/good/91940b19fa3ba96d.png": {
+   "sha256": "334fd4a65d10974992b9cefa5118569d1ca56ab5f30359a8a7f2f024cd56c0c7",
+   "size": 230693
+  },
+  "storage/core_stage/gold_finger/train/good/aa5b131c4a0e1c18.png": {
+   "sha256": "af58cf2fbb83e7614bc4be14a470d4a1340a0ac87bffb6c0e8fa9a8e174e9a9c",
+   "size": 1207845
+  },
+  "storage/core_stage/gold_finger/train/good/b82200d925c9cbbd.png": {
+   "sha256": "25196a549eb92fac338b8c9f6e99e761dddf9a293e5368f1ccbe166138c2e060",
+   "size": 1183988
+  },
+  "storage/core_stage/gold_finger/train/good/cd917648b3af1ede.jpg": {
+   "sha256": "99533ae21e56a3f507acccac86418e73c11fcb7fc7da5a10b500524e1c2eba09",
+   "size": 2706973
+  },
+  "storage/core_stage/gold_finger/train/good/f38146f330ae3371.png": {
+   "sha256": "707d15bd5f037fe1f2222635246ce8564b4d1c35bc6ffeaee3ead10ed157a2c3",
+   "size": 1202086
+  },
+  "storage/core_stage/gold_finger/train/good/fede589a58fc5dc9.jpg": {
+   "sha256": "b4edc42810a763bbdc5bec69120776145c59b1a7a2026bb50683a11125a511db",
+   "size": 2475610
+  },
+  "storage/core_stage/smt_solder/train/good/2de7dd0f234b5922.png": {
+   "sha256": "39682686712c41e01a0c1e8cbce88ac7ea4619377bc788c87f7c9e89e259b385",
+   "size": 293594
+  },
+  "storage/core_stage/smt_solder/train/good/70bd33c957e01772.png": {
+   "sha256": "eb4c929e79526842f2e1f24b038e5afbb5d7473652e97d420cfbc7d8de5d40d7",
+   "size": 534511
+  },
+  "storage/core_stage/smt_solder/train/good/8c28b2311df9f0ba.png": {
+   "sha256": "2bfc4a2326cddd0aec1d8f540477a41f3816c74ed48729157cc6e0cf64f673ef",
+   "size": 673903
+  },
+  "storage/core_stage/smt_solder/train/good/9fa4d1f54480592a.png": {
+   "sha256": "98fc4e658466d6b133f060eb82495666612f150dad2620499607802715cb698f",
+   "size": 620718
+  },
+  "storage/core_stage/smt_solder/train_anomaly/defect/2db4bdf4999c307a.png": {
+   "sha256": "8c48c8ace800f603e3dbeb3c1986cceb466f70fc503e30ec03be8cc55d9e188a",
+   "size": 669548
+  },
+  "storage/core_stage/smt_solder/train_anomaly/defect/55fdc5ef447723e7.png": {
+   "sha256": "6a51afc892227ed8d26d989b826fd2d5626124ae76cb128e8d7c74e0ce3acfa7",
+   "size": 286576
+  },
+  "storage/core_stage/smt_solder/train_anomaly/defect/5dd972ebf62cd53d.png": {
+   "sha256": "cb88fcc67dd067b2e5dfad6dc26d67274f401df0ee226642f931c5775b9466ee",
+   "size": 547505
+  },
+  "storage/core_stage/smt_solder/train_anomaly/defect/d6b14199e5c6e6f3.png": {
+   "sha256": "7626a9fbe03366ce86820bb73f61ddb1b9cbbd55f157570768aa06683d3e1b4b",
+   "size": 785248
+  },
+  "storage/core_stage/smt_solder/train_anomaly/defect/df5875fd89ad3b0e.png": {
+   "sha256": "9d55e1633bfb8736729a85dea0c226231efca80dc4d54e46819367a47f8e0ee3",
+   "size": 677184
+  },
+  "storage/core_stage/smt_solder/train_anomaly/defect/eb0935b3bbae5fa3.png": {
+   "sha256": "e91f46bd92470dc75ec33ea06e77d4af2ac71aa77f8dcbace06ad3d5642d640d",
+   "size": 612377
+  },
+  "storage/locks/pcbins_ui.lock": {
+   "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+   "size": 0
+  },
+  "storage/recipes/global_default.json": {
+   "sha256": "b87e300e7bc89c748370d8febac321d0ab2a82826a985c30f819dab1e67833c0",
+   "size": 215
+  },
+  "storage/template_calib/PixPin_2026-07-01_11-21-15_OK.json": {
+   "sha256": "3012fbfa1aa4cd54cdf829394872d1c9cd9553fe9d934048ede0db619df61ea3",
+   "size": 266
+  },
+  "tests/eval_traditional.py": {
+   "sha256": "80473bf138aac944eb9e4ba464f804f76efdae2388576bd529fa076c8a472017",
+   "size": 8290
+  },
+  "tests/test_adapter_batch.py": {
+   "sha256": "684c44f9037e8642cd1c4e202ccef5eb4c47f8d21d832824a928ddf317091398",
+   "size": 15863
+  },
+  "tests/test_async_template_snapshot.py": {
+   "sha256": "bc3174606dd1332e2084232437656d0c2258831314d69b73d448866f632a457a",
+   "size": 5659
+  },
+  "tests/test_pcbdual04.py": {
+   "sha256": "cd0f01017a3755e9b1b29f9cc303096abb73ed5360d1a9e8ff17ca37b6d510bb",
+   "size": 10632
+  },
+  "tests/test_shift_batch.py": {
+   "sha256": "2a78596d32157d341549c1ccc90979d88ab43788f91edf521963988950a60bd7",
+   "size": 3605
+  },
+  "tests/test_template_delete_cascade.py": {
+   "sha256": "b69b1897cd95c745430a1d313f06d3cfcd1564339b7a2eb3eae816fde5d31a8b",
+   "size": 1788
+  },
+  "tests/test_tuner_preview.py": {
+   "sha256": "8e90f26cfffd484fac57a9a997471c7ba0f03742c25586e16f7068258bd1b784",
+   "size": 12358
+  },
+  "tests/tuner02_real_cases.py": {
+   "sha256": "9d1d16d75bbf122e59ed8819680dc6c7916e8643f6a1aea96cc76ae452f92f73",
+   "size": 13648
+  },
+  "tests/_demo_record.py": {
+   "sha256": "230b5ce1d3af38094a9e0c513df63a98dee0c0ba3d78315b10019f467fbf4cf0",
+   "size": 19670
+  },
+  "tests/_dual_demo.py": {
+   "sha256": "5e76fb872d823354caf50f078ad84ed7373d61cb0d037fe530428a9bbb435581",
+   "size": 3220
+  },
+  "tests/_smoke_api.py": {
+   "sha256": "319b5ce0acb1563753227146adbf71cd854acb9c1cfc4113c678b9b0b461ef62",
+   "size": 2224
+  },
+  "tests/_smoke_dataset_adapter.py": {
+   "sha256": "a99e37d82eafb30ace92ef65986473e605c6b630f903b82918a8e313e6b85c7f",
+   "size": 5061
+  },
+  "tests/_smoke_ds_cascade.py": {
+   "sha256": "b3bec377225742f6d9f94061670e97a4e0b1f3b7e5c495cf1356ef95443a47e3",
+   "size": 5035
+  },
+  "tests/_smoke_full.py": {
+   "sha256": "825e465ed1833ec29657ecf049f78346cfce61fbb9848fc0532339b3cc6e43b2",
+   "size": 4446
+  },
+  "tests/_smoke_p02.py": {
+   "sha256": "1c6c4ddb636773d8e47918cf656a761d0c8bbe26692e22a0f80b2a334867fbaf",
+   "size": 4456
+  },
+  "tests/_ui_full_datalocal.py": {
+   "sha256": "77db3b750f3bd6b8ec139a059b9ee1ccd378381d77713b6a1aa2452bd00a6fa6",
+   "size": 60371
+  },
+  "tests/_verify_dual.py": {
+   "sha256": "2810db55c9a6ecc525605488a42306d87195fa8b9a267da4e53dde64e27db55f",
+   "size": 2210
+  },
+  "tests/_verify_feature.py": {
+   "sha256": "6428528a989bc63019c497ee3e3bfd8afb8e4b41388d7a72b2356b0ef56f86fc",
+   "size": 3271
+  },
+  "tests/_verify_new_algs.py": {
+   "sha256": "ba2810ab2f76bf153c5b6d5110885c23727f36e65878e308076e6f8e683cc957",
+   "size": 3023
+  },
+  "tests/_verify_p0_board.py": {
+   "sha256": "160e848bc17fdd07ba4f1fbaed076c589c0bbd1bae17de72b5a0fba8158712ab",
+   "size": 1914
+  },
+  "tests/_verify_pipeline.py": {
+   "sha256": "2b82eb2253dd41bccea451c49ab7c9b605fd091b5aeaba831b0fba98922615fe",
+   "size": 3778
+  },
+  "tests/_verify_smt_alg.py": {
+   "sha256": "c2f338c6b01fbd6ece4d4b6f5639efa95c437f7368f05fa7ca718cc399f7928a",
+   "size": 2276
+  },
+  "tests/_verify_traditional.py": {
+   "sha256": "a4b3e918437ffdeeae5500e564a8352400af41018b41b5d7dbc025da2050fab1",
+   "size": 4063
+  },
+  "tests/results/eval_traditional_latest.json": {
+   "sha256": "44a06c44b91807d35c9b657291530ba279c74d5245158a68eadae0c304443db0",
+   "size": 1677
+  },
+  "tools/cleanup_data.py": {
+   "sha256": "1b5ab58eb749f3e81b6bf27c75b9c9d32385d42245ad671ad09b318395d796be",
+   "size": 5248
+  }
+ }
+}

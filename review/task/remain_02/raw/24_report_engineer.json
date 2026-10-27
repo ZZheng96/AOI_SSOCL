@@ -1,0 +1,13 @@
+{
+  "name": "report_engineer",
+  "method": "POST",
+  "path": "/api/models/feature-set/gold_finger/report",
+  "role": "engineer",
+  "request_body": null,
+  "status_code": 200,
+  "response": {
+    "task_id": 3,
+    "status": "queued"
+  },
+  "note": "queued -> 后台贡献档案"
+}

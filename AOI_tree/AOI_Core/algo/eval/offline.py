@@ -6,6 +6,7 @@ import os
 import time
 import json
 import gc
+import contextlib
 import threading
 from concurrent.futures import ThreadPoolExecutor
 import numpy as np
@@ -17,8 +18,12 @@ from ..common.tiling import compute_tiles, extract_tiles, block_aggregate
 from ..common.io import load_image
 from ..common.preprocess import preprocess_image
 from ..fusion.calibrate import CDFCalibrator, TplCalibrator
-from ..fusion.fixed import fuse
+from ..fusion.fixed import fuse, effective_weights
 from ..decide import Decider, TraceLogger
+from ..decision.branch_budget import (fit_union_thresholds, union_decide, side_effects, branch_ratio,
+                                      tile_priority_from_heatmap)
+from ..decision.local_branch import local_cfg, mask_boxes
+from ..common.resolution import ResolutionProfile, select_view_mode
 from .metrics import image_metrics
 
 
@@ -36,6 +41,43 @@ def _global_clf_path(cfg):
         if os.path.exists(c):
             return c
     return cands[-1]
+
+
+def _masked_defect_patches(def_items, min_ratio=0.3, min_k=4, max_k=64):
+    """AC-031：init_defect 掩码 → 特征网格 G×G 块均值，取覆盖率 > min_ratio 的
+    patch 特征 (K,D) fp16。无掩码/无特征/K<min_k 的图跳过。返回 [(path,(K,D))]。"""
+    out = []
+    for it in def_items:
+        f, tm = it.get("feats"), it.get("tile_masks")
+        if f is None or tm is None:
+            continue
+        f = f.float() if hasattr(f, "float") else torch.as_tensor(f, dtype=torch.float32)
+        if f.ndim == 3:
+            f = f.unsqueeze(0)
+        T, D, G, _ = f.shape
+        rows = []
+        for t in range(min(T, len(tm))):
+            m = tm[t]
+            if m is None:
+                continue
+            m = (np.asarray(m) > 127).astype(np.float32)
+            h, w = m.shape[:2]
+            if h < G or w < G:
+                continue
+            cov = m[:h // G * G, :w // G * G].reshape(G, h // G, G, w // G).mean(axis=(1, 3))
+            sel = np.argwhere(cov > min_ratio)
+            if len(sel):
+                ii = torch.as_tensor(sel[:, 0]); jj = torch.as_tensor(sel[:, 1])
+                rows.append(f[t][:, ii, jj].T)   # (D,k)->(k,D)；先取 tile 避免高级索引维度前置
+        if not rows:
+            continue
+        pf = torch.cat(rows, 0)
+        if pf.shape[0] < min_k:
+            continue
+        if pf.shape[0] > max_k:
+            pf = pf[torch.linspace(0, pf.shape[0] - 1, max_k).long()]
+        out.append((str(it["path"]), pf.half().numpy()))
+    return out
 
 
 def _load_or_train_defect_clf(cfg, defect_paths, def_items, seed=42):
@@ -69,6 +111,38 @@ def _load_or_train_defect_clf(cfg, defect_paths, def_items, seed=42):
         except Exception as e:
             print(f"  [fit] 类型判别器失败（回退规则映射）: {e}", flush=True)
     return None
+
+
+def resolve_isolation(ccfg, n_tr, seed=42):
+    """AC-019 校准隔离决策（纯函数）。返回 (iso, cal_idx, fit_idx, info)。
+
+    默认 isolation="auto"：拟合图数足够（留出后 fit 侧 ≥ holdout_min_fit，默认 16）时走 holdout，
+    CDF/阈值/open 用留出正常图，消除自匹配阈值偏松；样本不足回退 self 并在 info 记原因
+    （小样本时再砍 fit 集会损失建库覆盖，精度不退化优先）。显式 "self"/"holdout" 照旧。"""
+    ccfg = ccfg or {}
+    req = str(ccfg.get("isolation", "auto")).lower()
+    n_tr = int(n_tr)
+    n_hold = max(int(ccfg.get("holdout_min", 4)),
+                 int(round(n_tr * float(ccfg.get("holdout_ratio", 0.2)))))
+    min_fit = 2 if req == "holdout" else int(ccfg.get("holdout_min_fit", 16))
+    reason = ""
+    if req not in ("auto", "holdout", "self"):
+        reason, req_eff = f"未知 isolation={req}，按 self", "self"
+    elif req == "self":
+        reason, req_eff = "显式配置 self", "self"
+    elif n_tr - n_hold >= min_fit:
+        req_eff = "holdout"
+    else:
+        reason, req_eff = f"拟合图不足（{n_tr}-{n_hold}<{min_fit}），回退 self", "self"
+    if req_eff == "holdout":
+        perm = np.random.default_rng(seed).permutation(n_tr)
+        cal_idx = sorted(int(i) for i in perm[:n_hold])
+        fit_idx = sorted(int(i) for i in perm[n_hold:])
+    else:
+        cal_idx = fit_idx = list(range(n_tr))
+    info = {"requested": req, "effective": req_eff, "n_train": n_tr,
+            "n_fit": len(fit_idx), "n_calib": len(cal_idx), "fallback_reason": reason}
+    return req_eff, cal_idx, fit_idx, info
 
 
 class Pipeline:
@@ -115,7 +189,9 @@ class Pipeline:
         # 与 DINO 前向/GPU 槽位重叠可把单图推理从 ~240ms 压到 ~160ms。
         # 线程安全：trad._vec 用全局 np.random（seed(0)+restore），由 _trad_lock
         # 串行化；blob/layout 无全局 RNG，直接并行。数值与串行版完全一致。----
-        self._cpu_exec = ThreadPoolExecutor(max_workers=2)
+        # R3-speed：每图并发 4 个 CPU 任务（trad/blob/img_features/align），
+        # 2 worker 时后两者排队 ~200ms；按核数自适应到 ≤4（各任务独立、无全局 RNG）。
+        self._cpu_exec = ThreadPoolExecutor(max_workers=max(2, min(4, (os.cpu_count() or 2) // 2)))
         self._trad_lock = threading.Lock()
         # ---- 图像预处理（augment.preprocess，§15.29）：训练/检测同口径 ----
         self._pre_cfg = (cfg.get("augment", {}) or {}).get("preprocess", {}) or {}
@@ -124,6 +200,13 @@ class Pipeline:
         self._ablate_reflow = False      # 关正常回流（含 sem 扩展与 CDF 重估）
         self._ablate_sem = False         # 回流时关 sem 扩展
         self._ablate_cdf = False         # 回流时关 CDF 重估
+        # ---- A 块（AC-001~008）：视图模式 + 独立单级局部分支 + 分支预算 ----
+        self.local_branch = None         # LocalBranch（global_local 时非空；persist: local_branch.*）
+        self.view_mode = None            # select_view_mode 结果（档案驱动，AC-001）
+        self.branch_budget_report = None # 分支 FPR 预算/阈值报告（AC-006）
+        # ---- C/D/E 块（AC-018~027）：校准契约/融合基线/路由准入/域差（persist: cde_report.json）----
+        self.cde_report = None
+        self.router_slot_names = None    # router 输入维度的槽位顺序（fit/推理/微调/持久化同口径）
 
     def set_ablation(self, intercept=False, reflow=False, sem=False, cdf=False):
         """U24 机制消融：逐项关闭在线更新机制，定位 AUROC 退化源。"""
@@ -197,12 +280,35 @@ class Pipeline:
         except Exception:  # noqa: BLE001
             return None
 
+    def _pair_kw(self, slot):
+        """round5 L3 配对：tpl 且 pair_mode 且当前推理有配对模板时透传，否则空（原逻辑）。"""
+        pt = getattr(self, "_pair_ctx", None)
+        if pt is not None and slot.name == "tpl" and getattr(slot, "pair_mode", False):
+            return {"pair_template": pt}
+        return {}
+
+    def _resolve_pair(self, path, explicit=None):
+        """显式配对优先；否则 slots.tpl.pair_auto_resolve 开启时按上游契约解析 X→X_repaired。"""
+        if explicit is not None:
+            return explicit
+        tc = (self.cfg.get("slots", {}).get("tpl") or {})
+        if path is None or not tc.get("pair_mode") or not tc.get("pair_auto_resolve"):
+            return None
+        from ..slots.tpl import resolve_pair_template
+        return resolve_pair_template(path, tc.get("pair_dirs"))
+
     def _slot_image_score(self, slot, item):
         """统一评分：槽位返回 patch 分数图(T, G, G)，图像分数由 multiscale 聚合（零额外前向）。
         trad/blob 无 patch 图，用 tile 分数 top-k 兜底。"""
         from ..common.tiling import scoremap_multiscale_aggregate
         # U27：整图打分优先（trad：整图 3NN 均值 >> tile 级聚合，diag_trad_score 实证）
-        r = slot.score_image(item["img"])
+        if slot.name == "tpl" and item.get("feats") is not None \
+                and len(item.get("tiles") or []) == 1 \
+                and tuple(item["tiles"][0]) == (0, 0) + tuple(item["img"].shape[:2]):
+            # round5：single 整图 tile 的特征即整图特征，tpl 配准路径复用（省一次前向）
+            r = slot.score_image(item["img"], feats=item["feats"], **self._pair_kw(slot))
+        else:
+            r = slot.score_image(item["img"], **self._pair_kw(slot))
         if r is not None:
             return r
         if slot.needs_dino:
@@ -266,9 +372,15 @@ class Pipeline:
         al_cfg = self.cfg.get("alignment", {}) or {}
         if al_cfg.get("enabled", True) and train_items:
             self._align_ref = self._prep_align_ref(train_items[0]["img"])
-        ctx = {"train_tile_feats": [it["feats"] for it in train_items],
-               "train_tile_imgs": [it["tile_imgs"] for it in train_items],
-               "train_imgs": [it["img"] for it in train_items]}   # U27：整图库（trad 主路径）
+        # ---- AC-019 校准隔离：holdout 时槽位只在 fit 子集拟合，CDF/阈值/open 用留出正常图 ----
+        ccfg = self.cfg.get("calibration", {}) or {}
+        n_tr = len(train_items)
+        iso, cal_idx, fit_idx, self._isolation_info = resolve_isolation(ccfg, n_tr, seed)
+        fit_items = [train_items[i] for i in fit_idx]
+        ctx = {"train_tile_feats": [it["feats"] for it in fit_items],
+               "train_tile_imgs": [it["tile_imgs"] for it in fit_items],
+               "train_imgs": [it["img"] for it in fit_items],   # U27：整图库（trad 主路径）
+               "train_paths": [str(it["path"]) for it in fit_items]}
         def_items = []
         if bundle["init_defect"]:
             def_items = self._tile_and_extract(
@@ -276,6 +388,7 @@ class Pipeline:
                 progress_cb=(lambda d, t: _prog(0.35 + 0.10 * d / max(1, t),
                                                 f"提取缺陷图特征 {d}/{t}")))
             ctx["defect_tile_imgs"] = [it["tile_imgs"] for it in def_items]
+            ctx["defect_imgs"] = [it["img"] for it in def_items]   # AC-011：trad 组选择（开发集）
             # §15.30：tile 级缺陷位置掩码（按位置抠缺陷移植；None=该图无位置标注）
             ctx["defect_tile_masks"] = [it["tile_masks"] for it in def_items]
             ctx["defect_paths"] = bundle["init_defect"]  # U72: crop 模式 YOLO 框解析用
@@ -287,6 +400,8 @@ class Pipeline:
                   f"({time.time() - t0:.0f}s)", flush=True)
             self.defect_clf = _load_or_train_defect_clf(
                 self.cfg, bundle["init_defect"], def_items, seed=seed)
+            # AC-031：掩码内 patch 留存（fp16，供 enable_ssocl 按开关预置缺陷样例库）
+            self._init_defect_patches = _masked_defect_patches(def_items)
         if bundle.get("templates"):       # L3 场景：用户显式模板图（红线：非隐式配对）
             ctx["templates"] = bundle["templates"]
         _fit_slots = [n for n in self.slots if n in self._score_slots]
@@ -307,6 +422,11 @@ class Pipeline:
                 _prog(0.60 + 0.18 * (ii + 1) / max(1, len(train_items)),
                       f"正常库打分 {ii + 1}/{len(train_items)}")
         _prog(0.78, "分数校准")
+        # AC-019：all_normal_scores 保留全部正常分（局部分支对齐 + 自匹配偏差报告）；
+        # 下游 CDF/体检/权重/阈值统一只用校准集（self 模式下即全集，行为不变）
+        all_normal_scores = normal_slot_scores
+        normal_slot_scores = {n: [v[i] for i in cal_idx] for n, v in all_normal_scores.items()}
+        fit_side_scores = {n: [v[i] for i in fit_idx] for n, v in all_normal_scores.items()}
         for n in self._score_slots:
             # 2026-08-30（P0）：tpl 槽位正常分布退化（train 图在模板库自匹配≈0），
             # CDF 校准会把正常分也映射到 1.0 → 误报；改用线性归一化（正常≈0）。
@@ -323,8 +443,8 @@ class Pipeline:
             self.open_det = OpenDetector(
                 n_components=oc.get("n_components", 0.95),
                 topk_ratio=oc.get("topk_ratio", 0.05))
-            self.open_det.fit([it["feats"] for it in train_items])
-            open_scores = [self.open_det.score(it["feats"])[0][0] for it in train_items]
+            self.open_det.fit([it["feats"] for it in fit_items])
+            open_scores = [self.open_det.score(train_items[i]["feats"])[0][0] for i in cal_idx]
             self.open_cal = CDFCalibrator(self.cfg["calibration"]["cdf_bins"]) \
                 .fit(open_scores)
             self.open_thresh = oc.get("thresh", 0.9)
@@ -426,7 +546,12 @@ class Pipeline:
                   f"（初始权重质量，协议内）", flush=True)
         # ---- M2 软路由（§5/§5.1）：L1a 用 init_normal+init_defect 训练 + 门控 ----
         self.router = None
+        self.router_slot_names = None
+        self._router_feats = None
         self.router_gate = None     # {"enabled": bool, "base_auc", "router_auc", ...}
+        _w_by_mode = {"equal": {n: 1.0 / len(self._score_slots) for n in self._score_slots},
+                      "sanity": dict(self.weights)
+                      if fm.get("weight_mode") == "sanity" else None}   # AC-020 基线快照
         rcfg = self.cfg.get("router", {})
         if rcfg.get("enabled") and def_items:
             from ..fusion.router import (LinearRouter, train_router_on_matrix,
@@ -467,6 +592,8 @@ class Pipeline:
                 [0] * len(neg_feats) + [1] * len(pos_feats), r_fused_all))
             enabled = router_gate(base_auc, router_auc, rcfg.get("gate_margin", 0.005))
             self.router = router
+            self.router_slot_names = list(names)   # AC-021：维度/顺序签名
+            self._router_feats = (neg_feats, pos_feats, list(names))   # 准入评估复用
             self.router_gate = {"enabled": enabled, "base_auc": round(base_auc, 4),
                                 "router_auc": round(router_auc, 4),
                                 "gate_margin": rcfg.get("gate_margin", 0.005),
@@ -534,6 +661,17 @@ class Pipeline:
                       + " ".join(f"{n}={self.weights[n]:.3f}" for n in names), flush=True)
         # 阈值只用 train/good：与 predict 实际生效权重同口径（共识启用时即共识权重）
         _prog(0.97, "判定阈值标定")
+        # round5 L3 配对：tpl 主导融合（slots.tpl.pair_tpl_weight，默认 None=关闭）
+        _pw = (self.cfg.get("slots", {}).get("tpl") or {}).get("pair_tpl_weight")
+        if _pw is not None and "tpl" in self._score_slots:
+            _pw = float(_pw)
+            _others = [n for n in self._score_slots if n != "tpl"]
+            _so = sum(self.weights.get(n, 0.0) for n in _others)
+            nw = {"tpl": _pw}
+            for n in _others:
+                nw[n] = (1.0 - _pw) * (self.weights.get(n, 0.0) / _so if _so > 0
+                                       else 1.0 / len(_others))
+            self.weights = nw
         fused_normal = []
         for i in range(len(normal_slot_scores[next(iter(self._score_slots))])):
             fused_normal.append(fuse(
@@ -541,6 +679,19 @@ class Pipeline:
                  for n in self._score_slots}, self.weights))
         self.decider = Decider.from_normal_scores(
             fused_normal, self.cfg["decision"]["tau_quantile"], self.cfg["decision"]["tau_gray"])
+        # 局部分支需与 train_items 逐图对齐：holdout 时用全部正常图的 fused（self 时即 fused_normal）
+        if iso == "self":
+            fused_all = fused_normal
+        else:
+            fused_all = [fuse({n: float(self.calibrators[n].transform([all_normal_scores[n][i]])[0])
+                               for n in self._score_slots}, self.weights)
+                         for i in range(n_tr)]
+        _prog(0.975, "C/D/E 报告（校准契约/融合基线/路由准入）")
+        self._build_cde_report(iso, normal_slot_scores, fit_side_scores,
+                               defect_slot_scores if def_items else None,
+                               fused_normal, _w_by_mode, fm, rcfg)
+        _prog(0.98, "局部分支（视图模式判定）")
+        self._fit_local_branch(train_items, def_items, fused_all)
         self.fit_seconds = time.time() - t0
         # 内存工程（M0 实测：tiles36 全量 train 特征驻留 CPU 可达 5.6GB）：
         # fit 完成后原始图/特征不再被任何槽位引用，立即释放
@@ -552,36 +703,313 @@ class Pipeline:
             torch.cuda.empty_cache()
         return self
 
-    def predict(self, path):
+    # ---------------- C/D/E 块：校准契约 / 融合基线 / 路由准入 / 域差 ----------------
+    def _build_cde_report(self, iso, nss_cal, fit_side, dss, fused_normal, w_by_mode, fm, rcfg):
+        """AC-018~027：只消费 fit 已算好的分数（零额外前向）。生成 self.cde_report，
+        并把 router 准入结论写入 router_gate["admission"]（默认 trace_only）。"""
+        from ..fusion import cde_report as C
+        ccfg = self.cfg.get("calibration", {}) or {}
+        names = list(self._score_slots)
+        rep = {"calibration": C.calibration_contract(
+            {n: nss_cal[n] for n in names}, {n: self.calibrators[n] for n in names},
+            ccfg.get("cdf_bins", 256), iso, fit_side if iso == "holdout" else None)}
+        rep["calibration"]["isolation_resolution"] = dict(getattr(self, "_isolation_info", {}) or {})
+        # 实际生效模式（AC-020/027）：domain_prior > consensus > 配置 weight_mode
+        dc = fm.get("domain_weights")
+        if dc and self.train_auroc is not None \
+                and self.train_auroc < fm.get("domain_train_auroc_thresh", 0.85):
+            prod = "domain_prior"
+        elif self.consensus_gate:
+            prod = "consensus"
+        else:
+            prod = "sanity" if fm.get("weight_mode") == "sanity" and self.slot_sanity else "equal"
+        if dss is not None:
+            cal_n = {n: np.asarray(self.calibrators[n].transform(nss_cal[n]), float) for n in names}
+            cal_d = {n: np.asarray(self.calibrators[n].transform(dss[n]), float) for n in names}
+            wbm = {k: v for k, v in w_by_mode.items() if v}
+            cc = self.cfg.get("consensus", {}) or {}
+            if cc.get("enabled"):
+                from ..fusion.consensus import consensus_weights
+                wbm["consensus"] = {k: float(v) for k, v in consensus_weights(
+                    cal_n, blend=cc.get("blend", 0.5),
+                    hard_thresh=cc.get("hard_thresh", 0.0)).items()}
+            if dc:
+                wbm["domain_prior"] = {n: float(dc.get(n, 0.0)) for n in names}
+            rep["baselines"] = C.fusion_baselines(
+                cal_n, cal_d, names, wbm, prod, self.slot_sanity,
+                exclude_unverified=fm.get("exclude_unverified", True))
+        else:
+            rep["baselines"] = {"production_mode": prod, "baselines": {},
+                                "reason": "无 init_defect，基线 AUC 不可算"}
+        if self._router_feats is not None:
+            nf, pf, rn = self._router_feats
+            adm = C.router_admission(nf, pf, rn, self.weights, rcfg,
+                                     seed=self.cfg.get("seed", 42))
+            self.router_gate["admission"] = adm
+            rep["router_admission"] = adm
+            print(f"[route] 准入={adm['decision']}（{adm.get('reason', '')}）", flush=True)
+        else:
+            rep["router_admission"] = {"decision": "not_trained", "permitted": False}
+        dec = self.cfg.get("decision", {})
+        rep["domain_shift"] = C.domain_shift(fused_normal, None, float(self.decider.tau_high),
+                                             1.0 - float(dec.get("tau_quantile", 0.99)),
+                                             self.slot_sanity)
+        sc = self.cfg.get("slots", {}) or {}
+        rep["cold_start"] = {**C.COLD_START_ROLES,
+                             "heads": {n: {"freeze": bool((sc.get(n) or {}).get("freeze", False)),
+                                           "init_from": (sc.get(n) or {}).get("init_from")}
+                                       for n in ("disc", "shead") if n in self.slots}}
+        rep["weights_semantics"] = C.WEIGHTS_SEMANTICS
+        rep["effective_weights"] = {n: round(float(v), 4) for n, v in (self.weights or {}).items()}
+        self.cde_report = rep
+
+    # ---------------- A 块：视图模式 + 局部分支 ----------------
+    def _fit_local_branch(self, train_items, def_items, fused_normal):
+        """AC-001~006：按品类档案选视图模式；global_local 时拟合独立单级局部分支，
+        并在两分支间分配图级 FPR 预算（并集基线）。整图专家始终不变（AC-002）。
+        tiling.local.enabled：true 强制开 / false 关 / "auto"（缺省）按档案判定。"""
+        lc = local_cfg(self.cfg)
+        en = lc.get("enabled", "auto")
+        self.local_branch = None
+        img_size = train_items[0]["img"].shape[:2] if train_items else (0, 0)
+        bb = self.cfg.get("backbone", {}) or {}
+        fm = self.cfg.get("fusion", {}) or {}
+        vm = select_view_mode(ResolutionProfile.from_cfg(self.cfg), img_size,
+                              grid=int(bb.get("grid", 32)), train_auroc=self.train_auroc,
+                              domain_auroc_thresh=fm.get("domain_train_auroc_thresh", 0.85),
+                              model_side=int(lc.get("model_side", 448)))
+        if en is True:
+            vm["enabled_by"] = "cfg_force_on"
+        elif en is False or str(en).lower() == "false":
+            vm["enabled_by"] = "cfg_off"
+        else:
+            vm["enabled_by"] = "auto_profile"
+        on = (en is True) or (vm["enabled_by"] == "auto_profile" and vm["mode"] == "global_local")
+        vm["local_enabled"] = bool(on)
+        self.view_mode = vm
+        print(f"  [fit] 视图模式 {vm['mode']}（{vm.get('reason', '')}）"
+              f" 局部分支={'开' if on else '关'}（{vm['enabled_by']}）", flush=True)
+        base = {"mode": "global_only", "tau_global": float(self.decider.tau_high),
+                "tau_gray": float(self.decider.tau_gray),
+                "sources": {"tau_global": "decider.tau_high（单分支，预算全给整图）"}}
+        if not on or self.backbone is None or not train_items:
+            self.branch_budget_report = base
+            return
+        from ..decision.local_branch import LocalBranch
+        from ..slots.disc import load_defect_mask
+        dev = getattr(self.backbone, "device_", "cuda")
+        lb = LocalBranch(self.cfg, self.backbone, device=dev, bounds=vm.get("bounds"))
+        d_imgs, d_masks = [], []
+        for it in def_items or []:
+            m = load_defect_mask(it["path"], it["img"].shape[:2])
+            if m is not None:
+                d_imgs.append(it["img"])
+                d_masks.append(m)
+        lb.fit([it["img"] for it in train_items], d_imgs, d_masks,
+               log=lambda s: print(s, flush=True))
+        # 全局阈值用全量正常 fused；FPR 并集只能在 holdout 同一批图上统计
+        gn_hold = [fused_normal[i] for i in lb.hold_idx] if lb.hold_idx else fused_normal
+        th = fit_union_thresholds(fused_normal, lb.normal_block_raw, lb.normal_image_raw,
+                                  lb.report.get("n_tiles_per_image", 1), self.cfg)
+        th_hold = fit_union_thresholds(gn_hold, lb.normal_block_raw, lb.normal_image_raw,
+                                       lb.report.get("n_tiles_per_image", 1), self.cfg)
+        gh, lh = np.asarray(gn_hold), np.asarray(lb.normal_image_raw)
+        if gh.size and gh.size == lh.size:
+            th["report"]["fpr_union"] = float(((gh >= th["tau_global"]) |
+                                               (lh >= th["tau_local"])).mean())
+            th["report"]["fpr_global_holdout"] = float((gh >= th["tau_global"]).mean())
+        th["report"]["tau_global_if_holdout_only"] = th_hold["tau_global"]
+        th["tau_gray_ratio"] = float(self.decider.tau_gray / max(self.decider.tau_high, 1e-12))
+        lb.thresholds = th
+        self.local_branch = lb
+        self.branch_budget_report = {"mode": "global_local", **th,
+                                     "local_report": lb.report,
+                                     "decider_tau_high": float(self.decider.tau_high)}
+        r = th["report"]
+        print(f"  [fit] 分支预算 α={th['alpha']:.4f}（{th['sources']['alpha']}）"
+              f" τg={th['tau_global']:.4f} τl={th['tau_local']:.4f}"
+              f" FPR g/l/∪={r['fpr_global']}/{r['fpr_local']}/{r['fpr_union']}", flush=True)
+
+    def _apply_local_branch(self, item, rec, decision, timing=None):
+        """AC-006~008：整图决策之后叠加局部分支。基线=并集；预算模式灰区/冲突全量重算；
+        否决默认关，仅全覆盖时允许且只降为 gray。返回 (decision, branch dict | None)。"""
+        lb = self.local_branch
+        if lb is None or not lb.enabled or not lb.thresholds:
+            return decision, None
+        t0 = time.time()
+        th = lb.thresholds
+        tg, tl = float(th["tau_global"]), float(th["tau_local"])
+        gray_ratio = float(th.get("tau_gray_ratio", 0.9))
+        img = item["img"]
+        H, W = img.shape[:2]
+        prio_fn = None
+        if lb.mode == "budget":
+            def prio_fn(tiles):
+                from ..decision.hierarchical import build_heatmap_mask
+                try:
+                    heat, _, _ = build_heatmap_mask(
+                        self._last_hms or {}, (64, 64), 1.0, weight_by_slot=self.weights,
+                        tiles=item.get("tiles"), src_size=(H, W))
+                except Exception:   # noqa: BLE001 热度不可用时退化为纯轮换
+                    heat = None
+                return tile_priority_from_heatmap(heat, tiles, (H, W))
+        out = lb.score(img, priority_fn=prio_fn)
+        g = float(rec["fused"])
+        d_u, u, fired = union_decide(g, out["score"], tg, tl, gray_ratio)
+        rg, rl = branch_ratio(g, tg), branch_ratio(out["score"], tl)
+        rescored = None
+        partial = len(out["selected"]) < out["n_total"]
+        if partial and (d_u == "gray" or abs(rg - rl) < lb.conflict_margin):
+            rescored = "gray" if d_u == "gray" else "conflict"
+            out = lb.score(img, force_full=True)
+            d_u, u, fired = union_decide(g, out["score"], tg, tl, gray_ratio)
+            rl = branch_ratio(out["score"], tl)
+        full_cov = len(out["selected"]) == out["n_total"]
+        g_alarm = decision == "anomaly"
+        l_alarm = bool(fired["local"])
+        local_quiet = full_cov and rl < lb.veto_ratio
+        kind = side_effects(g_alarm, l_alarm, veto=lb.veto, local_veto=local_quiet)
+        final = decision
+        if l_alarm:
+            final = "anomaly"
+        elif decision == "normal" and d_u == "gray":
+            final = "gray"
+        if kind == "vetoed":
+            final = "gray"
+        br = {"global_score": g, "local_score": float(out["score"]),
+              "ratio_global": float(rg), "ratio_local": float(rl), "union_score": float(u),
+              "tau_global": tg, "tau_local": tl, "fired": fired, "side_effect": kind,
+              "decision_before": decision, "decision_after": final,
+              "selected": [int(i) for i in out["selected"]],
+              "reasons": {str(k): v for k, v in out["reasons"].items()},
+              "n_total": int(out["n_total"]), "full_coverage": bool(full_cov),
+              "rescored_full": rescored, "mode": lb.mode,
+              "sources": th.get("sources"), "view_signature": lb.sig,
+              "ms": round((time.time() - t0) * 1000, 2)}
+        rec["_local_out"] = out
+        if timing is not None:
+            timing["local"] = br["ms"]
+        return final, br
+
+    def prepare_input(self, path=None, rgb=None, gpu_lock=None):
+        """AC-069（前台锁粒度）：读图/预处理/切块/DINO 前向（纯函数，不读写缓存与任何可变模型状态），
+        供引擎在品类锁外预提取，锁内 predict/predict_frame(prepared=...) 只做打分与收尾。
+        gpu_lock：可选，包住主干前向（多请求并发时串行 GPU，防显存叠加）。
+        返回 {"item", "t0", "t_io", "t_tile", "t_fw"}（time.time 时间戳，供分段计时）。"""
+        t0 = time.time()
+        img = self._preprocess(load_image(path) if rgb is None else rgb)
+        t_io = time.time()
+        # 收尾调度：_img_features（纯函数，2500² 实测 ~63ms）在锁外 DINO 前向前提交；
+        # 原先锁内（前向已完成）才提交，_attribute_types 空等 ~40ms。是否采用由锁内判定。
+        clf_fut = self._prefetch_clf_imgfeat(img)
+        tiles = compute_tiles(img.shape[:2], self.tiling["mode"],
+                              self.tiling["tile_size"], self.tiling["stride"])
+        tile_imgs = extract_tiles(img, tiles)
+        t_tile = time.time()
+        feats = None
+        if self.backbone is not None:
+            bb = self.cfg.get("backbone", {})
+            with (gpu_lock if gpu_lock is not None else contextlib.nullcontext()):
+                feats = self.backbone.extract_tiles(
+                    tile_imgs, batch=int(bb.get("extract_batch", 16))).cpu()
+        item = {"path": path, "img": img, "tiles": tiles,
+                "tile_imgs": tile_imgs, "feats": feats}
+        return {"item": item, "t0": t0, "t_io": t_io, "t_tile": t_tile,
+                "t_fw": time.time(), "clf_fut": clf_fut}
+
+    def _predict_prepared(self, prep, cache):
+        """AC-069（前台锁粒度）：锁内消费 prepare_input 结果（须持品类锁）。打分/收尾与原路径一致；
+        分段计时 io/tile/forward 取锁外段，score 起点为进锁时刻（不含等锁）。"""
+        item = self.adopt_item(prep["item"]) if cache else prep["item"]
+        img = item["img"]
+        t_in = time.time()
+        pre = self._prefetch_cpu(item)
+        # 锁内判定：clf 已 fitted 且 item 就是预提取的那份（同一 img 对象）才复用锁外 future
+        early = prep.get("clf_fut")
+        fitted = self.defect_clf is not None and getattr(self.defect_clf, "fitted", False)
+        if early is not None and fitted and item is prep["item"]:
+            item["_clf_imgfeat"] = early
+        else:
+            item["_clf_imgfeat"] = self._prefetch_clf_imgfeat(img)
+        item["_align_fut"] = self._prefetch_align(img)
+        rec = self._record(item, cpu_futures=pre)
+        # 平移时间轴：把等锁时长从 t0 扣掉，使 total = 锁外预提取 + 锁内
+        shift = t_in - prep["t_fw"]
+        rec = self._timed_finalize(item, rec, img, prep["t0"] + shift,
+                                   prep["t_io"] + shift, prep["t_tile"] + shift, t_in)
+        if self.trace_api is not None:
+            self.trace_api.record(rec)
+        return rec
+
+    def predict(self, path, prepared=None, pair_template=None):
+        """pair_template：round5 L3 显式配对模板（仅 tpl pair_mode 生效；None 回退原逻辑）。"""
+        self._pair_ctx = self._resolve_pair(path, pair_template)
+        try:
+            return self._predict_impl(path, prepared)
+        finally:
+            self._pair_ctx = None
+
+    def _predict_impl(self, path, prepared=None):
         """推理：槽位打分 → 校准 → 融合（+M3 缺陷样例拦截加分）→ 分层输出。
         U56：读图后立即提交 CPU 槽位（trad/blob/layout），DINO 前向期间后台并行。
         2026-08-30 提速：特征缓存命中时跳过 load_image/compute_tiles/
         extract_tiles（缓存内已有 img/tiles/tile_imgs/feats），与 _get_item
         缓存语义一致——离线回放每轮重复推理同图时省掉重复读图/切块，
-        打分/校准/融合流程不变，行为一致。"""
+        打分/校准/融合流程不变，行为一致。
+        AC-069（前台锁粒度）：prepared=prepare_input(path) 结果时跳过锁外已做的读图/前向。"""
         item = self._item_cache.get(path)
+        if item is None and prepared is not None:
+            return self._predict_prepared(prepared, cache=True)
         if item is not None:
             pre = self._prefetch_cpu(item)
             item["_clf_imgfeat"] = self._prefetch_clf_imgfeat(item["img"])
+            # §78：缓存命中路径原先在 _finalize 内同步算对位偏移（实测 ~14ms/张，
+            # 门控锚定集 20 张 ≈280ms 持锁）；与未命中路径一致改为预提交，纯函数数值不变
+            item["_align_fut"] = self._prefetch_align(item["img"])
             rec = self._record(item, cpu_futures=pre)
             rec = self._finalize(item, rec)
             rec = self._tta_refine(item["img"], rec)
             if self.trace_api is not None:
                 self.trace_api.record(rec)
             return rec
+        t0 = time.time()
         img = self._preprocess(load_image(path))
+        t_io = time.time()
         tiles = compute_tiles(img.shape[:2], self.tiling["mode"],
                               self.tiling["tile_size"], self.tiling["stride"])
         tile_imgs = extract_tiles(img, tiles)
+        t_tile = time.time()
+        # G1（2026-10-12）：纯 CPU 预取须在 DINO 前向（_get_item）之前提交才真正并行；
+        # 原先在 _get_item 之后提交，_attribute_types 实测空等 ~45ms。
+        # 收尾：clf/align 先于 trad/blob 提交，避免在小线程池里排在长任务之后。
+        clf_fut = self._prefetch_clf_imgfeat(img)
+        align_fut = self._prefetch_align(img)
         pre = self._prefetch_cpu({"img": img, "path": path,
                                   "tiles": tiles, "tile_imgs": tile_imgs})
         item = self._get_item(path, img=img, tiles=tiles, tile_imgs=tile_imgs)
-        item["_clf_imgfeat"] = self._prefetch_clf_imgfeat(img)
+        t_fw = time.time()
+        item["_clf_imgfeat"] = clf_fut
+        item["_align_fut"] = align_fut
         rec = self._record(item, cpu_futures=pre)
-        rec = self._finalize(item, rec)
-        rec = self._tta_refine(img, rec)
+        rec = self._timed_finalize(item, rec, img, t0, t_io, t_tile, t_fw)
         if self.trace_api is not None:
             self.trace_api.record(rec)
+        return rec
+
+    def _timed_finalize(self, item, rec, img, t0, t_io, t_tile, t_fw):
+        """AC-007 分段计时：io/tile/forward/score/local/hier/decide/tta/total（ms）。
+        forward 含 DINO 主干；score 含槽位打分+校准+融合（CPU 槽位与前向并行）。"""
+        ms = lambda a, b: round((b - a) * 1000, 2)   # noqa: E731
+        t_sc = time.time()
+        rec["timing"] = {"io": ms(t0, t_io), "tile": ms(t_io, t_tile),
+                         "forward": ms(t_tile, t_fw), "score": ms(t_fw, t_sc)}
+        rec = self._finalize(item, rec)
+        t_fin = time.time()
+        rec = self._tta_refine(img, rec)
+        tm = rec["timing"]
+        tm["decide"] = round(ms(t_sc, t_fin) - tm.get("local", 0.0) - tm.get("hier", 0.0), 2)
+        tm["tta"] = ms(t_fin, time.time())
+        tm["total"] = ms(t0, time.time())
         return rec
 
     def _predict_fused_only(self, path):
@@ -594,20 +1022,100 @@ class Pipeline:
         """返回与正式 predict 相同的最终 fused 分（含 DefectBank/head/TTA）。"""
         return float(self.predict(path)["fused"])
 
-    def predict_frame(self, rgb, path=None):
+    def _gate_anchor_pass(self, paths):
+        """§78：RegressGate 锚定集打分（逐张 = _predict_final_fused，数值/副作用不变），
+        额外留存重放信息 [(fused, observed, rec)]，供紧随其后的 recenter 在状态未变时
+        复用（省一整轮锚定前向，缩短品类锁持有）。observed=None 表示本张未计入缺陷率。"""
+        out = []
+        for p in paths:
+            self._last_observed = None
+            rec = self.predict(p)
+            # 无追溯 API 时不留 rec（含热图），避免留存态放大 deepcopy/内存
+            out.append((float(rec["fused"]), self._last_observed,
+                        rec if self.trace_api is not None else None))
+        return out
+
+    def _gate_anchor_replay(self, replay):
+        """§78：重放锚定 predict 的外部可见副作用（在线缺陷率窗、追溯落盘），
+        与重新 predict 一遍逐项一致；_last_hms/_last_router_w 已是同一末张的值。"""
+        nb = self.handler.normal_bank if self.handler is not None else None
+        for _fused, observed, rec in replay:
+            if observed is not None and nb is not None:
+                nb._observe_decision(observed)
+            if self.trace_api is not None and rec is not None:
+                self.trace_api.record(rec)
+
+    def _gate_state_token(self):
+        """§78：影响锚定 fused 的可变状态指纹（决策阈值/融合权重/校准 edges/
+        正常库与 sem 库/缺陷库/头）。check→recenter 之间任一变化即失配回退重算。"""
+        import hashlib
+        h = hashlib.blake2b(digest_size=16)
+        dec = self.decider
+        h.update(repr((id(dec), float(getattr(dec, "tau_gray", 0.0)),
+                       float(getattr(dec, "tau_high", 0.0)),
+                       sorted((k, float(v)) for k, v in self.weights.items()),
+                       sorted(self._score_slots))).encode())
+        for n in sorted(self.calibrators):
+            cal = self.calibrators[n]
+            h.update(n.encode())
+            h.update(repr(id(cal)).encode())
+            edges = getattr(cal, "edges", None)
+            if edges is not None:
+                h.update(np.ascontiguousarray(edges).tobytes())
+        for n in sorted(self.slots):
+            slot = self.slots[n]
+            bank = getattr(slot, "bank", None)
+            h.update(repr((n, id(slot), id(bank),
+                           tuple(getattr(bank, "shape", ()) or ()))).encode())
+        hd = self.handler
+        if hd is not None:
+            nb, db = hd.normal_bank, hd.defect_bank
+            h.update(repr((id(nb), getattr(nb, "version", None), len(getattr(nb, "ext", []) or []),
+                           id(db), getattr(db, "version", None),
+                           len(getattr(db, "items", []) or []))).encode())
+        hm = self.head_mgr
+        if hm is not None:
+            h.update(repr((id(hm), getattr(hm, "version", None),
+                           len(getattr(hm, "heads", []) or []))).encode())
+        h.update(repr((id(getattr(self, "local_branch", None)),
+                       id(getattr(self, "defect_clf", None)))).encode())
+        router = getattr(self, "router", None)
+        if router is not None and hasattr(router, "parameters"):
+            for w in router.parameters():     # 路由微调/回滚是原地 copy_，按值指纹
+                h.update(w.detach().cpu().contiguous().numpy().tobytes())
+        return h.hexdigest()
+
+    def predict_frame(self, rgb, path=None, prepared=None, pair_template=None):
+        self._pair_ctx = self._resolve_pair(path, pair_template)
+        try:
+            return self._predict_frame_impl(rgb, path, prepared)
+        finally:
+            self._pair_ctx = None
+
+    def _predict_frame_impl(self, rgb, path=None, prepared=None):
         """视频帧推理（§6）：numpy 帧（RGB HxWx3 uint8）走同一打分管线。
-        U56：同 predict——CPU 槽位与 DINO 前向并行。"""
+        U56：同 predict——CPU 槽位与 DINO 前向并行。
+        AC-069（前台锁粒度）：prepared=prepare_input(rgb=rgb) 结果时跳过锁外已做的预处理/前向。"""
+        if prepared is not None:
+            prepared["item"]["path"] = path
+            return self._predict_prepared(prepared, cache=False)
+        t0 = time.time()
         rgb = self._preprocess(rgb)
+        t_io = time.time()
         tiles = compute_tiles(rgb.shape[:2], self.tiling["mode"],
                               self.tiling["tile_size"], self.tiling["stride"])
         tile_imgs = extract_tiles(rgb, tiles)
+        t_tile = time.time()
+        clf_fut = self._prefetch_clf_imgfeat(rgb)
+        align_fut = self._prefetch_align(rgb)
         pre = self._prefetch_cpu({"img": rgb, "path": path,
                                   "tiles": tiles, "tile_imgs": tile_imgs})
         item = self._frame_item(rgb, path, tiles, tile_imgs)
-        item["_clf_imgfeat"] = self._prefetch_clf_imgfeat(rgb)
+        t_fw = time.time()
+        item["_clf_imgfeat"] = clf_fut
+        item["_align_fut"] = align_fut
         rec = self._record(item, cpu_futures=pre)
-        rec = self._finalize(item, rec)
-        rec = self._tta_refine(rgb, rec)
+        rec = self._timed_finalize(item, rec, rgb, t0, t_io, t_tile, t_fw)
         if self.trace_api is not None:
             self.trace_api.record(rec)
         return rec
@@ -620,6 +1128,12 @@ class Pipeline:
             return None
         from ..decision.defect_classifier import _img_features
         return self._cpu_exec.submit(_img_features, rgb)
+
+    def _prefetch_align(self, rgb):
+        """G1：对位相位相关（灰度+resize ~15ms）与 DINO 前向并行；纯函数，数值一致。"""
+        if self._align_ref is None:
+            return None
+        return self._cpu_exec.submit(self._align_offset, rgb)
 
     def _tta_refine(self, rgb, rec):
         """U100：对位偏移 TTA——判 anomaly/gray 时做平移搜索取最小 fused，若找到
@@ -635,6 +1149,8 @@ class Pipeline:
             rec["fused"] = float(best)
             rec["tta_refined"] = True
             rec["boxes"], rec["mask"], rec["types"] = [], None, []
+            rec["fused_heatmap"] = None
+            rec["localization"] = {"status": "not_requested", "reason": "tta_normal"}
             rec.setdefault("decision_trace", []).append({
                 "stage": "tta",
                 "fused_before": fused_before,
@@ -732,6 +1248,10 @@ class Pipeline:
             if hm_ok:
                 decision = "normal"
                 rule_reasons.append("tpl_consistency_override")
+        decision, br = self._apply_local_branch(item, rec, decision, rec.get("timing"))
+        if br is not None:
+            rec["branch"] = br
+            rule_reasons.append(f"local_branch:{br['side_effect']}")
         if boost:
             rule_reasons.append("defect_bank_intercept")
         trace = rec.setdefault("decision_trace", [])
@@ -744,9 +1264,45 @@ class Pipeline:
             "rule_reason": rule_reasons,
             "status": decision,
         })
+        if br is not None:
+            trace.append({"stage": "local_branch", **{k: br[k] for k in (
+                "global_score", "local_score", "tau_global", "tau_local", "fired",
+                "side_effect", "decision_before", "decision_after", "rescored_full")},
+                "rule_reason": [f"local_branch:{br['side_effect']}"], "status": decision})
+        local_out = rec.pop("_local_out", None)
         boxes, mask, types = [], None, []
         if decision != "normal" and getattr(self, "hier", True):
-            boxes, mask, types = self._hier(item, rec["slot_scores"])
+            t_h = time.time()
+            if br is not None and br["side_effect"] == "added_by_local" and local_out:
+                # AC-008：仅局部分支追加检出时，定位来自局部分支热图（全局热图无信号）
+                boxes, mask, types = self._hier(
+                    item, rec["slot_scores"], hms={"local": local_out["heatmaps"]},
+                    tiles={"local": local_out["tiles"]}, weights={"local": 1.0})
+                for b in boxes:
+                    b["source"] = "local_branch"
+            else:
+                boxes, mask, types = self._hier(item, rec["slot_scores"])
+            if rec.get("timing") is not None:
+                rec["timing"]["hier"] = round((time.time() - t_h) * 1000, 2)
+            loc = item.pop("_loc", None) or {}
+            rec["fused_heatmap"] = loc.get("fused_work")
+            rec["localization"] = loc.get("summary")
+        elif decision == "normal" and getattr(self, "hier", True) \
+                and getattr(self, "always_localize", False):
+            # 监控页三层显示需求（always_localize）：正常帧也产融合热力图，
+            # 但不产缺陷框/掩码/类型——保持 normal 判定语义不变
+            t_h = time.time()
+            self._hier(item, rec["slot_scores"])
+            if rec.get("timing") is not None:
+                rec["timing"]["hier"] = round((time.time() - t_h) * 1000, 2)
+            loc = item.pop("_loc", None) or {}
+            rec["fused_heatmap"] = loc.get("fused_work")
+            rec["localization"] = {"status": "heatmap_only",
+                                   "reason": "decision_normal"}
+        else:
+            rec["fused_heatmap"] = None
+            rec["localization"] = {"status": "not_requested", "reason": (
+                "decision_normal" if decision == "normal" else "hier_disabled")}
         rec.update(decision=decision, boxes=boxes, mask=mask, types=types)
         # E_open 不完备报告（§3.3）：open 信号高但命名槽位判 normal → 疑似体系外信号
         if self.open_det is not None and "open_score" in rec:
@@ -754,7 +1310,8 @@ class Pipeline:
                                      and decision == "normal")
         # M11d 对位偏移预警：有参考时每帧估算平移，超阈值透出 align_warn
         if self._align_ref is not None:
-            off = self._align_offset(item["img"])
+            fut = item.pop("_align_fut", None)
+            off = fut.result() if fut is not None else self._align_offset(item["img"])
             if off is not None:
                 warn_px = float((self.cfg.get("alignment", {}) or {})
                                 .get("warn_px", 4.0))
@@ -771,6 +1328,7 @@ class Pipeline:
             # 把 gray（待复核）也当缺陷，正常面右移（灰区积压）时缺陷率虚高，
             # 回流熔断被误触发锁死（MPDD 评测 fuse_blocked 恒 true）。
             self.handler.normal_bank._observe_decision(decision == "anomaly")
+            self._last_observed = decision == "anomaly"   # §78：门控锚定重放用
         return rec
 
     def attach_trace_api(self, log_dir):
@@ -785,6 +1343,12 @@ class Pipeline:
         DINO 前向期间 CPU 槽位在后台并行，避免顺序执行）。"""
         if path in self._item_cache:
             return self._item_cache[path]
+        return self.adopt_item(self.build_item(path, img=img, feats=feats,
+                                               tiles=tiles, tile_imgs=tile_imgs))
+
+    def build_item(self, path, img=None, feats=None, tiles=None, tile_imgs=None):
+        """读图/切块/DINO 前向构造 item，不读写缓存与任何模型状态（AC-069：
+        引擎在品类锁外预提取，锁内 adopt_item 入缓存，缩短在线学习临界区）。"""
         if img is None:
             img = self._preprocess(load_image(path))
         if tiles is None or tile_imgs is None:
@@ -796,8 +1360,14 @@ class Pipeline:
             feats = self.backbone.extract_tiles(
                 tile_imgs, batch=int(bb.get("extract_batch", 16))).cpu() \
                 if self.backbone is not None else None
-        item = {"path": path, "img": img, "tiles": tiles,
+        return {"path": path, "img": img, "tiles": tiles,
                 "tile_imgs": tile_imgs, "feats": feats}
+
+    def adopt_item(self, item):
+        """item 入特征缓存（已存在同路径则保留旧条目）；须在调用方持有的同一把锁内。"""
+        path = item["path"]
+        if path in self._item_cache:
+            return self._item_cache[path]
         if len(self._item_cache) > self._item_cache_max:  # 缓存上限：FIFO 逐出
             self._item_cache.pop(next(iter(self._item_cache)))
         self._item_cache[path] = item
@@ -833,6 +1403,15 @@ class Pipeline:
         return {"path": path, "img": rgb, "tiles": tiles,
                 "tile_imgs": tile_imgs, "feats": feats}
 
+    def explain_trad(self, path=None, rgb=None, top_dims=5):
+        """AC-014：按需 trad 解释（测量值/正常范围/参考近邻/组距离分解），不进推理热路径。"""
+        slot = self.slots.get("trad")
+        if slot is None or not hasattr(slot, "explain"):
+            return {"status": "not_applicable", "reason": "当前模型未启用 trad 槽位"}
+        img = self._preprocess(load_image(path) if rgb is None else rgb)
+        with self._trad_lock:
+            return slot.explain(img, top_dims=top_dims)
+
     def _score_trad(self, slot, item):
         """U56：trad 提取用全局 np.random（seed(0)+restore），锁串行化防线程间污染。"""
         with self._trad_lock:
@@ -843,7 +1422,7 @@ class Pipeline:
         U56：CPU 槽位（trad/blob/layout，needs_dino=False）提交线程池与 GPU 槽位并行；
         cpu_futures 由 predict 的 _prefetch_cpu 提供（DINO 前向期间已后台算完），
         数值与串行完全一致（trad 由 _trad_lock 保护全局 RNG）。"""
-        slot_scores, raw = {}, {}
+        slot_scores, raw, confidences = {}, {}, {}
         self._last_hms = {}                        # 热力图缓存（_hier 复用，避免重复打分）
         if cpu_futures is not None:
             futures = dict(cpu_futures)            # 已由 _prefetch_cpu 提交（DINO 期间并行）
@@ -860,33 +1439,43 @@ class Pipeline:
         for n, slot in self.slots.items():         # GPU 槽位：主线程顺序算（与 CPU 并行）
             if n in futures or n not in self._score_slots:
                 continue
-            s, ts, hms = self._slot_image_score(slot, item)
+            output = self._slot_image_score(slot, item)
+            s, ts, hms = output
+            confidences[n] = float(getattr(output, "confidence", 1.0))
             self._last_hms[n] = hms
             raw[n] = s
             slot_scores[n] = float(self.calibrators[n].transform([s])[0])
         for n, fut in futures.items():             # 回收 CPU 槽位结果
-            s, ts, hms = fut.result()
+            output = fut.result()
+            s, ts, hms = output
+            confidences[n] = float(getattr(output, "confidence", 1.0))
             self._last_hms[n] = hms
             raw[n] = s
             slot_scores[n] = float(self.calibrators[n].transform([s])[0])
         # 融合分 = self.weights（共识启用时即共识权重，否则等权保底）。
         # 路由仅追溯（U15 实证：门控评估集 init_defect 不可靠，路由 test 侧劣化
         # 0.2021 vs 保底 0.3385），不参与融合分——router_w 落盘供解释。
+        router_cand = None
         if self.router is not None:
-            names = sorted(slot_scores)   # U75：skip 模式下只有白名单槽位有分数
-            # 路由仅追溯：用 router 所在 device 构造张量，避免持久化加载时 CPU/CUDA 跨设备错配
-            try:
-                dev = next(self.router.parameters()).device
-            except Exception:
-                dev = torch.device("cpu")
-            svec = torch.tensor([[slot_scores[n] for n in names]], dtype=torch.float32, device=dev)
-            with torch.no_grad():
-                _, w = self.router.fused(svec)
-            self._last_router_w = {n: float(w[0, i].detach().cpu().item()) for i, n in enumerate(names)}
-        else:
-            self._last_router_w = dict(self.weights)
-        fused = fuse(slot_scores, self.weights)
+            # AC-021：与 fit 同一维度签名；旧快照无签名时回退 sorted(slot_scores)
+            names = self.router_slot_names or sorted(slot_scores)
+            if all(n in slot_scores for n in names) \
+                    and len(names) == self.router.n_slots:
+                # 路由仅追溯：用 router 所在 device 构造张量，避免持久化加载时 CPU/CUDA 跨设备错配
+                try:
+                    dev = next(self.router.parameters()).device
+                except Exception:
+                    dev = torch.device("cpu")
+                svec = torch.tensor([[slot_scores[n] for n in names]], dtype=torch.float32, device=dev)
+                with torch.no_grad():
+                    _, w = self.router.fused(svec)
+                router_cand = {n: float(w[0, i].detach().cpu().item()) for i, n in enumerate(names)}
+        self._last_router_w = router_cand if router_cand is not None else dict(self.weights)
+        applied = effective_weights(slot_scores, self.weights, confidences)
+        self._last_effective_weights = applied
+        fused = fuse(slot_scores, self.weights, confidences)
         rec = {"path": item["path"], "fused": float(fused), "slot_scores": slot_scores,
+               "slot_confidences": dict(confidences),
                "raw_scores": raw, "router_w": self._last_router_w,
                "n_tiles": len(item.get("tiles", [])),
 
@@ -894,11 +1483,20 @@ class Pipeline:
                    "stage": "fusion",
                    "raw_scores": dict(raw),
                    "calibrated_scores": dict(slot_scores),
-                   "effective_weights": {k: float(v) for k, v in self.weights.items()
-                                         if k in slot_scores},
+                   "effective_weights": dict(applied),
+                   "slot_confidences": dict(confidences),
+                   "normalization_rule": "active_weight_times_confidence / sum(active_weight_times_confidence)",
+                   "router_candidate_weights": router_cand,   # AC-027：仅追溯，applied=false
+                   "router_applied": False,
                    "fused_before": float(fused),
                    "fused_after": float(fused),
                    "rule_reason": "base_fusion",
+                   # FIX-SNAP：旧快照降级槽位显式透出（空 dict = 无降级）
+                   "degraded_slots": {k: {"layout_degraded": v.get("layout_degraded", True),
+                                          "layout_stats_source": v.get("layout_stats_source"),
+                                          "missing": list(v.get("missing", []))}
+                                      for k, v in (getattr(self, "degraded_slots", None)
+                                                   or {}).items()},
                }]}
         # E_open 哨兵（§3.3）：未解释信号分（不进融合）
         if self.open_det is not None and item["feats"] is not None:
@@ -910,34 +1508,48 @@ class Pipeline:
                 rec["open_score"] = 0.0
         return rec
 
-    def _hier(self, item, slot_scores, hms=None):
+    def _hier(self, item, slot_scores, hms=None, tiles=None, weights=None):
         """分层输出 L2/L3（§6.2）：融合热力图 → 掩码 → 检测框 → 类型归因。
         hms 由 _record 缓存提供（避免重复打分）；掩码在低分辨率工作网格构建
         （热力图本为 patch 级，work_side 下语义等价），框坐标放大回原图——
         3000×4096 上 hier 从 711ms（重算）→ 缓存 347ms → 本优化后再降。"""
         from ..decision.hierarchical import (build_heatmap_mask, boxes_from_mask,
-                                             attribute_type)
+                                             box_evidence)
         if hms is None:
             hms = getattr(self, "_last_hms", None)
         if hms is None:
             hms = self._slot_heatmaps(item)
+        if weights is None:
+            weights = getattr(self, "_last_effective_weights", self.weights)
         thresh = self.cfg.get("hierarchical", {}).get("mask_thresh", 0.5)
         H, W = item["img"].shape[:2]
         work_side = self.cfg.get("hierarchical", {}).get("work_side", 512)
         scale = min(work_side / max(H, W), 1.0)
         wh, ww = max(1, int(H * scale)), max(1, int(W * scale))
-        _, mask_work, per_slot_maps = build_heatmap_mask(
-            hms, (wh, ww), thresh, weight_by_slot=self.weights)
+        from ..decision.localization import (finalize_regions, localization_summary,
+                                             postproc_params)
+        params = postproc_params(self.cfg)
+        fused_work, mask_work, per_slot_maps = build_heatmap_mask(
+            hms, (wh, ww), thresh, weight_by_slot=weights or self.weights,
+            tiles=tiles if tiles is not None else item.get("tiles"), src_size=(H, W))
         boxes = []
         mask = None
         if mask_work is not None:
-            boxes = boxes_from_mask(mask_work, self.cfg.get("hierarchical", {}).get("min_area", 16))
-            inv = 1.0 / scale if scale > 0 else 1.0
-            for b in boxes:                    # 框坐标放大回原图
-                b["bbox"] = [int(v * inv) for v in b["bbox"]]
+            boxes = boxes_from_mask(mask_work, params["min_area"])
+            # AC-014：逐框区域证据在工作网格上算（与掩码同坐标），再放大框坐标
+            box_evidence(boxes, per_slot_maps, weights=weights or self.weights,
+                         image_slots=[n for n in slot_scores if n not in hms])
+            # AC-063：floor/ceil 放大 + 裁剪到图内，补分数/来源/后处理版本/region_id
+            boxes = finalize_regions(boxes, fused_work, scale, (H, W), params,
+                                     source="engine_box")
             # U56：类型归因在低分辨率工作网格上做（2500² 上 connectedComponents 慢 ~40ms），
             # 分布统计语义等价；L2 像素级掩码仍 resize 回原图交付。
             mask = cv2.resize(mask_work, (W, H), interpolation=cv2.INTER_NEAREST)
+            item["_loc"] = {"fused_work": fused_work,
+                            "summary": localization_summary(boxes, params, (H, W))}
+        else:
+            item["_loc"] = {"fused_work": None, "summary": localization_summary(
+                [], params, (H, W), status="unavailable", reason="no_heatmap_slot")}
         types = self._attribute_types(item, slot_scores, per_slot_maps,
                                       mask_work, (wh, ww))
         return boxes, mask, types
@@ -999,6 +1611,13 @@ class Pipeline:
             sample = sorted(rng.choice(paths, n, replace=False).tolist())
             self._anchor_items = self._tile_and_extract(sample)
             self.handler.setup(self, paths, rng=rng, anchor_paths=sample)
+        # AC-031：init_defect 掩码 patch 预置缺陷样例库（默认关；经锚定 FPR 门控，失败整批撤销）
+        self.init_defect_seed = {"action": "init_defect_seed_skip", "reason": "disabled"}
+        if (cfg.get("init_defect_seed", {}) or {}).get("enabled", False):
+            self.init_defect_seed = self.handler.seed_init_defect(
+                getattr(self, "_init_defect_patches", None) or [])
+            print(f"  [ssocl] init_defect_seed: {self.init_defect_seed}", flush=True)
+        self._init_defect_patches = None   # 已入库或不用，释放（不进快照）
         return self
 
     def _anchor_feats(self):
@@ -1007,14 +1626,23 @@ class Pipeline:
         items = getattr(self, "_anchor_items", []) or []
         if not items:
             return None
-        return _t.cat([it["feats"] for it in items], dim=0)
+        # 2026-10-11：cpu 降配（无主干）时 items[i]["feats"] 为 None——
+        # 过滤后拼接；全 None 返回 None（seed_core 对 None 优雅跳过，锚定库退化关闭）
+        feats = [it["feats"] for it in items if it.get("feats") is not None]
+        if not feats:
+            return None
+        return _t.cat(feats, dim=0)
 
-    def feedback(self, path, verdict, label=None, feats=None, box=None):
+    def feedback(self, path, verdict, label=None, feats=None, box=None, defect_type=None):
         """三类反馈统一入口（§7.1）：correct/wrong/none + label 0|1。
         box（U64）：用户在线提供的缺陷框标注（归一化 [x0,y0,x1,y1] 或 boxes 列表），
-        转发给 FeedbackHandler（label==1 有框时只入框内 patch）。"""
+        转发给 FeedbackHandler（label==1 有框时只入框内 patch）。
+        defect_type：缺陷类型血缘（按类型孵育用），缺省不传以兼容旧 handler。"""
         assert self.handler is not None, "未 enable_ssocl"
-        return self.handler.feedback(path, verdict, label=label, feats=feats, box=box)
+        if defect_type is None:
+            return self.handler.feedback(path, verdict, label=label, feats=feats, box=box)
+        return self.handler.feedback(path, verdict, label=label, feats=feats, box=box,
+                                     defect_type=defect_type)
 
     def active_enqueue(self, rec, item):
         """灰区样本入主动选样队列（§7.5）。"""
@@ -1060,6 +1688,8 @@ class Pipeline:
         self._cal_snapshot = {n: (cal.edges.copy(), len(self._cal_normal_hist.get(n, [])))
                               for n, cal in self.calibrators.items()}
         for n, cal in self.calibrators.items():
+            if n in (getattr(self, "degraded_slots", None) or {}):
+                continue                         # FIX-SNAP：降级槽位无拟合态，不打分
             s, _, _ = self._slot_image_score(self.slots[n], item)
             self._cal_normal_hist[n].append(s)
             cal.fit(self._cal_normal_hist[n])
@@ -1092,7 +1722,11 @@ class Pipeline:
         if self.router is None or not self._anchor_items:
             return False
         from ..fusion.router import train_router_on_matrix
-        names = sorted(self.slots)
+        # AC-021：与 fit/推理同一维度签名（原 sorted(self.slots) 含 open/非融合槽位，维度错配）
+        names = self.router_slot_names or sorted(self._score_slots)
+        if len(names) != self.router.n_slots or any(
+                n not in d["slots"] for d in difficult for n in names):
+            return False
         pos = np.array([[d["slots"][n] for n in names] for d in difficult],
                        dtype=np.float32)
         neg_paths = [it["path"] for it in self._anchor_items]
@@ -1164,6 +1798,17 @@ class Pipeline:
         types = [defect_type_from_path(p) if y == 1 else None
                  for p, y in zip(le["paths"], le["labels"])]
         profile = contribution_profile(le["per_slot"], le["labels"], types, self.weights)
+        trad = self.slots.get("trad")
+        if trad is not None and getattr(trad, "bank_w", None) is not None:
+            # AC-012：trad 组级档案（eval 侧报告，不回写 fit/权重）
+            from .contribution import trad_group_profile
+            imgs = [self._preprocess(load_image(p)) for p in le["paths"]]
+            profile["trad_groups"] = trad_group_profile(
+                trad, imgs, le["labels"], types,
+                category=self.cfg.get("category") if isinstance(self.cfg, dict) else None,
+                data_source="eval:test", config=dict(getattr(trad, "cfg", {}) or {}))
+            for row in profile["trad_groups"].get("per_image", []):
+                row["path"] = le["paths"][row.pop("image_index")]
         if out_path:
             save_profile(profile, out_path)
         return profile

@@ -4,7 +4,8 @@ notify_event(event, payload)：按 configs/default.yaml 的 notify 段配置
 异步 POST JSON（单线程池，不阻塞调用方）；webhook_url 为空即禁用；
 超时/连接失败等异常静默捕获并记 OperationLog("webhook_error")。
 
-事件：anomaly / gray / feedback / consolidate。
+事件：anomaly / gray / feedback / consolidate / alarm / open_set / align_warn。
+是否推送取决于事件触发条件及 notify.events 订阅；并非所有事件默认订阅。
 """
 from __future__ import annotations
 

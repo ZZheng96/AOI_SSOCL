@@ -1,0 +1,125 @@
+{
+  "name": "slot_health_engineer",
+  "method": "GET",
+  "path": "/api/models/gold_finger/slot-health",
+  "role": "engineer",
+  "request_body": null,
+  "status_code": 200,
+  "response": {
+    "slots": {
+      "blob": {
+        "reference": "DoG 斑点响应 vs train/good 统计",
+        "fit_type": "handcrafted_stat",
+        "uses_defect": false,
+        "localization": "斑点位置",
+        "domain_sensitivity": "low",
+        "fitted": true,
+        "in_fusion": true,
+        "cal_n": 14,
+        "sanity_auc": 0.8202,
+        "weight": 0.5369,
+        "small_sample": null,
+        "status": "ok"
+      },
+      "trad": {
+        "reference": "传统特征组（纹理/边缘）vs train/good 统计",
+        "fit_type": "handcrafted_stat",
+        "uses_defect": "group_select_only",
+        "localization": "块级统计偏离",
+        "domain_sensitivity": "medium",
+        "fitted": true,
+        "in_fusion": true,
+        "cal_n": 14,
+        "sanity_auc": 0.7762,
+        "weight": 0.4631,
+        "small_sample": null,
+        "status": "ok"
+      },
+      "layout": {
+        "reference": "train/good 布局统计（尺寸/数量/顺序）",
+        "fit_type": "statistical_layout",
+        "uses_defect": false,
+        "localization": "部件框",
+        "domain_sensitivity": "medium",
+        "fitted": true,
+        "in_fusion": true,
+        "cal_n": 14,
+        "sanity_auc": 0.6107,
+        "weight": 0.0,
+        "small_sample": null,
+        "status": "weak"
+      }
+    },
+    "post_fusion": {
+      "defect_knn": {
+        "role": "确认缺陷样例的近邻后验拦截（加分 ∝ 缺陷库相似 − 正常库相似）",
+        "train": "无训练；人工确认框/掩码 patch 入 DefectBank",
+        "update": "入库即生效，经锚定 FPR 门控，失败回滚",
+        "localization": "命中 patch（topk 相对相似）",
+        "domain_sensitivity": "high",
+        "not": "1～2 张图只承诺检出相似缺陷；只加分不减分",
+        "in_fusion": false,
+        "active": false,
+        "n_samples": 0,
+        "n_pure_images": 0
+      },
+      "incubate": {
+        "role": "确认样例孵育的轻量头，后验拦截加分",
+        "train": "纯 patch（add_box/add_patch）vs 锚定 patch，按独立图计数",
+        "update": "达 min_samples 后孵育，holdout 批准且不劣于旧头才替换",
+        "localization": "patch 判别分 topk",
+        "domain_sensitivity": "high",
+        "not": "不替代 disc，不进融合权重，不做类型分类",
+        "in_fusion": false,
+        "enabled": true,
+        "trained": false,
+        "min_samples": 8,
+        "n_pure_images": 0,
+        "separation": null,
+        "last_decision": null
+      }
+    },
+    "cold_start_roles": {
+      "normal_images": [
+        "sem 记忆库",
+        "槽位正常统计（blob/trad/layout/color）",
+        "CDF 校准",
+        "判定阈值 τ/灰区",
+        "open PCA",
+        "局部分支正常库"
+      ],
+      "defect_images": [
+        "槽位体检 slot_sanity",
+        "判别头 disc/shead 正样本",
+        "sanity 融合权重",
+        "router 训练/准入评估"
+      ],
+      "backbone": "DINO 冻结（不随品类微调）",
+      "never": "test 图不进任何 fit/选择（红线 3）"
+    },
+    "weights_semantics": {
+      "raw_scores": "槽位原始分（尺度各异，不可直接比较）",
+      "calibrated_scores": "CDF 校准分：正常分布分位，非概率；>1 为超训练最大值外推",
+      "effective_weights": "本次判定实际生效的融合权重（fixed/sanity/consensus/domain_prior 之一）",
+      "router_candidate_weights": "router softmax 候选权重：仅追溯，applied=false，不参与 fused",
+      "gate": "router 准入结论（permitted/trace_only），是门控判断不是权重"
+    },
+    "router_admission": null,
+    "domain_shift": null,
+    "fusion_baselines": null,
+    "update_audit": {
+      "entries": [],
+      "counts": {
+        "accepted": 0,
+        "rolled_back": 0,
+        "rejected": 0,
+        "applied_prior": 0
+      },
+      "pre_gate_rejects": 0
+    },
+    "category": "gold_finger",
+    "enabled": true,
+    "version": "v2"
+  },
+  "note": ""
+}

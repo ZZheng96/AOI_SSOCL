@@ -8,6 +8,7 @@ from typing import Optional
 
 from fastapi import APIRouter, File, Form, HTTPException, Response, UploadFile
 from PIL import Image as PILImage
+from sqlalchemy import func
 
 from ..core.tasks import task_manager
 from ..db.database import session_scope
@@ -29,6 +30,11 @@ router = APIRouter()
 def api_detect_image(req: DetectImageRequest):
     """同步图片检测：image_id（从 DB 取路径）与 path 二选一。"""
     try:
+        kw = {}
+        if req.pair_template is not None:
+            if not Path(req.pair_template).is_file():
+                raise ValueError(f"模板文件不存在: {req.pair_template}")
+            kw["pair_template"] = req.pair_template
         svc = get_detection_service()
         # 并发安全由引擎层品类级锁保证（见文件头注释），此处不再加全局锁
         if req.image_id is not None:
@@ -39,13 +45,13 @@ def api_detect_image(req: DetectImageRequest):
                 path = img.path
             out = svc.detect_image(path, req.category, image_id=req.image_id,
                                    target_type="image",
-                                   with_heatmap=req.with_heatmap)
+                                   with_heatmap=req.with_heatmap, **kw)
             out["image_id"] = req.image_id
         elif req.path:
             if not Path(req.path).is_file():
                 raise ValueError(f"文件不存在: {req.path}")
             out = svc.detect_image(req.path, req.category,
-                                   with_heatmap=req.with_heatmap)
+                                   with_heatmap=req.with_heatmap, **kw)
         else:
             raise ValueError("必须提供 image_id 或 path")
         return out
@@ -57,12 +63,18 @@ def api_detect_image(req: DetectImageRequest):
 
 @router.post("/detect/upload")
 async def api_detect_upload(file: UploadFile = File(...),
-                            category: str = Form("default")):
+                            category: str = Form("default"),
+                            pair_template: Optional[str] = Form(None)):
     """multipart 上传图片并同步检测（target_type=upload）。"""
     try:
+        kw = {}
+        if pair_template is not None:
+            if not Path(pair_template).is_file():
+                raise ValueError(f"模板文件不存在: {pair_template}")
+            kw["pair_template"] = pair_template
         data = await file.read()
         pil = PILImage.open(io.BytesIO(data))
-        return get_detection_service().detect_pil(pil, category)
+        return get_detection_service().detect_pil(pil, category, raw=data, **kw)
     except ValueError as e:
         raise HTTPException(status_code=400, detail=str(e))
     except Exception as e:  # noqa: BLE001
@@ -73,7 +85,8 @@ async def api_detect_upload(file: UploadFile = File(...),
 async def api_detect_frame(file: UploadFile = File(...),
                            category: str = Form("default"),
                            with_heatmap: bool = Form(False),
-                           persist: bool = Form(True)):
+                           persist: bool = Form(True),
+                           pair_template: Optional[str] = Form(None)):
     """零拷贝内存帧检测（产线"相机取图直入内存"形态，不足清单 #5 补强）。
 
     与 /detect/upload（先 PNG 落盘再读回）相对：帧 bytes 直接 imdecode
@@ -81,9 +94,14 @@ async def api_detect_frame(file: UploadFile = File(...),
     响应带 zero_copy=True 与 latency_e2e_ms（内存直入口径全链路耗时）。
     """
     try:
+        kw = {}
+        if pair_template is not None:
+            if not Path(pair_template).is_file():
+                raise ValueError(f"模板文件不存在: {pair_template}")
+            kw["pair_template"] = pair_template
         data = await file.read()
         return get_detection_service().detect_frame(
-            data, category, persist=persist, with_heatmap=with_heatmap)
+            data, category, persist=persist, with_heatmap=with_heatmap, **kw)
     except ValueError as e:
         raise HTTPException(status_code=400, detail=str(e))
     except Exception as e:  # noqa: BLE001
@@ -114,7 +132,7 @@ def api_detect_video(req: DetectVideoRequest):
             # 总帧数未知（total=-1），仅汇报进度消息
             progress_cb(n_sampled, -1, f"已检测 {n_sampled} 帧")
         return {"n_frames": n_sampled, "n_anomaly": n_anomaly,
-                "mean_latency_ms": (latency_sum / n_sampled if n_sampled else 0.0),
+                "mean_latency_ms": (latency_sum / n_sampled if n_sampled else None),
                 "ids": ids}
 
     task_id = task_manager.submit("detect_video", req.model_dump(), fn)
@@ -279,6 +297,11 @@ def api_detections_live(after_id: int = 0, limit: int = 50,
     with session_scope() as s:
         q = s.query(Detection).filter(
             Detection.target_type.in_(_LIVE_TARGET_TYPES))
+        from ._wo_shared import archived_workorder_ids
+        arch = archived_workorder_ids(s)
+        if workorder_id is None and arch:
+            q = q.filter(Detection.workorder_id.is_(None)
+                         | ~Detection.workorder_id.in_(arch))
         if workorder_id is not None:
             from ..db.models import Dataset, Image as ImageRow, WorkOrderSource
             ds_ids = [r[0] for r in s.query(WorkOrderSource.datasource_id)
@@ -303,11 +326,23 @@ def api_detections_live(after_id: int = 0, limit: int = 50,
         items = [to_dict(r) for r in rows]
         first_id = int(items[0]["id"]) if items else None
         latest_id = int(items[-1]["id"]) if items else None
-        gap = bool(after_id > 0 and first_id is not None
-                   and first_id > after_id + 1)
-        dropped_count = (first_id - after_id - 1) if gap else 0
-        reset_required = gap
-        next_after_id = latest_id if latest_id is not None else after_id
+        # AC-058：ID 洞≠丢帧。区间内被过滤（非产线类型/其他品类/工单）的
+        # 记录不算缺口；只有全表也不存在的 ID（删除/未落库）才计 gap。
+        filtered_out = dropped_count = 0
+        if after_id > 0 and first_id is not None and first_id > after_id + 1:
+            exist = (s.query(func.count(Detection.id))
+                     .filter(Detection.id > after_id, Detection.id < first_id)
+                     .scalar() or 0)
+            filtered_out = int(exist)
+            dropped_count = max(0, first_id - after_id - 1 - filtered_out)
+        gap = dropped_count > 0
+        # 游标超过全表最大 ID（库重建/重置）→ 客户端须从 0 重新订阅
+        reset_required = False
+        if after_id > 0 and not items:
+            max_id = s.query(func.max(Detection.id)).scalar()
+            reset_required = max_id is None or int(max_id) < after_id
+        next_after_id = (latest_id if latest_id is not None
+                         else (0 if reset_required else after_id))
         has_more = False
         if latest_id is not None:
             has_more = q.filter(Detection.id > latest_id).first() is not None
@@ -320,7 +355,8 @@ def api_detections_live(after_id: int = 0, limit: int = 50,
     return {"items": items, "alarm": alarm,
             "next_after_id": next_after_id, "latest_id": latest_id,
             "first_id": first_id, "gap": gap,
-            "dropped_count": dropped_count, "reset_required": reset_required,
+            "dropped_count": dropped_count, "filtered_out": filtered_out,
+            "reset_required": reset_required,
             "has_more": has_more}
 
 
@@ -331,6 +367,35 @@ def api_get_detection(detection_id: int):
         if row is None:
             raise HTTPException(status_code=404, detail="检测记录不存在")
         return to_dict(row)
+
+
+# ── AC-014：单帧解释（实际槽/raw/cal/生效权重/决策路径/逐框证据/trad 测量）────
+@router.get("/detections/{detection_id}/explain")
+def api_detection_explain(detection_id: int):
+    """检测时口径取自记录（不重算融合）；trad 测量解释按需计算（当前激活版本）。
+    不含性能增益/融合贡献；分数与 CDF 均非缺陷概率。"""
+    from ..engine import get_engine
+
+    with session_scope() as s:
+        det = s.get(Detection, detection_id)
+        if det is None:
+            raise HTTPException(status_code=404, detail="检测记录不存在")
+        d = to_dict(det)
+    d["score"] = d.get("final_score")
+    keys = ("detection_id", "category", "image_path", "decision", "score", "model_version",
+            "threshold", "gray_threshold", "raw_scores", "cal_scores", "weights",
+            "actual_router", "triggered_slot", "decision_trace", "box_evidence")
+    out = {k: d.get(k) for k in keys}
+    out["score_semantics"] = "融合异常分（校准后加权），非缺陷概率"
+    try:
+        ex = get_engine().explain_image(d["category"], d["image_path"])
+        out["trad"] = ex["trad"]
+        out["trad_model_version"] = ex["model_version"]
+        if ex["model_version"] != d.get("model_version"):
+            out["trad"]["version_note"] = "trad 解释基于当前激活版本，与检测时版本不同"
+    except Exception as e:  # noqa: BLE001 引擎未就绪/图像缺失 → 只返回记录口径
+        out["trad"] = {"status": "unavailable", "reason": str(e)[:200]}
+    return out
 
 
 # ── M7a：单帧追溯链 ──────────────────────────────────────────

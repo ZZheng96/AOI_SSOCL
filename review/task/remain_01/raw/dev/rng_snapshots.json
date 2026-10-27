@@ -1,0 +1,30 @@
+{
+  "tree": "dev",
+  "mode": "explicit_rng42",
+  "snapshots": [
+    {
+      "tag": "t0_after_global_seed0",
+      "algorithm": "MT19937",
+      "pos": 624,
+      "state_sha256_16": "012a3189dd9a9348"
+    },
+    {
+      "tag": "after_run_parity",
+      "algorithm": "MT19937",
+      "pos": 624,
+      "state_sha256_16": "012a3189dd9a9348"
+    },
+    {
+      "tag": "after_constant_image",
+      "algorithm": "MT19937",
+      "pos": 624,
+      "state_sha256_16": "012a3189dd9a9348"
+    },
+    {
+      "tag": "t_end",
+      "algorithm": "MT19937",
+      "pos": 624,
+      "state_sha256_16": "012a3189dd9a9348"
+    }
+  ]
+}

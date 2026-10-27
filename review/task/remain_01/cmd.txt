@@ -1,0 +1,25 @@
+REMAIN-01 实际执行命令（Windows PowerShell；py -3.11；均未修改稳定版/开发版任何文件）
+
+# 0. 产物目录
+New-Item -ItemType Directory -Force "d:\CGAIC\AOI_SSOCL\review\task\remain_01\temp", "d:\CGAIC\AOI_SSOCL\review\task\remain_01\raw", "d:\CGAIC\AOI_SSOCL\review\task\remain_01\raw\dev"
+
+# 1. 协议 A（权威验收）：稳定版树全链路 parity 复核
+#    候选=稳定版 AOI_feature（legacy_u27 口径），参照=稳定版 AOI_Core TradSlot(legacy)
+#    实际执行两次：第一次在本脚本 03 项处因 freg.TRAD_GROUPS 的 slice 为 list 而非 slice 对象
+#    报错（AttributeError），修正 run_remain01.py 后重跑成功；parity_result.json 两次一致。
+cd /d d:\CGAIC\AOI_SSOCL\stable_AOI_tree\AOI_Core
+py -3.11 d:\CGAIC\AOI_SSOCL\review\task\remain_01\raw\run_remain01.py --tree stable --outdir d:\CGAIC\AOI_SSOCL\review\task\remain_01\raw 2>&1 | Tee-Object -FilePath d:\CGAIC\AOI_SSOCL\review\task\remain_01\raw\run_log_stable.txt
+# 退出码 1（status=failed，预期复现历史 FAIL）；用时 ~9.8s
+
+# 2. 协议 B（诊断参照）：开发版树同一协议
+#    候选=开发版 AOI_feature（explicit_rng42 口径），参照=开发版 AOI_Core TradSlot(legacy)
+cd /d d:\CGAIC\AOI_SSOCL\AOI_tree\AOI_Core
+py -3.11 d:\CGAIC\AOI_SSOCL\review\task\remain_01\raw\run_remain01.py --tree dev --outdir d:\CGAIC\AOI_SSOCL\review\task\remain_01\raw\dev 2>&1 | Tee-Object -FilePath d:\CGAIC\AOI_SSOCL\review\task\remain_01\raw\run_log_dev.txt
+# 退出码 1（status=failed：scoring/report/bank_compatibility 3 项超 atol）；用时 ~10.2s
+
+# 3. 修复同步状态核查（SHA256）
+$files = 'feature_lib.py','feature_set.py','presets.py','scoring.py'
+foreach ($f in $files) { Get-FileHash "d:\CGAIC\AOI_SSOCL\AOI_tree\AOI_feature\$f" -Algorithm SHA256; Get-FileHash "d:\CGAIC\AOI_SSOCL\stable_AOI_tree\AOI_feature\$f" -Algorithm SHA256 }
+fc.exe "d:\CGAIC\AOI_SSOCL\AOI_tree\AOI_feature\presets.py" "d:\CGAIC\AOI_SSOCL\stable_AOI_tree\AOI_feature\presets.py"
+
+# 复验入口（修复同步 + dtype 对齐后重跑 #1；全 PASS 即退出码 0）

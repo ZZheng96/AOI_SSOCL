@@ -15,6 +15,9 @@
 from __future__ import annotations
 
 from typing import Callable, Optional
+import json
+
+from app.ui.tuner_preview import PreviewController
 
 import cv2
 import numpy as np
@@ -23,7 +26,7 @@ from PySide6.QtGui import QColor, QPainter, QPen, QPixmap
 from PySide6.QtWidgets import (
     QButtonGroup, QComboBox, QDialog, QFileDialog, QGridLayout, QGroupBox,
     QHBoxLayout, QLabel, QMessageBox, QPushButton, QRadioButton, QSlider,
-    QSpinBox, QSplitter, QVBoxLayout, QWidget,
+    QScrollArea, QSpinBox, QSplitter, QVBoxLayout, QWidget,
 )
 
 from app.tools import tuner as T
@@ -189,7 +192,8 @@ class TunerDialog(QDialog):
                  hsv_objects: Optional[list[T.HsvObjectSpec]] = None,
                  roi_boxes: Optional[list[tuple[str, int, int, int, int]]] = None,
                  initial_params: Optional[dict] = None,
-                 parent=None) -> None:
+                 parent=None, preview_runner=None, algorithm_ids=None,
+                 algorithm_params=None, params_apply_callback=None) -> None:
         super().__init__(parent)
         self.setWindowTitle("调参辅助：色板抽色 / 自动抽色 / 预处理")
         self.resize(1180, 680)
@@ -201,15 +205,29 @@ class TunerDialog(QDialog):
         self.initial_params = dict(initial_params or {})
         self.roi: tuple[int, int, int, int] | None = None
         self.swatch_points: list[tuple[int, int]] = []
+        self._edited_hsv = {}
+        self._preview_params = {}
+        self._algorithm_params = {k: dict(v) for k, v in (algorithm_params or {}).items()}
+        self._param_edits = {}
+        self._param_panels = {}
+        self.params_apply_callback = params_apply_callback
         self._current_hsv: dict = {}   # 当前对象 HSV 六值
         self._swatch_pixmap: QPixmap | None = None
         self._sliders: dict[str, QSlider] = {}
         self._spinners: dict[str, QSpinBox] = {}
         self._suppress_hsv = False      # 程序化赋值滑条时抑制重算
+        self._preview_result = None
+        self._preview_views = {}
+        self._algorithm_ids = list(algorithm_ids or [])
+        self._preview = PreviewController(preview_runner, self) if preview_runner else None
+        if self._preview:
+            self._preview.finished.connect(self._show_preview)
+            self._preview.failed.connect(lambda message: self.lbl_run.setText("ERROR：" + message))
         self._build()
         if image_path:
             self._load_image(image_path)
         self._init_objects()
+        self._refresh_param_panels()
 
     # ── UI ──────────────────────────────────────────────
     def _build(self) -> None:
@@ -300,7 +318,28 @@ class TunerDialog(QDialog):
         self.lbl_swatch.setWordWrap(True)
         rv.addWidget(self.lbl_swatch)
 
-        rv.addWidget(QLabel("图像预处理预览"))
+        self.cmb_algorithm = QComboBox()
+        self.cmb_algorithm.addItems(self._algorithm_ids)
+        rv.addWidget(QLabel("真实生产检测项（每次只执行当前项）"))
+        rv.addWidget(self.cmb_algorithm)
+        self._param_host = QWidget()
+        self._param_layout = QVBoxLayout(self._param_host)
+        param_scroll = QScrollArea()
+        param_scroll.setWidgetResizable(True)
+        param_scroll.setWidget(self._param_host)
+        param_scroll.setMinimumHeight(180)
+        rv.addWidget(param_scroll, 1)
+        self.lbl_run = QLabel("尚未执行；抽色视图不是算法判定")
+        self.lbl_run.setWordWrap(True)
+        self.lbl_run.setTextInteractionFlags(Qt.TextInteractionFlag.TextSelectableByMouse)
+        scroll = QScrollArea()
+        scroll.setWidgetResizable(True)
+        scroll.setWidget(self.lbl_run)
+        scroll.setMinimumHeight(180)
+        rv.addWidget(scroll, 1)
+        self.btn_cancel = QPushButton("取消预览")
+        rv.addWidget(self.btn_cancel)
+        rv.addWidget(QLabel("图像预处理预览（仅抽色辅助，不改变生产输入）"))
         self.cmb_pre = QComboBox()
         self.cmb_pre.addItems(["原始", "灰度", "Otsu", "自适应二值", "自动Gamma"])
         rv.addWidget(self.cmb_pre)
@@ -328,6 +367,46 @@ class TunerDialog(QDialog):
         self.cmb_aux.currentIndexChanged.connect(self._refresh_views)
         self.btn_copy.clicked.connect(self._copy_params)
         self.btn_apply.clicked.connect(self._apply)
+        self.btn_close.clicked.connect(self.reject)
+        self.finished.connect(lambda _code: self._preview.close() if self._preview else None)
+        self.cmb_algorithm.currentIndexChanged.connect(self._refresh_param_panels)
+        self.cmb_algorithm.currentIndexChanged.connect(self._schedule_preview)
+        self.btn_cancel.clicked.connect(self._cancel_preview)
+
+    def _refresh_param_panels(self, *_args) -> None:
+        from app.detect.catalog import get_catalog
+        from app.ui.algo_param_panel import AlgorithmParamPanel
+        while self._param_layout.count():
+            widget = self._param_layout.takeAt(0).widget()
+            if widget:
+                widget.deleteLater()
+        self._param_panels = {}
+        alg_id = self.cmb_algorithm.currentText()
+        if not alg_id:
+            return
+        shared = get_catalog().shared_param_id(alg_id)
+        hsv_keys = {key for obj in self.hsv_objects for key in obj.keys.values()}
+        for target in dict.fromkeys([shared, alg_id]):
+            if not target:
+                continue
+            values = dict(self._algorithm_params.get(target, self.initial_params))
+            values.update(self._param_edits.get(target, {}))
+            panel = AlgorithmParamPanel(
+                target, lambda: None, None, show_preview=False, compact=True,
+                values_provider=lambda v=values: (v, "当前模板冻结参数 / tuner 编辑"),
+                excluded_keys=hsv_keys)
+            if not panel.has_params():
+                panel.deleteLater()
+                continue
+            panel._save_row_widget.hide()
+            panel.refresh(preview=False)
+            panel.params_changed.connect(lambda t=target, p=panel: self._on_params_changed(t, p))
+            self._param_panels[target] = panel
+            self._param_layout.addWidget(panel)
+
+    def _on_params_changed(self, target, panel) -> None:
+        self._param_edits[target] = panel.current_values()
+        self._schedule_preview()
 
     def _init_objects(self) -> None:
         """从算法发现抽色对象；无则给空占位提示。"""
@@ -344,9 +423,10 @@ class TunerDialog(QDialog):
             self._obj_host_lay.addWidget(QLabel("（当前勾选的算法没有 HSV 颜色参数）"))
             self.btn_auto.setEnabled(False)
             self.btn_swatch.setEnabled(False)
-            self.btn_apply.setEnabled(False)
+            self.btn_apply.setEnabled(bool(self.params_apply_callback))
             self.lbl_hsv.setText("当前勾选算法未暴露 HSV 参数，无法抽色。\n"
                                  "请到算法调试/参数面板确认该算法是否提供颜色范围参数。")
+            self._schedule_preview()
             return
         for i, spec in enumerate(self.hsv_objects):
             rb = QRadioButton(f"{spec.label}（{spec.id}）")
@@ -355,6 +435,7 @@ class TunerDialog(QDialog):
             self._obj_host_lay.addWidget(rb)
         self.obj_group.idClicked.connect(self._switch_object)
         self._switch_object(0)
+        self._schedule_preview()
 
     def _selected_algorithm_ids(self) -> list[str]:
         parent = self.parent()
@@ -396,8 +477,11 @@ class TunerDialog(QDialog):
             QMessageBox.warning(self, "无法读取", path)
             return
         self.image_bgr = img
+        self._hsv_image = cv2.cvtColor(img, cv2.COLOR_BGR2HSV)
+        self._gray_image = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
         self.image_path = path
         self.canvas.set_image(img)
+        self._schedule_preview()
         self._refresh_views()
 
     def _open_image(self) -> None:
@@ -418,7 +502,17 @@ class TunerDialog(QDialog):
             return
         self._current_hsv = self._current_hsv_from_sliders()
         self._refresh_hsv_label()
+        self._remember_hsv()
         self._refresh_views()
+
+    def _remember_hsv(self) -> None:
+        idx = self.obj_group.checkedId()
+        if 0 <= idx < len(self.hsv_objects):
+            updates = T.hsv_to_params(self.hsv_objects[idx], self._current_hsv)
+            self.initial_params.update(updates)
+            self._preview_params.update(updates)
+            self._edited_hsv[idx] = dict(self._current_hsv)
+        self._schedule_preview()
 
     def _refresh_hsv_label(self) -> None:
         if not self.hsv_objects:
@@ -442,6 +536,7 @@ class TunerDialog(QDialog):
         self._current_hsv = {k: r[k] for k in ("h_lo", "h_hi", "s_lo", "s_hi", "v_lo", "v_hi")}
         self._set_sliders(self._current_hsv)
         self._refresh_hsv_label()
+        self._remember_hsv()
         self.cmb_aux.setCurrentText("HSV掩膜")
         self._refresh_views()
 
@@ -461,7 +556,61 @@ class TunerDialog(QDialog):
             desc = "；".join(
                 f"[{lo}-{hi} S{s0}-{s1} V{v0}-{v1}]" for lo, hi, s0, s1, v0, v1 in ranges)
             self.lbl_swatch.setText(f"多段色板 {len(ranges)} 段（红色跨边界）\n{desc}")
+        self._remember_hsv()
         self.cmb_aux.setCurrentText("HSV掩膜")
+        self._refresh_views()
+
+    def _schedule_preview(self, *_args) -> None:
+        if not self._preview or self.image_bgr is None or not self.cmb_algorithm.currentText():
+            return
+        self._preview_result = None
+        self._preview_views = {}
+        self.lbl_run.setText("等待真实算法预览…（旧判定已失效）")
+        self._refresh_views()
+        params = dict(self._preview_params)
+        if self.params_apply_callback is not None:
+            params["__parameter_layers__"] = {k: dict(v) for k, v in self._param_edits.items()}
+        self._preview.submit((self.cmb_algorithm.currentText(), self.image_bgr, params))
+
+    def _cancel_preview(self) -> None:
+        if self._preview:
+            self._preview.cancel()
+        self._preview_result = None
+        self._preview_views = {}
+        self.lbl_run.setText("预览已取消；不作为判定。运行中的算法仅丢弃结果，不强杀。")
+        self._refresh_views()
+
+    def _show_preview(self, summary) -> None:
+        self._preview_result = summary
+        self._preview_views = {"生产判定叠加": summary.vis_image}
+        details = []
+
+        def collect(value, prefix):
+            if isinstance(value, np.ndarray):
+                if value.ndim in (2, 3):
+                    image = value
+                    if image.dtype != np.uint8:
+                        image = cv2.normalize(image, None, 0, 255, cv2.NORM_MINMAX).astype(np.uint8)
+                    self._preview_views[prefix] = image
+                return "<图像：" + str(value.shape) + ">"
+            if isinstance(value, dict):
+                return {k: collect(v, prefix + "/" + str(k)) for k, v in value.items()}
+            if isinstance(value, (list, tuple)):
+                return [collect(v, prefix + "/" + str(i)) for i, v in enumerate(value)]
+            if isinstance(value, np.generic):
+                return value.item()
+            return value
+
+        for result in summary.results:
+            details.append(f"{result.algorithm}: {result.status} / v{result.algorithm_version} / {result.elapsed_ms}ms\n{result.message}")
+            details.append(json.dumps(collect(result.metadata, result.algorithm), ensure_ascii=False, default=str, indent=2))
+        self.lbl_run.setText("\n".join(details))
+        old = self.cmb_aux.currentText()
+        self.cmb_aux.blockSignals(True)
+        self.cmb_aux.clear()
+        self.cmb_aux.addItems(["无", "HSV掩膜", "H通道", "S通道", "V通道", *self._preview_views])
+        self.cmb_aux.setCurrentText(old if old in self._preview_views else "生产判定叠加")
+        self.cmb_aux.blockSignals(False)
         self._refresh_views()
 
     def _refresh_views(self) -> None:
@@ -469,14 +618,22 @@ class TunerDialog(QDialog):
             return
         pre = self.cmb_pre.currentText()
         aux = self.cmb_aux.currentText()
+        if aux in self._preview_views:
+            img = self._preview_views[aux]
+            if img is not None:
+                self.canvas.set_roi_boxes([])
+                self.canvas.clear_marks()
+                self.canvas.set_image(img)
+            return
+        self.canvas.set_roi_boxes(self.roi_boxes)
         img = self.image_bgr
         if pre == "灰度":
-            img = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+            img = self._gray_image
         elif pre == "Otsu":
-            img = cv2.threshold(cv2.cvtColor(img, cv2.COLOR_BGR2GRAY), 0, 255,
+            img = cv2.threshold(self._gray_image, 0, 255,
                                 cv2.THRESH_BINARY + cv2.THRESH_OTSU)[1]
         elif pre == "自适应二值":
-            img = cv2.adaptiveThreshold(cv2.cvtColor(img, cv2.COLOR_BGR2GRAY), 255,
+            img = cv2.adaptiveThreshold(self._gray_image, 255,
                                         cv2.ADAPTIVE_THRESH_GAUSSIAN_C,
                                         cv2.THRESH_BINARY, 31, 5)
         elif pre == "自动Gamma":
@@ -489,7 +646,7 @@ class TunerDialog(QDialog):
             overlay[mask > 0] = (0, 220, 255)
             img = cv2.addWeighted(img, 0.6, overlay, 0.4, 0)
         elif aux in ("H通道", "S通道", "V通道"):
-            hsv = cv2.cvtColor(img, cv2.COLOR_BGR2HSV) if img.ndim == 3 else img
+            hsv = self._hsv_image
             idx = {"H通道": 0, "S通道": 1, "V通道": 2}[aux]
             img = hsv[:, :, idx]
         self.canvas.set_image(img)
@@ -510,6 +667,13 @@ class TunerDialog(QDialog):
         QMessageBox.information(self, "已复制", txt)
 
     def _apply(self) -> None:
+        if self.params_apply_callback is not None:
+            if self._current_hsv:
+                self._remember_hsv()
+            self.params_apply_callback({k: dict(v) for k, v in self._param_edits.items()},
+                                       dict(self._preview_params))
+            self.applied.emit(dict(self._preview_params))
+            return
         if not self._current_hsv:
             QMessageBox.information(self, "提示", "先生成颜色范围")
             return
@@ -518,7 +682,11 @@ class TunerDialog(QDialog):
             return
         spec = self.hsv_objects[idx]
         if self.apply_callback is not None:
-            self.apply_callback(spec, dict(self._current_hsv))
+            if not self._edited_hsv:
+                self._remember_hsv()
+            edits = self._edited_hsv
+            for object_idx, hsv in edits.items():
+                self.apply_callback(self.hsv_objects[object_idx], dict(hsv))
             self.applied.emit(dict(self._current_hsv))
         else:
             QMessageBox.information(self, "未绑定", "未提供应用回调（可复制参数）")

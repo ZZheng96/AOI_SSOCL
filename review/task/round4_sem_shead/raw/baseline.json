@@ -1,0 +1,87 @@
+{
+  "mode": "baseline",
+  "weights": {
+    "sem": 0.36118659420289856,
+    "disc": 0.2776268115942029,
+    "shead": 0.36118659420289856
+  },
+  "slot_sanity_pipe": {
+    "sem": 0.819,
+    "disc": 0.7452,
+    "shead": 0.819
+  },
+  "slot_sanity_recalc_raw": {
+    "sem": 0.819,
+    "disc": 0.7429,
+    "shead": 0.819
+  },
+  "isolation": {
+    "requested": "auto",
+    "effective": "self",
+    "n_train": 14,
+    "n_fit": 14,
+    "n_calib": 14,
+    "fallback_reason": "拟合图不足（14-4<16），回退 self"
+  },
+  "cal_normal_mean_raw": {
+    "sem": 0.3679,
+    "disc": 0.9905,
+    "shead": 2.2287
+  },
+  "init_defect_mean_raw_by_twin": {
+    "twin_in_fit": {
+      "sem": 0.3831,
+      "disc": 0.9899,
+      "shead": 2.2796
+    },
+    "twin_not_in_fit": {
+      "sem": 0.6341,
+      "disc": 0.9973,
+      "shead": 5.5016
+    }
+  },
+  "group_n": {
+    "twin_in_fit": 14,
+    "twin_not_in_fit": 16
+  },
+  "train_auroc": 0.819,
+  "n_test": 20,
+  "fused_auroc": 0.97,
+  "recall_at_fpr5": 0.8,
+  "fused_equal_auroc": 0.97,
+  "fused_equal_recall_at_fpr5": 0.8,
+  "p50_ms": 167.1,
+  "p95_ms": 307.2,
+  "per_slot_test": {
+    "sem": {
+      "auroc_raw": 0.3,
+      "auroc_cal": 0.3
+    },
+    "disc": {
+      "auroc_raw": 0.97,
+      "auroc_cal": 0.97
+    },
+    "shead": {
+      "auroc_raw": 1.0,
+      "auroc_cal": 1.0
+    }
+  },
+  "pair_test": {
+    "sem": {
+      "n": 10,
+      "frac_defect_gt_twin": 0.6,
+      "mean_diff": 0.0003
+    },
+    "disc": {
+      "n": 10,
+      "frac_defect_gt_twin": 0.8,
+      "mean_diff": 0.0002
+    },
+    "shead": {
+      "n": 10,
+      "frac_defect_gt_twin": 0.7,
+      "mean_diff": 0.0064
+    }
+  },
+  "total_s": 24.0
+}

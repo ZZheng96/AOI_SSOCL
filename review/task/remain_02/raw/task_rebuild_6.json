@@ -1,0 +1,42 @@
+{
+  "task_id": 6,
+  "final": {
+    "id": 6,
+    "task_type": "model_prepare",
+    "status": "done",
+    "progress": 1.0,
+    "message": "完成",
+    "payload": {
+      "category": "gold_finger",
+      "force": true,
+      "scenario": "L1a",
+      "profile": "cpu",
+      "note": "representation_rebuild from v2. REMAIN-02 联调",
+      "datasource_id": null,
+      "allow_experimental": false,
+      "rebuild_representation": true
+    },
+    "result": {
+      "category": "gold_finger",
+      "version": "v3",
+      "auto_report": {
+        "status": "skipped_rebuild"
+      },
+      "version_num": 3,
+      "scenario": "L1a",
+      "profile": "cpu",
+      "n_normal": 8,
+      "n_defect": 2,
+      "n_val": 8,
+      "n_templates": 0,
+      "activated": false,
+      "representation_rebuild": true,
+      "message": "表示重建完成：新版本未激活，须经激活门控后上线"
+    },
+    "final_status": null,
+    "is_defect": false,
+    "requires_review": false,
+    "is_system_error": false
+  },
+  "elapsed_s": 8.0
+}

@@ -251,7 +251,7 @@ class DiscSlot(Slot):
         finetune = self.cfg.get("finetune_epochs")
         if finetune is not None:
             n_epochs = min(finetune, n_epochs)
-        if self.cfg.get("freeze"):
+        if self.cfg.get("freeze") or n_pseudo <= 0:
             n_epochs = 0
 
         if n_epochs > 0:

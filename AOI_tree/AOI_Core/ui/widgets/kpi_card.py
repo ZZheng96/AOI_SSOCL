@@ -2,7 +2,8 @@
 from __future__ import annotations
 
 from PySide6.QtCore import Qt
-from PySide6.QtWidgets import QFrame, QLabel, QVBoxLayout, QWidget
+from PySide6.QtWidgets import (QFrame, QLabel, QSizePolicy, QVBoxLayout,
+                               QWidget)
 
 from ui.theme import TEXT
 
@@ -16,6 +17,9 @@ class KpiCard(QFrame):
         super().__init__(parent)
         self.setProperty("card", True)
         self.setMinimumHeight(96)
+        # 2026-10-14：KPI 卡不参与纵向拉伸——外层布局有多余高度时不再把卡片拉高
+        # （否则卡内会出现大片空白，学习效果/统计页实测）
+        self.setSizePolicy(QSizePolicy.Preferred, QSizePolicy.Fixed)
 
         lay = QVBoxLayout(self)
         lay.setContentsMargins(14, 10, 14, 10)

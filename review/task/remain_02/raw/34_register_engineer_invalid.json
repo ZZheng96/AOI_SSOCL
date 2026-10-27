@@ -1,0 +1,14 @@
+{
+  "name": "register_engineer_invalid",
+  "method": "POST",
+  "path": "/api/models/feature-revisions",
+  "role": "engineer",
+  "request_body": {
+    "schema_version": 1
+  },
+  "status_code": 409,
+  "response": {
+    "detail": "缺少血缘: preprocess"
+  },
+  "note": "manifest 血缘不全 → 409"
+}

@@ -1,5 +1,0 @@
-{
-  "enabled": true,
-  "topk_ratio": 0.05,
-  "thresh": 0.9
-}

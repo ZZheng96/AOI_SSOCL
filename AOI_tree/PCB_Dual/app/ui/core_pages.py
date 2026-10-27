@@ -1,4 +1,4 @@
-"""嵌入树干 AOI_Core 的 PySide6 页面（数据/增强/模型/评估/反馈复核/学习/统计）。
+"""嵌入树干 AOI_Core 的 PySide6 页面（数据/增强/模型/评估/反馈复核/学习/特征工程/统计）。
 
 Core 的 ui 包只经 HTTP/WS 访问后端（ApiClient / TaskMonitor），不 import
 backend / algo / torch，因此可在 PCB_Dual 进程内直接加载：把 AOI_Core 根目录
@@ -34,8 +34,10 @@ _PAGES = [
     ("数据增强", "ui.pages.augment_page", "AugmentPage", "cat_tm"),
     ("模型管理", "ui.pages.model_page", "ModelPage", "cat_tm"),
     ("评估看板", "ui.pages.eval_page", "EvalPage", "cat_budget_tm"),
+    ("实时监控", "ui.pages.monitor_page", "MonitorPage", "cat_budget"),
     ("标注复核", "ui.pages.feedback_page", "FeedbackPage", "cat_tm"),
     ("学习效果", "ui.pages.learning_page", "LearningPage", "cat_tm"),
+    ("特征工程", "ui.pages.feature_page", "FeaturePage", "cat"),
     ("存档统计", "ui.pages.stats_page", "StatsPage", "cat_budget"),
 ]
 
@@ -56,9 +58,12 @@ class CoreHubPage(QWidget):
         self._task_monitor = None
         self._pages: list[QWidget] = []
         self._categories: list[str] = []
+        self._workorders: list[dict] = []
+        self._selected_workorder: dict | None = None
 
         self._root = QVBoxLayout(self)
-        self._root.setContentsMargins(0, 0, 0, 0)
+        self._root.setContentsMargins(12, 10, 12, 10)
+        self._root.setSpacing(10)
 
         self._placeholder = QWidget()
         ph = QVBoxLayout(self._placeholder)
@@ -75,9 +80,10 @@ class CoreHubPage(QWidget):
 
     # ── 生命周期 ──
     def ensure_built(self) -> None:
-        """Tab 激活时调用：已构建则刷新当前页，否则探活后构建。"""
+        """Tab 激活时调用：已构建则刷新品类和当前页，否则探活后构建。"""
         if self._built:
-            self._reload_current()
+            self._refresh_categories()
+            self._load_workorders()
             return
         from app.core.aoi_core_launcher import core_healthy
 
@@ -121,20 +127,54 @@ class CoreHubPage(QWidget):
         body = QWidget()
         body.setObjectName("CoreHub")
         # Core 主题只作用于本 Tab 子树，不影响 PCB_Dual 其它页
-        body.setStyleSheet(LIGHT_QSS)
+        body.setStyleSheet(LIGHT_QSS + """
+            QWidget#CoreHub { background: #F5F7FA; }
+            QWidget#CoreHubSidebar { background: #FFFFFF; border-radius: 8px; }
+            QLabel#CoreHubTitle { background: transparent; font-weight: 600; font-size: 12pt; }
+            QLabel#CoreHubCategoryLabel { background: transparent; color: #6B7280; }
+            QComboBox#CoreHubCategory { background: #FFFFFF; min-height: 28px; }
+        """)
         lay = QHBoxLayout(body)
         lay.setContentsMargins(0, 0, 0, 0)
+        lay.setSpacing(12)
 
-        left = QVBoxLayout()
-        left.addWidget(QLabel("品类"))
+        sidebar = QWidget()
+        sidebar.setObjectName("CoreHubSidebar")
+        sidebar.setFixedWidth(176)
+        left = QVBoxLayout(sidebar)
+        left.setContentsMargins(10, 12, 10, 10)
+        left.setSpacing(10)
+        title = QLabel("特征学习")
+        title.setObjectName("CoreHubTitle")
+        left.addWidget(title)
+        category_label = QLabel("品类")
+        category_label.setObjectName("CoreHubCategoryLabel")
+        left.addWidget(category_label)
         self.combo_cat = QComboBox()
-        self.combo_cat.setMinimumWidth(150)
+        self.combo_cat.setObjectName("CoreHubCategory")
+        self.combo_cat.setMinimumWidth(0)
         self.combo_cat.currentIndexChanged.connect(lambda _i: self._reload_current())
         left.addWidget(self.combo_cat)
+        self._btn_refresh_categories = QPushButton("刷新品类")
+        self._btn_refresh_categories.clicked.connect(self._refresh_categories)
+        left.addWidget(self._btn_refresh_categories)
+        workorder_label = QLabel("Core 当前工单")
+        workorder_label.setObjectName("CoreHubCategoryLabel")
+        left.addWidget(workorder_label)
+        self.combo_workorder = QComboBox()
+        self.combo_workorder.setObjectName("CoreHubCategory")
+        self.combo_workorder.addItem("（加载中…）", None)
+        self.combo_workorder.currentIndexChanged.connect(self._on_workorder_changed)
+        left.addWidget(self.combo_workorder)
+        self.lbl_workorder_context = QLabel("Core 特征产线监控（非 PCB 融合监控）")
+        self.lbl_workorder_context.setWordWrap(True)
+        self.lbl_workorder_context.setObjectName("CoreHubCategoryLabel")
+        left.addWidget(self.lbl_workorder_context)
         self.nav = QListWidget()
-        self.nav.setFixedWidth(150)
+        self.nav.setObjectName("nav")
+        self.nav.setHorizontalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAlwaysOff)
         left.addWidget(self.nav, 1)
-        lay.addLayout(left)
+        lay.addWidget(sidebar)
 
         self.stack = QStackedWidget()
         lay.addWidget(self.stack, 1)
@@ -150,11 +190,15 @@ class CoreHubPage(QWidget):
                     page = cls(self._client, get_cat, tm)
                 elif kind == "cat_budget_tm":
                     page = cls(self._client, get_cat, get_budget, tm)
+                elif kind == "cat":
+                    page = cls(self._client, get_cat)
                 else:
                     page = cls(self._client, get_cat, get_budget)
-                page._get_level = lambda: None
-                page._get_workorder = lambda: None
-                page._get_workorder_id = lambda: None
+                page._get_level = self.current_workorder
+                page._get_workorder = self.current_workorder
+                page._get_workorder_id = self.current_workorder_id
+                if hasattr(page, "goto_page"):
+                    page.goto_page.connect(self._on_page_goto)
             except Exception as exc:  # noqa: BLE001
                 logger.exception("Core 页面 %s 加载失败", title)
                 page = QLabel(f"{title} 加载失败：{exc}")
@@ -177,15 +221,23 @@ class CoreHubPage(QWidget):
         self._root.addWidget(body)
         self._built = True
         self._load_categories()
+        self._load_workorders()
         self.nav.setCurrentRow(0)
+
+    def _refresh_categories(self) -> None:
+        self._load_categories()
+        self._reload_current()
 
     def _load_categories(self) -> None:
         try:
             cats = self._client.list_categories()
         except Exception as exc:  # noqa: BLE001
             logger.warning("拉取 Core 品类失败：%s", exc)
-            cats = []
-        self._categories = [str(c) for c in cats]
+            return
+        # ApiClient 请求失败也会回退为空列表，不能据此清空已有品类。
+        if not cats and self._categories:
+            return
+        self._categories = [str(c) for c in (cats or [])]
         keep = self.combo_cat.currentData()
         self.combo_cat.blockSignals(True)
         self.combo_cat.clear()
@@ -195,6 +247,60 @@ class CoreHubPage(QWidget):
         idx = self.combo_cat.findData(keep) if keep else 0
         self.combo_cat.setCurrentIndex(max(idx, 0))
         self.combo_cat.blockSignals(False)
+
+    def _load_workorders(self) -> None:
+        try:
+            items = [w for w in (self._client.list_workorders() or []) if isinstance(w, dict)]
+        except Exception as exc:  # noqa: BLE001
+            logger.warning("拉取 Core 工单失败：%s", exc)
+            return
+        previous = self.current_workorder_id()
+        self._workorders = items
+        self.combo_workorder.blockSignals(True)
+        self.combo_workorder.clear()
+        if not items:
+            self.combo_workorder.addItem("（未建 Core 工单）", None)
+        else:
+            for wo in items:
+                self.combo_workorder.addItem(str(wo.get("name") or "-"), wo.get("id"))
+            idx = self.combo_workorder.findData(previous)
+            self.combo_workorder.setCurrentIndex(idx if idx >= 0 else 0)
+        self.combo_workorder.blockSignals(False)
+        self._on_workorder_changed(self.combo_workorder.currentIndex())
+
+    def current_workorder(self) -> dict | None:
+        wid = getattr(self, "combo_workorder", None)
+        wid = wid.currentData() if wid is not None else None
+        return next((w for w in self._workorders if w.get("id") == wid), None)
+
+    def current_workorder_id(self) -> int | None:
+        wo = self.current_workorder()
+        return int(wo["id"]) if wo and wo.get("id") is not None else None
+
+    def _on_workorder_changed(self, _index: int) -> None:
+        wo = self.current_workorder()
+        self._selected_workorder = wo
+        if wo:
+            cats = [str(c) for c in (wo.get("categories") or []) if c]
+            self.lbl_workorder_context.setText(
+                f"Core 特征产线监控（非 PCB 融合监控）\n工单：{wo.get('name') or '-'} · ID {wo.get('id')}\n"
+                f"品类：{'、'.join(cats) or '未声明'}")
+            if cats and self.current_category() not in cats:
+                self.combo_cat.setCurrentIndex(self.combo_cat.findData(cats[0]))
+        else:
+            self.lbl_workorder_context.setText("Core 特征产线监控（非 PCB 融合监控）\n未选择真实工单")
+        self._refresh_page_level_badges()
+        self._reload_current()
+
+    def _on_page_goto(self, title: str) -> None:
+        self.goto("标注复核" if title == "标注反馈" else title)
+
+    def _refresh_page_level_badges(self) -> None:
+        for i in range(self.stack.count()):
+            page = self.stack.widget(i)
+            fn = getattr(page, "update_level_badge", None)
+            if callable(fn):
+                fn()
 
     # ── 导航 ──
     def current_category(self) -> str:
@@ -223,6 +329,12 @@ class CoreHubPage(QWidget):
             if type(page).__name__ == "DataPage":
                 fn(self._categories)
             else:
+                if type(page).__name__ == "FeaturePage":
+                    idx = page.combo_category.findText(self.current_category())
+                    if idx >= 0:
+                        page.combo_category.blockSignals(True)
+                        page.combo_category.setCurrentIndex(idx)
+                        page.combo_category.blockSignals(False)
                 fn()
         except TypeError:
             fn()

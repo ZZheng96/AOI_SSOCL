@@ -1,0 +1,33 @@
+﻿[test06] 构造合成图（train=6, probe=3 含越界 300x280 / 20x40）...
+[test06] 实例化候选适配器（FeatureSet trunk_200 + GroupKNN k=3）...
+py : D:\CGAIC\AOI_SSOCL\AOI_tree\AOI_feature\feature_lib.py:208: FutureWarning: Parameter `min_size` is deprecated sinc
+e version 0.26.0 and will be removed in 2.0.0 (or later). To avoid this warning, please use the parameter `max_size` in
+stead. For more details, see the documentation of `remove_small_objects`. Note that the new threshold removes objects s
+maller than **or equal to** its value, while the previous parameter only removed smaller ones.
+At line:15 char:3253
++ ... pgrep\bin'; py -3.11 "d:\CGAIC\AOI_SSOCL\review\task\test06_trad_pari ...
++                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: (D:\CGAIC\AOI_SS...d smaller ones.:String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+  bw = morphology.remove_small_objects(bw.astype(bool), min_size=p["min_size"])
+[test06] run_parity 开始（参照=生产 TradSlot 全新实例）...
+D:\CGAIC\AOI_SSOCL\AOI_tree\AOI_Core\algo\vendor\traditional.py:264: FutureWarning: Parameter `min_size` is deprecated 
+since version 0.26.0 and will be removed in 2.0.0 (or later). To avoid this warning, please use the parameter `max_size
+` instead. For more details, see the documentation of `remove_small_objects`. Note that the new threshold removes objec
+ts smaller than **or equal to** its value, while the previous parameter only removed smaller ones.
+  bw = morphology.remove_small_objects(bw.astype(bool), min_size=50)
+[test06] run_parity 完成：status=failed verdict=new_candidate failed=['extraction', 'preprocess', 'knn_neighbors_self_match', 'scoring', 'report', 'bank_compatibility'] max_abs_diff=1.467e+01
+[test06] 逐组差异归因（15 组 x 3 探针）...
+  probe0 300x280: worst=selfsim max|diff|=1.467e+01
+  probe1 20x40: worst=selfsim max|diff|=2.901e+00
+  probe2 64x64: worst=selfsim max|diff|=9.513e+00
+[test06] 全部完成，用时 5.5s
+  FAIL  extraction
+  FAIL  preprocess
+  PASS  dimension_order_slice
+  PASS  rng
+  FAIL  knn_neighbors_self_match
+  FAIL  scoring
+  FAIL  report
+  FAIL  bank_compatibility

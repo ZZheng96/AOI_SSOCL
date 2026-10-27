@@ -1,0 +1,37 @@
+# 摘录自 backend/db/models.py（Detection schema，L214-245）
+
+class Detection(Base, TimestampMixin):
+    __tablename__ = "detections"
+    id / target_type / workorder_id / claim_token / claim_requeued_at
+    image_id / video_id / frame_idx / image_path / category
+    model_id: Mapped[int | None] = ForeignKey("models.id")        # 唯一模型关联
+    final_score / is_anomaly / level1_score / level2_score / level3_score
+    triggered_level / latency_ms / latency_e2e_ms
+    n_tiles: Mapped[dict] = JSON                                   # 杂项 JSON
+    heatmap_path / overlay_path
+
+→ 无 feature_revision / implementation_hash / config_hash / dimension / seed /
+  model_snapshot(artifact_hashes/backbone_sha256/code_sha256) 血缘列。
+
+models.py:351 的 extra 列属于 OperationLog（L344-351），不属于 Detection。
+
+# 唯一 Detection 写入点 backend/pipeline/service.py L719-745 _persist()：
+row = Detection(
+    target_type=..., image_id=..., workorder_id=..., claim_token=...,
+    image_path=det["image_path"], category=det["category"],
+    model_id=model_id,                       # 由 det["model_version"] 反查 Model 行（L705-718）
+    final_score=..., is_anomaly=..., level1/2/3_score=..., triggered_level=...,
+    latency_ms=..., latency_e2e_ms=...,
+    n_tiles={**det.get("n_tiles"), "model_version": ..., "threshold": ...,
+             "gray_threshold": ..., "boxes": ..., "types": ...,
+             "decision_trace": ..., "open_alert": ..., "align_warn": ...,
+             "align_offset": ..., "infer_latency_ms": ..., "total_latency_ms": ...},
+    heatmap_path=..., overlay_path=...,
+)
+→ n_tiles JSON 内无任何特征血缘键。
+
+# 推理结果契约 backend/engine/__init__.py L39-66 DetectionResult：
+score/decision/is_anomaly/threshold/gray_threshold/slot_scores/raw_scores/weights/
+router_w/defect_boxes/mask/fused_heatmap/heatmap_paths/types/latency_ms/n_tiles/
+triggered_slot/open_alert/align_offset/align_warn/model_version/
+extra: Dict = field(default_factory=dict)   # L66 「预留扩展」，生产路径无人写特征血缘

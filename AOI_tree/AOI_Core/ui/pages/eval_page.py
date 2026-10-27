@@ -1,9 +1,4 @@
-"""评估看板页：精度评估与延迟基准。
-
-左：新建评估表单（类型/品类/split/样本上限/名称）+ 运行按钮 + 进度
-右：评估记录表格（勾选两行可对比，弹出双系列柱状图对话框）；
-    选中 benchmark 行时下方显示 LatencyChart（200ms 预算参考线）。
-"""
+"""评估看板：三个独立评估入口、任务进度、指标记录与内嵌鲁棒性曲线。"""
 from __future__ import annotations
 
 from PySide6.QtCore import Qt, QTimer
@@ -29,8 +24,9 @@ from PySide6.QtWidgets import (
 from ui.api_client import ApiClient
 from ui.pages.common import (attach_level_badge, make_banner, make_card,
                              run_async, warn)
+from ui.pages.stats_page import biz_budget_value
 from ui.theme import DANGER, PRIMARY, SUCCESS, WARNING
-from ui.widgets.charts import BarChart, LatencyChart, LineChart
+from ui.widgets.charts import BarChart, LatencyChart, LineChart, num_or_nan
 from ui.widgets.task_progress import TaskMonitor, TaskProgressBar
 
 RUN_TYPE_NAMES = {"accuracy": "精度评估", "benchmark": "延迟基准",
@@ -50,7 +46,14 @@ def _fmt(v) -> str:
         return "-"
 
 
-class RobustnessDialog(QDialog):
+def _rate_text(metrics: dict, numerator: str, other: str) -> str:
+    a, b = metrics.get(numerator), metrics.get(other)
+    if not all(isinstance(v, (int, float)) for v in (a, b)) or a + b == 0:
+        return "未知"
+    return f"{a / (a + b) * 100:.1f}%"
+
+
+class RobustnessPanel(QWidget):
     """噪声鲁棒性详情（2026-08-29 用户要求补充）：基线 AUROC + 各扰动
     类型 A_rob（分数-噪声曲线面积）+ 分档 AUC 衰减曲线。
 
@@ -58,11 +61,16 @@ class RobustnessDialog(QDialog):
     此前 UI 只在记录表格显示 baseline_auroc 单值，无详情入口）。
     """
 
-    def __init__(self, run: dict, parent: QWidget | None = None):
+    def __init__(self, parent: QWidget | None = None):
         super().__init__(parent)
-        self.setWindowTitle("噪声鲁棒性详情")
-        self.resize(720, 480)
-        lay = QVBoxLayout(self)
+        self._layout = QVBoxLayout(self)
+
+    def set_run(self, run: dict) -> None:
+        lay = self._layout
+        while lay.count():
+            widget = lay.takeAt(0).widget()
+            if widget is not None:
+                widget.deleteLater()
 
         name = run.get("name") or f"运行 #{run.get('id')}"
         head = QLabel(f"{name}　（{RUN_TYPE_NAMES.get(run.get('run_type'), '')}）")
@@ -76,43 +84,33 @@ class RobustnessDialog(QDialog):
         kpi = QLabel()
         parts = [f"基线 AUROC（扰动前）＝ {_fmt(base)}"]
         for kind, c in curves.items():
-            arob = (c or {}).get("a_rob")
-            if arob is not None:
-                parts.append(
-                    f"{NOISE_KIND_CN.get(kind, kind)} A_rob＝{float(arob):.3f}")
+            arob = c.get("a_rob") if isinstance(c, dict) else None
+            parts.append(f"{NOISE_KIND_CN.get(kind, kind)} A_rob＝{_fmt(arob)}")
         kpi.setText("　".join(parts))
         kpi.setProperty("subtext", True)
         lay.addWidget(kpi)
 
         chart = LineChart()
-        chart.set_labels([], "AUROC")
-        # 各扰动类型衰减曲线：x=扰动档位，y=该档位 AUROC
-        if curves:
-            xs = None
-            series = {}
-            for kind, c in curves.items():
-                aucs = (c or {}).get("auc_levels") or []
-                if not aucs:
-                    continue
-                if xs is None:
-                    xs = list(range(1, len(aucs) + 1))   # 档位下标 1..n
-                series[NOISE_KIND_CN.get(kind, kind)] = [float(v) for v in aucs]
-            for name_i, ys in series.items():
-                color = (SUCCESS if name_i == "亮度"
-                         else PRIMARY if name_i == "高斯噪声" else WARNING)
-                chart.add_series(name_i, xs, ys, color=color)
-            chart.set_labels([str(i) for i in xs], "AUROC")
+        levels = metrics.get("levels")
+        n = max((len(c.get("auc_levels") or []) for c in curves.values()
+                 if isinstance(c, dict)), default=0)
+        real_levels = isinstance(levels, list) and len(levels) >= n and n > 0
+        labels = [str(v) for v in levels[:n]] if real_levels else [str(i + 1) for i in range(n)]
+        for kind, c in curves.items():
+            aucs = c.get("auc_levels") or [] if isinstance(c, dict) else []
+            if aucs:
+                color = SUCCESS if kind == "brightness" else PRIMARY if kind == "gauss" else WARNING
+                chart.add_series(NOISE_KIND_CN.get(kind, kind), list(range(len(aucs))),
+                                 [num_or_nan(v) for v in aucs], color=color)
+        chart.set_labels(labels, "AUROC")
         lay.addWidget(chart, 1)
 
-        hint = QLabel("A_rob＝各档位 AUROC 折线下的面积（档位 0→满档），"
-                      "越接近 1.0 说明检测对扰动越稳健；AUC 随档位下降为预期衰减")
+        x_hint = "横轴按位置展示真实扰动强度标签" if real_levels else "历史记录未保存完整真实扰动档位，横轴为序号"
+        hint = QLabel("A_rob＝未归一化的 AUROC-扰动强度梯形面积；默认强度区间 0→0.8，"
+                      "理想上限为 0.8，不是 1.0。" + x_hint + "；AUC 随强度下降为预期衰减")
         hint.setProperty("subtext", True)
         hint.setWordWrap(True)
         lay.addWidget(hint)
-
-        btn = QPushButton("关闭")
-        btn.clicked.connect(self.accept)
-        lay.addWidget(btn, 0, Qt.AlignRight)
 
 
 class CompareDialog(QDialog):
@@ -145,14 +143,14 @@ class CompareDialog(QDialog):
             if ma is None and mb is None:
                 continue
             categories.append(label)
-            va.append(float(ma or 0))
-            vb.append(float(mb or 0))
+            va.append(num_or_nan(ma))  # 缺失留空，不画成 0
+            vb.append(num_or_nan(mb))
         la = (run_a.get("latency") or {}).get("mean")
         lb_ = (run_b.get("latency") or {}).get("mean")
         if la is not None or lb_ is not None:
             categories.append("延迟mean(ms)")
-            va.append(float(la or 0))
-            vb.append(float(lb_ or 0))
+            va.append(num_or_nan(la))
+            vb.append(num_or_nan(lb_))
 
         chart = BarChart()
         chart.set_data(categories, {str(name_a): va, str(name_b): vb})
@@ -168,13 +166,21 @@ class EvalPage(QWidget):
 
     def __init__(self, client: ApiClient, get_category, get_budget=None,
                  task_monitor: TaskMonitor | None = None,
-                 parent: QWidget | None = None):
+                 parent: QWidget | None = None, get_biz_budget=None):
         super().__init__(parent)
         self._client = client
         self._get_category = get_category
         self._get_budget = get_budget or (lambda: 200.0)
+        self._get_biz_budget = get_biz_budget
         self._monitor = task_monitor
         self._runs: list[dict] = []
+        self._benchmark_default = 0
+        self._task_id = None
+        self._submitting = False
+        self._polling = False
+        self._poll_timer = QTimer(self)
+        self._poll_timer.setInterval(1500)
+        self._poll_timer.timeout.connect(self._poll_task)
 
         root = QVBoxLayout(self)
         root.setContentsMargins(12, 10, 12, 10)
@@ -217,30 +223,34 @@ class EvalPage(QWidget):
         self.combo_category.currentIndexChanged.connect(
             lambda _i: self._on_category_changed())
         form.addRow("评估品类", self.combo_category)
-        self.combo_type = QComboBox()
-        self.combo_type.addItem("精度评估（顺带完整延迟分布）", "accuracy")
-        self.combo_type.addItem("延迟基准（严格计时口径）", "benchmark")
-        self.combo_type.addItem("噪声鲁棒性", "robustness")
-        self.combo_type.currentIndexChanged.connect(
-            lambda _i: self._on_type_changed())
-        form.addRow("评估类型", self.combo_type)
+        self.run_buttons = {}
+        self.sample_limits = {}
         self.combo_split = QComboBox()
         self.combo_split.addItems(["test", "val", "train"])
         form.addRow("数据划分", self.combo_split)
-        self.spin_limit = QSpinBox()
-        self.spin_limit.setRange(0, 10000)
-        self.spin_limit.setValue(100)
-        self.spin_limit.setSpecialValueText("不限")
-        form.addRow("样本上限", self.spin_limit)
         self.edit_name = QLineEdit()
         self.edit_name.setPlaceholderText("可选，便于对比记录")
         form.addRow("评估名称", self.edit_name)
         lay.addLayout(form)
 
-        self.btn_run = QPushButton("运行评估")
-        self.btn_run.setProperty("primary", True)
-        self.btn_run.clicked.connect(self._on_run)
-        lay.addWidget(self.btn_run)
+        for text, rtype, default in (("运行精度评估", "accuracy", 20),
+                                      ("运行延迟基准", "benchmark", 0),
+                                      ("运行噪声鲁棒性", "robustness", 12)):
+            row = QHBoxLayout()
+            btn = QPushButton(text)
+            btn.clicked.connect(lambda _checked=False, t=rtype: self._on_run(t))
+            spin = QSpinBox()
+            spin.setRange(0 if rtype == "benchmark" else 8 if rtype == "robustness" else 1, 10000)
+            if rtype == "benchmark":
+                spin.setSpecialValueText("使用配置")
+            spin.setValue(default)
+            spin.setSuffix(" 张")
+            spin.setToolTip("本入口样本上限；延迟基准预热次数由配置决定，且可能循环已有图片")
+            self.run_buttons[rtype] = btn
+            self.sample_limits[rtype] = spin
+            row.addWidget(btn)
+            row.addWidget(spin)
+            lay.addLayout(row)
 
         self.note = QLabel("")
         self.note.setProperty("subtext", True)
@@ -249,46 +259,75 @@ class EvalPage(QWidget):
         lay.addStretch(1)
         return card
 
-    def _on_type_changed(self) -> None:
-        """按类型给样本上限合理默认值（鲁棒性≈样本数×16 次前向，默认小样本）。"""
-        rtype = self.combo_type.currentData()
-        if rtype == "robustness":
-            self.spin_limit.setValue(12)
-        elif rtype == "benchmark":
-            self.spin_limit.setValue(20)
-        else:
-            self.spin_limit.setValue(100)
+    def _update_run_buttons(self) -> None:
+        enabled = self.combo_category.count() > 0 and not self._submitting and self._task_id is None
+        for btn in self.run_buttons.values():
+            btn.setEnabled(enabled)
 
-    def _on_run(self) -> None:
+    def _on_run(self, run_type: str) -> None:
+        if self._submitting or self._task_id is not None:
+            return
         cat = (self.combo_category.currentData()
                or (self._get_category() if self._get_category else "")
                or "")
         if not cat:
             warn(self, "请先在左侧选择评估品类")
             return
-        run_type = self.combo_type.currentData()
         name = self.edit_name.text().strip()
-        limit = self.spin_limit.value()
+        limit = self.sample_limits[run_type].value()
+        split = self.combo_split.currentText()
+        if run_type == "robustness" and QMessageBox.question(
+                self, "确认鲁棒性前向成本",
+                f"最多 {limit} 张 × 16 次前向（基线 + 3 类扰动 × 5 档）＝{limit * 16} 次。\n"
+                "不是单次检测耗时；确认单独提交？") != QMessageBox.Yes:
+            return
+        self._submitting = True
+        self._update_run_buttons()
 
         if run_type == "accuracy":
             fn = lambda: self._client.eval_accuracy(  # noqa: E731
-                cat, split=self.combo_split.currentText(),
-                name=name, limit=limit)
+                cat, split=split, name=name, limit=limit)
         elif run_type == "robustness":
             n = limit if limit > 0 else 12
             fn = lambda: self._client.eval_robustness(  # noqa: E731
-                cat, split=self.combo_split.currentText(), limit=n)
+                cat, split=split, limit=n)
         else:
-            n = limit if limit > 0 else 20
+            n = limit if limit > 0 else None
             fn = lambda: self._client.eval_benchmark(cat, n_images=n)  # noqa: E731
 
+        def _failed(message="提交失败，未取得任务 ID") -> None:
+            self._submitting = False
+            self._update_run_buttons()
+            warn(self, str(message))
+
         def _started(res) -> None:
-            if res and res.get("task_id"):
-                self.progress.show()
-                self.progress.update_task({
-                    "status": "running", "progress": 0,
-                    "message": "评估任务已提交，正在执行…"})
-        run_async(self, fn, _started)
+            self._submitting = False
+            if not res or not res.get("task_id"):
+                _failed()
+                return
+            self._task_id = str(res["task_id"])
+            self._update_run_buttons()
+            self.progress.update_task({"id": self._task_id,
+                "status": "pending", "progress": 0,
+                "message": "评估任务已提交，正在执行…"})
+            self._poll_timer.start()
+            self._poll_task()
+        run_async(self, fn, _started, _failed)
+
+    def _poll_task(self) -> None:
+        if self._task_id is None or self._polling:
+            return
+        task_id = self._task_id
+        self._polling = True
+
+        def _received(task) -> None:
+            self._polling = False
+            if task:
+                self._on_task(task)
+
+        def _failed(_message) -> None:
+            self._polling = False
+        run_async(self, lambda: self._client.get_task(task_id), _received, _failed)
 
     # ══════════════════ 右：记录表格 + 延迟图 ══════════════════
     def _build_result_panel(self) -> QWidget:
@@ -317,16 +356,18 @@ class EvalPage(QWidget):
         head_row.addWidget(btn_refresh)
         lay.addLayout(head_row)
 
-        self.table = QTableWidget(0, 8)
+        self.table = QTableWidget(0, 12)
         self.table.setHorizontalHeaderLabels(
             ["对比", "类型", "品类", "AUROC", "AP", "F1",
-             "延迟mean(ms)", "通过 / 时间"])
+             "延迟mean(ms)", "通过 / 时间", "版本", "样本数", "检出率", "误报率(FPR)"])
         # U-opsflow：指标人话解释（鼠标悬停表头可见）
         for col, tip in (
                 (3, "AUROC：把异常排在正常前面的能力，1.0=完美，0.5=瞎猜"),
                 (4, "AP：精确率-召回率的综合，越高越好"),
                 (5, "F1：精确率与召回率的调和平均，越高越好"),
-                (7, "是否达标（与基线对比）及记录时间")):
+                (7, "是否达标（与基线对比）及记录时间"),
+                (10, "检出率=TP/(TP+FN)：真实缺陷被系统检出的比例；缺标签或零分母为未知"),
+                (11, "误报率(FPR)=FP/(FP+TN)：正常样本被系统判为缺陷的比例；缺标签或零分母为未知")): 
             h = self.table.horizontalHeaderItem(col)
             if h is not None:
                 h.setToolTip(tip)
@@ -335,44 +376,59 @@ class EvalPage(QWidget):
         self.table.setAlternatingRowColors(True)
         self.table.setSelectionBehavior(QTableWidget.SelectRows)
         self.table.itemSelectionChanged.connect(self._on_row_selected)
-        # 双击噪声鲁棒性记录 → 详情对话框（2026-08-29 补展示入口）
-        self.table.cellDoubleClicked.connect(self._on_cell_double)
-        lay.addWidget(self.table, 1)
 
+        # ── 下区：指标说明 + 延迟明细（2026-10-14 布局调整）──
+        # 前端反馈：原实现把「说明文字 + 延迟柱状图」和记录表平铺在一个卡片里，
+        # 图最小高 180px、说明文字又占 4~5 行，导致**记录表空间严重不足**。
+        # 改为上下 QSplitter：记录表占大头、下区可拖拽，延迟图最小高降到 110px。
+        detail = QWidget()
+        dl = QVBoxLayout(detail)
+        dl.setContentsMargins(0, 0, 0, 0)
+        dl.setSpacing(2)
         # 混淆矩阵派生指标明细（2026-08-30）：选中行时填充，见 _on_row_selected
-        # 前端反馈 2026-09-13 #6：补充双击交互提示（鲁棒性详情入口此前无 UI 提示）
         self.lbl_metrics_detail = QLabel(
-            "选中一条精度评估记录查看混淆矩阵派生指标；"
-            "双击「噪声鲁棒性」记录查看分档衰减曲线")
+            "选中记录查看精度、延迟或内嵌鲁棒性曲线")
         self.lbl_metrics_detail.setProperty("subtext", True)
         self.lbl_metrics_detail.setWordWrap(True)
-        lay.addWidget(self.lbl_metrics_detail)
+        dl.addWidget(self.lbl_metrics_detail)
         # 指标含义说明区（固定展示）
         meaning = QLabel(
             "指标含义（最优 F1 阈值口径）：准确率=全部样本判对比例；"
             "精确率=判为缺陷中真缺陷占比；检出率(缺陷召回)=缺陷被判出的比例；"
-            "漏检率(FNR)=缺陷被判正常的比例——客户看重『不能漏检』时盯这个；"
-            "误报率(FPR)=正常被判缺陷的比例；特异度=正常被判正常的比例")
+            "误报率(FPR)=正常被判缺陷的比例；特异度=正常判正常比例。"
+            "最佳 F1 阈值来自本次评估集，不等于生产阈值；缺失或零分母为未知。")
         meaning.setProperty("subtext", True)
         meaning.setWordWrap(True)
-        lay.addWidget(meaning)
+        dl.addWidget(meaning)
 
         # M16c 流程引导：验收后的下一步动作提示（review R7）
         hint = QLabel("流程引导：✓ 通过 → 去「模型管理」激活版本投产；"
                       "✗ 未达标 → 回「数据管理」补缺陷数据或用「数据增强」"
                       "合成后重新准备模型")
         hint.setProperty("subtext", True)
-        lay.addWidget(hint)
+        dl.addWidget(hint)
 
         self.lat_head = QLabel("")
         self.lat_head.setProperty("heading", True)
-        lay.addWidget(self.lat_head)
+        dl.addWidget(self.lat_head)
         self.latency_chart = LatencyChart(budget_ms=float(self._get_budget()))
+        self.latency_chart.setMinimumHeight(110)   # 让位给上方记录表
         self.latency_chart.set_values([], [])
-        lay.addWidget(self.latency_chart)
+        dl.addWidget(self.latency_chart, 1)
         self.lbl_latency_hint = QLabel("选中一条评估记录查看延迟分布柱状图")
         self.lbl_latency_hint.setProperty("subtext", True)
-        lay.addWidget(self.lbl_latency_hint)
+        dl.addWidget(self.lbl_latency_hint)
+        self.robustness_panel = RobustnessPanel()
+        self.robustness_panel.hide()
+        dl.addWidget(self.robustness_panel, 1)
+
+        vsplit = QSplitter(Qt.Vertical)
+        vsplit.addWidget(self.table)
+        vsplit.addWidget(detail)
+        vsplit.setStretchFactor(0, 3)
+        vsplit.setStretchFactor(1, 1)
+        vsplit.setSizes([430, 240])
+        lay.addWidget(vsplit, 1)
         return card
 
     def _refresh_budget_texts(self) -> None:
@@ -382,7 +438,9 @@ class EvalPage(QWidget):
         self.lbl_tip.setText(
             f"验证 2060 GPU / 2500×2500 大图分块 / 总延迟 <{budget:.0f}ms 的实时性指标")
         self.note.setText(
-            "精度评估：AUROC / AP / F1 + 顺带完整延迟分布（一次跑完精度+延迟）\n"
+            "精度与鲁棒性：任务执行时固定当前快照，适用于初次及后续模型；版本见记录。\n"
+            "精度评估：AUROC / AP / F1 + 延迟分布；检出率与误报率基于评估集最佳 F1 阈值。\n"
+            "延迟基准使用在线服务，不固定版本，不用于固定版本精度比较。\n"
             f"延迟基准：预热+大图优先的严格计时，mean/p50/p95/max 对比 {budget:.0f}ms 预算\n"
             "噪声鲁棒性：亮度/高斯/模糊扰动下 AUC 衰减（≈样本数×16 次前向，建议小样本）")
         self.lat_head.setText(
@@ -392,10 +450,26 @@ class EvalPage(QWidget):
         if getattr(self, "table", None) is not None and self.table.currentRow() >= 0:
             self._on_row_selected()
 
+    def _fill_benchmark_config(self, data) -> None:
+        if not isinstance(data, dict):
+            return
+        values = {item["key"]: item.get("value") for item in data.get("items", [])
+                  if item.get("section") == "evaluation"}
+        n = values.get("benchmark_n_images")
+        spin = self.sample_limits["benchmark"]
+        if isinstance(n, int) and n > 0:
+            if spin.value() == self._benchmark_default:
+                spin.setValue(n)
+            self._benchmark_default = n
+        warmup = values.get("benchmark_warmup")
+        if isinstance(warmup, int):
+            spin.setToolTip(f"延迟基准另含 {warmup} 次预热（来自配置），可能循环已有图片")
+
     def reload(self) -> None:
+        run_async(self, self._client.get_config, self._fill_benchmark_config)
         self._refresh_categories()
         self._refresh_budget_texts()
-        run_async(self, self._client.list_eval_runs, self._fill_runs)
+        run_async(self, lambda: self._client.list_eval_runs(all_pages=True), self._fill_runs)
 
     def _on_category_changed(self) -> None:
         """品类变化时同步"数据划分"默认值（test 域不可用则回退 val）。"""
@@ -425,10 +499,7 @@ class EvalPage(QWidget):
         cur = self._get_category() if self._get_category else ""
         idx = combo.findData(cur)
         combo.setCurrentIndex(idx if idx >= 0 and idx < combo.count() else 0)
-        btn = getattr(self, "btn_run", None)
-        if btn is not None:
-            btn.setEnabled(combo.count() > 0)
-            btn.setToolTip("当前工单无品类，无法评估" if combo.count() == 0 else "")
+        self._update_run_buttons()
 
     def _fill_runs(self, runs) -> None:
         runs = runs or []
@@ -436,7 +507,9 @@ class EvalPage(QWidget):
         self.table.clearSpans()
         if not runs:
             self.table.setRowCount(1)
-            self.table.setSpan(0, 0, 1, 8)
+            self.table.setSpan(0, 0, 1, self.table.columnCount())
+            self.robustness_panel.hide()
+            self.lbl_metrics_detail.setText("暂无评估记录")
             self.table.setItem(0, 0, QTableWidgetItem(
                 "暂无评估记录，可在左侧新建评估"))
             return
@@ -483,8 +556,9 @@ class EvalPage(QWidget):
                 # 只看 AUROC，latency_pass=false 的记录也显示"✓ 通过"
                 acc_ok = float(metrics["auroc"]) >= 0.9
                 lat_ok = metrics.get("latency_pass")
-                passed = acc_ok and (lat_ok is not False)
-                mark_override = None
+                passed = False if not acc_ok or lat_ok is False else True if lat_ok is True else None
+                if acc_ok and lat_ok is None:
+                    mark_override = "未知（缺延迟判定）"
                 if acc_ok and lat_ok is False:
                     mark_override = "✗ 延迟未达标"
                 elif not acc_ok:
@@ -499,6 +573,12 @@ class EvalPage(QWidget):
             elif passed is False:
                 item.setForeground(QColor(DANGER))
             self.table.setItem(r, 7, item)
+            version = metrics.get("model_version")
+            version_text = "在线服务（不固定）" if rtype == "benchmark" else (f"v{version}" if version is not None else "未知")
+            self.table.setItem(r, 8, QTableWidgetItem(version_text))
+            self.table.setItem(r, 9, QTableWidgetItem(str(run.get("n_images") if run.get("n_images") is not None else "未知")))
+            self.table.setItem(r, 10, QTableWidgetItem(_rate_text(metrics, "tp", "fn")))
+            self.table.setItem(r, 11, QTableWidgetItem(_rate_text(metrics, "fp", "tn")))
         # 走查 2026-08-29 修复：刷新后自动选中最先记录并画延迟图——此前
         # 评估完成 reload 后无选中行，延迟明细一直空（"跑完看不到内容"）
         self.table.selectRow(0)
@@ -560,20 +640,67 @@ class EvalPage(QWidget):
 
         run_async(self, _del, lambda _r: self.reload())
 
-    def _on_cell_double(self, row: int, _col: int) -> None:
-        """双击噪声鲁棒性记录 → 详情对话框（A_rob + 分档衰减曲线）。"""
-        if not (0 <= row < len(self._runs)):
-            return
-        run = self._runs[row]
-        if str(run.get("run_type", "")) != "robustness":
-            return
-        RobustnessDialog(run, self).exec()
+    def _budget_verdict(self, mets: dict, tp, tn, fp, fn_) -> str:
+        """AC-072：FPR / 缺陷召回对照业务预算达标线（设置页可配）。"""
+        lim_fpr = biz_budget_value(self._get_biz_budget, "g2_max_fpr_pct")
+        lim_rec = biz_budget_value(self._get_biz_budget, "g2_min_recall_pct")
+
+        def _v(key, a, b):
+            v = (a / b) if b else None
+            return None if v is None else float(v) * 100
+
+        fpr, rec = _v("fpr", fp, fp + tn), _v("recall_defect", tp, tp + fn_)
+        s_fpr = ("无定义" if fpr is None else
+                 ("超限" if fpr > lim_fpr else "达标"))
+        s_rec = ("无定义" if rec is None else
+                 ("低于下限" if rec < lim_rec else "达标"))
+        return (f"业务预算达标线：误报率(FPR) ≤{lim_fpr:g}%（{s_fpr}）　"
+                f"缺陷召回 ≥{lim_rec:g}%（{s_rec}）")
+
+    @staticmethod
+    def _working_point_text(mets: dict) -> str:
+        """FPR≤预算时的最大 recall 参考工作点（不修改生产阈值）。"""
+        wp = mets.get("budget_working_point")
+        if not isinstance(wp, dict):
+            return ""
+        return (f"参考工作点（FPR≤{float(wp.get('max_fpr', 0)) * 100:g}%）："
+                f"最大缺陷召回 {float(wp['recall']) * 100:.1f}%　"
+                f"阈值 {float(wp['threshold']):.4g}　FPR {float(wp['fpr']) * 100:.1f}%"
+                "（仅供参考，不修改生产阈值）")
+
+    @staticmethod
+    def _coverage_text(mets: dict) -> str:
+        """批次覆盖告警：未覆盖批次 + 域外比例 + 纳入 train/good 建议。"""
+        cov = mets.get("batch_coverage")
+        if not isinstance(cov, dict):
+            return ""
+        ood = cov.get("out_of_domain_ratio")
+        s_ood = "-" if ood is None else f"{float(ood) * 100:.1f}%"
+        unc = cov.get("uncovered_batches") or []
+        if not cov.get("train_batches"):
+            return f"批次覆盖：train/good 来源未知，仅统计域外比例 {s_ood}"
+        if not unc and not (ood or 0):
+            return "批次覆盖：评估正常样本批次均已被 train/good 覆盖"
+        appr = set(cov.get("approved_extra_good_batches") or [])
+        parts = [b + ("（已登记）" if b in appr else "") for b in unc]
+        txt = (f"⚠ 批次覆盖告警：未覆盖批次 {('、'.join(parts) or '无')}　"
+               f"域外比例 {s_ood}")
+        sugg = cov.get("suggestions") or []
+        if sugg:
+            txt += "\n建议：" + "；".join(sugg)
+        return txt
 
     def _on_row_selected(self) -> None:
         row = self.table.currentRow()
         if not (0 <= row < len(self._runs)):
             return
         run = self._runs[row]
+        robust = run.get("run_type") == "robustness"
+        self.robustness_panel.setVisible(robust)
+        for widget in (self.lat_head, self.latency_chart, self.lbl_latency_hint):
+            widget.setVisible(not robust)
+        if robust:
+            self.robustness_panel.set_run(run)
         # 混淆矩阵派生指标明细：优先用后端已算好的键；旧记录（无派生键）
         # 由 tn/fp/fn/tp 本地等价推导；分母为 0（除零）显示 "-"
         mets = run.get("metrics") or {}
@@ -581,20 +708,20 @@ class EvalPage(QWidget):
         fp, fn_ = mets.get("fp"), mets.get("fn")
         if all(isinstance(v, (int, float)) for v in (tp, tn, fp, fn_)):
             def _cell(key, a, b):
-                v = mets.get(key)
-                if not isinstance(v, (int, float)):
-                    v = (a / b) if b else None
+                v = (a / b) if b else None
                 return (f"{float(v) * 100:.1f}%" if v is not None
-                        else "-（除零无定义）")
+                        else "未知（零分母）")
             n_all = tp + tn + fp + fn_
             self.lbl_metrics_detail.setText(
                 f"混淆矩阵：tn={int(tn)} fp={int(fp)} fn={int(fn_)} "
                 f"tp={int(tp)}　|　准确率 {_cell('accuracy', tp + tn, n_all)}　"
                 f"精确率 {_cell('precision', tp, tp + fp)}　"
                 f"检出率(缺陷召回) {_cell('recall_defect', tp, tp + fn_)}　"
-                f"漏检率(FNR) {_cell('fnr', fn_, fn_ + tp)}　"
                 f"误报率(FPR) {_cell('fpr', fp, fp + tn)}　"
-                f"特异度 {_cell('specificity', tn, tn + fp)}")
+                f"特异度 {_cell('specificity', tn, tn + fp)}"
+                f"\n{self._budget_verdict(mets, tp, tn, fp, fn_)}"
+                + "".join(f"\n{t}" for t in (self._working_point_text(mets),
+                                             self._coverage_text(mets)) if t))
         else:
             self.lbl_metrics_detail.setText(
                 "该记录无混淆矩阵数据（仅精度评估记录含 tn/fp/fn/tp）")
@@ -623,14 +750,13 @@ class EvalPage(QWidget):
             f"超预算柱体为红色，红色虚线为 {self._get_budget():.0f}ms 预算线")
 
     def _on_task(self, task: dict) -> None:
-        ttype = str(task.get("task_type", ""))
-        if ttype and "eval" not in ttype and "benchmark" not in ttype \
-                and "accuracy" not in ttype and "ab_compare" not in ttype \
-                and "robustness" not in ttype \
-                and "learning_curve" not in ttype and "contribution" not in ttype:
+        if self._task_id is None or str(task.get("id", task.get("task_id"))) != self._task_id:
             return
         self.progress.update_task(task)
-        if str(task.get("status")) in ("done", "success", "failed", "error"):
+        if str(task.get("status")) in ("done", "success", "completed", "failed", "error", "cancelled", "canceled"):
+            self._task_id = None
+            self._poll_timer.stop()
+            self._update_run_buttons()
             self.reload()
             # 前端反馈 2026-09-13 #6：鲁棒性等任务"完成后记录没立刻出现"
             # （WS 终态推送可能先于 DB 提交落库可读），延迟 1.5s 兜底二次刷新

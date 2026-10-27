@@ -5,7 +5,7 @@
 
 - 提取：extract(img) 只计算 enabled 组，特征向量 = 启用组按配置顺序拼接
 - 维度：不做静态登记，载入时对探针图逐组实测（维度永远与实际输出一致）
-- 随机性：extract 内对每张图 seed(0) 包裹（U27 口径，主干 TradSlot._vec 同款）
+- 随机性：selfsim 使用显式 default_rng(42)，与 Core Trad 同口径且不污染全局 RNG
 - 自定义特征：custom_features.py 中的 @feature 函数，经 add_custom 加入配置
 """
 import importlib.util
@@ -46,6 +46,38 @@ class FeatureSet:
                                f"自定义见 custom_features.py）")
             g.setdefault("enabled", True)
             g.setdefault("params", {})
+
+    def revision_manifest(self, *, dataset_split, model_snapshot, seed=42):
+        """冻结实验配置与实际实现血缘；绝不替换 Core 的生产 trad。"""
+        import inspect
+        from . import ensure_core_importable
+        ensure_core_importable()
+        from algo.feature_revision import file_hash
+        groups = []
+        hashes = {}
+        state = np.random.get_state()
+        try:
+            np.random.seed(0)
+            meta = self.probe()
+        finally:
+            np.random.set_state(state)
+        for m in meta:
+            reg = FEATURE_FUNCS[m["key"]]
+            source = inspect.getsourcefile(reg["func"])
+            if source is None:
+                raise ValueError("特征实现来源未知，不能注册 revision")
+            hashes[os.path.abspath(source)] = file_hash(source)
+            groups.append({"key": m["key"], "dim": m["dim"],
+                           "slice": [m["slice"].start, m["slice"].stop],
+                           "params": {**reg["default_params"], **m["params"]}})
+        for source in (__file__, inspect.getsourcefile(preprocess),
+                       os.path.join(os.path.dirname(__file__), "scoring.py")):
+            hashes[os.path.abspath(source)] = file_hash(source)
+        return {"schema_version": 1, "name": self.config.get("name"),
+                "groups": groups, "dimension": sum(g["dim"] for g in groups),
+                "preprocess": dict(self.preprocess_cfg), "implementation_hashes": hashes,
+                "seed": seed, "extract_seed": 42, "dataset_split": dataset_split,
+                "model_snapshot": model_snapshot}
 
     # ── 持久化 ───────────────────────────────────────────────────────
 
@@ -105,16 +137,25 @@ class FeatureSet:
 
     # ── 提取（主干同口径）────────────────────────────────────────────
 
-    def extract_one(self, img) -> np.ndarray:
-        """单图提取（调用方负责 RNG 播种；批量提取请用 scoring.extract_features）"""
+    def extract_one(self, img, rng=None) -> np.ndarray:
+        """单图提取；selfsim 使用显式 Generator，与 Core Trad 同口径。"""
+        rng = rng or np.random.default_rng(42)
         img = preprocess(img, **self.preprocess_cfg)
         ctx = make_ctx(img)
         out = []
         for g in self.enabled_groups():
             f = FEATURE_FUNCS[g["key"]]["func"]
             params = {**FEATURE_FUNCS[g["key"]]["default_params"], **g["params"]}
-            out.extend(f(ctx, params))
-        return np.asarray(out, dtype=np.float32)
+            if g["key"] == "selfsim":
+                out.extend(f(ctx, params, rng=rng))
+            else:
+                out.extend(f(ctx, params))
+        return np.nan_to_num(
+            np.asarray(out, dtype=np.float32),
+            nan=0.0,
+            posinf=0.0,
+            neginf=0.0,
+        )
 
     # 与主干 extractor 同名的入口，供评估链路透明替换
     extract = extract_one

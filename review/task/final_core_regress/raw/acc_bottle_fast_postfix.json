@@ -1,0 +1,32 @@
+{
+  "dataset": "mvtec",
+  "profile": "fast",
+  "scenario": "L1a",
+  "base_cfg": "engine_fast.yaml",
+  "seed": 42,
+  "max_test": 150,
+  "device": "cuda",
+  "started": "2026-10-14 15:52:33",
+  "categories": {
+    "bottle": {
+      "version": 1,
+      "n_test": 53,
+      "fused_auroc": 1.0,
+      "fused_ap": 0.9999999999999999,
+      "ms_per_image": 76.3384666082994,
+      "slots": {
+        "sem": 0.9946969696969697,
+        "disc": 0.990909090909091,
+        "shead": 1.0
+      },
+      "fused_max_auroc": 1.0,
+      "elapsed_s": 26.4
+    }
+  },
+  "summary": {
+    "n": 1,
+    "avg_auroc": 1.0,
+    "ge09": 1,
+    "min": 1.0
+  }
+}

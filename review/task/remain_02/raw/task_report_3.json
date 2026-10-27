@@ -1,0 +1,924 @@
+{
+  "task_id": 3,
+  "final": {
+    "id": 3,
+    "task_type": "contribution",
+    "status": "done",
+    "progress": 1.0,
+    "message": "完成",
+    "payload": {
+      "category": "gold_finger",
+      "reason": "manual"
+    },
+    "result": {
+      "eval_run_id": 1,
+      "profile": {
+        "univariate": {
+          "by_type": {
+            "test": {
+              "blob": 1.0,
+              "trad": 0.1875
+            }
+          },
+          "overall": {
+            "blob": 1.0,
+            "trad": 0.1875
+          },
+          "availability": {
+            "by_type": {
+              "test": {
+                "blob": {
+                  "status": "available",
+                  "reason": null
+                },
+                "trad": {
+                  "status": "available",
+                  "reason": null
+                }
+              }
+            },
+            "overall": {
+              "blob": {
+                "status": "available",
+                "reason": null
+              },
+              "trad": {
+                "status": "available",
+                "reason": null
+              }
+            }
+          }
+        },
+        "redundancy": {
+          "names": [
+            "blob",
+            "trad"
+          ],
+          "corr": [
+            [
+              1,
+              -0.3571428571428572
+            ],
+            [
+              -0.3571428571428572,
+              1
+            ]
+          ],
+          "availability": [
+            [
+              {
+                "status": "available",
+                "reason": null
+              },
+              {
+                "status": "available",
+                "reason": null
+              }
+            ],
+            [
+              {
+                "status": "available",
+                "reason": null
+              },
+              {
+                "status": "available",
+                "reason": null
+              }
+            ]
+          ]
+        },
+        "ablation": {
+          "full": 1.0,
+          "single": {
+            "blob": 1.0,
+            "trad": 0.1875
+          },
+          "leave_one_out": {
+            "blob": 0.1875,
+            "trad": 1.0
+          },
+          "availability": {
+            "full": {
+              "status": "available",
+              "reason": null
+            },
+            "single": {
+              "blob": {
+                "status": "available",
+                "reason": null
+              },
+              "trad": {
+                "status": "available",
+                "reason": null
+              }
+            },
+            "leave_one_out": {
+              "blob": {
+                "status": "available",
+                "reason": null
+              },
+              "trad": {
+                "status": "available",
+                "reason": null
+              }
+            }
+          }
+        },
+        "trad_groups": {
+          "status": "available",
+          "meta": {
+            "registry_version": 1,
+            "registry_sha256": "e372b79cddf47ffb2a131a55ea6b67a6e6d4553122b09c4e8fb134af5528f9e4",
+            "signature": {
+              "registry_sha256": "e372b79cddf47ffb2a131a55ea6b67a6e6d4553122b09c4e8fb134af5528f9e4",
+              "groups": [
+                "glcm",
+                "selfsim",
+                "edge",
+                "hog",
+                "shape",
+                "gray",
+                "gloss",
+                "color",
+                "fft",
+                "wavelet",
+                "logic",
+                "gabor",
+                "log",
+                "pc",
+                "surf"
+              ],
+              "group_spec": "all",
+              "scoring": "legacy",
+              "dimension": 200
+            },
+            "category": "gold_finger",
+            "data_source": "test n=8",
+            "config": {
+              "enabled": true
+            },
+            "n_normal": 4,
+            "n_defect": 4,
+            "views": {
+              "global": "available",
+              "tile": "not_applicable：trad 仅整图库打分，局部视图由 DINO 局部分支负责"
+            },
+            "created_at": "2026-10-14 13:00:43",
+            "semantics": "组距离=偏离正常程度；AUROC 为开发/评价集判别力，非缺陷概率，非融合贡献",
+            "model_version": 2
+          },
+          "view": "global",
+          "full_auroc": 0.1875,
+          "full_ci95": [
+            0.0,
+            0.625
+          ],
+          "enabled": [
+            "glcm",
+            "selfsim",
+            "edge",
+            "hog",
+            "shape",
+            "gray",
+            "gloss",
+            "color",
+            "fft",
+            "wavelet",
+            "logic",
+            "gabor",
+            "log",
+            "pc",
+            "surf"
+          ],
+          "groups": {
+            "glcm": {
+              "name": "GLCM 纹理",
+              "category": "texture",
+              "version": 1,
+              "dim": 4,
+              "enabled": true,
+              "weight": 1.0,
+              "single_auroc": 0.0,
+              "single_ci95": [
+                0.0,
+                0.0
+              ],
+              "direction": "reversed",
+              "extract_ms": 25.357987513416447,
+              "by_type": {
+                "test": 0.0
+              },
+              "fixed_loo_auroc": 0.4375,
+              "rebuild_loo_auroc": 0.4375,
+              "permutation_auroc": 0.4375,
+              "fixed_loo_drop": -0.25,
+              "rebuild_loo_drop": -0.25,
+              "permutation_drop": -0.25,
+              "redundancy": [
+                "gray",
+                1.0
+              ]
+            },
+            "selfsim": {
+              "name": "区域自相似",
+              "category": "texture",
+              "version": 1,
+              "dim": 5,
+              "enabled": true,
+              "weight": 1.0,
+              "single_auroc": 0.0,
+              "single_ci95": [
+                0.0,
+                0.0
+              ],
+              "direction": "reversed",
+              "extract_ms": 7.124299991119187,
+              "by_type": {
+                "test": 0.0
+              },
+              "fixed_loo_auroc": 0.4375,
+              "rebuild_loo_auroc": 0.4375,
+              "permutation_auroc": 0.5,
+              "fixed_loo_drop": -0.25,
+              "rebuild_loo_drop": -0.25,
+              "permutation_drop": -0.3125,
+              "redundancy": [
+                "gabor",
+                0.9523809523809524
+              ]
+            },
+            "edge": {
+              "name": "边缘梯度+LBP",
+              "category": "texture",
+              "version": 1,
+              "dim": 28,
+              "enabled": true,
+              "weight": 1.0,
+              "single_auroc": 0.0,
+              "single_ci95": [
+                0.0,
+                0.0
+              ],
+              "direction": "reversed",
+              "extract_ms": 14.862150004773866,
+              "by_type": {
+                "test": 0.0
+              },
+              "fixed_loo_auroc": 0.1875,
+              "rebuild_loo_auroc": 0.25,
+              "permutation_auroc": 0.375,
+              "fixed_loo_drop": 0.0,
+              "rebuild_loo_drop": -0.0625,
+              "permutation_drop": -0.1875,
+              "redundancy": [
+                "selfsim",
+                0.9047619047619048
+              ]
+            },
+            "hog": {
+              "name": "HOG",
+              "category": "geometry",
+              "version": 1,
+              "dim": 11,
+              "enabled": true,
+              "weight": 1.0,
+              "single_auroc": 0.8125,
+              "single_ci95": [
+                0.43593750000000003,
+                1.0
+              ],
+              "direction": "normal",
+              "extract_ms": 10.367499991843943,
+              "by_type": {
+                "test": 0.8125
+              },
+              "fixed_loo_auroc": 0.125,
+              "rebuild_loo_auroc": 0.125,
+              "permutation_auroc": 0.0,
+              "fixed_loo_drop": 0.0625,
+              "rebuild_loo_drop": 0.0625,
+              "permutation_drop": 0.1875,
+              "redundancy": [
+                "logic",
+                0.8333333333333335
+              ]
+            },
+            "shape": {
+              "name": "形状/Hu/轮廓",
+              "category": "geometry",
+              "version": 1,
+              "dim": 11,
+              "enabled": true,
+              "weight": 1.0,
+              "single_auroc": 1.0,
+              "single_ci95": [
+                1.0,
+                1.0
+              ],
+              "direction": "normal",
+              "extract_ms": 1.624537500902079,
+              "by_type": {
+                "test": 1.0
+              },
+              "fixed_loo_auroc": 0.0,
+              "rebuild_loo_auroc": 0.0,
+              "permutation_auroc": 0.0,
+              "fixed_loo_drop": 0.1875,
+              "rebuild_loo_drop": 0.1875,
+              "permutation_drop": 0.1875,
+              "redundancy": [
+                "surf",
+                0.9047619047619048
+              ]
+            },
+            "gray": {
+              "name": "灰度统计",
+              "category": "material",
+              "version": 1,
+              "dim": 12,
+              "enabled": true,
+              "weight": 1.0,
+              "single_auroc": 0.0,
+              "single_ci95": [
+                0.0,
+                0.0
+              ],
+              "direction": "reversed",
+              "extract_ms": 6.159462493087631,
+              "by_type": {
+                "test": 0.0
+              },
+              "fixed_loo_auroc": 0.75,
+              "rebuild_loo_auroc": 0.75,
+              "permutation_auroc": 0.625,
+              "fixed_loo_drop": -0.5625,
+              "rebuild_loo_drop": -0.5625,
+              "permutation_drop": -0.4375,
+              "redundancy": [
+                "glcm",
+                1.0
+              ]
+            },
+            "gloss": {
+              "name": "材质反光/高光",
+              "category": "material",
+              "version": 1,
+              "dim": 4,
+              "enabled": true,
+              "weight": 1.0,
+              "single_auroc": 0.0,
+              "single_ci95": [
+                0.0,
+                0.0
+              ],
+              "direction": "reversed",
+              "extract_ms": 1.8442250147927552,
+              "by_type": {
+                "test": 0.0
+              },
+              "fixed_loo_auroc": 0.25,
+              "rebuild_loo_auroc": 0.1875,
+              "permutation_auroc": 0.1875,
+              "fixed_loo_drop": -0.0625,
+              "rebuild_loo_drop": 0.0,
+              "permutation_drop": 0.0,
+              "redundancy": [
+                "wavelet",
+                0.9132233209773138
+              ]
+            },
+            "color": {
+              "name": "HSV 直方图+色彩矩+RGB 相关",
+              "category": "color",
+              "version": 1,
+              "dim": 36,
+              "enabled": true,
+              "weight": 1.0,
+              "single_auroc": 0.0,
+              "single_ci95": [
+                0.0,
+                0.0
+              ],
+              "direction": "reversed",
+              "extract_ms": 11.493049998534843,
+              "by_type": {
+                "test": 0.0
+              },
+              "fixed_loo_auroc": 0.375,
+              "rebuild_loo_auroc": 0.3125,
+              "permutation_auroc": 0.25,
+              "fixed_loo_drop": -0.1875,
+              "rebuild_loo_drop": -0.125,
+              "permutation_drop": -0.0625,
+              "redundancy": [
+                "glcm",
+                0.9047619047619048
+              ]
+            },
+            "fft": {
+              "name": "FFT 频域",
+              "category": "freq",
+              "version": 1,
+              "dim": 13,
+              "enabled": true,
+              "weight": 1.0,
+              "single_auroc": 0.0,
+              "single_ci95": [
+                0.0,
+                0.0
+              ],
+              "direction": "reversed",
+              "extract_ms": 4.167425009654835,
+              "by_type": {
+                "test": 0.0
+              },
+              "fixed_loo_auroc": 0.4375,
+              "rebuild_loo_auroc": 0.4375,
+              "permutation_auroc": 0.4375,
+              "fixed_loo_drop": -0.25,
+              "rebuild_loo_drop": -0.25,
+              "permutation_drop": -0.25,
+              "redundancy": [
+                "log",
+                0.9047619047619048
+              ]
+            },
+            "wavelet": {
+              "name": "Haar 小波",
+              "category": "freq",
+              "version": 1,
+              "dim": 40,
+              "enabled": true,
+              "weight": 1.0,
+              "single_auroc": 0.0,
+              "single_ci95": [
+                0.0,
+                0.0
+              ],
+              "direction": "reversed",
+              "extract_ms": 1.8259374919580296,
+              "by_type": {
+                "test": 0.0
+              },
+              "fixed_loo_auroc": 0.75,
+              "rebuild_loo_auroc": 0.75,
+              "permutation_auroc": 0.75,
+              "fixed_loo_drop": -0.5625,
+              "rebuild_loo_drop": -0.5625,
+              "permutation_drop": -0.5625,
+              "redundancy": [
+                "gloss",
+                0.9132233209773138
+              ]
+            },
+            "logic": {
+              "name": "逻辑关系代理(连通域/对称)",
+              "category": "logic",
+              "version": 1,
+              "dim": 6,
+              "enabled": true,
+              "weight": 1.0,
+              "single_auroc": 1.0,
+              "single_ci95": [
+                1.0,
+                1.0
+              ],
+              "direction": "normal",
+              "extract_ms": 0.8550374986953102,
+              "by_type": {
+                "test": 1.0
+              },
+              "fixed_loo_auroc": 0.0625,
+              "rebuild_loo_auroc": 0.0625,
+              "permutation_auroc": 0.0,
+              "fixed_loo_drop": 0.125,
+              "rebuild_loo_drop": 0.125,
+              "permutation_drop": 0.1875,
+              "redundancy": [
+                "glcm",
+                -0.9047619047619048
+              ]
+            },
+            "gabor": {
+              "name": "Gabor",
+              "category": "texture",
+              "version": 1,
+              "dim": 8,
+              "enabled": true,
+              "weight": 1.0,
+              "single_auroc": 0.0,
+              "single_ci95": [
+                0.0,
+                0.0
+              ],
+              "direction": "reversed",
+              "extract_ms": 13.067299994872883,
+              "by_type": {
+                "test": 0.0
+              },
+              "fixed_loo_auroc": 0.375,
+              "rebuild_loo_auroc": 0.3125,
+              "permutation_auroc": 0.25,
+              "fixed_loo_drop": -0.1875,
+              "rebuild_loo_drop": -0.125,
+              "permutation_drop": -0.0625,
+              "redundancy": [
+                "selfsim",
+                0.9523809523809524
+              ]
+            },
+            "log": {
+              "name": "LoG 斑点",
+              "category": "blob",
+              "version": 1,
+              "dim": 5,
+              "enabled": true,
+              "weight": 1.0,
+              "single_auroc": 0.0,
+              "single_ci95": [
+                0.0,
+                0.0
+              ],
+              "direction": "reversed",
+              "extract_ms": 7.958825000969227,
+              "by_type": {
+                "test": 0.0
+              },
+              "fixed_loo_auroc": 0.25,
+              "rebuild_loo_auroc": 0.25,
+              "permutation_auroc": 0.1875,
+              "fixed_loo_drop": -0.0625,
+              "rebuild_loo_drop": -0.0625,
+              "permutation_drop": 0.0,
+              "redundancy": [
+                "glcm",
+                0.9047619047619048
+              ]
+            },
+            "pc": {
+              "name": "相位一致性",
+              "category": "blob",
+              "version": 1,
+              "dim": 3,
+              "enabled": true,
+              "weight": 1.0,
+              "single_auroc": 1.0,
+              "single_ci95": [
+                1.0,
+                1.0
+              ],
+              "direction": "normal",
+              "extract_ms": 8.295087507576682,
+              "by_type": {
+                "test": 1.0
+              },
+              "fixed_loo_auroc": 0.0,
+              "rebuild_loo_auroc": 0.0,
+              "permutation_auroc": 0.0,
+              "fixed_loo_drop": 0.1875,
+              "rebuild_loo_drop": 0.1875,
+              "permutation_drop": 0.1875,
+              "redundancy": [
+                "surf",
+                0.880952380952381
+              ]
+            },
+            "surf": {
+              "name": "SURF 多尺度 Hessian 斑点",
+              "category": "blob",
+              "version": 1,
+              "dim": 14,
+              "enabled": true,
+              "weight": 1.0,
+              "single_auroc": 1.0,
+              "single_ci95": [
+                1.0,
+                1.0
+              ],
+              "direction": "normal",
+              "extract_ms": 22.45500000572065,
+              "by_type": {
+                "test": 1.0
+              },
+              "fixed_loo_auroc": 0.0,
+              "rebuild_loo_auroc": 0.0,
+              "permutation_auroc": 0.0,
+              "fixed_loo_drop": 0.1875,
+              "rebuild_loo_drop": 0.1875,
+              "permutation_drop": 0.1875,
+              "redundancy": [
+                "shape",
+                0.9047619047619048
+              ]
+            }
+          },
+          "redundancy": {
+            "names": [
+              "glcm",
+              "selfsim",
+              "edge",
+              "hog",
+              "shape",
+              "gray",
+              "gloss",
+              "color",
+              "fft",
+              "wavelet",
+              "logic",
+              "gabor",
+              "log",
+              "pc",
+              "surf"
+            ],
+            "corr": [
+              [
+                1.0,
+                0.5952380952380953,
+                0.6904761904761906,
+                -0.6666666666666669,
+                -0.8095238095238096,
+                1.0,
+                0.7610194341477615,
+                0.9047619047619048,
+                0.8095238095238096,
+                0.6666666666666669,
+                -0.9047619047619048,
+                0.5476190476190477,
+                0.9047619047619048,
+                -0.7619047619047621,
+                -0.7857142857142858
+              ],
+              [
+                0.5952380952380953,
+                1.0,
+                0.9047619047619048,
+                -0.11904761904761905,
+                -0.6904761904761906,
+                0.5952380952380953,
+                0.8371213775625378,
+                0.5714285714285715,
+                0.7619047619047621,
+                0.7857142857142858,
+                -0.5714285714285715,
+                0.9523809523809524,
+                0.6666666666666669,
+                -0.7142857142857144,
+                -0.6190476190476191
+              ],
+              [
+                0.6904761904761906,
+                0.9047619047619048,
+                1.0,
+                -0.261904761904762,
+                -0.7380952380952381,
+                0.6904761904761906,
+                0.8371213775625378,
+                0.6190476190476191,
+                0.8095238095238096,
+                0.6904761904761906,
+                -0.7142857142857144,
+                0.8571428571428572,
+                0.8095238095238096,
+                -0.6666666666666669,
+                -0.6666666666666669
+              ],
+              [
+                -0.6666666666666669,
+                -0.11904761904761905,
+                -0.261904761904762,
+                1.0,
+                0.7380952380952381,
+                -0.6666666666666669,
+                -0.44392800325286097,
+                -0.7857142857142858,
+                -0.30952380952380953,
+                -0.3571428571428572,
+                0.8333333333333335,
+                -0.19047619047619052,
+                -0.5476190476190477,
+                0.4761904761904762,
+                0.7857142857142858
+              ],
+              [
+                -0.8095238095238096,
+                -0.6904761904761906,
+                -0.7380952380952381,
+                0.7380952380952381,
+                1.0,
+                -0.8095238095238096,
+                -0.7356521196761695,
+                -0.8333333333333335,
+                -0.5714285714285715,
+                -0.5714285714285715,
+                0.880952380952381,
+                -0.6904761904761906,
+                -0.7619047619047621,
+                0.7142857142857144,
+                0.9047619047619048
+              ],
+              [
+                1.0,
+                0.5952380952380953,
+                0.6904761904761906,
+                -0.6666666666666669,
+                -0.8095238095238096,
+                1.0,
+                0.7610194341477615,
+                0.9047619047619048,
+                0.8095238095238096,
+                0.6666666666666669,
+                -0.9047619047619048,
+                0.5476190476190477,
+                0.9047619047619048,
+                -0.7619047619047621,
+                -0.7857142857142858
+              ],
+              [
+                0.7610194341477615,
+                0.8371213775625378,
+                0.8371213775625378,
+                -0.44392800325286097,
+                -0.7356521196761695,
+                0.7610194341477615,
+                1.0,
+                0.8624886920341298,
+                0.8117540630909458,
+                0.9132233209773138,
+                -0.7610194341477616,
+                0.8371213775625378,
+                0.7102848052045776,
+                -0.7102848052045776,
+                -0.7102848052045776
+              ],
+              [
+                0.9047619047619048,
+                0.5714285714285715,
+                0.6190476190476191,
+                -0.7857142857142858,
+                -0.8333333333333335,
+                0.9047619047619048,
+                0.8624886920341298,
+                1.0,
+                0.6904761904761906,
+                0.7619047619047621,
+                -0.9047619047619048,
+                0.5714285714285715,
+                0.7380952380952381,
+                -0.6904761904761906,
+                -0.8095238095238096
+              ],
+              [
+                0.8095238095238096,
+                0.7619047619047621,
+                0.8095238095238096,
+                -0.30952380952380953,
+                -0.5714285714285715,
+                0.8095238095238096,
+                0.8117540630909458,
+                0.6904761904761906,
+                1.0,
+                0.8571428571428572,
+                -0.7380952380952381,
+                0.7619047619047621,
+                0.9047619047619048,
+                -0.8571428571428572,
+                -0.6904761904761906
+              ],
+              [
+                0.6666666666666669,
+                0.7857142857142858,
+                0.6904761904761906,
+                -0.3571428571428572,
+                -0.5714285714285715,
+                0.6666666666666669,
+                0.9132233209773138,
+                0.7619047619047621,
+                0.8571428571428572,
+                1.0,
+                -0.6666666666666669,
+                0.8333333333333335,
+                0.6666666666666669,
+                -0.8095238095238096,
+                -0.6904761904761906
+              ],
+              [
+                -0.9047619047619048,
+                -0.5714285714285715,
+                -0.7142857142857144,
+                0.8333333333333335,
+                0.880952380952381,
+                -0.9047619047619048,
+                -0.7610194341477616,
+                -0.9047619047619048,
+                -0.7380952380952381,
+                -0.6666666666666669,
+                1.0,
+                -0.5714285714285715,
+                -0.880952380952381,
+                0.7380952380952381,
+                0.9047619047619048
+              ],
+              [
+                0.5476190476190477,
+                0.9523809523809524,
+                0.8571428571428572,
+                -0.19047619047619052,
+                -0.6904761904761906,
+                0.5476190476190477,
+                0.8371213775625378,
+                0.5714285714285715,
+                0.7619047619047621,
+                0.8333333333333335,
+                -0.5714285714285715,
+                1.0,
+                0.6666666666666669,
+                -0.8095238095238096,
+                -0.7142857142857144
+              ],
+              [
+                0.9047619047619048,
+                0.6666666666666669,
+                0.8095238095238096,
+                -0.5476190476190477,
+                -0.7619047619047621,
+                0.9047619047619048,
+                0.7102848052045776,
+                0.7380952380952381,
+                0.9047619047619048,
+                0.6666666666666669,
+                -0.880952380952381,
+                0.6666666666666669,
+                1.0,
+                -0.8571428571428572,
+                -0.8333333333333335
+              ],
+              [
+                -0.7619047619047621,
+                -0.7142857142857144,
+                -0.6666666666666669,
+                0.4761904761904762,
+                0.7142857142857144,
+                -0.7619047619047621,
+                -0.7102848052045776,
+                -0.6904761904761906,
+                -0.8571428571428572,
+                -0.8095238095238096,
+                0.7380952380952381,
+                -0.8095238095238096,
+                -0.8571428571428572,
+                1.0,
+                0.880952380952381
+              ],
+              [
+                -0.7857142857142858,
+                -0.6190476190476191,
+                -0.6666666666666669,
+                0.7857142857142858,
+                0.9047619047619048,
+                -0.7857142857142858,
+                -0.7102848052045776,
+                -0.8095238095238096,
+                -0.6904761904761906,
+                -0.6904761904761906,
+                0.9047619047619048,
+                -0.7142857142857144,
+                -0.8333333333333335,
+                0.880952380952381,
+                1.0
+              ]
+            ],
+            "cluster_thr": 0.8
+          },
+          "cluster_loo": [
+            {
+              "groups": [
+                "color",
+                "edge",
+                "fft",
+                "gabor",
+                "glcm",
+                "gloss",
+                "gray",
+                "hog",
+                "log",
+                "logic",
+                "pc",
+                "selfsim",
+                "shape",
+                "surf",
+                "wavelet"
+              ],
+              "loo_auroc": null,
+              "drop": null
+            }
+          ]
+        }
+      }
+    },
+    "final_status": null,
+    "is_defect": false,
+    "requires_review": false,
+    "is_system_error": false
+  },
+  "elapsed_s": 16.0
+}

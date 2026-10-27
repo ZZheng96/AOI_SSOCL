@@ -1,0 +1,357 @@
+[5/10] GET /system/config：11 项 business_budget 带 value/default/min/max + 固定 WAL=永久；POST 需 admin（+4.50s）
+[6/10] POST /system/config：合法项应用+持久化，非法值进 rejected 并回传原因（不再 500）（+4.54s）
+[4/10] 候选验收 policy 由配置映射（pct/100），满足 candidate_release.evaluate 的 ready 判定（+4.60s）
+[1/10] 默认值 = 用户定值（FPR≤5%/Recall≥95%/回退≤2pt/灰区≤15%，保留期 90d/12m/30d/10 版/12m/7d）（+4.64s）
+[3/10] 持久化往返（TEMP yaml 重读）；手改 yaml 的非法存量值回落默认（+4.68s）
+[2/10] 校验：越界/NaN/布尔混入/int 字段传 float/字符串一律拒绝并给原因，内存值不变（+4.74s）
+[10/10] 评估页：FPR/缺陷召回对照配置达标线（达标/超限/低于下限/无定义）（+4.78s）
+[9/10] 统计页：未注入/注入非法值时回落 UI 默认（与后端默认一致）（+4.84s）
+[8/10] 统计页：误报率/灰区率按配置上限判超限（默认 5%/15%，改配置后阈值随之变化）（+4.90s）
+[7/10] 设置页离屏：分组“业务预算与保留期”，编辑→保存提交正确类型→恢复默认→保存回默认（+4.96s）
+[engine] cat: 重放未巩固学习 1 条
+[TEMP learning trajectory] round 0
+[ssocl] U65 head_ft 完成: pos=8 neg=8 signed=-0.1897 锚定集 shead 移动 0.0 累计触发 1 次
+[ssocl] U65 head_ft 完成: pos=8 neg=8 signed=-0.1897 锚定集 shead 移动 0.0 累计触发 1 次
+[TEMP learning trajectory] round 1
+[ssocl] U65 head_ft 完成: pos=8 neg=8 signed=-0.1785 锚定集 shead 移动 0.0 累计触发 2 次
+[ssocl] U65 head_ft 完成: pos=8 neg=8 signed=-0.1785 锚定集 shead 移动 0.0 累计触发 1 次
+[TEMP learning trajectory] round 2
+[ssocl] U65 head_ft 完成: pos=8 neg=8 signed=-0.1677 锚定集 shead 移动 0.0 累计触发 2 次
+[ssocl] U65 head_ft 完成: pos=8 neg=8 signed=-0.1677 锚定集 shead 移动 0.0 累计触发 1 次
+[ssocl] U65 门控否决: head_ft 锚定集 fused 0.0000→0.0354 signed=0.035 (上行限 -100 / 下行限 100.0)，锚定集 shead 原始分移动 0.0，回滚 head （pos=8 neg=8，冷却 10 反馈）
+[ssocl] U65 门控否决: head_ft 锚定集 fused 0.0000→0.0354 signed=0.035 (上行限 -100.0 / 下行限 100.0)，锚定集 shead 原始分移动 0.0，回滚 head （pos=8 neg=8，冷却 10 反馈）
+[TEMP learning validation] missing
+[TEMP learning validation] field
+[TEMP learning validation] shape
+[TEMP learning validation] version
+[TEMP learning validation] method
+[TEMP real feedback] 0
+[TEMP real feedback] 1
+[TEMP real feedback] 2
+[TEMP real feedback] 3
+[TEMP real feedback] 4
+[TEMP real feedback] 5
+[TEMP budget] events
+[TEMP budget] loo
+[TEMP budget] search
+[TEMP budget] steps
+[TEMP budget] reloads
+[TEMP budget] snapshot_bytes
+[TEMP budget] patch_bytes
+[TEMP cancel] budget:parent_events
+[TEMP cancel] budget:after_reload
+[TEMP cancel] before_prepared
+[TEMP cancel] after_prepared
+[TEMP recovery] before_save
+[TEMP recovery] after_save
+[TEMP recovery] before_prepared
+[TEMP recovery] after_prepared
+[TEMP recovery] before_rename
+[TEMP recovery] after_rename
+[TEMP recovery] before_completed
+[TEMP recovery] after_completed
+[TEMP integrity] candidate
+[TEMP integrity] parent
+[TEMP integrity] wal
+[TEMP integrity] current
+[TEMP mutex] child process recover while training
+[5/8] RegressGate 审计条目 / _audit_decide / 汇总（先验/门控前否决）
+[6/8] trace.update_log 带 audit；无 handler → None
+[+] AC-037 低于 PatchCore 且耗缺陷样本时披露；缺 current 报错
+[+] AC-037 variants/ablations：gain/harm/inconclusive + 分组副作用
+[7/8] persist：regress_gate 审计/基准分往返 + 旧快照兼容 + cde_report.json
+[8/8] _retrain_router 维度签名 + effective_weights/weights_semantics
+[1/8] 校准契约 / 融合基线 / 分层切分
+[3/8] 域差：insufficient / normal_drift / shift
+[2/8] router 准入：样本不足 / trace_only（不胜固定权重）
+[4/8] slot_health：能力表 + 运行时状态 + open 不进融合
+[+] slot-health API：engineer 可读 / operator 403 / 未准备 enabled=False
+[1/5] box_evidence 区域主导/平坦槽位/无正向证据
+[4/5] /detections/{id}/explain 路由（TEMP SQLite）
+[3/5] explain_trad 无 trad 槽位
+[5/5] UI 文本 + ExplainDialog offscreen
+[2/5] _to_result 无区域证据回退整图口径
+[parity 4/4] GroupKNN fit 与生产 float32 口径逐位一致
+[parity 3/4] 大图 selfsim 使用共享 default_rng(42)
+[parity 1/3] 检查组顺序、切片和总维度
+[parity 2/3] 3 张内存代表图逐图比较 Core/AOI_feature
+[1/4] engine.feature_set 只读快照 / not_applicable / 未加载
+[3b/4] 自动档案钩子 insufficient/queued/already_running/disabled/error
+[3/4] draft 只登记候选 / 400 / 403 / 手动档案 / 自动钩子
+[2/4] GET 角色 can_edit + 档案状态 insufficient/not_generated/stale/current
+[3c/4] AC-017 难例池 GET / 准入试算 POST（403/409/queued 不激活）
+[4/4] 学习页特征集卡片 offscreen（操作员只读）
+[TEMP attribution] real handler -> engine -> finite JSON
+[engine] cat: 重放未巩固学习 1 条
+[engine] cat: 重放未巩固学习 0 条（跳过 2 条：图像缺失/重放失败，详见内存审计）
+[engine] cat: 重放未巩固学习 1 条
+[AC-038 2/3] get_engine() 单例置 legacy_online_guard=True
+[AC-038 1/3] 生产单例守卫：未授权 submit_feedback 抛 LegacyOnlineLearningBlocked
+[AC-038 3/3] service legacy 分支透传入口授权 allow_legacy_online
+[AC-063 1/2] 复算：默认=在线、改阈值、404/409/403/410、只读不落库
+[AC-063 2/2] 路由：参数校验 422、无 raw 409、默认 base_dir 取 storage(heatmaps)
+[AC-072 1/4] label_lateness 纯函数：边界/缺失时间
+[AC-072 2/4] 超容忍标签 → late_excluded，不调 learn_candidate，计入统计
+[AC-072 4/4] GET /system/retention/late_labels
+[AC-072 3/4] 容忍期内标签照常入候选训练
+[AC-072 R4/4] API：preview 需 engineer、execute 需 admin，默认 dry-run，缺审批 403
+[AC-072 R2/4] 无审批 / confirm 缺失 / plan_id 不符 → 拒绝且不删除
+[AC-072 R3/4] 审批后执行：仅删过期项 + 审计；计划变化后旧 plan_id 失效
+[AC-072 R1/4] 预览/dry-run 只列计划不删除；快照与 WAL 永不入计划
+[parity 1/3] production ...
+  -> passed failed=[]
+[parity 2/3] unseeded_rng ...
+  -> failed failed=['extraction', 'preprocess', 'rng']
+[parity 3/3] no_skip_self ...
+  -> failed failed=['knn_neighbors_self_match', 'scoring', 'report']
+[budget] 两层校准（Šidák 块级 + 经验图级）→ 合成正常集并集 FPR ≤ α
+[cde 1/4] CDF 契约：尾部 bootstrap std 随 n 收敛 / 小样本 / 自匹配偏差
+[cde 2/4] 固定融合基线：未验证槽（sanity 缺/≤0.5）不参与，硬规则单列
+[cde 3/4] 软路由准入：分层三集 / 不胜基线则 trace_only / 熵与过拟合报告
+[cde 4/4] 域差：中位漂移/IQR + FPR 膨胀，动态路由标 not_integrated
+[schemes] 整图 / 全局+全量局部 / 全局+预算细判 同数据对照 + 副作用分报
+[tiling 2/3] ROI 覆盖 / 块尺寸上下界（冲突交全局）
+[tiling 1/3] 随机尺寸 / 末行末列回移 / 并集覆盖 / 原图反解
+[tiling 3/3] 面积占比标签（≥0.25 正 / ≤0.05 负 / 中间丢弃）+ 中心上下文裁切
+[8/9] allow_stale：无/过期/越权授权拒绝，合法授权放行且入审计
+[7/9] 审计链：evaluate→approve→activate，篡改可检出
+[2/9] 验收后业务阈值变化→审批/激活拒绝
+[3/9] EvalRun绑定篡改/缺失→拒绝
+[4/9] 父版本过期→审批/激活拒绝
+[9/9] 普通快照激活走账本；指针后崩溃→prepared阻断→recover
+[1/9] policy宽于业务冻结阈值→拒绝
+[5/9] 合成标注集 80/类 0错→CI门禁通过
+[6/9] 合成标注集 1FP：点估计通过但CI上界超限→拒绝
+[cleanup] 采集真实 storage 指纹（只读）…
+[cleanup] dry-run 完成，指纹 137 项不变
+[deploy] TEMP=C:\Users\imia\AppData\Local\Temp\aoi_offline_yzm15aup，复制 vendor 代码与 88MB 权重…
+[deploy] 场景 ①vendor 子进程启动…
+[deploy] 场景 ①vendor 完成 ok=True
+[deploy] 场景 ②回退缓存 子进程启动…
+[deploy] 场景 ②回退缓存 完成 ok=True
+[deploy] 场景 ③缺权重 子进程启动…
+[deploy] 场景 ③缺权重 完成 ok=False
+[deploy] 场景 sklearn 清点(19 个) 子进程启动…
+[deploy] 场景 sklearn 清点(19 个) 完成 ok=None
+[deploy] pkl=19 版本不一致=1 pickled=['1.9.1'] env=1.9.0 lock_mismatch={'scikit-learn': {'locked': '1.9.1', 'env': '1.9.0'}, 'torch': {'locked': '2.14.0+cu126', 'env': '2.5.1+cu121'}, 'numpy': {'locked': '2.5.2', 'env': '2.4.6'}}
+[AC-065] 生成合成 dev/test 切分 ...
+  [dev 1/12] {'mask_thresh': 0.3, 'min_area': 4, 'work_side': 512} recall=0.817 prec=0.867 misloc=0.167
+  [dev 2/12] {'mask_thresh': 0.3, 'min_area': 16, 'work_side': 512} recall=0.817 prec=0.867 misloc=0.167
+  [dev 3/12] {'mask_thresh': 0.3, 'min_area': 48, 'work_side': 512} recall=0.817 prec=0.867 misloc=0.167
+  [dev 4/12] {'mask_thresh': 0.4, 'min_area': 4, 'work_side': 512} recall=0.923 prec=0.970 misloc=0.056
+  [dev 5/12] {'mask_thresh': 0.4, 'min_area': 16, 'work_side': 512} recall=0.923 prec=0.970 misloc=0.056
+  [dev 6/12] {'mask_thresh': 0.4, 'min_area': 48, 'work_side': 512} recall=0.923 prec=0.970 misloc=0.056
+  [dev 7/12] {'mask_thresh': 0.5, 'min_area': 4, 'work_side': 512} recall=0.808 prec=0.857 misloc=0.056
+  [dev 8/12] {'mask_thresh': 0.5, 'min_area': 16, 'work_side': 512} recall=0.808 prec=0.857 misloc=0.056
+  [dev 9/12] {'mask_thresh': 0.5, 'min_area': 48, 'work_side': 512} recall=0.808 prec=0.857 misloc=0.056
+  [dev 10/12] {'mask_thresh': 0.6, 'min_area': 4, 'work_side': 512} recall=0.731 prec=0.817 misloc=0.056
+  [dev 11/12] {'mask_thresh': 0.6, 'min_area': 16, 'work_side': 512} recall=0.731 prec=0.817 misloc=0.056
+  [dev 12/12] {'mask_thresh': 0.6, 'min_area': 48, 'work_side': 512} recall=0.731 prec=0.826 misloc=0.056
+[AC-065] dev 冻结: {'mask_thresh': 0.4, 'min_area': 4, 'work_side': 512} version=pp-2f54c2e670
+  [test normal] recall=1.000 prec=1.0 misloc=0.0 miou=0.8544707130722141
+  [test multiscale] recall=1.000 prec=1.0 misloc=0.0 miou=0.8488344950211985
+  [test adjacent] recall=1.000 prec=1.0 misloc=0.0 miou=0.8108121683868671
+  [test small] recall=0.833 prec=0.9090909090909091 misloc=0.16666666666666666 miou=0.6677123869007198
+  [test boundary] recall=1.000 prec=1.0 misloc=0.0 miou=0.9040272033929398
+  [test topk] recall=1.000 prec=1.0 misloc=0.0 miou=0.7859035144331069
+[AC-065] 边界裁剪/坐标空间
+[AC-065] top-k 按峰值截断
+[AC-065] 后处理耗时估算（2500x2500）
+  定位后处理 9.31 ms/图
+[4/6] 离屏 UI：拖 r1 右边 → 仅 x1 变化 → revise 提交
+[5/6] 离屏 UI：框内拖动整框平移（尺寸不变）；原地单击不产生待提交
+[6/6] 离屏 UI：撤销 → 重做按钮恢复 → 无可重做时失败；表格同步
+[1/6] 纯函数：hit_edge / drag_edge / move_box（对边固定、最小尺寸、图内）
+[3b/6] API：redo 走 Literal 校验、同 event_id 幂等、链失效 422
+[2/6] 后端 redo：undo→redo→undo、栈式多级重做、事件只追加
+[3/6] 后端 redo：撤销后新操作→链失效；他人改过→冲突；幂等
+[2/3] 发布写操作审计：仅 admin 产生 *_rejected 记录，低权限 403 不落审计（+108.57s）
+[1/3] 四阶段 × 三角色 API 矩阵：低于最低角色 403 且不触达发布逻辑（+108.60s）
+[3/3] 工作区导航：operator 仅检测/复核入口，engineer/admin 全量；_apply_role 幂等（+108.60s）
+[1/3] 能力清单覆盖七槽 + color/open 候选
+[2/3] fast 三槽：清单仅 3 项，缺 4 槽，is_seven=False
+[3/3] 七槽+open：open 不进融合；反向体检槽标 reverse（降级可见）
+[3/4] 真实 incomplete_report → 工作台待办：仅 alert 计数，旧 warn 忽略（+108.73s）
+[1/4] 真实 live 首批 → 条带三态着色/短脉冲/旧行中性/跟随最新帧（+108.92s）
+[2/4] 条带回看灰区帧（取消跟随/开放集徽标独立）→ 增量 after_id 推进不跳帧（+109.11s）
+[4/4] 游标超出全表最大 ID（库重置）→ 页面回到 0 重新订阅（+109.32s）
+[2/4] grouped 打分与 TradSlot._dist 同口径（跳最近邻 [1:4]）
+[1/4] admission_metrics 通过/增益/冗余/G1/G2/open/planned/不足
+[4/4] 试算端到端 → 证据 JSON → revision 门禁（未通过拒批/通过可批）
+[AC-034] open 原因归类：drift 标漂移、各原因单列计数
+[3/4] 难例池：来源/冲突/漂移/排除 test 与作废/train 参照
+[TEMP budget] events
+[TEMP budget] loo
+[TEMP budget] search
+[TEMP budget] steps
+[TEMP budget] reloads
+[TEMP budget] snapshot_bytes
+[TEMP budget] patch_bytes
+[TEMP cancel] budget:parent_events
+[TEMP cancel] budget:after_reload
+[TEMP cancel] before_prepared
+[TEMP cancel] after_prepared
+[TEMP recovery] before_save
+[TEMP recovery] after_save
+[TEMP recovery] before_prepared
+[TEMP recovery] after_prepared
+[TEMP recovery] before_rename
+[TEMP recovery] after_rename
+[TEMP recovery] before_completed
+[TEMP recovery] after_completed
+[TEMP integrity] candidate
+[TEMP integrity] parent
+[TEMP integrity] wal
+[TEMP integrity] current
+[TEMP mutex] child process recover while training
+[2b/4] AC-064 争议/噪声隔离
+[3/4] 定位评估 + dev 选择
+[1/4] 后处理版本 + 区域记录
+[2/4] 区域复核纯函数
+[4/4] 引擎透出 → 渲染 → 落库 → 区域复核 API
+[权限/血缘] TEMP 检测落库 + 真实鉴权中间件
+[1/3] TEMP SQLite + API
+[2/3] 状态、幂等、冲突与反馈事件
+[3/3] Qt offscreen 展示 + 处置提交
+[1/5] new_defect 处置 → 候选 draft
+[2/5] 同类型归并计数 + 幂等不重复计数
+[3/5] 非 new_defect 不注册；缺模型版本 skipped
+[4/5] 草案未激活 + admission 门禁仍需人工
+[5/5] GET 列出自动候选 + CDE 报告口径
+[AC-049] 空集/单样本/单类别安全，未定义指标为 unavailable
+[AC-049] 缺种子/种子不一致/缺 ID/重复/缺样本/标签冲突拒绝配对
+[AC-049] NaN/Inf/缺分数不虚构 AUROC，二值预测不虚构 gray
+[AC-049] 按 ID 配对/工作决策/gray 口径/输入不变
+[+] boost 只用通用头，类型头不影响在线打分
+[+] 类型样本不足不孵育；无类型归 _any 只进通用头
+[+] 旧单头 pickle（无 heads/type_state）可加载并继续按类型孵育
+[+] 多类型分别孵育：scratch/dent 各自成头，通用头不变
+[+] 无类型样本：行为与原单头一致（heads 为空）
+[+] 人工标签覆盖伪标签；teacher 版本不符的伪标签作废
+[+] 伪标签只出高置信：远低→0，远高→1，中间不标
+[+] 伪标签候选：teacher=激活版本、人工优先、不写库不激活
+[+] consolidate(activate=False) 附带伪标签候选；activate=True 不生成
+[3/3] 区域复核 API 透出 human_box/reviewer/revision/train_status
+[1/3] 候选框 vs 人工真值：source/reviewer/revision/train_status
+[2/3] disputed / 不一致状态不进训练
+[7/7] 对话框：拖框→add / 选中→revise（乐观锁）
+[6/7] 对话框：叠加框/高亮/新列/API 路径
+[2/7] add payload：reason/operator/revision/越界校验
+[4/7] 叠加颜色映射：候选/人工可训/人工未训/拒绝/争议
+[1/7] 坐标换算：缩放/反向拖拽/越界裁剪/往返
+[3/7] revise payload：须 region_id + expected_revision
+[5/7] to_dict 透出 region_review 派生视图
+[5/9] API：delete/undo 幂等、revision 409、撤销冲突 409、模型框删除 422、落库不进训练
+[3/9] 后端 delete：仅人工框、须 reason、软删除留档、不进训练
+[4/9] 后端 undo：反向修订、仅本人、他人改过→冲突、链完整
+[7/9] 离屏 UI：删除人工框（模型框拦截）→ 画布隐藏、表格留档
+[6/9] 离屏 UI：选中显示 4 角手柄 → 拖 br 角 → revise 提交（须理由）
+[9/9] 离屏 UI：删除/撤销携带过期 revision → 409 刷新后可重试
+[8/9] 离屏 UI：撤销上一步（恢复框/状态）与他人修改后 409 提示
+[1/9] 纯函数：角点/命中容差/拖拽约束（对角固定、最小尺寸、图内、不翻转）
+[2/9] 纯函数：can_delete / delete、undo payload 校验
+[3/5] 候选构建 → guard.regions + review.consumption 回写 + API/to_dict 透出
+[5/5] 旧 guard（无 regions）行为不变；无 eligible 框不回写
+[4/5] 消费后修订/作废/删除 → 发布前 fail-closed（REGION_STALE）
+[1/5] 消费快照 + used/used_by 派生，不改 revision/events
+[2/5] 消费后修订/作废/删除 → stale_after_use + reason
+[2/4] 下行（recenter 意图方向）不触发累计拦截
+[3/4] 连续 3 次违规冻结；冻结期正常更新也回滚；unfreeze 恢复
+[4/4] status 可 JSON 化回填；旧快照无 init_* 不判累计
+[1/4] 小步上行漂移：单步过门，累计越限回滚
+[2/5] activate/rollback 遇 stale 默认拒绝，allow_stale 放行
+[1/5] stale 拒在线学习/巩固（激活+候选路径），current 放行
+[5/5] /models/{id}/activate 遇 stale → 409 带重建指引
+[4/5] _prepare_engine 重建：trigger/parent/不激活/跳过自动档案
+[3/5] rebuild 路由：403 / 409 无版本 / 继承 scenario,profile / pending
+[AC-019 1/1] resolve_isolation：auto 默认 / 小样本回退 / 显式 self|holdout / 未知值 / 确定性
+[AC-044 1/1] 人工优先/同修订争议/伪标签过期与 teacher 不符/缺 teacher_version
+[AC-042 1/2] audit_label_order：ok/late/before/out_of_order/unknown/re_detect
+[AC-042 2/2] label_order_audit：TEMP sqlite，排除作废反馈，只读
+[AC-052 1/1] /review/open_alerts/summary：状态/原因/学习状态/准入候选计数
+[AC-063 3/4] 409 / None 失败：提示且清空预览
+[AC-063 4/4] 参数无效不发请求
+[AC-063 1/4] build_recompute_payload：None 沿用原参数、越界拒绝
+[AC-063 2/4] 对话框按钮 → POST 复算 → 预览框叠加，区域/修订号不变
+[10/12] AC-034 E_open 难例→准入登记门禁：缺证据阻断、齐全只登记 draft、永不自动上线
+[4/12] AC-014 逐框归因：区域证据 vs 整图回退，trad explain 参考
+[9/12] AC-033 统一能力卡：槽 + 融合后通道，缺省显式 unknown
+[7/12] AC-016/061 角色只读、启停→draft(parent)、绑定/血缘/回滚/Detection 关联
+[1/12] AC-011 组级独立选组：局部视图不被整图否定、样本不足/反向不选、不自动生效
+[8/12] AC-028/032 记忆资产清单：库=memory、头/路由=weights、逐条血缘
+[11/12] AC-060 编排总表：fast 三槽如实 is_seven=False、缺基础槽列出
+[12/12] AC-060 七槽齐 is_seven=True；候选槽分列；diff 列出变化与移除
+[2/12] AC-012 档案血缘 code/data/config hash + 完整性/小样本判定
+[6/12] AC-015 表示变化 → 隔离旧库/重提/重建/重校准/G2；仅配置变 → 重校准
+[5/12] AC-035 快照盘点字段 = persist 实际写入字段；未绑定 revision 不可复现
+[3/12] AC-013 trad 打分协议如实描述：legacy 全向量 L2 / grouped 组距离加权
+[r3 2/4] CDF：域外样本（远超 train 上沿）保序、不平局于 2.0
+[r3 4/4] 域差场景：test 全体超 train 上沿时 fused 仍保留 raw 排序
+[r3 1/4] 软限幅：值域 [-1,2]、严格单调、[0,1] 内恒等
+[r3 3/4] Tpl：diff/ref 软限幅保序，正常≈0 语义不变
+[3/8] backend.engine 注册的读取函数取 governance_decisions.blob_gpu_enabled（+152.55s）
+[2/8] blob GPU：治理配置/环境变量/槽位 cfg 任一为真启用；AOI_BLOB_GPU=0 强关；CPU 设备不启用（+152.58s）
+[5/8] 覆盖检查：未覆盖批次列表 + 域外比例 + 建议文案 + 登记批次不出建议（+152.62s）
+[4/8] 批次推断：子目录优先，否则文件名前缀（Image_2026 / t_fov / numeric）（+152.62s）
+[6/8] FPR≤预算最大 recall 工作点（score>=thr 口径，与暴力枚举一致）（+152.62s）
+[7/8] run_accuracy_eval 参考报告：预算取 g2_max_fpr_pct，train 上沿退回 tau_high，不改 decider（+152.63s）
+[8/8] 评估页：业务预算行后展示参考工作点 + 覆盖告警/建议；旧记录不显示（+152.63s）
+[1/8] 新增治理项默认值/类型校验 + /system/config 说明文案（+152.66s）
+[4/12] 冻结：时间自动写入；冻结后改阈值整批 409 THRESHOLD_FROZEN，同值回传不触发（+152.67s）
+[3/12] GET /system/config：11 项待决策带 value/default/impact/readonly/options；未冻结无 locked（+152.70s）
+[6/12] /system/info 依赖锁自检：带 policy；异常不阻断（+152.71s）
+[5/12] 同批冻结+定值允许（本次值即冻结值）；解冻同批可改阈值且清空冻结时间；只读项篡改被拒（+152.74s）
+[10/12] 依赖锁策略：block 激活 409 且不切换；auto 激活失败不回滚批准；warn 附告警（+152.78s）
+[9/12] 候选发布策略：manual 批准不激活；auto_on_approve 批准后自动激活；拒绝不激活（+152.78s）
+[7/12] 依赖锁：+cu126 后缀忽略；版本不一致/缺包 warn 放行、block 抛 DEPENDENCY_LOCK_MISMATCH（+152.78s）
+[2/12] 手改 yaml 非法存量值回落默认（+152.81s）
+[1/12] governance_decisions 默认值（AC-045/046 默认关、manual/auto/warn）+ 枚举/类型校验（+152.85s）
+[8/12] 校准隔离：auto 不覆盖 yaml；holdout/self 注入 calibration.isolation → resolve_isolation 读到（+152.87s）
+[11/12] 设置页：“待决策事项”分组、下拉框/只读标签/说明-当前值-影响范围、恢复默认不动决策（+152.88s）
+[12/12] 设置页：保存下拉/开关值写回；冻结后阈值编辑器禁用；改禁用值触发 409 提示（+152.92s）
+[5/6] run_accuracy_eval：登记后剔除 fit 子集，仅评 eval 子集 + 缺陷（+154.26s）
+[4/6] run_accuracy_eval：默认空登记不剔除任何 test 图（+154.43s）
+[6/6] run_accuracy_eval：limit 截断不改变划分池（仍按全部 test 正常图划分）（+154.59s）
+[3/6] _prepare_engine：登记后 fit 副本并入 init_normal 且过 guard_bundle、从 val 剔除，缺陷/eval 不进入拟合（+154.75s）
+[2/6] _prepare_engine：默认空登记 bundle 与改动前口径一致（+155.07s）
+[1/6] split_extra_good：确定性/不相交/顺序无关/只含登记批次/floor 比例（+155.12s）
+[r4 2/4] CDF 校准单调递增：raw 排序 = cal 排序（不翻转 sem 方向）
+[r4 1/4] sem：离正常库越远分越高（距离语义，非相似度）
+[r4 3/4] 配对混淆：缺陷图≈库内 repaired 孪生 → 分低于离库正常（数据致 AUROC<0.5）
+[r4 4/4] domain 36 张正常 → holdout 7 校准 / 29 拟合（sanity 用留出正常，诚实非 bug）
+[dino] 使用随包 vendor 权重: D:\CGAIC\AOI_SSOCL\AOI_tree\assets\dinov2\dinov2_vits14_pretrain.pth
+[1/3] fresh build reference
+[dino] 使用随包 vendor 权重: D:\CGAIC\AOI_SSOCL\AOI_tree\assets\dinov2\dinov2_vits14_pretrain.pth
+[2/3] cache hit after same seed
+[3/3] unseen RNG state rebuilds mapping
+[dino] 使用随包 vendor 权重: D:\CGAIC\AOI_SSOCL\AOI_tree\assets\dinov2\dinov2_vits14_pretrain.pth
+[dino] 使用随包 vendor 权重: D:\CGAIC\AOI_SSOCL\AOI_tree\assets\dinov2\dinov2_vits14_pretrain.pth
+[1/4] activate allow_stale=true → 409，service/engine 未调用、指针不变
+[3/4] activate 缺省/false 保持原路径，service 收到 allow_stale=False
+[2/4] rollback allow_stale=true → 409，engine.rollback 未调用、指针不变
+[4/4] rollback 缺省保持原路径，engine 收到 allow_stale=False
+[6/7] 删除已消费人工框 h0 → REGION_STALE(deleted)
+[7/7] 撤销已消费框（undo add h0 → retracted；undo revise r1 → candidate）→ REGION_STALE
+[5/7] 复核对话框“学习消费”列：未用于学习 / 已用于学习 / 已用后变更
+[4/7] 即时学习：成功回写 consumption(kind=instant)；失败不回写
+[1/7] 空库 quality_overview / health / batch_summary 比率为 None
+[2/7] timeseries(category)：e2e 全缺 → None，推理耗时照常
+[3/7] 工单 bad_rate / _p95 / report：缺失为 None，e2e 不回退推理耗时
+[isolation] shared category, archived workorder and orphan records
+[5/5] 真实 api_stats_overview（临时 SQLite）→ 工作台卡片/口径行（+160.22s）
+[1/5] 完整统计字段 → 面向用户的文案（耗时/缺失数/工单/来源）（+160.24s）
+[2/5] 缺数据/旧后端：显示 —/不可用，不出现 0 ms 或 0.0%（+160.25s）
+[4/5] 旧后端 payload（无新口径字段）：_fill_kpi 不崩、不冒充 0（+160.25s）
+[3/5] 工作台离屏实例化：口径卡片初始“—”、tooltip 含口径定义（+160.26s）
+[7/7] 真实 overview/quality_overview（临时 SQLite）→ 统计页卡片/口径行（+160.39s）
+[5/7] 批次表：e2e 后端补 0.0 → “—”，推理/e2e 分列，无复核比率 “—”（+160.45s）
+[6/7] 导出 CSV：分母为 0 的比率/缺失 e2e 留空，不写 0（+160.49s）
+[4/7] 完整统计数据：模型判断耗时与完整处理耗时分列，说明工单和来源（+160.49s）
+[2/7] 离屏实例化：耗时卡片初始“—”，说明文字清晰可见（+160.54s）
+[3/7] 旧后端/空范围（avg_latency_ms=0.0）：显示 —/不可用，不出现 0 ms / 0.0%（+160.59s）
+[1/7] 统计页复用工作台口径函数/常量（同一对象，非复制）（+160.80s）
+[+] AC-038 生产入口不调 engine.submit_feedback / 不传 candidate_only=False
+[+] AC-038 service 默认 candidate_only=True 且 legacy 须显式放行
+[+] AC-038 主干进程级只读共享：eval + requires_grad=False + 同一对象
+[dino] 使用随包 vendor 权重: D:\CGAIC\AOI_SSOCL\AOI_tree\assets\dinov2\dinov2_vits14_pretrain.pth
+[dino] 使用随包 vendor 权重: D:\CGAIC\AOI_SSOCL\AOI_tree\assets\dinov2\dinov2_vits14_pretrain.pth

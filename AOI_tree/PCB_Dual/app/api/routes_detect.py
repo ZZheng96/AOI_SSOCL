@@ -66,6 +66,7 @@ def detect_traditional(payload: dict) -> dict:
     return {
         "overall": s.overall,
         **result_interpretation(s.overall),
+        "requires_review": s.requires_review,
         "overall_ok": s.overall_ok,
         "ng_count": s.ng_count,
         "elapsed_ms": s.elapsed_ms,
@@ -74,6 +75,11 @@ def detect_traditional(payload: dict) -> dict:
         "results": [
             {"status": r.status, "display_name": r.display_name, "message": r.message,
              "defect_count": r.defect_count, "elapsed_ms": r.elapsed_ms,
+             "item_id": r.item_id, "algorithm_version": r.algorithm_version,
+             "error_code": r.error_code, "error_message": r.error_message,
+             "skip_reason": r.skip_reason,
+             "execution_mode": r.metadata.get("execution_mode", "unknown"),
+             "request_snapshot": r.metadata.get("request_snapshot"),
              "boxes": [{"x": b.x, "y": b.y, "w": b.w, "h": b.h, "label": b.label}
                        for b in r.boxes]}
             for r in s.results

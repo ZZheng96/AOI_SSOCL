@@ -1,0 +1,45 @@
+[1/5] isolate inputs/snapshot/SQLite: C:\Users\imia\AppData\Local\Temp\aoi_hard01_service_id9wyqdp
+[2/5] initialize isolated database; cold-load actual engine
+[dino] 使用随包 vendor 权重: D:\CGAIC\AOI_SSOCL\AOI_tree\assets\dinov2\dinov2_vits14_pretrain.pth
+[disc] 加载预训练头 D:\CGAIC\AOI_SSOCL\AOI_tree\AOI_Core\assets\disc_pretrain.pt
+  cold load 2389.814ms
+[3/5] warmup each actual entry (excluded; cache cleared)
+  engine_path: 297.417ms
+  service_heatmap_persist: 204.712ms
+[4/5] <=8 unique inputs, two actual entry measurements per input
+  start 1/8 engine_path resize2500_00_1289.jpg
+  done wall=130.782ms JSON=0.022ms
+  start 1/8 service_heatmap_persist resize2500_00_1289.jpg
+  done wall=167.420ms JSON=1.033ms
+  start 2/8 engine_path resize2500_01_1290.jpg
+  done wall=120.232ms JSON=0.023ms
+  start 2/8 service_heatmap_persist resize2500_01_1290.jpg
+  done wall=155.916ms JSON=1.245ms
+  start 3/8 engine_path resize2500_02_1291.jpg
+  done wall=128.521ms JSON=0.024ms
+  start 3/8 service_heatmap_persist resize2500_02_1291.jpg
+  done wall=157.649ms JSON=2.036ms
+  start 4/8 engine_path resize2500_03_1292.jpg
+  done wall=123.415ms JSON=0.019ms
+  start 4/8 service_heatmap_persist resize2500_03_1292.jpg
+  done wall=174.483ms JSON=1.510ms
+  start 5/8 engine_path resize2500_04_1293.jpg
+  done wall=126.172ms JSON=0.024ms
+  start 5/8 service_heatmap_persist resize2500_04_1293.jpg
+  done wall=161.694ms JSON=1.111ms
+  start 6/8 engine_path resize2500_05_1294.jpg
+  done wall=122.030ms JSON=0.019ms
+  start 6/8 service_heatmap_persist resize2500_05_1294.jpg
+  done wall=157.784ms JSON=1.314ms
+  start 7/8 engine_path resize2500_06_1295.jpg
+  done wall=127.801ms JSON=0.023ms
+  start 7/8 service_heatmap_persist resize2500_06_1295.jpg
+  done wall=163.944ms JSON=0.846ms
+  start 8/8 engine_path resize2500_07_1296.jpg
+  done wall=131.238ms JSON=0.023ms
+  start 8/8 service_heatmap_persist resize2500_07_1296.jpg
+  done wall=163.029ms JSON=1.850ms
+[5/5] complete; verified SQLite rows and heatmap files
+  engine_path: {'n': 8, 'p50': 126.9865500216838, 'p95': 131.0782300075516, 'max': 131.2379000009969, 'mean': 126.2738125078613}
+  service_heatmap_persist: {'n': 8, 'p50': 162.36129999742843, 'p95': 172.01100997335743, 'max': 174.48319995310158, 'mean': 162.739937492006}
+RESULT=C:\Users\imia\AppData\Local\Temp\aoi_hard01_service_id9wyqdp\result.json

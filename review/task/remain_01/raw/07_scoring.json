@@ -1,0 +1,49 @@
+{
+  "task_check": "评分",
+  "tree": "stable",
+  "candidate_mode": "legacy_u27",
+  "harness_check_key": "scoring",
+  "pass": false,
+  "evidence": {
+    "max_abs_diff": 0.37591788389005387,
+    "atol": 1e-06,
+    "rows": [
+      {
+        "image": "train0",
+        "candidate_score": 16.533100272187934,
+        "production_score": 16.5416316986084,
+        "abs_diff": 0.008531426420464783
+      },
+      {
+        "image": "train1",
+        "candidate_score": 17.040671508525808,
+        "production_score": 17.137792587280273,
+        "abs_diff": 0.09712107875446563
+      },
+      {
+        "image": "train2",
+        "candidate_score": 21.422966961306724,
+        "production_score": 21.434240341186523,
+        "abs_diff": 0.011273379879799705
+      },
+      {
+        "image": "probe0",
+        "candidate_score": 73.7890672576403,
+        "production_score": 74.10245513916016,
+        "abs_diff": 0.3133878815198585
+      },
+      {
+        "image": "probe1",
+        "candidate_score": 67.91096260927401,
+        "production_score": 68.28688049316406,
+        "abs_diff": 0.37591788389005387
+      },
+      {
+        "image": "probe2",
+        "candidate_score": 22.591892545924765,
+        "production_score": 22.60780906677246,
+        "abs_diff": 0.015916520847696347
+      }
+    ]
+  }
+}

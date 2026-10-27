@@ -1,0 +1,225 @@
+﻿{
+    "overall":  "NG",
+    "final_status":  "ANOMALY",
+    "is_defect":  true,
+    "requires_review":  true,
+    "is_system_error":  false,
+    "overall_ok":  false,
+    "ng_count":  1,
+    "elapsed_ms":  177,
+    "gate_blocked":  false,
+    "gate_message":  "",
+    "results":  [
+                    {
+                        "status":  "OK",
+                        "display_name":  "å­æ´",
+                        "message":  "å­æ´ å¤å®=OKï¼ç¼ºé·æ°=0ï¼é\u0085åææåºåè¦çç=0.99",
+                        "defect_count":  0,
+                        "elapsed_ms":  45,
+                        "item_id":  "tht_å­æ´",
+                        "algorithm_version":  "2.1.0",
+                        "error_code":  null,
+                        "error_message":  null,
+                        "skip_reason":  null,
+                        "execution_mode":  "production_adapter_batch",
+                        "request_snapshot":  {
+                                                 "params":  {
+
+                                                            },
+                                                 "rois":  [
+
+                                                          ],
+                                                 "roi_coordinate_system":  "standard_image_pixels",
+                                                 "template_id":  "TH_templ2_single",
+                                                 "template_version":  1,
+                                                 "preprocess":  {
+                                                                    "color":  "NONE",
+                                                                    "enhance":  "NONE",
+                                                                    "filter":  "NONE",
+                                                                    "morphology":  "NONE"
+                                                                },
+                                                 "image_size":  [
+                                                                    124,
+                                                                    125
+                                                                ],
+                                                 "source":  "inspect",
+                                                 "algorithm_version":  "2.1.0",
+                                                 "param_schema_version":  1,
+                                                 "version_id":  "14f764eee4e58612"
+                                             },
+                        "boxes":  [
+
+                                  ]
+                    },
+                    {
+                        "status":  "NG",
+                        "display_name":  "å°é¡",
+                        "message":  "å°é¡ å¤å®=NGï¼ç¼ºé·æ°=1ï¼é\u0085åææåºåè¦çç=0.99",
+                        "defect_count":  1,
+                        "elapsed_ms":  51,
+                        "item_id":  "tht_å°é¡",
+                        "algorithm_version":  "2.1.0",
+                        "error_code":  null,
+                        "error_message":  null,
+                        "skip_reason":  null,
+                        "execution_mode":  "production_adapter_batch",
+                        "request_snapshot":  {
+                                                 "params":  {
+
+                                                            },
+                                                 "rois":  [
+
+                                                          ],
+                                                 "roi_coordinate_system":  "standard_image_pixels",
+                                                 "template_id":  "TH_templ2_single",
+                                                 "template_version":  1,
+                                                 "preprocess":  {
+                                                                    "color":  "NONE",
+                                                                    "enhance":  "NONE",
+                                                                    "filter":  "NONE",
+                                                                    "morphology":  "NONE"
+                                                                },
+                                                 "image_size":  [
+                                                                    124,
+                                                                    125
+                                                                ],
+                                                 "source":  "inspect",
+                                                 "algorithm_version":  "2.1.0",
+                                                 "param_schema_version":  1,
+                                                 "version_id":  "14f764eee4e58612"
+                                             },
+                        "boxes":  [
+                                      {
+                                          "x":  3,
+                                          "y":  6,
+                                          "w":  111,
+                                          "h":  118,
+                                          "label":  "å°é¡"
+                                      }
+                                  ]
+                    },
+                    {
+                        "status":  "OK",
+                        "display_name":  "å¤é¡(å\u0085é¡)",
+                        "message":  "å¤é¡(å\u0085é¡) å¤å®=OKï¼ç¼ºé·æ°=0ï¼é\u0085åææåºåè¦çç=0.99",
+                        "defect_count":  0,
+                        "elapsed_ms":  39,
+                        "item_id":  "tht_å¤é¡å\u0085é¡",
+                        "algorithm_version":  "2.1.0",
+                        "error_code":  null,
+                        "error_message":  null,
+                        "skip_reason":  null,
+                        "execution_mode":  "production_adapter_batch",
+                        "request_snapshot":  {
+                                                 "params":  {
+
+                                                            },
+                                                 "rois":  [
+
+                                                          ],
+                                                 "roi_coordinate_system":  "standard_image_pixels",
+                                                 "template_id":  "TH_templ2_single",
+                                                 "template_version":  1,
+                                                 "preprocess":  {
+                                                                    "color":  "NONE",
+                                                                    "enhance":  "NONE",
+                                                                    "filter":  "NONE",
+                                                                    "morphology":  "NONE"
+                                                                },
+                                                 "image_size":  [
+                                                                    124,
+                                                                    125
+                                                                ],
+                                                 "source":  "inspect",
+                                                 "algorithm_version":  "2.1.0",
+                                                 "param_schema_version":  1,
+                                                 "version_id":  "14f764eee4e58612"
+                                             },
+                        "boxes":  [
+
+                                  ]
+                    },
+                    {
+                        "status":  "SKIP",
+                        "display_name":  "è¿é¡",
+                        "message":  "[è·³è¿] è¿é¡ï¼è¿é¡éè¦å¨ãæ å®ãä¸­æ¡éè³å° 2 ä¸ªçç¹åºå",
+                        "defect_count":  0,
+                        "elapsed_ms":  0,
+                        "item_id":  "tht_è¿é¡",
+                        "algorithm_version":  "2.1.0",
+                        "error_code":  null,
+                        "error_message":  null,
+                        "skip_reason":  "è¿é¡éè¦å¨ãæ å®ãä¸­æ¡éè³å° 2 ä¸ªçç¹åºå",
+                        "execution_mode":  "not_executed",
+                        "request_snapshot":  {
+                                                 "params":  {
+
+                                                            },
+                                                 "rois":  [
+
+                                                          ],
+                                                 "roi_coordinate_system":  "standard_image_pixels",
+                                                 "template_id":  "TH_templ2_single",
+                                                 "template_version":  1,
+                                                 "preprocess":  {
+                                                                    "color":  "NONE",
+                                                                    "enhance":  "NONE",
+                                                                    "filter":  "NONE",
+                                                                    "morphology":  "NONE"
+                                                                },
+                                                 "image_size":  [
+                                                                    124,
+                                                                    125
+                                                                ],
+                                                 "source":  "inspect",
+                                                 "algorithm_version":  "2.1.0",
+                                                 "param_schema_version":  1,
+                                                 "version_id":  "14f764eee4e58612"
+                                             },
+                        "boxes":  [
+
+                                  ]
+                    },
+                    {
+                        "status":  "OK",
+                        "display_name":  "ä¸åºè",
+                        "message":  "ä¸åºè å¤å®=OKï¼ç¼ºé·æ°=0ï¼é\u0085åææåºåè¦çç=0.99",
+                        "defect_count":  0,
+                        "elapsed_ms":  38,
+                        "item_id":  "tht_ä¸åºè",
+                        "algorithm_version":  "2.1.0",
+                        "error_code":  null,
+                        "error_message":  null,
+                        "skip_reason":  null,
+                        "execution_mode":  "production_adapter_batch",
+                        "request_snapshot":  {
+                                                 "params":  {
+
+                                                            },
+                                                 "rois":  [
+
+                                                          ],
+                                                 "roi_coordinate_system":  "standard_image_pixels",
+                                                 "template_id":  "TH_templ2_single",
+                                                 "template_version":  1,
+                                                 "preprocess":  {
+                                                                    "color":  "NONE",
+                                                                    "enhance":  "NONE",
+                                                                    "filter":  "NONE",
+                                                                    "morphology":  "NONE"
+                                                                },
+                                                 "image_size":  [
+                                                                    124,
+                                                                    125
+                                                                ],
+                                                 "source":  "inspect",
+                                                 "algorithm_version":  "2.1.0",
+                                                 "param_schema_version":  1,
+                                                 "version_id":  "14f764eee4e58612"
+                                             },
+                        "boxes":  [
+
+                                  ]
+                    }
+                ]
+}

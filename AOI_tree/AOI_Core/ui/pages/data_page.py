@@ -26,6 +26,7 @@ from PySide6.QtWidgets import (
     QFormLayout,
     QGroupBox,
     QHBoxLayout,
+    QHeaderView,
     QLabel,
     QLineEdit,
     QListWidget,
@@ -93,7 +94,7 @@ SOURCE_CN = {
 }
 
 # 表格列数（含批次/来源/导入时间）
-_N_COLS = 11
+_N_COLS = 10
 
 
 def _fmt_size(path: str) -> str:
@@ -330,7 +331,8 @@ class DataPage(QWidget):
         root.setSpacing(8)
 
         top = QHBoxLayout()
-        top.addWidget(make_banner("数据底座：数据源管理（模态为筛选项，建源即导入）"))
+        top.addWidget(make_banner(
+            "数据管理：先建立数据源并导入数据，再创建工单挂接；数据源可被多个工单复用"))
         attach_level_badge(self, top)   # U-workorder：数据条件徽标
         top.addStretch(1)
         root.addLayout(top)
@@ -400,15 +402,20 @@ class DataPage(QWidget):
 
         btn_new_source = QPushButton("新建数据源")
         btn_new_source.setProperty("primary", True)
-        btn_new_source.setToolTip("登记数据源（名称＋模态＋标注档位＋品类/模板声明＋数据流），"
-                                  "一步式建源并导入数据挂到该源")
+        btn_new_source.setToolTip(
+            "新建数据源时登记名称、图片/视频类型、标注档位、品类/模板能力和数据流；\n"
+            "这些信息用于判断数据能支持哪种检测方式，并把导入的批次归到该数据源")
         btn_new_source.clicked.connect(self._on_create_datasource)
         bar.addWidget(btn_new_source)
         lay.addLayout(bar)
 
         # 主体：左侧数据树导航 + 右侧缩略图表格
         splitter = QSplitter(Qt.Horizontal)
-        splitter.addWidget(self._build_tree_panel())
+        tree_panel = self._build_tree_panel()
+        # 2026-10-14：给左侧树面板设宽度上限，避免它按内容撑开、把右侧主列表挤到
+        # 横向滚动；上限放宽到 240（取"够看清树"和"主表放得下"的折中）
+        tree_panel.setMaximumWidth(240)
+        splitter.addWidget(tree_panel)
 
         right = QWidget()
         r_lay = QVBoxLayout(right)
@@ -423,17 +430,22 @@ class DataPage(QWidget):
         ip_lay = QVBoxLayout(img_page)
         ip_lay.setContentsMargins(0, 0, 0, 0)
         ip_lay.setSpacing(4)
-        # 缩略图表格（序号列显示累计编号：第 1 页 1-50、第 2 页 51-100）
+        # 序号列显示累计编号：第 1 页 1-50、第 2 页 51-100
         self.table = QTableWidget(0, _N_COLS)
         self.table.setHorizontalHeaderLabels(
             ["序号", "缩略图", "ID", "品类", "批次", "来源", "划分", "标签",
-             "缺陷类型", "导入时间", "路径"])
-        self.table.setColumnWidth(0, 55)
-        self.table.setColumnWidth(1, 110)
-        self.table.setColumnWidth(2, 55)
-        self.table.setColumnWidth(3, 120)   # 品类列固定宽：长品类名自动换行
-        self.table.setWordWrap(True)   # 长文本（如品类名）显示不下自动换行
-        self.table.horizontalHeader().setStretchLastSection(True)
+             "缺陷类型", "导入时间"])
+        # 列宽（前端反馈 2026-10-14：既要每列放得下、又不让主列表横向滚动）。
+        # 树加宽到 240 后表格视口 ≈730px：固定列合计 ≈716px，「导入时间」吸收剩余宽度；
+        # 「缺陷类型」由 58 放宽到 76（原来连表头四个字都显示不全）。
+        hh = self.table.horizontalHeader()
+        for _c, _w in ((0, 42), (1, 76), (2, 46), (3, 84), (4, 46),
+                       (5, 72), (6, 116), (7, 64), (8, 76), (9, 94)):
+            self.table.setColumnWidth(_c, _w)
+        hh.setSectionResizeMode(QHeaderView.Interactive)
+        self.table.setTextElideMode(Qt.ElideRight)
+        self.table.setWordWrap(True)   # 长文本（如导入时间）自动换行，不丢信息
+        hh.setStretchLastSection(True)
         self.table.verticalHeader().setDefaultSectionSize(66)
         self.table.verticalHeader().setVisible(False)  # 行号并入「序号」列（累计编号），避免与自带行号重复
         self.table.setSelectionBehavior(QTableWidget.SelectRows)
@@ -489,7 +501,8 @@ class DataPage(QWidget):
         splitter.addWidget(right)
         splitter.setStretchFactor(0, 0)
         splitter.setStretchFactor(1, 1)
-        splitter.setSizes([260, 800])
+        # 2026-10-14：左侧数据导航树加宽到 240（原 190/210 太窄，树里的层级看不清）
+        splitter.setSizes([240, 730])
         lay.addWidget(splitter, 1)
         # 前端反馈 v5：数据流队列（当前工单待检批次，可回队/取消）
         lay.addWidget(self._build_queue_panel())
@@ -497,14 +510,26 @@ class DataPage(QWidget):
 
     # ══════════════════ 数据流队列（前端反馈 v5）══════════════════
     def _build_queue_panel(self) -> QWidget:
-        box = QGroupBox("数据流队列（当前工单）— 暂停产线后可编排；错检批次可回队重新检测")
+        box = QGroupBox(
+            "数据流队列（当前工单）：按批次查看待检测数据；暂停产线后可回队重新检测")
+        box.setToolTip(
+            "队列是当前工单的检测安排，不是新的数据批次。\n"
+            "本地图片按批次逐张送检；错检批次可回队，回队图片会优先重新检测。\n"
+            "RTSP 视频流按实时帧处理，不使用本地图片批次队列。")
         v = QVBoxLayout(box)
         self.queue_table = QTableWidget(0, 6)
         self.queue_table.setHorizontalHeaderLabels(
-            ["批次", "数据源", "品类", "图片/检测/不良/反馈", "错检批次", "回队"])
+            ["批次", "数据源", "品类", "检测/不良/反馈", "错检批次", "回队"])
         self.queue_table.setEditTriggers(QTableWidget.NoEditTriggers)
         self.queue_table.verticalHeader().setVisible(False)
-        self.queue_table.horizontalHeader().setStretchLastSection(True)
+        # 列宽（前端反馈 2026-10-14：原实现每次加载都 resizeColumnsToContents()，
+        # 会把列挤成"刚好放下内容"的宽度，「品类」等表头显示不全）。改为固定列宽，
+        # 剩余宽度交给「数据源」列（内容最长）。
+        _qh = self.queue_table.horizontalHeader()
+        for _c, _w in ((0, 92), (2, 120), (3, 160), (4, 110), (5, 96)):
+            self.queue_table.setColumnWidth(_c, _w)
+        _qh.setSectionResizeMode(1, QHeaderView.Stretch)
+        _qh.setStretchLastSection(False)
         v.addWidget(self.queue_table, 1)
         row = QHBoxLayout()
         self.btn_queue_reload = QPushButton("刷新队列")
@@ -559,7 +584,8 @@ class DataPage(QWidget):
                 self.queue_table.setItem(r, c, cell)
                 if c == 0:
                     cell.setData(Qt.UserRole, it.get("batch_key"))
-        self.queue_table.resizeColumnsToContents()
+        # 不再 resizeColumnsToContents()：它会覆盖上面按设计给的列宽，
+        # 把「品类」等列挤到表头显示不全（前端反馈 2026-10-14）
 
     def _selected_queue_keys(self) -> list[str]:
         out = []
@@ -586,12 +612,22 @@ class DataPage(QWidget):
         lay = QVBoxLayout(w)
         lay.setContentsMargins(0, 0, 8, 0)
         lay.setSpacing(4)
-        head = QLabel("数据导航（数据源→品类→批次→划分→标签）")
+        head = QLabel("数据导航（数据源→品类→批次→用途划分→标签）")
+        head.setToolTip(
+            "数据源：数据从哪里来；批次：一次导入或归档形成的数据集合；\n"
+            "划分：按图片用途查看预训练组和检测组；标签：正常、异常等标注结果。\n"
+            "右侧分组是图片筛选视图，不会创建新的数据库批次。")
         head.setProperty("heading", True)
+        # 2026-10-14：标题允许换行——原来单行不换行会把它自己的宽度变成树面板的
+        # 最小宽度（约 300px），导致左侧树占宽过多、右侧主列表被挤到要横向滚动
+        head.setWordWrap(True)
         lay.addWidget(head)
         self.tree = QTreeWidget()
         self.tree.setHeaderHidden(True)
-        self.tree.setMinimumWidth(230)
+        # 2026-10-14：树最小宽度 200（前端反馈 168 太窄、树里的层级看不清），
+        # 主列表列宽按"树 240 + 表格视口 ≈730"重新分配
+        self.tree.setMinimumWidth(200)
+        self.tree.setTextElideMode(Qt.ElideRight)
         self.tree.itemSelectionChanged.connect(self._on_tree_selected)
         self.tree.setContextMenuPolicy(Qt.CustomContextMenu)
         self.tree.customContextMenuRequested.connect(self._on_tree_menu)
@@ -1227,8 +1263,10 @@ class DataPage(QWidget):
         self.table.setRowCount(len(items))
         base = (self._page - 1) * self._page_size   # 累计序号偏移
         for r, img in enumerate(items):
-            self.table.setItem(
-                r, 0, QTableWidgetItem(str(base + r + 1)))
+            path = str(img.get("path", ""))
+            idx_item = QTableWidgetItem(str(base + r + 1))
+            idx_item.setToolTip(path)   # 全路径：原「路径」列改挂 tooltip
+            self.table.setItem(r, 0, idx_item)
             cell = make_thumb_cell()
             self.table.setCellWidget(r, 1, cell)
             load_thumb_async(self, self._client,
@@ -1255,7 +1293,6 @@ class DataPage(QWidget):
             self.table.setItem(r, 8, QTableWidgetItem(str(img.get("defect_type") or "-")))
             created = str(img.get("created_at") or "")[:19].replace("T", " ")
             self.table.setItem(r, 9, QTableWidgetItem(created))
-            self.table.setItem(r, 10, QTableWidgetItem(str(img.get("path", ""))))
         # 换行后行高自适应内容（缩略图列最小高度由 minimumSectionSize 保证）
         self.table.verticalHeader().setMinimumSectionSize(60)
         self.table.resizeRowsToContents()
@@ -1690,6 +1727,11 @@ class DataPage(QWidget):
         combo_tier.setCurrentIndex(idx if idx >= 0 else 0)
         combo_tier.setToolTip("声明这份数据已具备的标注水平；导入数据后体检并自动校正")
         f.addRow("标注档位", combo_tier)
+        tier_help = QLabel(
+            "标注档位用于选择后续模型准备方式；系统导入后会根据实际数据体检并校正。")
+        tier_help.setWordWrap(True)
+        tier_help.setProperty("subtext", True)
+        f.addRow("为什么需要", tier_help)
         # 前端反馈 v9：预训练组/检测组配置（调整即动态重算）
         spin_pn = QSpinBox()
         spin_pn.setRange(0, 9999)
@@ -1706,6 +1748,11 @@ class DataPage(QWidget):
         spin_bs.setValue(int(src.get("batch_size") or 30))
         spin_bs.setToolTip("检测组按此数量分批次（产线按批消费/回队）")
         f.addRow("检测批次图数", spin_bs)
+        batch_help = QLabel(
+            "检测组会按这个数量切成图片组，供工单队列逐组消费；错检组可整体回队重检。")
+        batch_help.setWordWrap(True)
+        batch_help.setProperty("subtext", True)
+        f.addRow("分组作用", batch_help)
         chk_category = QCheckBox("数据已分品类（导入时按目录自动识别）")
         chk_category.setChecked(bool(src.get("per_category")))
         f.addRow("品类", chk_category)
@@ -1963,6 +2010,12 @@ class DataPage(QWidget):
         dlg.setWindowTitle("新建数据源")
         dlg.setMinimumWidth(460)
         f = QFormLayout(dlg)
+        desc = QLabel(
+            "数据源是可复用的数据入口：先登记数据从哪里来、如何组织和如何分组，"
+            "再把导入批次挂到它下面；之后工单可以复用这个数据源。")
+        desc.setWordWrap(True)
+        desc.setProperty("subtext", True)
+        f.addRow("说明", desc)
         edit_name = QLineEdit()
         edit_name.setPlaceholderText("如：3号线贴片机拍照图 / 产线A检测视频")
         f.addRow("名称", edit_name)

@@ -1,0 +1,78 @@
+{
+  "profile": "accuracy",
+  "category": "bottle",
+  "n_probe": 10,
+  "max_abs_delta": 0.0,
+  "rows": [
+    {
+      "img": "test\\good\\000.png",
+      "A": 1.2336924806605902,
+      "B": 1.2336924806605902,
+      "d_fused": 0.0,
+      "d_slot_max": 0.0
+    },
+    {
+      "img": "test\\good\\001.png",
+      "A": 1.0058197638201039,
+      "B": 1.0058197638201039,
+      "d_fused": 0.0,
+      "d_slot_max": 0.0
+    },
+    {
+      "img": "test\\good\\002.png",
+      "A": 0.5691082218374307,
+      "B": 0.5691082218374307,
+      "d_fused": 0.0,
+      "d_slot_max": 0.0
+    },
+    {
+      "img": "test\\good\\003.png",
+      "A": 0.3000095788006314,
+      "B": 0.3000095788006314,
+      "d_fused": 0.0,
+      "d_slot_max": 0.0
+    },
+    {
+      "img": "test\\good\\004.png",
+      "A": 0.4540137080749216,
+      "B": 0.4540137080749216,
+      "d_fused": 0.0,
+      "d_slot_max": 0.0
+    },
+    {
+      "img": "test\\broken_large\\001.png",
+      "A": 1.9692626869418688,
+      "B": 1.9692626869418688,
+      "d_fused": 0.0,
+      "d_slot_max": 0.0
+    },
+    {
+      "img": "test\\broken_small\\000.png",
+      "A": 1.6264140895502757,
+      "B": 1.6264140895502757,
+      "d_fused": 0.0,
+      "d_slot_max": 0.0
+    },
+    {
+      "img": "test\\broken_small\\001.png",
+      "A": 1.841292381461239,
+      "B": 1.841292381461239,
+      "d_fused": 0.0,
+      "d_slot_max": 0.0
+    },
+    {
+      "img": "test\\contamination\\000.png",
+      "A": 1.9024353350548697,
+      "B": 1.9024353350548697,
+      "d_fused": 0.0,
+      "d_slot_max": 0.0
+    },
+    {
+      "img": "test\\contamination\\001.png",
+      "A": 1.7479768454685158,
+      "B": 1.7479768454685158,
+      "d_fused": 0.0,
+      "d_slot_max": 0.0
+    }
+  ]
+}

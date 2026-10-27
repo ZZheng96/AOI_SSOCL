@@ -1,0 +1,4 @@
+Working directory: d:\CGAIC\AOI_SSOCL\AOI_tree\PCB_Dual
+$env:QT_QPA_PLATFORM='offscreen'; py -3.11 -m unittest tests.test_pcbdual04 tests.test_adapter_batch tests.test_shift_batch tests.test_tuner_preview -v
+py -3.11 -c "import platform,cv2,numpy,PySide6; print(platform.platform()); print(platform.python_version(),cv2.__version__,numpy.__version__,PySide6.__version__)"
+py -3.11 -c "from app.detect.adapters.shift_adapter import _load_shift,ShiftAdapter,SHIFT_SHARED_ID; a=ShiftAdapter(); d=_load_shift()['instance'].default_config(); print([(p.key,p.default,d.get(p.key)) for p in a.param_specs(SHIFT_SHARED_ID) if str(p.default).lower()!=str(d.get(p.key)).lower()])"

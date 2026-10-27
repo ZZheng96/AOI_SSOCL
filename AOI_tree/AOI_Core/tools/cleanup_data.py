@@ -98,6 +98,30 @@ def purge_heatmaps(settings, days: int, dry: bool) -> None:
           "（DB 检测记录保留，热力图可由追溯重检再生成）")
 
 
+def _protected_versions(cat_dir: Path, versions: list, active, keep: int) -> dict:
+    """AC-079：归档前算出必须保留的版本及原因（引用完整性）。除激活版+最新N版外，
+    还保留回滚链：激活版 meta.parent_version（候选回滚目标）与激活版前一版
+    （engine.rollback 默认目标），避免清理后回滚/重放失败。"""
+    import json
+    reasons: dict = {}
+    for v in versions[:keep]:
+        reasons.setdefault(v, []).append(f"最新{keep}版")
+    if active:
+        reasons.setdefault(active, []).append("激活版")
+        meta = cat_dir / f"v{active}" / "meta.json"
+        try:
+            parent = json.loads(meta.read_text(encoding="utf-8")).get("parent_version") \
+                if meta.is_file() else None
+        except Exception:  # noqa: BLE001
+            parent = None
+        if isinstance(parent, int) and parent in versions:
+            reasons.setdefault(parent, []).append("激活版父版本（回滚目标）")
+        older = sorted(v for v in versions if v < active)
+        if older:
+            reasons.setdefault(older[-1], []).append("激活版前一版（默认回滚目标）")
+    return reasons
+
+
 def snapshots_keep(settings, keep: int, dry: bool) -> None:
     root = settings.engine_storage / "snapshots"
     if not root.is_dir():
@@ -118,7 +142,11 @@ def snapshots_keep(settings, keep: int, dry: bool) -> None:
             (int(p.name[1:]) for p in cat_dir.iterdir()
              if p.is_dir() and p.name.startswith("v") and p.name[1:].isdigit()),
             reverse=True)
-        keep_set = set(versions[:keep]) | ({active} if active else set())
+        reasons = _protected_versions(cat_dir, versions, active, keep)
+        keep_set = set(reasons)
+        if dry:
+            for v in sorted(reasons, reverse=True):
+                print(f"[dry]   保留 {cat_dir.name}/v{v}：{'、'.join(reasons[v])}")
         for v in versions:
             if v in keep_set:
                 continue

@@ -1,0 +1,278 @@
+{
+  "id": "演示_连锡_bridge_实录_20261019_225049",
+  "display_name": "演示_连锡_bridge_实录_20261019_225049",
+  "version": 1,
+  "status": "published",
+  "created_at": "2026-10-19T22:50:58+08:00",
+  "updated_at": "2026-10-19T22:51:16+08:00",
+  "standard_image": {
+    "path": "D:\\CGAIC\\AOI_SSOCL\\AOI_tree\\PCB_Dual\\alg_repo\\smt\\test_images\\bridge_pair\\pair4\\PixPin_2026-07-01_09-22-58_OK.png",
+    "sha1": "9fa4d1f54480592acb30adfa074b290d04e070d8",
+    "width": 964,
+    "height": 653,
+    "source_name": ""
+  },
+  "category": "solder_smt",
+  "detection_items": [
+    {
+      "algorithm_id": "solder_连锡",
+      "enabled": true,
+      "params": {
+        "bridge_min_area": 20,
+        "mask_h_low": 31,
+        "mask_h_high": 87,
+        "mask_s_min": 40,
+        "mask_v_min": 50,
+        "silk_h_low": 85,
+        "silk_h_high": 89,
+        "silk_s_low": 58,
+        "silk_s_high": 110,
+        "silk_v_low": 145,
+        "silk_v_high": 157,
+        "insufficient_thresh": 0.08,
+        "excess_thresh": 0.3,
+        "cold_solder_dark_ratio": 0.3,
+        "cold_solder_v_dark": 80,
+        "solder_blue_h_low": 0,
+        "solder_blue_h_high": 179,
+        "solder_blue_s_min": 0,
+        "solder_blue_v_min": 122,
+        "template_mode": "diff_grow_ROI",
+        "provide_pad_frames": true,
+        "crack_min_length_ratio": 0.5
+      },
+      "preprocess_recipe": null,
+      "region_kind": "smt"
+    },
+    {
+      "algorithm_id": "solder_共用参数",
+      "enabled": false,
+      "params": {
+        "solder_blue_h_low": 0,
+        "solder_blue_h_high": 179,
+        "solder_blue_s_min": 0,
+        "solder_blue_v_min": 122,
+        "pad_expand_ratio": 0.3,
+        "pad_expand_short_ratio": 0.3,
+        "min_pad_area": 20,
+        "min_interference_area": 30,
+        "enable_auto_resize": "true",
+        "auto_resize_max_size": 400,
+        "auto_resize_threshold": 450,
+        "mask_h_low": 31,
+        "mask_h_high": 87,
+        "mask_s_min": 40,
+        "mask_v_min": 50,
+        "silk_h_low": 85,
+        "silk_h_high": 89,
+        "silk_s_low": 58,
+        "silk_s_high": 110,
+        "silk_v_low": 145,
+        "silk_v_high": 157,
+        "insufficient_thresh": 0.08,
+        "excess_thresh": 0.3,
+        "bridge_min_area": 20,
+        "cold_solder_dark_ratio": 0.3,
+        "cold_solder_v_dark": 80,
+        "template_mode": "diff_grow_ROI",
+        "provide_pad_frames": true,
+        "crack_min_length_ratio": 0.5
+      },
+      "preprocess_recipe": null,
+      "region_kind": "smt"
+    }
+  ],
+  "algorithms": [
+    {
+      "algorithm_id": "solder_连锡",
+      "enabled": true,
+      "params": {
+        "bridge_min_area": 20,
+        "mask_h_low": 31,
+        "mask_h_high": 87,
+        "mask_s_min": 40,
+        "mask_v_min": 50,
+        "silk_h_low": 85,
+        "silk_h_high": 89,
+        "silk_s_low": 58,
+        "silk_s_high": 110,
+        "silk_v_low": 145,
+        "silk_v_high": 157,
+        "insufficient_thresh": 0.08,
+        "excess_thresh": 0.3,
+        "cold_solder_dark_ratio": 0.3,
+        "cold_solder_v_dark": 80,
+        "solder_blue_h_low": 0,
+        "solder_blue_h_high": 179,
+        "solder_blue_s_min": 0,
+        "solder_blue_v_min": 122,
+        "template_mode": "diff_grow_ROI",
+        "provide_pad_frames": true,
+        "crack_min_length_ratio": 0.5
+      },
+      "preprocess_recipe": null,
+      "region_kind": "smt"
+    },
+    {
+      "algorithm_id": "solder_共用参数",
+      "enabled": false,
+      "params": {
+        "solder_blue_h_low": 0,
+        "solder_blue_h_high": 179,
+        "solder_blue_s_min": 0,
+        "solder_blue_v_min": 122,
+        "pad_expand_ratio": 0.3,
+        "pad_expand_short_ratio": 0.3,
+        "min_pad_area": 20,
+        "min_interference_area": 30,
+        "enable_auto_resize": "true",
+        "auto_resize_max_size": 400,
+        "auto_resize_threshold": 450,
+        "mask_h_low": 31,
+        "mask_h_high": 87,
+        "mask_s_min": 40,
+        "mask_v_min": 50,
+        "silk_h_low": 85,
+        "silk_h_high": 89,
+        "silk_s_low": 58,
+        "silk_s_high": 110,
+        "silk_v_low": 145,
+        "silk_v_high": 157,
+        "insufficient_thresh": 0.08,
+        "excess_thresh": 0.3,
+        "bridge_min_area": 20,
+        "cold_solder_dark_ratio": 0.3,
+        "cold_solder_v_dark": 80,
+        "template_mode": "diff_grow_ROI",
+        "provide_pad_frames": true,
+        "crack_min_length_ratio": 0.5
+      },
+      "preprocess_recipe": null,
+      "region_kind": "smt"
+    }
+  ],
+  "region_sets": {
+    "smt_pads": [
+      {
+        "shape": "rect",
+        "x": 23,
+        "y": 43,
+        "w": 258,
+        "h": 123
+      },
+      {
+        "shape": "rect",
+        "x": 24,
+        "y": 203,
+        "w": 258,
+        "h": 99
+      },
+      {
+        "shape": "rect",
+        "x": 29,
+        "y": 350,
+        "w": 257,
+        "h": 102
+      },
+      {
+        "shape": "rect",
+        "x": 30,
+        "y": 497,
+        "w": 257,
+        "h": 120
+      },
+      {
+        "shape": "rect",
+        "x": 695,
+        "y": 41,
+        "w": 258,
+        "h": 123
+      },
+      {
+        "shape": "rect",
+        "x": 696,
+        "y": 203,
+        "w": 259,
+        "h": 106
+      },
+      {
+        "shape": "rect",
+        "x": 701,
+        "y": 351,
+        "w": 257,
+        "h": 104
+      },
+      {
+        "shape": "rect",
+        "x": 704,
+        "y": 476,
+        "w": 256,
+        "h": 131
+      }
+    ]
+  },
+  "calibration": {
+    "smt_pads": [
+      [
+        23.0,
+        43.0,
+        258.0,
+        123.0
+      ],
+      [
+        24.0,
+        203.0,
+        258.0,
+        99.0
+      ],
+      [
+        29.0,
+        350.0,
+        257.0,
+        102.0
+      ],
+      [
+        30.0,
+        497.0,
+        257.0,
+        120.0
+      ],
+      [
+        695.0,
+        41.0,
+        258.0,
+        123.0
+      ],
+      [
+        696.0,
+        203.0,
+        259.0,
+        106.0
+      ],
+      [
+        701.0,
+        351.0,
+        257.0,
+        104.0
+      ],
+      [
+        704.0,
+        476.0,
+        256.0,
+        131.0
+      ]
+    ]
+  },
+  "gate": {
+    "size_gate_enabled": true,
+    "size_gate_max_diff_px": 10
+  },
+  "notes": "",
+  "calib_key": "演示_连锡_bridge_实录_20261019_225049",
+  "engine_mode": "dual",
+  "model_category": "solder_smt",
+  "px_calibration": {},
+  "cad_items": [],
+  "panels": {},
+  "fov_grid": []
+}

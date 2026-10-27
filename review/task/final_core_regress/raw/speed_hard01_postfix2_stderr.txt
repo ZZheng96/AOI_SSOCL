@@ -1,0 +1,21 @@
+D:\CGAIC\AOI_SSOCL\AOI_tree\assets\dinov2\dinov2\layers\swiglu_ffn.py:51: UserWarning: xFormers is not available (SwiGLU)
+  warnings.warn("xFormers is not available (SwiGLU)")
+D:\CGAIC\AOI_SSOCL\AOI_tree\assets\dinov2\dinov2\layers\attention.py:33: UserWarning: xFormers is not available (Attention)
+  warnings.warn("xFormers is not available (Attention)")
+D:\CGAIC\AOI_SSOCL\AOI_tree\assets\dinov2\dinov2\layers\block.py:40: UserWarning: xFormers is not available (Block)
+  warnings.warn("xFormers is not available (Block)")
+C:\Users\imia\AppData\Roaming\Python\Python311\site-packages\sklearn\base.py:525: InconsistentVersionWarning: Trying to unpickle estimator DecisionTreeClassifier from version 1.9.1 when using version 1.9.0. This might lead to breaking code or invalid results. Use at your own risk. For more info please refer to:
+https://scikit-learn.org/stable/model_persistence.html#security-maintainability-limitations
+  warnings.warn(
+C:\Users\imia\AppData\Roaming\Python\Python311\site-packages\sklearn\base.py:525: InconsistentVersionWarning: Trying to unpickle estimator RandomForestClassifier from version 1.9.1 when using version 1.9.0. This might lead to breaking code or invalid results. Use at your own risk. For more info please refer to:
+https://scikit-learn.org/stable/model_persistence.html#security-maintainability-limitations
+  warnings.warn(
+对位偏移预警 detection_id=1 category=gold_finger offset=[-9.0, 26.64]
+对位偏移预警 detection_id=2 category=gold_finger offset=[-9.0, 26.64]
+对位偏移预警 detection_id=3 category=gold_finger offset=[-121.84, -118.82]
+对位偏移预警 detection_id=4 category=gold_finger offset=[17.14, -78.32]
+对位偏移预警 detection_id=5 category=gold_finger offset=[43.15, -106.02]
+对位偏移预警 detection_id=6 category=gold_finger offset=[7.7, -8.43]
+对位偏移预警 detection_id=7 category=gold_finger offset=[105.39, 121.27]
+对位偏移预警 detection_id=8 category=gold_finger offset=[27.95, -4.81]
+对位偏移预警 detection_id=9 category=gold_finger offset=[23.31, -10.8]

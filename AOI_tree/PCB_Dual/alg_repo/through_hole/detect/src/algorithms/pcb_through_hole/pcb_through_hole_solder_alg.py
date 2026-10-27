@@ -66,6 +66,7 @@ class PcbThroughHoleSolderAlg(IDetectionAlgorithm):
         roi_bbox: Optional[BoundingBox] = None,
         original_template_image: Optional[np.ndarray] = None,
         multiple_roi_images: Optional[List[np.ndarray]] = None,
+        *, _shared_cache=None,
     ) -> AlgorithmResult:
         """检测入口。算法池只调用此方法。"""
         t0 = time.perf_counter()
@@ -128,10 +129,25 @@ class PcbThroughHoleSolderAlg(IDetectionAlgorithm):
                 except Exception as exc:
                     return self._fail_result(f"参数配置无效: {exc}", t0, exc=exc)
 
-                res = run_inspect(
-                    work_image, tm, name=str(template_key),
-                    enable_review=bool(cfg.get("enable_review", True)),
-                )
+                # 比较实际阈值而非仅比较覆盖字典：显式默认值与缺省值可安全同组。
+                effective = {"thresholds": dict(INS_C.TH),
+                             "insufficient": {k: INS_C.insuf_th(k) for k in INS_C.INSUF_PRESETS["MED"]}}
+                cache_key = repr((sorted((k, v) for k, v in cfg.items()
+                    if k not in {"enabled_defects", "advanced", "void_preset", "insuf_preset"}),
+                    sorted(effective["thresholds"].items()), sorted(effective["insufficient"].items())))
+                res = _shared_cache.get(cache_key) if _shared_cache is not None else None
+                if res is None:
+                    inspect_tm = replace(tm, enabled_defects=effective_enabled_defects([12, 13, 14, 15, 16], n_pads)) if _shared_cache is not None else tm
+                    res = run_inspect(
+                        work_image, inspect_tm, name=str(template_key),
+                        enable_review=bool(cfg.get("enable_review", True)),
+                        diagnostics=bool(cfg.get("diagnostics")),
+                    )
+                    if _shared_cache is not None:
+                        _shared_cache[cache_key] = res
+                if _shared_cache is not None and res.status != "待复检":
+                    detections = [d for d in res.detections if d.defect_id in tm.enabled_defects]
+                    res = replace(res, detections=detections, status="NG" if detections else "OK")
                 vis = draw_annotation(res)
 
             # 组织结果：坐标映射回完整 image
@@ -428,6 +444,23 @@ class PcbThroughHoleSolderAlg(IDetectionAlgorithm):
             "image_shape": [int(test_full.shape[0]), int(test_full.shape[1])],
             "output_image": output_image,
         }
+        if cfg.get("diagnostics"):
+            solder = res.masks.solder
+            contours, _ = cv2.findContours(solder, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+            contour_view = cv2.cvtColor(solder, cv2.COLOR_GRAY2BGR)
+            cv2.drawContours(contour_view, contours, -1, (0, 0, 255), 1)
+            metadata["diagnostics"] = {
+                "contour_view": contour_view,
+                "aligned_test": res.aligned,
+                "solder_mask": solder,
+                "mask_source": "标准锡面（REVIEW早停，未执行测试分割）" if status == "REVIEW" else "测试锡面",
+                "valid_registration": res.valid,
+                "contours": [c.reshape(-1, 2).tolist() for c in contours],
+                "coverage_meaning": "配准有效区域覆盖模板锡面比例；不是焊锡填充率",
+                "alignment": vars(res.align_meta),
+                "coordinates": {"space": "检测工作图", "crop_offset": [offset_x, offset_y]},
+                **res.diagnostics,
+            }
         if roi_bbox is not None:
             metadata["roi_bbox"] = {
                 "x": roi_bbox.x, "y": roi_bbox.y,

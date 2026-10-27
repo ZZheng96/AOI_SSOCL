@@ -1,0 +1,176 @@
+[
+ {
+  "file": "alg_repo/shift_smt/src/algorithms/component_detect/shift_smt_all_alg.py",
+  "action": "diff_synced",
+  "hash_match": true,
+  "backup": "d:\\CGAIC\\AOI_SSOCL\\review\\sync_backup\\PCB-ACCEPT-05\\alg_repo\\shift_smt\\src\\algorithms\\component_detect\\shift_smt_all_alg.py"
+ },
+ {
+  "file": "alg_repo/smt/src/algorithms/solder_smt/composite_smt_all/_solder_core.py",
+  "action": "diff_synced",
+  "hash_match": true,
+  "backup": "d:\\CGAIC\\AOI_SSOCL\\review\\sync_backup\\PCB-ACCEPT-05\\alg_repo\\smt\\src\\algorithms\\solder_smt\\composite_smt_all\\_solder_core.py"
+ },
+ {
+  "file": "alg_repo/smt/src/algorithms/solder_smt/composite_smt_all/solder_smt_all_alg.py",
+  "action": "diff_synced",
+  "hash_match": true,
+  "backup": "d:\\CGAIC\\AOI_SSOCL\\review\\sync_backup\\PCB-ACCEPT-05\\alg_repo\\smt\\src\\algorithms\\solder_smt\\composite_smt_all\\solder_smt_all_alg.py"
+ },
+ {
+  "file": "alg_repo/through_hole/detect/src/algorithms/pcb_through_hole/pcb_through_hole_solder_alg.py",
+  "action": "diff_synced",
+  "hash_match": true,
+  "backup": "d:\\CGAIC\\AOI_SSOCL\\review\\sync_backup\\PCB-ACCEPT-05\\alg_repo\\through_hole\\detect\\src\\algorithms\\pcb_through_hole\\pcb_through_hole_solder_alg.py"
+ },
+ {
+  "file": "alg_repo/through_hole/detect/src/algorithms/pcb_through_hole/pipeline.py",
+  "action": "diff_synced",
+  "hash_match": true,
+  "backup": "d:\\CGAIC\\AOI_SSOCL\\review\\sync_backup\\PCB-ACCEPT-05\\alg_repo\\through_hole\\detect\\src\\algorithms\\pcb_through_hole\\pipeline.py"
+ },
+ {
+  "file": "app/api/routes_detect.py",
+  "action": "diff_synced",
+  "hash_match": true,
+  "backup": "d:\\CGAIC\\AOI_SSOCL\\review\\sync_backup\\PCB-ACCEPT-05\\app\\api\\routes_detect.py"
+ },
+ {
+  "file": "app/detect/adapters/shift_adapter.py",
+  "action": "diff_synced",
+  "hash_match": true,
+  "backup": "d:\\CGAIC\\AOI_SSOCL\\review\\sync_backup\\PCB-ACCEPT-05\\app\\detect\\adapters\\shift_adapter.py"
+ },
+ {
+  "file": "app/detect/adapters/smt_adapter.py",
+  "action": "diff_synced",
+  "hash_match": true,
+  "backup": "d:\\CGAIC\\AOI_SSOCL\\review\\sync_backup\\PCB-ACCEPT-05\\app\\detect\\adapters\\smt_adapter.py"
+ },
+ {
+  "file": "app/detect/adapters/through_hole_adapter.py",
+  "action": "diff_synced",
+  "hash_match": true,
+  "backup": "d:\\CGAIC\\AOI_SSOCL\\review\\sync_backup\\PCB-ACCEPT-05\\app\\detect\\adapters\\through_hole_adapter.py"
+ },
+ {
+  "file": "app/detect/contract.py",
+  "action": "diff_synced",
+  "hash_match": true,
+  "backup": "d:\\CGAIC\\AOI_SSOCL\\review\\sync_backup\\PCB-ACCEPT-05\\app\\detect\\contract.py"
+ },
+ {
+  "file": "app/detect/scheduler.py",
+  "action": "diff_synced",
+  "hash_match": true,
+  "backup": "d:\\CGAIC\\AOI_SSOCL\\review\\sync_backup\\PCB-ACCEPT-05\\app\\detect\\scheduler.py"
+ },
+ {
+  "file": "app/detect/types.py",
+  "action": "diff_synced",
+  "hash_match": true,
+  "backup": "d:\\CGAIC\\AOI_SSOCL\\review\\sync_backup\\PCB-ACCEPT-05\\app\\detect\\types.py"
+ },
+ {
+  "file": "app/inspect/fusion.py",
+  "action": "diff_synced",
+  "hash_match": true,
+  "backup": "d:\\CGAIC\\AOI_SSOCL\\review\\sync_backup\\PCB-ACCEPT-05\\app\\inspect\\fusion.py"
+ },
+ {
+  "file": "app/inspect/service.py",
+  "action": "diff_synced",
+  "hash_match": true,
+  "backup": "d:\\CGAIC\\AOI_SSOCL\\review\\sync_backup\\PCB-ACCEPT-05\\app\\inspect\\service.py"
+ },
+ {
+  "file": "app/result/store.py",
+  "action": "diff_synced",
+  "hash_match": true,
+  "backup": "d:\\CGAIC\\AOI_SSOCL\\review\\sync_backup\\PCB-ACCEPT-05\\app\\result\\store.py"
+ },
+ {
+  "file": "app/ui/algo_param_panel.py",
+  "action": "diff_synced",
+  "hash_match": true,
+  "backup": "d:\\CGAIC\\AOI_SSOCL\\review\\sync_backup\\PCB-ACCEPT-05\\app\\ui\\algo_param_panel.py"
+ },
+ {
+  "file": "app/ui/defect_table.py",
+  "action": "diff_synced",
+  "hash_match": true,
+  "backup": "d:\\CGAIC\\AOI_SSOCL\\review\\sync_backup\\PCB-ACCEPT-05\\app\\ui\\defect_table.py"
+ },
+ {
+  "file": "app/ui/detect_page.py",
+  "action": "diff_synced",
+  "hash_match": true,
+  "backup": "d:\\CGAIC\\AOI_SSOCL\\review\\sync_backup\\PCB-ACCEPT-05\\app\\ui\\detect_page.py"
+ },
+ {
+  "file": "app/ui/history_page.py",
+  "action": "diff_synced",
+  "hash_match": true,
+  "backup": "d:\\CGAIC\\AOI_SSOCL\\review\\sync_backup\\PCB-ACCEPT-05\\app\\ui\\history_page.py"
+ },
+ {
+  "file": "app/ui/inspect_page.py",
+  "action": "diff_synced",
+  "hash_match": true,
+  "backup": "d:\\CGAIC\\AOI_SSOCL\\review\\sync_backup\\PCB-ACCEPT-05\\app\\ui\\inspect_page.py"
+ },
+ {
+  "file": "app/ui/result_hud.py",
+  "action": "diff_synced",
+  "hash_match": true,
+  "backup": "d:\\CGAIC\\AOI_SSOCL\\review\\sync_backup\\PCB-ACCEPT-05\\app\\ui\\result_hud.py"
+ },
+ {
+  "file": "app/ui/template_studio_page.py",
+  "action": "diff_synced",
+  "hash_match": true,
+  "backup": "d:\\CGAIC\\AOI_SSOCL\\review\\sync_backup\\PCB-ACCEPT-05\\app\\ui\\template_studio_page.py"
+ },
+ {
+  "file": "app/ui/tuner_dialog.py",
+  "action": "diff_synced",
+  "hash_match": true,
+  "backup": "d:\\CGAIC\\AOI_SSOCL\\review\\sync_backup\\PCB-ACCEPT-05\\app\\ui\\tuner_dialog.py"
+ },
+ {
+  "file": "docs/架构与设计.md",
+  "action": "diff_synced",
+  "hash_match": true,
+  "backup": "d:\\CGAIC\\AOI_SSOCL\\review\\sync_backup\\PCB-ACCEPT-05\\docs\\架构与设计.md"
+ },
+ {
+  "file": "app/ui/tuner_preview.py",
+  "action": "new_copied",
+  "hash_match": true
+ },
+ {
+  "file": "tests/test_adapter_batch.py",
+  "action": "new_copied",
+  "hash_match": true
+ },
+ {
+  "file": "tests/test_pcbdual04.py",
+  "action": "new_copied",
+  "hash_match": true
+ },
+ {
+  "file": "tests/test_shift_batch.py",
+  "action": "new_copied",
+  "hash_match": true
+ },
+ {
+  "file": "tests/test_tuner_preview.py",
+  "action": "new_copied",
+  "hash_match": true
+ },
+ {
+  "file": "tests/tuner02_real_cases.py",
+  "action": "new_copied",
+  "hash_match": true
+ }
+]

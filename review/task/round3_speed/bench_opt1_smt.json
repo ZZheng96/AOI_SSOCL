@@ -1,0 +1,1177 @@
+{
+ "tag": "opt1_smt",
+ "env": {},
+ "cats": {
+  "smt_solder": {
+   "rows": [
+    {
+     "image": "PixPin_2026-07-01_08-41-22_OK.png",
+     "shape": [
+      286,
+      792
+     ],
+     "rep": 0,
+     "decision": "anomaly",
+     "score": 0.8496928571428572,
+     "slot_scores": {
+      "sem": 0.96875,
+      "disc": 0.19140625,
+      "shead": 0.71875
+     },
+     "raw_scores": {
+      "sem": 0.4723999068140983,
+      "disc": 0.9818254213780164,
+      "shead": 2.5897233486175537
+     },
+     "n_boxes": 0,
+     "latency_ms": 39.99,
+     "wall_ms": 40.1,
+     "decode_ms": 5.8,
+     "serialize_ms": 0.06,
+     "tasks": {
+      "_align_offset": {
+       "wait": 0.2,
+       "run": 2.3
+      },
+      "slot:sem": {
+       "wait": 0.0,
+       "run": 3.7
+      },
+      "slot:disc": {
+       "wait": 0.0,
+       "run": 1.4
+      },
+      "slot:shead": {
+       "wait": 0.0,
+       "run": 2.0
+      },
+      "_img_features": {
+       "wait": 0.1,
+       "run": 10.3
+      }
+     },
+     "timing": {
+      "io": 0.0,
+      "tile": 0.0,
+      "forward": 27.92,
+      "score": 8.11,
+      "hier": 3.98,
+      "decide": 0.0,
+      "tta": 0.0,
+      "total": 40.02
+     }
+    },
+    {
+     "image": "PixPin_2026-07-01_08-41-56_OK.png",
+     "shape": [
+      274,
+      757
+     ],
+     "rep": 0,
+     "decision": "normal",
+     "score": 0.49015401785714285,
+     "slot_scores": {
+      "sem": 0.33203125,
+      "disc": 0.6640625,
+      "shead": 0.6640625
+     },
+     "raw_scores": {
+      "sem": 0.45955115407705305,
+      "disc": 0.9900542099028825,
+      "shead": 2.545862436294555
+     },
+     "n_boxes": 0,
+     "latency_ms": 36.73,
+     "wall_ms": 36.83,
+     "decode_ms": 3.08,
+     "serialize_ms": 0.03,
+     "tasks": {
+      "_align_offset": {
+       "wait": 0.2,
+       "run": 1.8
+      },
+      "slot:sem": {
+       "wait": 0.0,
+       "run": 3.2
+      },
+      "slot:disc": {
+       "wait": 0.0,
+       "run": 1.5
+      },
+      "slot:shead": {
+       "wait": 0.0,
+       "run": 2.3
+      },
+      "_img_features": {
+       "wait": 0.1,
+       "run": 9.1
+      }
+     },
+     "timing": {
+      "io": 0.0,
+      "tile": 0.0,
+      "forward": 28.43,
+      "score": 7.98,
+      "decide": 0.0,
+      "tta": 0.0,
+      "total": 36.41
+     }
+    },
+    {
+     "image": "PixPin_2026-07-01_08-47-30_OK.png",
+     "shape": [
+      600,
+      291
+     ],
+     "rep": 0,
+     "decision": "anomaly",
+     "score": 1.3042598214285717,
+     "slot_scores": {
+      "sem": 2.0,
+      "disc": 0.59765625,
+      "shead": 0.5390625
+     },
+     "raw_scores": {
+      "sem": 0.6174421176314353,
+      "disc": 0.989012511074543,
+      "shead": 2.4238183498382564
+     },
+     "n_boxes": 2,
+     "latency_ms": 40.9,
+     "wall_ms": 41.01,
+     "decode_ms": 5.28,
+     "serialize_ms": 0.04,
+     "tasks": {
+      "_align_offset": {
+       "wait": 0.1,
+       "run": 2.1
+      },
+      "slot:sem": {
+       "wait": 0.0,
+       "run": 3.6
+      },
+      "slot:disc": {
+       "wait": 0.0,
+       "run": 1.5
+      },
+      "slot:shead": {
+       "wait": 0.0,
+       "run": 1.9
+      },
+      "_img_features": {
+       "wait": 0.1,
+       "run": 9.4
+      }
+     },
+     "timing": {
+      "io": 0.0,
+      "tile": 0.0,
+      "forward": 29.92,
+      "score": 7.98,
+      "hier": 2.99,
+      "decide": 0.0,
+      "tta": 0.0,
+      "total": 40.89
+     }
+    },
+    {
+     "image": "PixPin_2026-07-01_09-01-11_OK.png",
+     "shape": [
+      579,
+      709
+     ],
+     "rep": 0,
+     "decision": "anomaly",
+     "score": 1.3079803571428572,
+     "slot_scores": {
+      "sem": 2.0,
+      "disc": 2.0,
+      "shead": 0.546875
+     },
+     "raw_scores": {
+      "sem": 0.5464095264673233,
+      "disc": 0.9926674511283636,
+      "shead": 2.4308831691741943
+     },
+     "n_boxes": 1,
+     "latency_ms": 54.36,
+     "wall_ms": 54.47,
+     "decode_ms": 11.61,
+     "serialize_ms": 0.05,
+     "tasks": {
+      "slot:sem": {
+       "wait": 0.0,
+       "run": 4.1
+      },
+      "_align_offset": {
+       "wait": 0.1,
+       "run": 4.3
+      },
+      "slot:disc": {
+       "wait": 0.0,
+       "run": 1.1
+      },
+      "slot:shead": {
+       "wait": 0.0,
+       "run": 1.9
+      },
+      "_img_features": {
+       "wait": 0.1,
+       "run": 23.9
+      }
+     },
+     "timing": {
+      "io": 0.0,
+      "tile": 0.0,
+      "forward": 28.92,
+      "score": 7.98,
+      "hier": 16.96,
+      "decide": 0.0,
+      "tta": 0.0,
+      "total": 53.85
+     }
+    },
+    {
+     "image": "PixPin_2026-07-01_09-09-07_OK.png",
+     "shape": [
+      540,
+      274
+     ],
+     "rep": 0,
+     "decision": "anomaly",
+     "score": 1.3079803571428572,
+     "slot_scores": {
+      "sem": 2.0,
+      "disc": 2.0,
+      "shead": 0.546875
+     },
+     "raw_scores": {
+      "sem": 0.6232651468366385,
+      "disc": 0.9922429326921701,
+      "shead": 2.4288744926452637
+     },
+     "n_boxes": 2,
+     "latency_ms": 40.23,
+     "wall_ms": 40.32,
+     "decode_ms": 4.64,
+     "serialize_ms": 0.03,
+     "tasks": {
+      "_align_offset": {
+       "wait": 0.1,
+       "run": 1.8
+      },
+      "slot:sem": {
+       "wait": 0.0,
+       "run": 3.5
+      },
+      "slot:disc": {
+       "wait": 0.0,
+       "run": 1.5
+      },
+      "slot:shead": {
+       "wait": 0.0,
+       "run": 1.9
+      },
+      "_img_features": {
+       "wait": 0.2,
+       "run": 7.3
+      }
+     },
+     "timing": {
+      "io": 0.0,
+      "tile": 0.0,
+      "forward": 29.43,
+      "score": 7.56,
+      "hier": 3.98,
+      "decide": 0.0,
+      "tta": 0.0,
+      "total": 40.97
+     }
+    },
+    {
+     "image": "PixPin_2026-07-01_09-21-26_OK.png",
+     "shape": [
+      686,
+      278
+     ],
+     "rep": 0,
+     "decision": "anomaly",
+     "score": 1.4344785714285715,
+     "slot_scores": {
+      "sem": 2.0,
+      "disc": 0.48046875,
+      "shead": 0.8125
+     },
+     "raw_scores": {
+      "sem": 0.5857875734567642,
+      "disc": 0.9871885865926742,
+      "shead": 2.663142919540405
+     },
+     "n_boxes": 5,
+     "latency_ms": 40.64,
+     "wall_ms": 40.75,
+     "decode_ms": 5.7,
+     "serialize_ms": 0.04,
+     "tasks": {
+      "_align_offset": {
+       "wait": 0.1,
+       "run": 1.6
+      },
+      "slot:sem": {
+       "wait": 0.0,
+       "run": 3.0
+      },
+      "slot:disc": {
+       "wait": 0.0,
+       "run": 1.7
+      },
+      "slot:shead": {
+       "wait": 0.0,
+       "run": 2.3
+      },
+      "_img_features": {
+       "wait": 0.1,
+       "run": 9.8
+      }
+     },
+     "timing": {
+      "io": 0.0,
+      "tile": 0.0,
+      "forward": 29.49,
+      "score": 7.94,
+      "hier": 3.99,
+      "decide": 0.0,
+      "tta": 0.0,
+      "total": 41.41
+     }
+    },
+    {
+     "image": "PixPin_2026-07-01_09-23-16.png",
+     "shape": [
+      704,
+      712
+     ],
+     "rep": 0,
+     "decision": "anomaly",
+     "score": 1.309840625,
+     "slot_scores": {
+      "sem": 2.0,
+      "disc": 2.0,
+      "shead": 0.55078125
+     },
+     "raw_scores": {
+      "sem": 0.5975022062659263,
+      "disc": 0.994612305238843,
+      "shead": 2.434088945388794
+     },
+     "n_boxes": 1,
+     "latency_ms": 63.56,
+     "wall_ms": 63.66,
+     "decode_ms": 7.39,
+     "serialize_ms": 0.04,
+     "tasks": {
+      "slot:sem": {
+       "wait": 0.0,
+       "run": 3.3
+      },
+      "_align_offset": {
+       "wait": 0.2,
+       "run": 3.5
+      },
+      "slot:disc": {
+       "wait": 0.0,
+       "run": 1.5
+      },
+      "slot:shead": {
+       "wait": 0.0,
+       "run": 2.3
+      },
+      "_img_features": {
+       "wait": 0.2,
+       "run": 33.6
+      }
+     },
+     "timing": {
+      "io": 0.0,
+      "tile": 0.0,
+      "forward": 28.43,
+      "score": 9.01,
+      "hier": 25.98,
+      "decide": 0.0,
+      "tta": 0.0,
+      "total": 63.41
+     }
+    },
+    {
+     "image": "PixPin_2026-07-01_09-31-55.png",
+     "shape": [
+      825,
+      595
+     ],
+     "rep": 0,
+     "decision": "anomaly",
+     "score": 1.311700892857143,
+     "slot_scores": {
+      "sem": 2.0,
+      "disc": 2.0,
+      "shead": 0.5546875
+     },
+     "raw_scores": {
+      "sem": 0.5597364533692599,
+      "disc": 0.9945914708077908,
+      "shead": 2.4365780353546143
+     },
+     "n_boxes": 2,
+     "latency_ms": 59.59,
+     "wall_ms": 59.71,
+     "decode_ms": 8.18,
+     "serialize_ms": 0.05,
+     "tasks": {
+      "slot:sem": {
+       "wait": 0.0,
+       "run": 2.9
+      },
+      "_align_offset": {
+       "wait": 0.2,
+       "run": 3.6
+      },
+      "slot:disc": {
+       "wait": 0.0,
+       "run": 1.6
+      },
+      "slot:shead": {
+       "wait": 0.0,
+       "run": 2.5
+      },
+      "_img_features": {
+       "wait": 0.1,
+       "run": 28.8
+      }
+     },
+     "timing": {
+      "io": 0.0,
+      "tile": 0.0,
+      "forward": 29.45,
+      "score": 7.95,
+      "hier": 21.96,
+      "decide": 0.0,
+      "tta": 0.0,
+      "total": 59.36
+     }
+    },
+    {
+     "image": "PixPin_2026-07-01_09-38-22.png",
+     "shape": [
+      304,
+      656
+     ],
+     "rep": 0,
+     "decision": "anomaly",
+     "score": 1.298679017857143,
+     "slot_scores": {
+      "sem": 2.0,
+      "disc": 0.375,
+      "shead": 0.52734375
+     },
+     "raw_scores": {
+      "sem": 0.6224556405097246,
+      "disc": 0.9855749174952507,
+      "shead": 2.4106485843658447
+     },
+     "n_boxes": 3,
+     "latency_ms": 42.94,
+     "wall_ms": 43.04,
+     "decode_ms": 3.77,
+     "serialize_ms": 0.05,
+     "tasks": {
+      "_align_offset": {
+       "wait": 0.1,
+       "run": 2.8
+      },
+      "slot:sem": {
+       "wait": 0.0,
+       "run": 3.1
+      },
+      "slot:disc": {
+       "wait": 0.0,
+       "run": 1.9
+      },
+      "slot:shead": {
+       "wait": 0.0,
+       "run": 2.4
+      },
+      "_img_features": {
+       "wait": 0.1,
+       "run": 12.3
+      }
+     },
+     "timing": {
+      "io": 0.0,
+      "tile": 0.0,
+      "forward": 29.1,
+      "score": 8.98,
+      "hier": 4.5,
+      "decide": 0.0,
+      "tta": 0.0,
+      "total": 42.57
+     }
+    },
+    {
+     "image": "less_tin2.png",
+     "shape": [
+      246,
+      260
+     ],
+     "rep": 0,
+     "decision": "anomaly",
+     "score": 1.309840625,
+     "slot_scores": {
+      "sem": 2.0,
+      "disc": 0.6640625,
+      "shead": 0.55078125
+     },
+     "raw_scores": {
+      "sem": 0.6223970200866461,
+      "disc": 0.9900435756891965,
+      "shead": 2.432679176330566
+     },
+     "n_boxes": 1,
+     "latency_ms": 39.12,
+     "wall_ms": 39.21,
+     "decode_ms": 1.75,
+     "serialize_ms": 0.03,
+     "tasks": {
+      "_align_offset": {
+       "wait": 0.1,
+       "run": 1.2
+      },
+      "slot:sem": {
+       "wait": 0.0,
+       "run": 3.2
+      },
+      "_img_features": {
+       "wait": 0.1,
+       "run": 3.4
+      },
+      "slot:disc": {
+       "wait": 0.0,
+       "run": 1.5
+      },
+      "slot:shead": {
+       "wait": 0.0,
+       "run": 2.0
+      }
+     },
+     "timing": {
+      "io": 0.0,
+      "tile": 0.0,
+      "forward": 29.92,
+      "score": 7.33,
+      "hier": 2.0,
+      "decide": 0.0,
+      "tta": 0.0,
+      "total": 39.24
+     }
+    },
+    {
+     "image": "PixPin_2026-07-01_09-18-11.png",
+     "shape": [
+      637,
+      644
+     ],
+     "rep": 0,
+     "decision": "anomaly",
+     "score": 1.3079803571428572,
+     "slot_scores": {
+      "sem": 2.0,
+      "disc": 2.0,
+      "shead": 0.546875
+     },
+     "raw_scores": {
+      "sem": 0.6000312604010104,
+      "disc": 0.9984119042754174,
+      "shead": 2.4298980236053462
+     },
+     "n_boxes": 1,
+     "latency_ms": 56.85,
+     "wall_ms": 56.95,
+     "decode_ms": 6.88,
+     "serialize_ms": 0.05,
+     "tasks": {
+      "slot:sem": {
+       "wait": 0.0,
+       "run": 2.9
+      },
+      "_align_offset": {
+       "wait": 0.2,
+       "run": 3.0
+      },
+      "slot:disc": {
+       "wait": 0.0,
+       "run": 1.8
+      },
+      "slot:shead": {
+       "wait": 0.0,
+       "run": 2.6
+      },
+      "_img_features": {
+       "wait": 0.0,
+       "run": 26.2
+      }
+     },
+     "timing": {
+      "io": 0.0,
+      "tile": 0.0,
+      "forward": 28.94,
+      "score": 8.98,
+      "hier": 18.63,
+      "decide": 0.0,
+      "tta": 0.0,
+      "total": 56.55
+     }
+    },
+    {
+     "image": "PixPin_2026-06-30_23-25-10.png",
+     "shape": [
+      754,
+      217
+     ],
+     "rep": 0,
+     "decision": "anomaly",
+     "score": 1.2968187500000001,
+     "slot_scores": {
+      "sem": 2.0,
+      "disc": 0.30078125,
+      "shead": 0.5234375
+     },
+     "raw_scores": {
+      "sem": 0.6354068964719772,
+      "disc": 0.9842204742133616,
+      "shead": 2.406371831893921
+     },
+     "n_boxes": 2,
+     "latency_ms": 41.35,
+     "wall_ms": 41.45,
+     "decode_ms": 3.7,
+     "serialize_ms": 0.04,
+     "tasks": {
+      "_align_offset": {
+       "wait": 0.1,
+       "run": 1.2
+      },
+      "slot:sem": {
+       "wait": 0.0,
+       "run": 2.8
+      },
+      "slot:disc": {
+       "wait": 0.0,
+       "run": 1.5
+      },
+      "slot:shead": {
+       "wait": 0.0,
+       "run": 2.3
+      },
+      "_img_features": {
+       "wait": 0.1,
+       "run": 7.9
+      }
+     },
+     "timing": {
+      "io": 0.0,
+      "tile": 0.0,
+      "forward": 31.42,
+      "score": 6.97,
+      "hier": 2.99,
+      "decide": 0.0,
+      "tta": 0.0,
+      "total": 41.38
+     }
+    },
+    {
+     "image": "PixPin_2026-07-01_08-41-22.png",
+     "shape": [
+      286,
+      792
+     ],
+     "rep": 0,
+     "decision": "anomaly",
+     "score": 1.3693691964285715,
+     "slot_scores": {
+      "sem": 2.0,
+      "disc": 0.23828125,
+      "shead": 0.67578125
+     },
+     "raw_scores": {
+      "sem": 0.5312553822994232,
+      "disc": 0.9828404728323221,
+      "shead": 2.5546083450317383
+     },
+     "n_boxes": 0,
+     "latency_ms": 40.32,
+     "wall_ms": 40.45,
+     "decode_ms": 2.81,
+     "serialize_ms": 0.05,
+     "tasks": {
+      "_align_offset": {
+       "wait": 0.1,
+       "run": 2.2
+      },
+      "slot:sem": {
+       "wait": 0.0,
+       "run": 2.8
+      },
+      "slot:disc": {
+       "wait": 0.0,
+       "run": 1.8
+      },
+      "slot:shead": {
+       "wait": 0.0,
+       "run": 2.1
+      },
+      "_img_features": {
+       "wait": 0.1,
+       "run": 10.3
+      }
+     },
+     "timing": {
+      "io": 0.0,
+      "tile": 0.0,
+      "forward": 29.43,
+      "score": 7.49,
+      "hier": 3.99,
+      "decide": 0.0,
+      "tta": 0.0,
+      "total": 40.91
+     }
+    },
+    {
+     "image": "PixPin_2026-07-01_11-24-37.png",
+     "shape": [
+      647,
+      1081
+     ],
+     "rep": 0,
+     "decision": "anomaly",
+     "score": 1.4233169642857144,
+     "slot_scores": {
+      "sem": 2.0,
+      "disc": 2.0,
+      "shead": 0.7890625
+     },
+     "raw_scores": {
+      "sem": 0.5935396954417229,
+      "disc": 0.9939692117273806,
+      "shead": 2.6429436206817627
+     },
+     "n_boxes": 1,
+     "latency_ms": 72.11,
+     "wall_ms": 72.2,
+     "decode_ms": 11.94,
+     "serialize_ms": 0.03,
+     "tasks": {
+      "slot:sem": {
+       "wait": 0.0,
+       "run": 3.7
+      },
+      "_align_offset": {
+       "wait": 0.1,
+       "run": 4.5
+      },
+      "slot:disc": {
+       "wait": 0.0,
+       "run": 1.4
+      },
+      "slot:shead": {
+       "wait": 0.0,
+       "run": 1.9
+      },
+      "_img_features": {
+       "wait": 0.1,
+       "run": 40.5
+      }
+     },
+     "timing": {
+      "io": 0.0,
+      "tile": 0.0,
+      "forward": 30.47,
+      "score": 8.15,
+      "hier": 33.96,
+      "decide": 0.0,
+      "tta": 0.0,
+      "total": 72.58
+     }
+    },
+    {
+     "image": "PixPin_2026-07-01_09-21-26.png",
+     "shape": [
+      686,
+      278
+     ],
+     "rep": 0,
+     "decision": "anomaly",
+     "score": 1.4344785714285715,
+     "slot_scores": {
+      "sem": 2.0,
+      "disc": 0.6640625,
+      "shead": 0.8125
+     },
+     "raw_scores": {
+      "sem": 0.5881460007280112,
+      "disc": 0.990047349780798,
+      "shead": 2.6616389751434326
+     },
+     "n_boxes": 3,
+     "latency_ms": 41.62,
+     "wall_ms": 41.7,
+     "decode_ms": 3.16,
+     "serialize_ms": 0.03,
+     "tasks": {
+      "_align_offset": {
+       "wait": 0.1,
+       "run": 1.5
+      },
+      "slot:sem": {
+       "wait": 0.0,
+       "run": 2.5
+      },
+      "slot:disc": {
+       "wait": 0.0,
+       "run": 1.3
+      },
+      "slot:shead": {
+       "wait": 0.0,
+       "run": 2.2
+      },
+      "_img_features": {
+       "wait": 0.1,
+       "run": 8.8
+      }
+     },
+     "timing": {
+      "io": 0.0,
+      "tile": 0.0,
+      "forward": 30.43,
+      "score": 6.98,
+      "hier": 3.99,
+      "decide": 0.0,
+      "tta": 0.0,
+      "total": 41.4
+     }
+    },
+    {
+     "image": "PixPin_2026-07-01_09-01-28.png",
+     "shape": [
+      580,
+      712
+     ],
+     "rep": 0,
+     "decision": "anomaly",
+     "score": 1.3451857142857144,
+     "slot_scores": {
+      "sem": 2.0,
+      "disc": 2.0,
+      "shead": 0.625
+     },
+     "raw_scores": {
+      "sem": 0.539676907658577,
+      "disc": 0.9944020975381136,
+      "shead": 2.5075440406799316
+     },
+     "n_boxes": 2,
+     "latency_ms": 59.47,
+     "wall_ms": 59.59,
+     "decode_ms": 6.98,
+     "serialize_ms": 0.04,
+     "tasks": {
+      "_align_offset": {
+       "wait": 0.2,
+       "run": 3.0
+      },
+      "slot:sem": {
+       "wait": 0.0,
+       "run": 3.5
+      },
+      "slot:disc": {
+       "wait": 0.0,
+       "run": 1.9
+      },
+      "slot:shead": {
+       "wait": 0.0,
+       "run": 2.3
+      },
+      "_img_features": {
+       "wait": 0.1,
+       "run": 27.4
+      }
+     },
+     "timing": {
+      "io": 0.0,
+      "tile": 0.0,
+      "forward": 30.55,
+      "score": 8.95,
+      "hier": 19.77,
+      "decide": 0.0,
+      "tta": 0.0,
+      "total": 59.26
+     }
+    },
+    {
+     "image": "PixPin_2026-07-01_08-47-05.png",
+     "shape": [
+      604,
+      296
+     ],
+     "rep": 0,
+     "decision": "anomaly",
+     "score": 1.2763558035714286,
+     "slot_scores": {
+      "sem": 2.0,
+      "disc": 0.6484375,
+      "shead": 0.48046875
+     },
+     "raw_scores": {
+      "sem": 0.6241187922656536,
+      "disc": 0.9898284081369637,
+      "shead": 2.3666896820068355
+     },
+     "n_boxes": 1,
+     "latency_ms": 41.83,
+     "wall_ms": 41.93,
+     "decode_ms": 4.1,
+     "serialize_ms": 0.04,
+     "tasks": {
+      "_align_offset": {
+       "wait": 0.1,
+       "run": 1.7
+      },
+      "slot:sem": {
+       "wait": 0.0,
+       "run": 3.1
+      },
+      "slot:disc": {
+       "wait": 0.0,
+       "run": 1.5
+      },
+      "slot:shead": {
+       "wait": 0.0,
+       "run": 2.3
+      },
+      "_img_features": {
+       "wait": 0.0,
+       "run": 8.9
+      }
+     },
+     "timing": {
+      "io": 0.0,
+      "tile": 0.0,
+      "forward": 30.14,
+      "score": 8.73,
+      "hier": 2.99,
+      "decide": 0.0,
+      "tta": 0.0,
+      "total": 41.86
+     }
+    },
+    {
+     "image": "PixPin_2026-07-01_08-47-30.png",
+     "shape": [
+      600,
+      291
+     ],
+     "rep": 0,
+     "decision": "anomaly",
+     "score": 1.272635267857143,
+     "slot_scores": {
+      "sem": 2.0,
+      "disc": 0.4375,
+      "shead": 0.47265625
+     },
+     "raw_scores": {
+      "sem": 0.6225398451089859,
+      "disc": 0.9865706160664558,
+      "shead": 2.356905221939087
+     },
+     "n_boxes": 3,
+     "latency_ms": 41.06,
+     "wall_ms": 41.16,
+     "decode_ms": 3.73,
+     "serialize_ms": 0.04,
+     "tasks": {
+      "_align_offset": {
+       "wait": 0.1,
+       "run": 1.6
+      },
+      "slot:sem": {
+       "wait": 0.0,
+       "run": 2.9
+      },
+      "slot:disc": {
+       "wait": 0.0,
+       "run": 1.5
+      },
+      "slot:shead": {
+       "wait": 0.0,
+       "run": 2.6
+      },
+      "_img_features": {
+       "wait": 0.1,
+       "run": 9.8
+      }
+     },
+     "timing": {
+      "io": 0.0,
+      "tile": 0.0,
+      "forward": 29.49,
+      "score": 8.95,
+      "hier": 3.03,
+      "decide": 0.0,
+      "tta": 0.0,
+      "total": 41.46
+     }
+    }
+   ],
+   "agg": {
+    "latency_ms": {
+     "n": 18,
+     "p50": 41.4,
+     "p95": 63.6,
+     "mean": 47.4,
+     "max": 72.1
+    },
+    "decode_ms": {
+     "n": 18,
+     "p50": 4.6,
+     "p95": 11.6,
+     "mean": 5.6,
+     "max": 11.9
+    },
+    "serialize_ms": {
+     "n": 18,
+     "p50": 0.0,
+     "p95": 0.1,
+     "mean": 0.0,
+     "max": 0.1
+    },
+    "t_io": {
+     "n": 18,
+     "p50": 0.0,
+     "p95": 0.0,
+     "mean": 0.0,
+     "max": 0.0
+    },
+    "t_tile": {
+     "n": 18,
+     "p50": 0.0,
+     "p95": 0.0,
+     "mean": 0.0,
+     "max": 0.0
+    },
+    "t_forward": {
+     "n": 18,
+     "p50": 29.4,
+     "p95": 30.6,
+     "mean": 29.5,
+     "max": 31.4
+    },
+    "t_score": {
+     "n": 18,
+     "p50": 8.0,
+     "p95": 9.0,
+     "mean": 8.1,
+     "max": 9.0
+    },
+    "t_hier": {
+     "n": 17,
+     "p50": 4.0,
+     "p95": 26.0,
+     "mean": 10.3,
+     "max": 34.0
+    },
+    "t_decide": {
+     "n": 18,
+     "p50": 0.0,
+     "p95": 0.0,
+     "mean": 0.0,
+     "max": 0.0
+    },
+    "t_total": {
+     "n": 18,
+     "p50": 41.4,
+     "p95": 63.4,
+     "mean": 47.4,
+     "max": 72.6
+    },
+    "run:_align_offset": {
+     "n": 18,
+     "p50": 2.1,
+     "p95": 4.3,
+     "mean": 2.4,
+     "max": 4.5
+    },
+    "wait:_align_offset": {
+     "n": 18,
+     "p50": 0.1,
+     "p95": 0.2,
+     "mean": 0.1,
+     "max": 0.2
+    },
+    "run:_img_features": {
+     "n": 18,
+     "p50": 9.8,
+     "p95": 33.6,
+     "mean": 16.0,
+     "max": 40.5
+    },
+    "wait:_img_features": {
+     "n": 18,
+     "p50": 0.1,
+     "p95": 0.2,
+     "mean": 0.1,
+     "max": 0.2
+    },
+    "run:slot:disc": {
+     "n": 18,
+     "p50": 1.5,
+     "p95": 1.9,
+     "mean": 1.6,
+     "max": 1.9
+    },
+    "wait:slot:disc": {
+     "n": 18,
+     "p50": 0.0,
+     "p95": 0.0,
+     "mean": 0.0,
+     "max": 0.0
+    },
+    "run:slot:sem": {
+     "n": 18,
+     "p50": 3.1,
+     "p95": 3.7,
+     "mean": 3.2,
+     "max": 4.1
+    },
+    "wait:slot:sem": {
+     "n": 18,
+     "p50": 0.0,
+     "p95": 0.0,
+     "mean": 0.0,
+     "max": 0.0
+    },
+    "run:slot:shead": {
+     "n": 18,
+     "p50": 2.3,
+     "p95": 2.6,
+     "mean": 2.2,
+     "max": 2.6
+    },
+    "wait:slot:shead": {
+     "n": 18,
+     "p50": 0.0,
+     "p95": 0.0,
+     "mean": 0.0,
+     "max": 0.0
+    }
+   }
+  }
+ }
+}

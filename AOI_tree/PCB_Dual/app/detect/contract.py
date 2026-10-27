@@ -13,8 +13,8 @@ import numpy as np
 INSPECT_CONTRACT = 1
 
 Trigger = Literal["on_job", "live", "manual", "external"]
-ItemStatus = Literal["OK", "NG", "SKIP", "ERROR"]
-JobStatus = Literal["OK", "NG", "ERROR"]
+ItemStatus = Literal["OK", "NG", "REVIEW", "SKIP", "ERROR"]
+JobStatus = Literal["OK", "NG", "REVIEW", "SKIP", "ERROR"]
 
 
 @dataclass
@@ -85,6 +85,14 @@ def job_status(*, gate_blocked: bool, items: list[Any]) -> JobStatus:
         return "ERROR"
     if any(getattr(r, "status", None) == "ERROR" or getattr(r, "error_code", None) for r in items):
         return "ERROR"
-    if any((not getattr(r, "ok", True)) and (not getattr(r, "skipped", False)) for r in items):
+    if any(getattr(r, "status", None) == "NG" for r in items):
+        return "NG"
+    if any(getattr(r, "status", None) == "REVIEW" for r in items):
+        return "REVIEW"
+    if not items or all(getattr(r, "status", None) == "SKIP" or getattr(r, "skipped", False) for r in items):
+        return "SKIP"
+    if any(getattr(r, "status", None) == "SKIP" or getattr(r, "skipped", False) for r in items):
+        return "REVIEW"
+    if any(not getattr(r, "ok", True) for r in items):
         return "NG"
     return "OK"

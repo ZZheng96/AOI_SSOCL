@@ -1,0 +1,6 @@
+# TEST-03 复跑命令
+
+py -3.11 d:\CGAIC\AOI_SSOCL\review\task\test03_vram\raw\vram_test03.py
+
+# 产物：raw\vram_samples.csv（逐样本 t/scenario/used_mib）、raw\vram_summary.json、
+#       raw\vram_child.py（双实例子进程脚本）

@@ -71,4 +71,20 @@ def guard_bundle(bundle, protocol):
                 raise IsolationViolation(
                     f"红线违规：{previous} 与 {split} 存在重复内容，如 {path}")
             seen_contents[digest.digest()] = split
+    # round5（L3）：模板库只允许显式金样板——与 init_normal 同图允许，
+    # 与 init_defect/val/test 同路径或同内容一律违规（test 图及其修复图只作评估）
+    for path in bundle.get("templates") or []:
+        if not isinstance(path, (str, os.PathLike)):
+            continue
+        key = os.path.normcase(os.path.realpath(os.path.abspath(path)))
+        prev = seen_paths.get(key)
+        if prev is not None and prev != "init_normal":
+            raise IsolationViolation(f"红线违规：templates 与 {prev} 共用图片 {path}")
+        digest = hashlib.sha256()
+        with open(path, "rb") as image:
+            for chunk in iter(lambda: image.read(1 << 20), b""):
+                digest.update(chunk)
+        prev = seen_contents.get(digest.digest())
+        if prev is not None and prev != "init_normal":
+            raise IsolationViolation(f"红线违规：templates 与 {prev} 存在重复内容，如 {path}")
     return True

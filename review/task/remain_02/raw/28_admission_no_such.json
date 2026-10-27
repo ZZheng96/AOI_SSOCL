@@ -1,0 +1,12 @@
+{
+  "name": "admission_no_such",
+  "method": "POST",
+  "path": "/api/models/feature-revisions/nope/admission",
+  "role": "engineer",
+  "request_body": {},
+  "status_code": 409,
+  "response": {
+    "detail": "revision 不存在"
+  },
+  "note": ""
+}

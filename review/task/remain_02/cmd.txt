@@ -1,0 +1,50 @@
+REMAIN-02 真实HTTP联调验收 —— 命令记录（Windows PowerShell；py -3.11）
+工作目录基准：d:\CGAIC\AOI_SSOCL\review\task\remain_02（除注明外）
+
+===== 1. 搭建 TEMP 隔离环境 =====
+py -3.11 setup_temp.py
+  -> 建 temp_core\config.yaml（port 8031、独立 storage/DB、三角色 key）
+  -> 只读复制稳定版 gold_finger 快照（v1/v2/current.json）到 temp_core
+  -> 合成 18 张 512x512 PNG 并登记 TEMP DB（SETUP_OK）
+
+===== 2. 第一轮联调（发现血缘问题）=====
+# 启动服务（cwd=d:\CGAIC\AOI_SSOCL\stable_AOI_tree\AOI_Core）
+$env:AOI_CONFIG="d:\CGAIC\AOI_SSOCL\review\task\remain_02\temp_core\config.yaml"; py -3.11 server.py
+  -> uvicorn http://127.0.0.1:8031
+py -3.11 http_accept.py
+  -> 54 项 FAIL=4：draft/report/rebuild 均 409（gold_finger 无法加载）
+  -> 根因：启动钩子 register_engine_snapshots 判定 TEMP 库无检测血缘，
+     删除 temp 副本 current.json（routes_models.py 204-212 行）
+
+===== 3. 修复血缘并重启 =====
+py -3.11 fix_lineage.py
+  -> 恢复 current.json（从稳定版只读复制）
+  -> TEMP DB 插入 1 条 Detection（category=gold_finger）（FIX_OK）
+# 重启服务（同上命令），日志确认 "引擎快照登记完成（新增 0 行）"，未再删指针
+
+===== 4. 健康与加载验证 =====
+py -3.11 -c "import requests; ..." 
+  -> GET /api/health 200 {"status":"ok","device":"cuda",...}
+  -> GET /api/models/feature-set/gold_finger (engineer) 200
+     {enabled:true, status:available, can_edit:true, version:2}
+
+===== 5. 正式联调（清空旧 raw 请求文件，保留 prod_hash_before.json）=====
+py -3.11 http_accept.py
+  -> 55 项，FAIL=0（终端有逐请求进度与后台任务轮询进度）
+  -> 逐请求落 raw\NN_*.json；summary.json；snap_*.json；isolation_draft.json
+
+===== 6. 生产侧 after 哈希快照对比 =====
+py -3.11 hash_snapshot.py raw\prod_hash_after.json "prod_db=...\database\aoi.db" "prod_snap_gold_finger=...\snapshots\gold_finger" "prod_config=...\configs\default.yaml"
+py -3.11 -c "对比 before/after" -> PROD_UNTOUCHED
+
+===== 7. UI 离屏对照 =====
+py -3.11 ui_offscreen.py
+  -> QT_QPA_PLATFORM=offscreen，用 8031 真实响应填充学习页特征集卡片
+  -> operator/engineer 两角色 PASS；截图 raw\ui_feature_set_card_{role}.png
+
+===== 8. 清理 =====
+Copy-Item temp_core\storage\logs\server.log raw\server_8031.log
+# 停止 8031 服务进程（PID 18120），确认：
+Get-NetTCPConnection -LocalPort 8031 -State Listen -> PORT_8031_RELEASED
+Get-Process -Id 18120 -> SERVER_PROCESS_GONE
+# TEMP 副本 temp_core\ 保留供复核

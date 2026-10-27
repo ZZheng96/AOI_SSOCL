@@ -6,6 +6,23 @@
 import numpy as np
 
 
+def _soft_bound(q):
+    """R3（2026-10-14）：保序软限幅，替代 np.clip(q,-1,2) 硬截断。
+
+    旧硬截断使域外样本大量平局于 2.0（TEST-07：shead raw AUROC 1.0 → cal 0.5，
+    sem/shead test 侧 100% 饱和），融合排序丢失。改为严格单调的有界映射：
+    q∈[0,1] 不变；q>1 → 1+e/(1+e)∈(1,2)；q<0 → -|q|/(1+|q|)∈(-1,0)。
+    值域仍为 [-1,2]（契约不变），边界处连续、斜率 1，保留全部排序信息。"""
+    q = np.asarray(q, dtype=np.float64).copy()
+    hi = q > 1.0
+    e = q[hi] - 1.0
+    q[hi] = 1.0 + e / (1.0 + e)
+    lo = q < 0.0
+    a = -q[lo]
+    q[lo] = -a / (1.0 + a)
+    return q
+
+
 class CDFCalibrator:
     def __init__(self, n_bins=256):
         self.n_bins = n_bins
@@ -35,8 +52,8 @@ class CDFCalibrator:
         lo0, lo1 = self.edges[0], self.edges[1] if n >= 2 else self.edges[0] + 1.0
         below = s < lo0
         q[below] = (s[below] - lo0) / max(lo1 - lo0, 1e-12)
-        # 限幅防单槽爆值主导融合（保序：超过 cap 的样本仍单调递增，仅在 cap 处截断）
-        return np.clip(q, -1.0, 2.0)
+        # 限幅防单槽爆值主导融合；R3：软限幅严格保序，域外样本不再平局于 2.0
+        return _soft_bound(q)
 
     def fit_transform(self, normal_scores):
         return self.fit(normal_scores).transform(normal_scores)
@@ -75,7 +92,7 @@ class TplCalibrator:
 
     def transform(self, scores):
         q = np.asarray(scores, dtype=np.float64) / self.ref
-        return np.clip(q, -1.0, 2.0)
+        return _soft_bound(q)
 
     def fit_transform(self, normal_scores):
         return self.fit(normal_scores).transform(normal_scores)

@@ -3,6 +3,7 @@
 14 组特征 + ⑮ SURF（多尺度 Hessian 斑点，+14 维），向量化实现。
 单张 256x256 ~30ms（不含 PC/SURF 时更快的常驻路径已向量化）。
 """
+import time
 import cv2
 import numpy as np
 from skimage import feature, filters, color, transform, morphology
@@ -147,6 +148,14 @@ class TraditionalFeatureExtractor:
             s = 32.0 / min(h, w)
             img = cv2.resize(img, (int(w * s), int(h * s)))
         features = []
+        # AC-010：分组边界标记（不改数值），供注册表切片核对与组级耗时
+        trace = []
+        _t = [time.perf_counter()]
+
+        def mark(key):
+            now = time.perf_counter()
+            trace.append((key, len(features), (now - _t[0]) * 1000.0))
+            _t[0] = now
         gray = cv2.cvtColor(img, cv2.COLOR_RGB2GRAY)
         hsv = cv2.cvtColor(img, cv2.COLOR_RGB2HSV)
         lab = cv2.cvtColor(img, cv2.COLOR_RGB2LAB)
@@ -156,6 +165,7 @@ class TraditionalFeatureExtractor:
                            levels=256, symmetric=True, normed=True)
         for prop in ['contrast', 'correlation', 'energy', 'homogeneity']:
             features.append(graycoprops(glcm, prop).mean())
+        mark("glcm")
         
         # ② 区域自相似 (5)
         h, w = gray.shape
@@ -182,6 +192,7 @@ class TraditionalFeatureExtractor:
         # 加两个自相似统计
         features.append(np.std(gray[:8, :8] - gray[8:16, 8:16]))
         features.append(np.std(gray[::8, ::8]))
+        mark("selfsim")
         
         # ③ 边缘梯度 (27)
         # Canny 密度（cv2 实现，比 skimage 快 ~50 倍）
@@ -206,6 +217,7 @@ class TraditionalFeatureExtractor:
         lbp = local_binary_pattern(gray, 8, 1, method='uniform')
         lbp_hist, _ = np.histogram(lbp, bins=6, range=(0, 6), density=True)
         features.extend(lbp_hist.tolist())
+        mark("edge")
         
         # ④ HOG (11)
         fd = hog(gray, orientations=9, pixels_per_cell=(16, 16), cells_per_block=(2, 2), 
@@ -213,6 +225,7 @@ class TraditionalFeatureExtractor:
         # 降采样到 11 维
         idx = np.linspace(0, len(fd)-1, 11, dtype=int)
         features.extend(fd[idx].tolist())
+        mark("hog")
         
         # ⑤ 形状/几何 (11)
         # Hu 矩 (7)
@@ -231,6 +244,7 @@ class TraditionalFeatureExtractor:
             features.append(np.mean(perims) / (h + w) if perims else 0.0)
         else:
             features.extend([0, 0, 0, 0])
+        mark("shape")
         
         # ⑥ 灰度统计 (12)
         features.extend([gray.mean(), gray.std(), gray.min(), gray.max(),
@@ -238,6 +252,7 @@ class TraditionalFeatureExtractor:
                         shannon_entropy(gray),
                         np.mean(gray ** 2), np.mean(np.abs(gray - gray.mean()) ** 3),
                         np.mean(gray ** 4), (gray.max() - gray.min()) / (gray.mean() + 1e-8)])
+        mark("gray")
         
         # ⑦ 材质反光/高光 (4)
         specular = gray > gray.mean() + 2 * gray.std()
@@ -249,6 +264,7 @@ class TraditionalFeatureExtractor:
         bw = morphology.remove_small_objects(bw.astype(bool), min_size=50)
         features.append(bw.mean())
         features.append(len(np.unique(bw)) / (h * w) * 1e4)
+        mark("gloss")
         
         # ⑧ 色彩 HSV 直方图 + 色彩矩 (39)
         for ch in range(3):
@@ -263,6 +279,7 @@ class TraditionalFeatureExtractor:
             for j in range(i+1, 3):
                 cc = np.corrcoef(img[:,:,i].ravel(), img[:,:,j].ravel())[0, 1]
                 features.append(cc if not np.isnan(cc) else 0.0)
+        mark("color")
         
         # ⑨ FFT 频域 (13)
         f = np.fft.fft2(gray)
@@ -287,6 +304,7 @@ class TraditionalFeatureExtractor:
         for i in range(10):
             mask_i = (r >= r_bins[i]) & (r < r_bins[i+1])
             features.append(magnitude[mask_i].mean() / total_energy)
+        mark("fft")
         
         # ⑩ Haar 小波 (24)
         coeffs = pywt.wavedec2(gray, 'haar', level=3)
@@ -297,6 +315,7 @@ class TraditionalFeatureExtractor:
                 for detail in c:  # LH, HL, HH
                     features.extend([detail.mean(), detail.std(), 
                                    np.mean(detail**2), np.mean(np.abs(detail))])
+        mark("wavelet")
         
         # ⑪ 逻辑关系代理 (6)
         # 连通域分析
@@ -313,6 +332,7 @@ class TraditionalFeatureExtractor:
         diff_h = np.mean(np.abs(gray[:, :w//2] - gray[:, :w//2][:, ::-1]))
         diff_v = np.mean(np.abs(gray[:h//2, :] - gray[:h//2, :][::-1, :]))
         features.extend([diff_h, diff_v])
+        mark("logic")
         
         # ⑫ Gabor (8)
         for theta in [0, np.pi/4, np.pi/2, 3*np.pi/4]:
@@ -320,20 +340,25 @@ class TraditionalFeatureExtractor:
                 gabor_kernel = cv2.getGaborKernel((21, 21), 4, theta, 1/freq, 0.5, 0)
                 filtered = cv2.filter2D(gray, cv2.CV_32F, gabor_kernel)
                 features.append(filtered.mean())
+        mark("gabor")
         
         # ⑬ LoG 斑点 (5)（cv2 替代 skimage filters，快 ~10 倍）
         for sigma in [1, 2, 4, 8, 16]:
             blur = cv2.GaussianBlur(gray, (0, 0), sigma)
             log = cv2.Laplacian(blur, cv2.CV_32F)
             features.append(np.abs(log).mean())
+        mark("log")
         
         # ⑭ 相位一致性 (3)
         pc = self._phase_congruency(gray)
         features.extend([pc.mean(), pc.std(), pc.max()])
+        mark("pc")
         
         # ⑮ SURF 多尺度 Hessian 斑点 (14)
         surf_vals, _ = _surf_features(gray)
         features.extend(surf_vals)
+        mark("surf")
+        self.last_trace = trace
         
         arr = np.nan_to_num(np.array(features, dtype=np.float32), nan=0.0, posinf=0.0, neginf=0.0)
         # 旧 checkpoint 兼容：trad_ref 是 172 维时截断（SURF 追加在末尾，截断即回退）

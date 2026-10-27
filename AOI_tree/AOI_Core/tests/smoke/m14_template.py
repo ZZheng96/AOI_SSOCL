@@ -10,6 +10,7 @@
 隔离环境：独立临时 sqlite/storage/cfg（同 M10/M11 模式）。
 数据：自动探测可用数据集 10 正常 + 3 缺陷 + 2 张模板标记（fast profile）。
 """
+import json
 import os
 import shutil
 import sys
@@ -61,6 +62,7 @@ def wait_task(task_manager, task_id, timeout=900):
         t = task_manager.get(task_id)
         if t["status"] in ("done", "failed"):
             return t
+        print(f"  [task {task_id}] {t.get('progress', 0) * 100:5.1f}% {t.get('message', '')}", flush=True)
         time.sleep(3)
     raise TimeoutError(f"task {task_id} 超时")
 
@@ -76,14 +78,16 @@ def main():
         # ── 数据登记 ─────────────────────────────────────
         print("[M14-0] 数据登记", flush=True)
         good = _ls(os.path.join(DATA_DIR, "train", "good"), 10)
+        test_good = _ls(os.path.join(DATA_DIR, "test", "good"), 2)
         defects = []
         for sub in sorted(os.listdir(os.path.join(DATA_DIR, "test"))):
             dd = os.path.join(DATA_DIR, "test", sub)
             if os.path.isdir(dd) and sub != "good":
-                defects += _ls(dd, 3)  # 单缺陷类型数据集也能凑满 3 张
-            if len(defects) >= 3:
-                break
-        defects = defects[:3]
+                defects += _ls(dd, 10)
+        defects = defects[:5]
+        assert len(defects) >= 4, "m14 需要至少 4 张独立缺陷图：1 张 train_anomaly + 3 张 test"
+        train_defects = defects[:1]
+        test_defects = defects[1:]
         ids = {}
         with session_scope() as s:
             for p in good:
@@ -92,12 +96,36 @@ def main():
                 s.add(row)
                 s.flush()
                 ids[p] = row.id
-            for p in defects:
+            for p in test_good:
+                s.add(ImageRow(path=p, category=CAT, split="test",
+                               label="normal", source="smoke"))
+            for p in test_defects:
                 s.add(ImageRow(path=p, category=CAT, split="test",
                                label="anomaly", source="smoke"))
 
-        # ── 1) M14a L3 模板链路 ──────────────────────────
-        print("[M14-1] L3 模板链路", flush=True)
+        # ── 1) 无初始化缺陷时，训练指标保持合法 None ────────
+        print("[M14-1] 无 init_defect 合法空指标", flush=True)
+        r = client.post("/api/models/prepare",
+                        json={"category": CAT, "scenario": "L1a",
+                              "profile": "fast", "force": True})
+        assert r.status_code == 200, f"无缺陷 prepare 提交失败: {r.text}"
+        t = wait_task(task_manager, r.json()["task_id"])
+        ck("无缺陷 prepare 完成", t["status"] == "done", t.get("message", ""))
+        r = client.get("/api/self_learning/insight", params={"category": CAT})
+        ck("无 init_defect 时 train_auroc 合法 None",
+           r.json().get("train_auroc") is None,
+           f"train_auroc={r.json().get('train_auroc')}")
+
+        # 独立 train_anomaly 只用于下一次 prepare；绝不取 test 样本。
+        with session_scope() as s:
+            s.add(ImageRow(path=train_defects[0], category=CAT,
+                           split="train_anomaly", label="anomaly", source="smoke"))
+        ck("train_anomaly 与 test 图资产不重叠",
+           not set(train_defects).intersection(test_defects),
+           f"train={train_defects}, test={test_defects}")
+
+        # ── 2) M14a L3 模板链路 ──────────────────────────
+        print("[M14-2] L3 模板链路", flush=True)
         tpl_ids = [ids[good[0]], ids[good[1]]]
         for iid in tpl_ids:
             r = client.post(f"/api/images/{iid}/annotate",
@@ -119,11 +147,14 @@ def main():
         ck("prepare 携带模板数", res.get("n_templates") == 2,
            f"n_templates={res.get('n_templates')}")
 
+        print("  执行真实 detect 响应及严格 JSON 契约", flush=True)
         r = client.post("/api/detect/image",
-                        json={"path": defects[0], "category": CAT,
+                        json={"path": test_good[0], "category": CAT,
                               "with_heatmap": False})
         assert r.status_code == 200, f"detect 失败: {r.text}"
         det = r.json()
+        json.dumps(det, allow_nan=False)
+        ck("检测响应严格 JSON 可序列化", True)
         ck("L3 激活 tpl 槽位", "tpl" in (det.get("slots") or {}),
            f"slots={list((det.get('slots') or {}).keys())}")
 
@@ -135,7 +166,7 @@ def main():
         ck("insight 双库字段", "normal_bank" in ins and "defect_bank" in ins,
            f"core={ins.get('normal_bank', {}).get('core_patches')}")
         ck("insight 孵育/门控字段", "incubate" in ins and "weight_gate" in ins)
-        ck("insight train_auroc", ins.get("train_auroc") is not None,
+        ck("insight train_auroc 有定义", ins.get("train_auroc") is not None,
            f"train_auroc={ins.get('train_auroc')}")
         r = client.get("/api/self_learning/insight",
                        params={"category": "no_such_cat"})
@@ -151,8 +182,8 @@ def main():
         cat_rep = [x for x in rep["reports"] if x["category"] == CAT]
         ck("报告含本品类窗口统计", bool(cat_rep)
            and cat_rep[0]["window_n"] >= 1, f"{cat_rep}")
-        # open_alert 落库字段存在（M14c 原料）
         r = client.get("/api/detections", params={"category": CAT, "page_size": 5})
+        json.dumps(r.json(), allow_nan=False)
         items = r.json().get("items", [])
         ck("检测记录含 open_alert 落库",
            bool(items) and "open_alert" in (items[0].get("n_tiles") or {}))

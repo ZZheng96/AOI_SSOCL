@@ -1,0 +1,20 @@
+{
+  "name": "config_threshold_frozen_409",
+  "method": "POST",
+  "path": "/api/system/config",
+  "role": "admin",
+  "request_body": {
+    "business_budget.g2_max_fpr_pct": 10.0
+  },
+  "status_code": 409,
+  "response": {
+    "detail": {
+      "message": "GT 与业务阈值已冻结，需先关闭冻结再修改",
+      "reason_code": "THRESHOLD_FROZEN",
+      "keys": [
+        "business_budget.g2_max_fpr_pct"
+      ]
+    }
+  },
+  "note": "冻结期改阈值 → 409 THRESHOLD_FROZEN"
+}

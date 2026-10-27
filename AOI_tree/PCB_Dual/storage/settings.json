@@ -1,5 +1,5 @@
 {
-  "outputs_dir": "E:\\CPIPC\\CGAIC\\AOI_tree\\PCB_Dual\\storage\\outputs",
+  "outputs_dir": "D:\\CGAIC\\AOI_SSOCL\\AOI_tree\\PCB_Dual\\storage\\outputs",
   "gate_enabled": true,
   "size_gate_max_diff_px": 10,
   "stop_on_error": false

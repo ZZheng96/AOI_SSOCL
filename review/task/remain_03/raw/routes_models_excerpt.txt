@@ -1,0 +1,39 @@
+# 摘录自 backend/api/routes_models.py（稳定版，只读）
+
+L274-276:
+def _feature_revision_store():
+    from algo.feature_revision import FeatureSetRevision
+    return FeatureSetRevision(get_settings().storage("feature_revisions") / "registry.json")
+
+L279-282（列表接口自述未绑定生产）:
+@router.get("/models/feature-revisions")
+def api_feature_revisions():
+    return {"items": _feature_revision_store().list(),
+            "production_binding": "unknown", "changes_production_extractor": False}
+
+L296-314（状态流转不触生产）:
+@router.post("/models/feature-revisions/{rid}/transition", ... require_role("admin"))
+    ...
+    return {"revision": row, "production_model_activated": False,
+            "message": "仅更新特征门禁状态，不切换生产提取器或模型"}
+
+L406-454（draft 提交不触生产）:
+    return {"revision_id": rid, "state": "draft", "activated": False,
+            "changes_production": False,
+            "message": "已提交为候选特征集（draft），需评估/审批后才可绑定新模型"}
+
+L590-599（AC-073/074/076：生产激活/回滚禁止 allow_stale 绕过）:
+def _reject_stale_override(allow_stale, action):
+    if allow_stale: raise HTTPException(409, ... "STALE_OVERRIDE_FORBIDDEN" ...)
+
+L602-693 api_activate_model：
+    L622 注释：「仅显式绑定 revision 的模型受新门禁管理；旧生产 trad 不猜测绑定。」
+    L629-641: binding = snapshot_meta.get("feature_revision_binding") or {}
+              rid = binding.get("revision_id")
+              if rid:
+                  ... _feature_revision_store().check_activation(rid, expected_snapshot)
+    → 因 persist.py:652 恒写 revision_id=None，该门禁分支生产中永不触发（死代码）。
+
+L696-718 api_rollback_model：engine.rollback → 仅模型版本指针（current.json），无特征指针对账。
+
+→ 无 bind_production / rollback_production 的 HTTP 路由（全 backend grep 无调用）。

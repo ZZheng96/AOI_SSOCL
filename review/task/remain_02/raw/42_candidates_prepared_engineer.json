@@ -1,0 +1,10 @@
+{
+  "name": "candidates_prepared_engineer",
+  "method": "GET",
+  "path": "/api/candidates/recovery/prepared",
+  "role": "engineer",
+  "request_body": null,
+  "status_code": 200,
+  "response": [],
+  "note": ""
+}

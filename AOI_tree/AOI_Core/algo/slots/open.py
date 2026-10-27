@@ -32,8 +32,14 @@ class OpenDetector:
         from sklearn.decomposition import PCA
         chunks, G = [], 32
         for feats in tile_feats_list:
+            if feats is None or np.asarray(feats).size == 0:
+                continue   # 2026-10-11：无主干（cpu 降配）时 feats 为空，跳过而非崩溃
             x, G = self._patches(feats)
             chunks.append(x)
+        if not chunks:           # 全部为空（无主干）：哨兵退化关闭，score 恒 0
+            self.pca = None
+            self.mean_err = 0.0
+            return self
         X = np.concatenate(chunks)
         self.pca = PCA(n_components=self.n_components).fit(X)
         self.mean_err = float(np.mean(self._recon_err(X)))

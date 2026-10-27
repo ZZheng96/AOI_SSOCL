@@ -1,0 +1,1460 @@
+{
+ "tag": "opt2_gpu",
+ "env": {},
+ "cats": {
+  "gold_finger": {
+   "rows": [
+    {
+     "image": "det776_det14_bench_02.png",
+     "shape": [
+      2500,
+      2500
+     ],
+     "rep": 0,
+     "decision": "anomaly",
+     "score": 2.0,
+     "slot_scores": {
+      "blob": 2.0,
+      "trad": 2.0
+     },
+     "raw_scores": {
+      "blob": 0.19889210164546967,
+      "trad": 72.08991241455078
+     },
+     "n_boxes": 0,
+     "latency_ms": 162.41,
+     "wall_ms": 162.48,
+     "decode_ms": 88.5,
+     "serialize_ms": 0.03,
+     "tasks": {
+      "_align_offset": {
+       "wait": 1.3,
+       "run": 19.1
+      },
+      "slot:blob": {
+       "wait": 0.1,
+       "run": 30.1
+      },
+      "_img_features": {
+       "wait": 1.2,
+       "run": 69.8
+      },
+      "slot:trad": {
+       "wait": 0.1,
+       "run": 161.9
+      }
+     },
+     "timing": {
+      "io": 0.0,
+      "tile": 0.0,
+      "forward": 0.0,
+      "score": 162.55,
+      "hier": 0.0,
+      "decide": 0.0,
+      "tta": 0.0,
+      "total": 162.55
+     }
+    },
+    {
+     "image": "det385_det28_bench_00.png",
+     "shape": [
+      3000,
+      4096
+     ],
+     "rep": 0,
+     "decision": "anomaly",
+     "score": 2.0,
+     "slot_scores": {
+      "blob": 2.0,
+      "trad": 2.0
+     },
+     "raw_scores": {
+      "blob": 0.22610652446746826,
+      "trad": 71.34115600585938
+     },
+     "n_boxes": 0,
+     "latency_ms": 136.79,
+     "wall_ms": 136.87,
+     "decode_ms": 182.72,
+     "serialize_ms": 0.03,
+     "tasks": {
+      "_align_offset": {
+       "wait": 0.3,
+       "run": 46.2
+      },
+      "_img_features": {
+       "wait": 0.3,
+       "run": 73.0
+      },
+      "slot:blob": {
+       "wait": 0.1,
+       "run": 82.0
+      },
+      "slot:trad": {
+       "wait": 0.2,
+       "run": 136.3
+      }
+     },
+     "timing": {
+      "io": 0.0,
+      "tile": 0.0,
+      "forward": 0.0,
+      "score": 136.62,
+      "hier": 0.99,
+      "decide": 0.0,
+      "tta": 0.0,
+      "total": 137.62
+     }
+    },
+    {
+     "image": "det588_det61_bench_07.png",
+     "shape": [
+      1024,
+      1024
+     ],
+     "rep": 0,
+     "decision": "anomaly",
+     "score": 2.0,
+     "slot_scores": {
+      "blob": 2.0,
+      "trad": 2.0
+     },
+     "raw_scores": {
+      "blob": 0.21332621574401855,
+      "trad": 78.40667724609375
+     },
+     "n_boxes": 0,
+     "latency_ms": 163.26,
+     "wall_ms": 163.36,
+     "decode_ms": 21.03,
+     "serialize_ms": 0.04,
+     "tasks": {
+      "_align_offset": {
+       "wait": 0.7,
+       "run": 3.5
+      },
+      "slot:blob": {
+       "wait": 0.1,
+       "run": 10.7
+      },
+      "_img_features": {
+       "wait": 0.6,
+       "run": 71.0
+      },
+      "slot:trad": {
+       "wait": 0.2,
+       "run": 162.7
+      }
+     },
+     "timing": {
+      "io": 0.0,
+      "tile": 0.0,
+      "forward": 0.0,
+      "score": 163.05,
+      "hier": 0.0,
+      "decide": 0.0,
+      "tta": 0.0,
+      "total": 163.05
+     }
+    },
+    {
+     "image": "det7_bench_03.png",
+     "shape": [
+      2500,
+      2500
+     ],
+     "rep": 0,
+     "decision": "anomaly",
+     "score": 2.0,
+     "slot_scores": {
+      "blob": 2.0,
+      "trad": 2.0
+     },
+     "raw_scores": {
+      "blob": 0.22115075588226318,
+      "trad": 75.82986450195312
+     },
+     "n_boxes": 0,
+     "latency_ms": 156.14,
+     "wall_ms": 156.22,
+     "decode_ms": 98.51,
+     "serialize_ms": 0.03,
+     "tasks": {
+      "_align_offset": {
+       "wait": 2.3,
+       "run": 22.1
+      },
+      "slot:blob": {
+       "wait": 0.1,
+       "run": 31.3
+      },
+      "_img_features": {
+       "wait": 1.3,
+       "run": 70.4
+      },
+      "slot:trad": {
+       "wait": 0.1,
+       "run": 155.6
+      }
+     },
+     "timing": {
+      "io": 0.0,
+      "tile": 0.0,
+      "forward": 0.0,
+      "score": 155.99,
+      "hier": 0.0,
+      "decide": 0.0,
+      "tta": 0.0,
+      "total": 155.99
+     }
+    },
+    {
+     "image": "det245_det14_bench_02.png",
+     "shape": [
+      2500,
+      2500
+     ],
+     "rep": 0,
+     "decision": "anomaly",
+     "score": 2.0,
+     "slot_scores": {
+      "blob": 2.0,
+      "trad": 2.0
+     },
+     "raw_scores": {
+      "blob": 0.19889210164546967,
+      "trad": 72.08991241455078
+     },
+     "n_boxes": 0,
+     "latency_ms": 157.99,
+     "wall_ms": 158.09,
+     "decode_ms": 95.6,
+     "serialize_ms": 0.04,
+     "tasks": {
+      "_align_offset": {
+       "wait": 2.2,
+       "run": 19.2
+      },
+      "slot:blob": {
+       "wait": 0.1,
+       "run": 30.7
+      },
+      "_img_features": {
+       "wait": 2.2,
+       "run": 75.3
+      },
+      "slot:trad": {
+       "wait": 0.3,
+       "run": 157.3
+      }
+     },
+     "timing": {
+      "io": 0.0,
+      "tile": 0.0,
+      "forward": 0.0,
+      "score": 157.7,
+      "hier": 0.0,
+      "decide": 0.0,
+      "tta": 0.0,
+      "total": 157.7
+     }
+    },
+    {
+     "image": "det711_det28_bench_00.png",
+     "shape": [
+      3000,
+      4096
+     ],
+     "rep": 0,
+     "decision": "anomaly",
+     "score": 2.0,
+     "slot_scores": {
+      "blob": 2.0,
+      "trad": 2.0
+     },
+     "raw_scores": {
+      "blob": 0.22610652446746826,
+      "trad": 71.34115600585938
+     },
+     "n_boxes": 0,
+     "latency_ms": 137.84,
+     "wall_ms": 137.91,
+     "decode_ms": 178.89,
+     "serialize_ms": 0.02,
+     "tasks": {
+      "_align_offset": {
+       "wait": 5.8,
+       "run": 50.5
+      },
+      "slot:blob": {
+       "wait": 0.2,
+       "run": 68.3
+      },
+      "_img_features": {
+       "wait": 5.8,
+       "run": 71.1
+      },
+      "slot:trad": {
+       "wait": 0.2,
+       "run": 137.1
+      }
+     },
+     "timing": {
+      "io": 0.0,
+      "tile": 0.0,
+      "forward": 0.0,
+      "score": 137.58,
+      "hier": 0.0,
+      "decide": 0.0,
+      "tta": 0.0,
+      "total": 137.58
+     }
+    },
+    {
+     "image": "det179_det14_bench_02.png",
+     "shape": [
+      2500,
+      2500
+     ],
+     "rep": 0,
+     "decision": "anomaly",
+     "score": 2.0,
+     "slot_scores": {
+      "blob": 2.0,
+      "trad": 2.0
+     },
+     "raw_scores": {
+      "blob": 0.19889210164546967,
+      "trad": 72.08991241455078
+     },
+     "n_boxes": 0,
+     "latency_ms": 155.73,
+     "wall_ms": 155.79,
+     "decode_ms": 108.35,
+     "serialize_ms": 0.02,
+     "tasks": {
+      "_align_offset": {
+       "wait": 0.3,
+       "run": 20.0
+      },
+      "slot:blob": {
+       "wait": 0.1,
+       "run": 35.6
+      },
+      "_img_features": {
+       "wait": 0.3,
+       "run": 69.1
+      },
+      "slot:trad": {
+       "wait": 0.1,
+       "run": 155.3
+      }
+     },
+     "timing": {
+      "io": 0.0,
+      "tile": 0.0,
+      "forward": 0.0,
+      "score": 155.65,
+      "hier": 0.0,
+      "decide": 0.0,
+      "tta": 0.0,
+      "total": 155.65
+     }
+    },
+    {
+     "image": "det452_0599_repaired.png",
+     "shape": [
+      432,
+      304
+     ],
+     "rep": 0,
+     "decision": "normal",
+     "score": 0.678069720405768,
+     "slot_scores": {
+      "blob": 0.53515625,
+      "trad": 0.84375
+     },
+     "raw_scores": {
+      "blob": 0.09123443812131882,
+      "trad": 19.149412155151367
+     },
+     "n_boxes": 0,
+     "latency_ms": 102.71,
+     "wall_ms": 102.77,
+     "decode_ms": 3.49,
+     "serialize_ms": 0.03,
+     "tasks": {
+      "_align_offset": {
+       "wait": 0.3,
+       "run": 1.3
+      },
+      "slot:blob": {
+       "wait": 0.1,
+       "run": 2.6
+      },
+      "_img_features": {
+       "wait": 0.3,
+       "run": 5.9
+      },
+      "slot:trad": {
+       "wait": 0.1,
+       "run": 102.4
+      }
+     },
+     "timing": {
+      "io": 0.0,
+      "tile": 0.0,
+      "forward": 0.0,
+      "score": 102.83,
+      "decide": 0.0,
+      "tta": 0.0,
+      "total": 102.83
+     }
+    },
+    {
+     "image": "det20_bench_00.png",
+     "shape": [
+      2500,
+      2500
+     ],
+     "rep": 0,
+     "decision": "anomaly",
+     "score": 2.0,
+     "slot_scores": {
+      "blob": 2.0,
+      "trad": 2.0
+     },
+     "raw_scores": {
+      "blob": 0.21345606446266174,
+      "trad": 73.36799621582031
+     },
+     "n_boxes": 0,
+     "latency_ms": 158.95,
+     "wall_ms": 159.03,
+     "decode_ms": 89.39,
+     "serialize_ms": 0.03,
+     "tasks": {
+      "_align_offset": {
+       "wait": 2.0,
+       "run": 17.4
+      },
+      "slot:blob": {
+       "wait": 0.1,
+       "run": 31.1
+      },
+      "_img_features": {
+       "wait": 1.8,
+       "run": 72.7
+      },
+      "slot:trad": {
+       "wait": 0.1,
+       "run": 158.4
+      }
+     },
+     "timing": {
+      "io": 0.0,
+      "tile": 0.0,
+      "forward": 0.0,
+      "score": 159.19,
+      "hier": 0.0,
+      "decide": 0.0,
+      "tta": 0.0,
+      "total": 159.19
+     }
+    },
+    {
+     "image": "det12_bench_00.png",
+     "shape": [
+      2500,
+      2500
+     ],
+     "rep": 0,
+     "decision": "anomaly",
+     "score": 2.0,
+     "slot_scores": {
+      "blob": 2.0,
+      "trad": 2.0
+     },
+     "raw_scores": {
+      "blob": 0.21345606446266174,
+      "trad": 73.36799621582031
+     },
+     "n_boxes": 0,
+     "latency_ms": 166.56,
+     "wall_ms": 166.62,
+     "decode_ms": 95.06,
+     "serialize_ms": 0.02,
+     "tasks": {
+      "slot:blob": {
+       "wait": 0.1,
+       "run": 31.7
+      },
+      "_align_offset": {
+       "wait": 2.9,
+       "run": 30.8
+      },
+      "_img_features": {
+       "wait": 1.3,
+       "run": 81.1
+      },
+      "slot:trad": {
+       "wait": 0.1,
+       "run": 166.1
+      }
+     },
+     "timing": {
+      "io": 0.0,
+      "tile": 0.0,
+      "forward": 0.0,
+      "score": 166.41,
+      "hier": 0.0,
+      "decide": 0.0,
+      "tta": 0.0,
+      "total": 166.41
+     }
+    },
+    {
+     "image": "det426_det1_bench_00.png",
+     "shape": [
+      2500,
+      2500
+     ],
+     "rep": 0,
+     "decision": "anomaly",
+     "score": 2.0,
+     "slot_scores": {
+      "blob": 2.0,
+      "trad": 2.0
+     },
+     "raw_scores": {
+      "blob": 0.21345606446266174,
+      "trad": 73.36799621582031
+     },
+     "n_boxes": 0,
+     "latency_ms": 181.82,
+     "wall_ms": 181.89,
+     "decode_ms": 103.71,
+     "serialize_ms": 0.03,
+     "tasks": {
+      "slot:blob": {
+       "wait": 0.1,
+       "run": 34.0
+      },
+      "_align_offset": {
+       "wait": 1.9,
+       "run": 32.4
+      },
+      "_img_features": {
+       "wait": 1.9,
+       "run": 109.7
+      },
+      "slot:trad": {
+       "wait": 0.1,
+       "run": 181.3
+      }
+     },
+     "timing": {
+      "io": 0.0,
+      "tile": 0.0,
+      "forward": 0.0,
+      "score": 181.02,
+      "hier": 0.0,
+      "decide": 0.0,
+      "tta": 0.0,
+      "total": 181.02
+     }
+    },
+    {
+     "image": "det90_det68_bench_06.png",
+     "shape": [
+      1024,
+      1024
+     ],
+     "rep": 0,
+     "decision": "anomaly",
+     "score": 2.0,
+     "slot_scores": {
+      "blob": 2.0,
+      "trad": 2.0
+     },
+     "raw_scores": {
+      "blob": 0.20713546872138977,
+      "trad": 75.98040771484375
+     },
+     "n_boxes": 0,
+     "latency_ms": 146.26,
+     "wall_ms": 146.32,
+     "decode_ms": 17.12,
+     "serialize_ms": 0.02,
+     "tasks": {
+      "_align_offset": {
+       "wait": 0.4,
+       "run": 3.1
+      },
+      "slot:blob": {
+       "wait": 0.1,
+       "run": 10.7
+      },
+      "_img_features": {
+       "wait": 0.4,
+       "run": 59.7
+      },
+      "slot:trad": {
+       "wait": 0.2,
+       "run": 145.7
+      }
+     },
+     "timing": {
+      "io": 0.0,
+      "tile": 0.0,
+      "forward": 0.0,
+      "score": 146.35,
+      "hier": 0.0,
+      "decide": 0.0,
+      "tta": 0.0,
+      "total": 146.35
+     }
+    },
+    {
+     "image": "det254_det76_bench_06.png",
+     "shape": [
+      1024,
+      1024
+     ],
+     "rep": 0,
+     "decision": "anomaly",
+     "score": 2.0,
+     "slot_scores": {
+      "blob": 2.0,
+      "trad": 2.0
+     },
+     "raw_scores": {
+      "blob": 0.20713546872138977,
+      "trad": 75.98040771484375
+     },
+     "n_boxes": 0,
+     "latency_ms": 150.78,
+     "wall_ms": 150.84,
+     "decode_ms": 16.15,
+     "serialize_ms": 0.02,
+     "tasks": {
+      "_align_offset": {
+       "wait": 0.4,
+       "run": 2.6
+      },
+      "slot:blob": {
+       "wait": 0.1,
+       "run": 10.1
+      },
+      "_img_features": {
+       "wait": 0.3,
+       "run": 65.2
+      },
+      "slot:trad": {
+       "wait": 0.1,
+       "run": 150.3
+      }
+     },
+     "timing": {
+      "io": 0.0,
+      "tile": 0.0,
+      "forward": 0.0,
+      "score": 150.85,
+      "hier": 0.0,
+      "decide": 0.0,
+      "tta": 0.0,
+      "total": 150.85
+     }
+    },
+    {
+     "image": "det469_det1_bench_00.png",
+     "shape": [
+      2500,
+      2500
+     ],
+     "rep": 0,
+     "decision": "anomaly",
+     "score": 2.0,
+     "slot_scores": {
+      "blob": 2.0,
+      "trad": 2.0
+     },
+     "raw_scores": {
+      "blob": 0.21345606446266174,
+      "trad": 73.36799621582031
+     },
+     "n_boxes": 0,
+     "latency_ms": 162.46,
+     "wall_ms": 162.53,
+     "decode_ms": 95.66,
+     "serialize_ms": 0.03,
+     "tasks": {
+      "_align_offset": {
+       "wait": 1.5,
+       "run": 21.7
+      },
+      "slot:blob": {
+       "wait": 0.2,
+       "run": 31.5
+      },
+      "_img_features": {
+       "wait": 1.4,
+       "run": 81.1
+      },
+      "slot:trad": {
+       "wait": 0.2,
+       "run": 161.9
+      }
+     },
+     "timing": {
+      "io": 0.0,
+      "tile": 0.0,
+      "forward": 0.0,
+      "score": 162.96,
+      "hier": 0.0,
+      "decide": 0.0,
+      "tta": 0.0,
+      "total": 162.96
+     }
+    },
+    {
+     "image": "det290_det1_bench_00.png",
+     "shape": [
+      2500,
+      2500
+     ],
+     "rep": 0,
+     "decision": "anomaly",
+     "score": 2.0,
+     "slot_scores": {
+      "blob": 2.0,
+      "trad": 2.0
+     },
+     "raw_scores": {
+      "blob": 0.21345606446266174,
+      "trad": 73.36799621582031
+     },
+     "n_boxes": 0,
+     "latency_ms": 174.31,
+     "wall_ms": 174.38,
+     "decode_ms": 95.62,
+     "serialize_ms": 0.02,
+     "tasks": {
+      "_align_offset": {
+       "wait": 2.5,
+       "run": 22.4
+      },
+      "slot:blob": {
+       "wait": 0.1,
+       "run": 32.4
+      },
+      "_img_features": {
+       "wait": 1.9,
+       "run": 101.3
+      },
+      "slot:trad": {
+       "wait": 0.2,
+       "run": 173.8
+      }
+     },
+     "timing": {
+      "io": 0.0,
+      "tile": 0.0,
+      "forward": 0.0,
+      "score": 173.57,
+      "hier": 0.0,
+      "decide": 0.0,
+      "tta": 0.0,
+      "total": 173.57
+     }
+    },
+    {
+     "image": "det39_bench_02.png",
+     "shape": [
+      3000,
+      4096
+     ],
+     "rep": 0,
+     "decision": "anomaly",
+     "score": 2.0,
+     "slot_scores": {
+      "blob": 2.0,
+      "trad": 2.0
+     },
+     "raw_scores": {
+      "blob": 0.1914578378200531,
+      "trad": 70.34062957763672
+     },
+     "n_boxes": 0,
+     "latency_ms": 128.16,
+     "wall_ms": 128.23,
+     "decode_ms": 166.92,
+     "serialize_ms": 0.02,
+     "tasks": {
+      "_align_offset": {
+       "wait": 0.3,
+       "run": 42.1
+      },
+      "_img_features": {
+       "wait": 0.3,
+       "run": 61.8
+      },
+      "slot:blob": {
+       "wait": 0.1,
+       "run": 75.4
+      },
+      "slot:trad": {
+       "wait": 0.1,
+       "run": 127.8
+      }
+     },
+     "timing": {
+      "io": 0.0,
+      "tile": 0.0,
+      "forward": 0.0,
+      "score": 127.97,
+      "hier": 0.0,
+      "decide": 0.0,
+      "tta": 0.0,
+      "total": 127.97
+     }
+    },
+    {
+     "image": "det770_0599_repaired.png",
+     "shape": [
+      432,
+      304
+     ],
+     "rep": 0,
+     "decision": "normal",
+     "score": 0.678069720405768,
+     "slot_scores": {
+      "blob": 0.53515625,
+      "trad": 0.84375
+     },
+     "raw_scores": {
+      "blob": 0.09123443812131882,
+      "trad": 19.149412155151367
+     },
+     "n_boxes": 0,
+     "latency_ms": 105.73,
+     "wall_ms": 105.8,
+     "decode_ms": 6.46,
+     "serialize_ms": 0.03,
+     "tasks": {
+      "_align_offset": {
+       "wait": 0.4,
+       "run": 2.1
+      },
+      "slot:blob": {
+       "wait": 0.1,
+       "run": 2.5
+      },
+      "_img_features": {
+       "wait": 0.1,
+       "run": 6.6
+      },
+      "slot:trad": {
+       "wait": 0.1,
+       "run": 105.4
+      }
+     },
+     "timing": {
+      "io": 0.0,
+      "tile": 0.0,
+      "forward": 0.0,
+      "score": 104.77,
+      "decide": 0.0,
+      "tta": 0.0,
+      "total": 104.77
+     }
+    },
+    {
+     "image": "det826_det68_bench_06.png",
+     "shape": [
+      1024,
+      1024
+     ],
+     "rep": 0,
+     "decision": "anomaly",
+     "score": 2.0,
+     "slot_scores": {
+      "blob": 2.0,
+      "trad": 2.0
+     },
+     "raw_scores": {
+      "blob": 0.20713546872138977,
+      "trad": 75.98040771484375
+     },
+     "n_boxes": 0,
+     "latency_ms": 152.73,
+     "wall_ms": 152.79,
+     "decode_ms": 16.59,
+     "serialize_ms": 0.02,
+     "tasks": {
+      "_align_offset": {
+       "wait": 0.4,
+       "run": 2.4
+      },
+      "slot:blob": {
+       "wait": 0.1,
+       "run": 7.7
+      },
+      "_img_features": {
+       "wait": 0.4,
+       "run": 66.5
+      },
+      "slot:trad": {
+       "wait": 0.1,
+       "run": 152.3
+      }
+     },
+     "timing": {
+      "io": 0.0,
+      "tile": 0.0,
+      "forward": 0.0,
+      "score": 152.48,
+      "hier": 0.0,
+      "decide": 0.0,
+      "tta": 0.0,
+      "total": 152.48
+     }
+    },
+    {
+     "image": "det328_det28_bench_00.png",
+     "shape": [
+      3000,
+      4096
+     ],
+     "rep": 0,
+     "decision": "anomaly",
+     "score": 2.0,
+     "slot_scores": {
+      "blob": 2.0,
+      "trad": 2.0
+     },
+     "raw_scores": {
+      "blob": 0.22610652446746826,
+      "trad": 71.34115600585938
+     },
+     "n_boxes": 0,
+     "latency_ms": 151.96,
+     "wall_ms": 152.02,
+     "decode_ms": 175.15,
+     "serialize_ms": 0.02,
+     "tasks": {
+      "_align_offset": {
+       "wait": 1.0,
+       "run": 54.1
+      },
+      "slot:blob": {
+       "wait": 0.1,
+       "run": 66.5
+      },
+      "_img_features": {
+       "wait": 0.9,
+       "run": 94.8
+      },
+      "slot:trad": {
+       "wait": 0.2,
+       "run": 151.5
+      }
+     },
+     "timing": {
+      "io": 0.0,
+      "tile": 0.0,
+      "forward": 0.0,
+      "score": 151.44,
+      "hier": 0.0,
+      "decide": 0.0,
+      "tta": 0.0,
+      "total": 151.44
+     }
+    },
+    {
+     "image": "det171_det76_bench_06.png",
+     "shape": [
+      1024,
+      1024
+     ],
+     "rep": 0,
+     "decision": "anomaly",
+     "score": 2.0,
+     "slot_scores": {
+      "blob": 2.0,
+      "trad": 2.0
+     },
+     "raw_scores": {
+      "blob": 0.20713546872138977,
+      "trad": 75.98040771484375
+     },
+     "n_boxes": 0,
+     "latency_ms": 152.56,
+     "wall_ms": 152.63,
+     "decode_ms": 19.59,
+     "serialize_ms": 0.02,
+     "tasks": {
+      "_align_offset": {
+       "wait": 0.7,
+       "run": 3.2
+      },
+      "slot:blob": {
+       "wait": 0.1,
+       "run": 7.1
+      },
+      "_img_features": {
+       "wait": 0.6,
+       "run": 58.7
+      },
+      "slot:trad": {
+       "wait": 0.2,
+       "run": 152.0
+      }
+     },
+     "timing": {
+      "io": 0.0,
+      "tile": 0.0,
+      "forward": 0.0,
+      "score": 152.88,
+      "hier": 0.0,
+      "decide": 0.0,
+      "tta": 0.0,
+      "total": 152.88
+     }
+    },
+    {
+     "image": "1322.jpg",
+     "shape": [
+      3000,
+      4096
+     ],
+     "rep": 0,
+     "decision": "anomaly",
+     "score": 2.0,
+     "slot_scores": {
+      "blob": 2.0,
+      "trad": 2.0
+     },
+     "raw_scores": {
+      "blob": 0.23485171794891357,
+      "trad": 58.23687744140625
+     },
+     "n_boxes": 0,
+     "latency_ms": 169.16,
+     "wall_ms": 169.25,
+     "decode_ms": 59.5,
+     "serialize_ms": 0.03,
+     "tasks": {
+      "_align_offset": {
+       "wait": 0.4,
+       "run": 46.1
+      },
+      "_img_features": {
+       "wait": 0.3,
+       "run": 74.4
+      },
+      "slot:trad": {
+       "wait": 0.1,
+       "run": 134.1
+      },
+      "slot:blob": {
+       "wait": 0.1,
+       "run": 168.6
+      }
+     },
+     "timing": {
+      "io": 0.0,
+      "tile": 0.0,
+      "forward": 0.0,
+      "score": 168.54,
+      "hier": 0.0,
+      "decide": 0.0,
+      "tta": 0.0,
+      "total": 168.54
+     }
+    },
+    {
+     "image": "1294.jpg",
+     "shape": [
+      3000,
+      4096
+     ],
+     "rep": 0,
+     "decision": "anomaly",
+     "score": 2.0,
+     "slot_scores": {
+      "blob": 2.0,
+      "trad": 2.0
+     },
+     "raw_scores": {
+      "blob": 0.241032212972641,
+      "trad": 55.03105545043945
+     },
+     "n_boxes": 0,
+     "latency_ms": 134.52,
+     "wall_ms": 134.6,
+     "decode_ms": 78.01,
+     "serialize_ms": 0.03,
+     "tasks": {
+      "_align_offset": {
+       "wait": 2.3,
+       "run": 49.1
+      },
+      "slot:blob": {
+       "wait": 0.1,
+       "run": 61.8
+      },
+      "_img_features": {
+       "wait": 0.9,
+       "run": 71.5
+      },
+      "slot:trad": {
+       "wait": 0.2,
+       "run": 133.9
+      }
+     },
+     "timing": {
+      "io": 0.0,
+      "tile": 0.0,
+      "forward": 0.0,
+      "score": 134.41,
+      "hier": 0.54,
+      "decide": 0.0,
+      "tta": 0.0,
+      "total": 134.95
+     }
+    },
+    {
+     "image": "1334.jpg",
+     "shape": [
+      3000,
+      4096
+     ],
+     "rep": 0,
+     "decision": "anomaly",
+     "score": 2.0,
+     "slot_scores": {
+      "blob": 2.0,
+      "trad": 2.0
+     },
+     "raw_scores": {
+      "blob": 0.23470711708068848,
+      "trad": 65.77507781982422
+     },
+     "n_boxes": 0,
+     "latency_ms": 138.61,
+     "wall_ms": 138.7,
+     "decode_ms": 70.11,
+     "serialize_ms": 0.04,
+     "tasks": {
+      "_align_offset": {
+       "wait": 0.3,
+       "run": 45.7
+      },
+      "slot:blob": {
+       "wait": 0.1,
+       "run": 77.3
+      },
+      "_img_features": {
+       "wait": 0.3,
+       "run": 80.8
+      },
+      "slot:trad": {
+       "wait": 0.1,
+       "run": 138.0
+      }
+     },
+     "timing": {
+      "io": 0.0,
+      "tile": 0.0,
+      "forward": 0.0,
+      "score": 137.57,
+      "hier": 0.97,
+      "decide": 0.0,
+      "tta": 0.0,
+      "total": 138.54
+     }
+    },
+    {
+     "image": "0607.png",
+     "shape": [
+      1223,
+      852
+     ],
+     "rep": 0,
+     "decision": "normal",
+     "score": 0.16901015467806843,
+     "slot_scores": {
+      "blob": 0.3046875,
+      "trad": 0.01171875
+     },
+     "raw_scores": {
+      "blob": 0.08948089182376862,
+      "trad": 9.541752815246582
+     },
+     "n_boxes": 0,
+     "latency_ms": 140.58,
+     "wall_ms": 140.67,
+     "decode_ms": 20.87,
+     "serialize_ms": 0.03,
+     "tasks": {
+      "_align_offset": {
+       "wait": 0.7,
+       "run": 5.8
+      },
+      "slot:blob": {
+       "wait": 0.1,
+       "run": 31.6
+      },
+      "_img_features": {
+       "wait": 0.2,
+       "run": 71.1
+      },
+      "slot:trad": {
+       "wait": 0.2,
+       "run": 140.1
+      }
+     },
+     "timing": {
+      "io": 0.0,
+      "tile": 0.0,
+      "forward": 0.0,
+      "score": 140.75,
+      "decide": 0.0,
+      "tta": 0.0,
+      "total": 140.75
+     }
+    },
+    {
+     "image": "0611.png",
+     "shape": [
+      1223,
+      852
+     ],
+     "rep": 0,
+     "decision": "normal",
+     "score": 0.29714615819919515,
+     "slot_scores": {
+      "blob": 0.12890625,
+      "trad": 0.4921875
+     },
+     "raw_scores": {
+      "blob": 0.08663445711135864,
+      "trad": 15.622052192687988
+     },
+     "n_boxes": 0,
+     "latency_ms": 123.39,
+     "wall_ms": 123.48,
+     "decode_ms": 31.49,
+     "serialize_ms": 0.02,
+     "tasks": {
+      "_align_offset": {
+       "wait": 0.6,
+       "run": 6.2
+      },
+      "slot:blob": {
+       "wait": 0.2,
+       "run": 21.3
+      },
+      "_img_features": {
+       "wait": 0.6,
+       "run": 55.3
+      },
+      "slot:trad": {
+       "wait": 0.2,
+       "run": 122.9
+      }
+     },
+     "timing": {
+      "io": 0.0,
+      "tile": 0.0,
+      "forward": 0.0,
+      "score": 123.37,
+      "decide": 0.0,
+      "tta": 0.0,
+      "total": 123.37
+     }
+    },
+    {
+     "image": "Image_20260116193703828.jpg",
+     "shape": [
+      5120,
+      5120
+     ],
+     "rep": 0,
+     "decision": "anomaly",
+     "score": 2.0,
+     "slot_scores": {
+      "blob": 2.0,
+      "trad": 2.0
+     },
+     "raw_scores": {
+      "blob": 0.1985333263874054,
+      "trad": 73.96520233154297
+     },
+     "n_boxes": 0,
+     "latency_ms": 191.89,
+     "wall_ms": 191.96,
+     "decode_ms": 261.53,
+     "serialize_ms": 0.02,
+     "tasks": {
+      "_align_offset": {
+       "wait": 5.5,
+       "run": 68.3
+      },
+      "_img_features": {
+       "wait": 2.5,
+       "run": 112.6
+      },
+      "slot:blob": {
+       "wait": 0.1,
+       "run": 144.5
+      },
+      "slot:trad": {
+       "wait": 0.2,
+       "run": 191.3
+      }
+     },
+     "timing": {
+      "io": 0.0,
+      "tile": 0.0,
+      "forward": 0.0,
+      "score": 192.45,
+      "hier": 0.0,
+      "decide": 0.0,
+      "tta": 0.0,
+      "total": 192.45
+     }
+    }
+   ],
+   "agg": {
+    "latency_ms": {
+     "n": 26,
+     "p50": 152.6,
+     "p95": 181.8,
+     "mean": 150.1,
+     "max": 191.9
+    },
+    "decode_ms": {
+     "n": 26,
+     "p50": 88.5,
+     "p95": 182.7,
+     "mean": 84.5,
+     "max": 261.5
+    },
+    "serialize_ms": {
+     "n": 26,
+     "p50": 0.0,
+     "p95": 0.0,
+     "mean": 0.0,
+     "max": 0.0
+    },
+    "t_io": {
+     "n": 26,
+     "p50": 0.0,
+     "p95": 0.0,
+     "mean": 0.0,
+     "max": 0.0
+    },
+    "t_tile": {
+     "n": 26,
+     "p50": 0.0,
+     "p95": 0.0,
+     "mean": 0.0,
+     "max": 0.0
+    },
+    "t_forward": {
+     "n": 26,
+     "p50": 0.0,
+     "p95": 0.0,
+     "mean": 0.0,
+     "max": 0.0
+    },
+    "t_score": {
+     "n": 26,
+     "p50": 152.5,
+     "p95": 181.0,
+     "mean": 150.0,
+     "max": 192.4
+    },
+    "t_hier": {
+     "n": 22,
+     "p50": 0.0,
+     "p95": 1.0,
+     "mean": 0.1,
+     "max": 1.0
+    },
+    "t_decide": {
+     "n": 26,
+     "p50": 0.0,
+     "p95": 0.0,
+     "mean": 0.0,
+     "max": 0.0
+    },
+    "t_total": {
+     "n": 26,
+     "p50": 152.5,
+     "p95": 181.0,
+     "mean": 150.1,
+     "max": 192.4
+    },
+    "run:_align_offset": {
+     "n": 26,
+     "p50": 20.0,
+     "p95": 54.1,
+     "mean": 24.5,
+     "max": 68.3
+    },
+    "wait:_align_offset": {
+     "n": 26,
+     "p50": 0.7,
+     "p95": 5.5,
+     "mean": 1.4,
+     "max": 5.8
+    },
+    "run:_img_features": {
+     "n": 26,
+     "p50": 71.1,
+     "p95": 109.7,
+     "mean": 70.4,
+     "max": 112.6
+    },
+    "wait:_img_features": {
+     "n": 26,
+     "p50": 0.6,
+     "p95": 2.5,
+     "mean": 1.1,
+     "max": 5.8
+    },
+    "run:slot:blob": {
+     "n": 26,
+     "p50": 31.5,
+     "p95": 144.5,
+     "mean": 43.7,
+     "max": 168.6
+    },
+    "wait:slot:blob": {
+     "n": 26,
+     "p50": 0.1,
+     "p95": 0.2,
+     "mean": 0.1,
+     "max": 0.2
+    },
+    "run:slot:trad": {
+     "n": 26,
+     "p50": 151.5,
+     "p95": 181.3,
+     "mean": 148.3,
+     "max": 191.3
+    },
+    "wait:slot:trad": {
+     "n": 26,
+     "p50": 0.1,
+     "p95": 0.2,
+     "mean": 0.2,
+     "max": 0.3
+    }
+   }
+  }
+ }
+}

@@ -15,15 +15,23 @@ routes_feedback（操作员反馈）与 routes_review（灰区复核）两边复
 from __future__ import annotations
 
 import logging
+import math
 import os
+from numbers import Real, Integral
 import re
+import threading
+from functools import wraps
 from datetime import date, datetime, timedelta
 from typing import Dict, List, Optional, Tuple
 
 from sqlalchemy import func
+from sqlalchemy.exc import IntegrityError
+
+from algo.decision.localization import consumable_regions, record_consumption
 
 from ..api._wo_shared import archived_workorder_ids
 from ..core import datasets as ds_helper
+from ..core.config import get_settings
 from ..core.ingest import register_image
 from ..core.notify import notify_event
 from ..db.database import log_action, session_scope
@@ -32,6 +40,54 @@ from ..db.models import (ConsolidationBatch, ConsolidationFeedback, Detection,
 from ..engine import get_engine
 
 logger = logging.getLogger(__name__)
+
+
+def feedback_json(value):
+    """仅包装反馈证据：非有限/非JSON值置未知，不修改算法工作态。"""
+    if value is None or isinstance(value, (str, bool)):
+        return value
+    if isinstance(value, Integral):
+        return int(value)
+    if isinstance(value, Real):
+        return float(value) if math.isfinite(value) else None
+    if isinstance(value, dict):
+        return {str(k): feedback_json(v) for k, v in value.items()}
+    if isinstance(value, (list, tuple)):
+        return [feedback_json(v) for v in value]
+    return None
+
+
+def feedback_details(trace):
+    """只读持久反馈结果；缺失归因不使用当前模型补推。"""
+    trace = trace if isinstance(trace, dict) else {}
+    update = trace.get("engine_update")
+    update = feedback_json(update) if isinstance(update, dict) else {}
+    candidate = trace.get("candidate")
+    candidate = feedback_json(candidate) if isinstance(candidate, dict) else {}
+    candidate_entry = candidate.get("entry") if isinstance(candidate, dict) else None
+    candidate_entry = candidate_entry if isinstance(candidate_entry, dict) else {}
+    attribution = update.get("attribution")
+    evidence = update.get("evidence")
+    candidate_attribution = candidate_entry.get("attribution")
+    status = trace.get("learning_status", "unknown")
+    if attribution:
+        attribution_availability = "available"
+    elif candidate_attribution:
+        attribution_availability = "candidate_available"
+    elif status == "candidate_queued":
+        attribution_availability = "pending_candidate"
+    elif status in ("candidate_failed", "failed"):
+        attribution_availability = "failed"
+    else:
+        attribution_availability = "unavailable"
+    return {"engine_update": update or None,
+            "learning_status": status,
+            "attribution": attribution,
+            "attribution_availability": attribution_availability,
+            "candidate_attribution": candidate_attribution,
+            "candidate_entry": candidate_entry or None,
+            "evidence": evidence,
+            "evidence_availability": "available" if evidence else "unavailable"}
 
 
 # ── 反馈即学共用路径（M5a：/feedback 与 /review 复用）─────────
@@ -92,14 +148,43 @@ def _region_to_norm_box(image_path: str, region) -> Optional[List[float]]:
         return None
 
 
+class FeedbackConflict(ValueError):
+    pass
+
+
+_feedback_submit_lock = threading.RLock()
+
+
+def _serialized_feedback(fn):
+    @wraps(fn)
+    def wrapped(*args, **kwargs):
+        with _feedback_submit_lock:
+            try:
+                return fn(*args, **kwargs)
+            except IntegrityError:
+                if kwargs.get("source_event_id"):
+                    with session_scope() as s:
+                        found = s.query(Feedback.id).filter(
+                            Feedback.source_event_id == kwargs["source_event_id"]).first()
+                    if found:
+                        return fn(*args, **kwargs)
+                raise
+    return wrapped
+
+
+@_serialized_feedback
 def submit_feedback_record(detection_id: int, feedback_type: str,
                            operator_label: int,
                            defect_type: Optional[str] = None,
                            comment: Optional[str] = None,
                            region: Optional[list] = None,
                            operator: str = "operator",
-                           source_event_id: Optional[str] = None) -> Dict:
-    """落 Feedback + 今日统计 + 引擎即学（成功置 consumed=True）。
+                           source_event_id: Optional[str] = None,
+                           candidate_only: bool = True,
+                           allow_legacy_online: bool = False) -> Dict:
+    """落库反馈；默认仅排队候选，不改变生产工作态。
+
+    在线即学仅供显式隔离的 legacy 实验调用（allow_legacy_online=True）。
 
     M7a：即学前先用当前引擎对该图打一次分，记"反馈前判定" pre
     （score/decision/slots）随 region 一起落库（{"box":.., "pre":..}），
@@ -111,6 +196,8 @@ def submit_feedback_record(detection_id: int, feedback_type: str,
     M8a：反馈图不在 Image 表时自动登记（split=feedback, source=feedback），
     挂"反馈回流"系统批次（按品类 get_or_create）。
     """
+    if not candidate_only and not allow_legacy_online:
+        raise FeedbackConflict("生产反馈只能排队候选；legacy 在线学习必须显式隔离")
     engine = get_engine()
     def _current_version(category: str):
         try:
@@ -118,6 +205,8 @@ def submit_feedback_record(detection_id: int, feedback_type: str,
         except Exception:  # noqa: BLE001
             return None
 
+    existing = None
+    source_event_id = source_event_id or None
     with session_scope() as s:
         det = s.get(Detection, detection_id)
         if det is None:
@@ -127,23 +216,43 @@ def submit_feedback_record(detection_id: int, feedback_type: str,
                         .filter(Feedback.source_event_id == source_event_id)
                         .first())
             if existing is not None:
+                stored = (existing.detection_id, existing.feedback_type,
+                          existing.operator_label, existing.defect_type,
+                          existing.comment, region_box_pre(existing.region)[0], existing.operator)
+                incoming = (detection_id, feedback_type, operator_label, defect_type,
+                            comment, region, operator)
+                stored_candidate = bool((existing.learning_trace or {}).get("candidate_only"))
+                if stored_candidate != candidate_only:
+                    raise FeedbackConflict("来源事件学习路径不一致")
+                if stored != incoming or existing.invalidated:
+                    raise FeedbackConflict("来源事件ID对应不同payload或已作废")
+            if existing is not None and (candidate_only or existing.consumed or
+                    (existing.learning_trace or {}).get("learning_status") == "pending"):
                 version = _current_version(det.category)
                 return {"feedback_id": existing.id,
-                        "engine_update": None if not existing.consumed else {"idempotent": True},
+                        "engine_update": feedback_details(existing.learning_trace)["engine_update"],
                         "note": "已存在相同来源事件",
                         "category": det.category, "image_path": det.image_path,
-                        "pre": (existing.region or {}).get("pre"),
+                        "pre": region_box_pre(existing.region)[1],
                         "post": existing.post,
                         "learning_trace": existing.learning_trace,
-                        "model_version_before": existing.model_version_before,
-                        "model_version_after": existing.model_version_after,
                         "feedback_status": "stored",
-                        "learning_status": "applied" if existing.consumed else "unavailable",
-                        "consolidation_status": "not_requested",
+                        "learning_status": (existing.learning_trace or {}).get(
+                            "learning_status", "applied" if existing.consumed else "unknown"),
+                        "consolidation_status": (existing.learning_trace or {}).get(
+                            "consolidation_status", "not_requested"),
                         "model_activation_status": "unchanged",
                         "model_version_before": version,
-                        "model_version_after": version}
+                        "model_version_after": version,
+                        "idempotent": True}
         image_path, category = det.image_path, det.category
+        # AC-055：审计只记录检测实际推理版本，缺失为 None（不回退 current_version）
+        detection_model_version = (det.n_tiles or {}).get("model_version")
+        # AC-063/064：即时学习同样按 region 消费快照回写 consumption
+        _review = (det.n_tiles or {}).get("region_review") or {}
+        instant_guard = {"detection_id": det.id,
+                         "region_revision": int(_review.get("revision", 0)),
+                         "regions": consumable_regions(_review)}
         model_version_before = _current_version(category)
         img_registered = (s.query(Image)
                           .filter(Image.path == image_path).first() is not None)
@@ -170,27 +279,80 @@ def submit_feedback_record(detection_id: int, feedback_type: str,
     except Exception:  # noqa: BLE001 引擎未就绪/未 prepare 时 pre=None
         pre = None
 
-    with session_scope() as s:
-        fb = Feedback(detection_id=detection_id,
-                      feedback_type=feedback_type,
-                      operator_label=operator_label,
-                      defect_type=defect_type, comment=comment,
-                      region={"box": region, "pre": pre}, operator=operator,
-                      source_event_id=source_event_id)
-        s.add(fb)
-        s.flush()
-        fb_id = fb.id
-
-        stats = s.query(StatsDaily).filter(StatsDaily.date == date.today()).first()
-        if stats is None:
-            stats = StatsDaily(date=date.today())
-            s.add(stats)
+    if existing is not None:
+        fb_id = existing.id
+        pre = region_box_pre(existing.region)[1]
+    else:
+        with session_scope() as s:
+            fb = Feedback(detection_id=detection_id,
+                          feedback_type=feedback_type,
+                          operator_label=operator_label,
+                          defect_type=defect_type, comment=comment,
+                          region={"box": region, "pre": pre,
+                                  # AC-064：反馈框为人工标注（不与 engine_box 候选混用）
+                                  "box_source": "human_box" if region else None},
+                          operator=operator,
+                          source_event_id=source_event_id,
+                          learning_trace={"candidate_only": True, "learning_status": "candidate_queued"}
+                          if candidate_only else None)
+            s.add(fb)
             s.flush()
-        stats.n_feedback += 1
-        if feedback_type == "false_positive":
-            stats.n_false_positive += 1
-        elif feedback_type == "false_negative":
-            stats.n_false_negative += 1
+            fb_id = fb.id
+
+            stats = s.query(StatsDaily).filter(StatsDaily.date == date.today()).first()
+            if stats is None:
+                stats = StatsDaily(date=date.today())
+                s.add(stats)
+                s.flush()
+            stats.n_feedback += 1
+            if feedback_type == "false_positive":
+                stats.n_false_positive += 1
+            elif feedback_type == "false_negative":
+                stats.n_false_negative += 1
+
+    if candidate_only:
+        with session_scope() as s:
+            pending_count = (s.query(func.count(Feedback.id))
+                             .join(Detection, Feedback.detection_id == Detection.id)
+                             .filter(Detection.category == category,
+                                     Feedback.consumed.is_(False),
+                                     Feedback.invalidated.is_(False),
+                                     Feedback.feedback_type != "open_alert").scalar() or 0)
+        threshold = _feedback_threshold_status(int(pending_count))
+        trace = {"feedback_id": fb_id, "candidate_only": True,
+                 **threshold,
+                 "learning_status": "candidate_queued",
+                 "model_version_before": model_version_before,
+                 "model_version_after": model_version_before,
+                 "engine_update": None}
+        with session_scope() as s:
+            row = s.get(Feedback, fb_id)
+            if row is not None:
+                row.learning_trace = trace
+                row.consumed = False
+        log_action("feedback_candidate_queued",
+                   f"detection_id={detection_id} type={feedback_type}",
+                   user=operator,
+                   extra={"feedback_id": fb_id, "detection_id": detection_id,
+                          "source_event_id": source_event_id,
+                          "category": category,
+                          "learning_status": "candidate_queued",
+                          "detection_model_version": detection_model_version})
+        if threshold["threshold_reached"]:
+            log_action("feedback_consolidation_threshold",
+                       "反馈达到阈值，等待候选巩固；未激活生产模型",
+                       user=operator,
+                       extra={"feedback_id": fb_id, "category": category, **threshold})
+        return {"feedback_id": fb_id, "engine_update": None,
+                **threshold,
+                "note": "已排队候选；未应用、未激活，等待候选任务消费",
+                "category": category, "image_path": image_path, "pre": pre,
+                "post": None, "learning_trace": trace,
+                "feedback_status": "stored", "learning_status": "candidate_queued",
+                "model_activation_status": "unchanged",
+                "model_version_before": model_version_before,
+                "model_version_after": model_version_before,
+                "activated": False, "idempotent": False}
 
     verdict, label = map_verdict_label(feedback_type, operator_label)
     box = None
@@ -198,16 +360,57 @@ def submit_feedback_record(detection_id: int, feedback_type: str,
         box = _region_to_norm_box(image_path, region)
     engine_update: Optional[dict] = None
     note: Optional[str] = None
-    def mark_consumed():
-        with session_scope() as s:
-            row = s.get(Feedback, fb_id)
-            if row is not None:
-                row.consumed = True
+    result_lock = threading.RLock()
+    terminal = False
+    trace = {"feedback_id": fb_id, "verdict": verdict, "label": label,
+             "learning_status": "pending", "model_version_before": model_version_before,
+             "model_version_after": model_version_before, "engine_update": None}
+    post = None
 
+    def persist_result(update, error=None, *, final=True):
+        nonlocal terminal, trace, post
+        with result_lock:
+            if terminal:
+                return
+            version = _current_version(category)
+            status = ("failed" if error else "applied") if final else "pending"
+            trace = {**trace, "learning_status": status,
+                     "model_version_after": version,
+                     "engine_update": feedback_json(update)}
+            if error is not None:
+                trace["error"] = str(error)
+            if final and error is None:
+                try:
+                    r = engine.predict_image_path(category, image_path)
+                    post = feedback_json({"score": round(float(r.score), 6),
+                        "decision": r.decision, "slots": r.slot_scores or {},
+                        "model_version": version, "status": "captured"})
+                except Exception:
+                    post = {"model_version": version, "status": "unavailable"}
+                trace["region_consumption"] = _record_region_consumption(
+                    fb_id, instant_guard,
+                    {"version_num": version, "parent_version": model_version_before},
+                    candidate_id=f"instant:feedback:{fb_id}", kind="instant")
+            # 回调只捕获标量/引擎，不复用请求线程的 ORM session。
+            with session_scope() as s:
+                row = s.get(Feedback, fb_id)
+                if row is not None:
+                    row.consumed = final and error is None
+                    row.model_version_before = (f"v{model_version_before}"
+                        if isinstance(model_version_before, int) else model_version_before)
+                    row.model_version_after = (f"v{version}" if isinstance(version, int) else version)
+                    row.post = post
+                    row.learning_trace = feedback_json(trace)
+            terminal = final
+
+    persist_result(None, final=False)
     try:
         engine_update = get_engine().submit_feedback(
             category, image_path, verdict=verdict, label=label, box=box,
-            on_complete=mark_consumed, feedback_id=fb_id)
+            on_result=persist_result, feedback_id=fb_id,
+            allow_legacy_online=allow_legacy_online)   # AC-038：入口已守卫，此处恒为 True
+        engine_update = feedback_json(engine_update)
+        persist_result(engine_update, final=not bool(engine_update and engine_update.get("async")))
         notify_event("feedback", {
             "category": category, "detection_id": detection_id,
             "feedback_type": feedback_type, "label": label,
@@ -215,47 +418,23 @@ def submit_feedback_record(detection_id: int, feedback_type: str,
             "version": get_engine().current_version(category),
         })
     except Exception as e:  # noqa: BLE001 引擎未就绪不中断反馈落库
-        note = f"模型未就绪，反馈仅落库（{e}）"
+        persist_result(None, e)
+        note = f"学习失败，反馈已落库（{e}）"
 
     log_action("feedback",
                f"detection_id={detection_id} type={feedback_type} "
                f"engine_update={'ok' if engine_update else 'skip'}",
                user=operator)
-    model_version_after = _current_version(category)
-    post: Optional[dict] = None
-    if engine_update and not engine_update.get("async"):
-        try:
-            r = engine.predict_image_path(category, image_path)
-            post = {"score": round(float(r.score), 6),
-                    "decision": r.decision,
-                    "slots": {k: round(float(v), 4)
-                              for k, v in (r.slot_scores or {}).items()},
-                    "model_version": model_version_after,
-                    "status": "captured"}
-        except Exception:  # noqa: BLE001 学习完成但反馈后推理不可用
-            post = {"model_version": model_version_after,
-                    "status": "unavailable"}
-    trace = {"feedback_id": fb_id, "verdict": verdict, "label": label,
-             "learning_status": "applied" if engine_update else "unavailable",
-             "model_version_before": model_version_before,
-             "model_version_after": model_version_after,
-             "engine_update": engine_update}
-    with session_scope() as s:
-        row = s.get(Feedback, fb_id)
-        if row is not None:
-            row.model_version_before = (f"v{model_version_before}"
-                                         if isinstance(model_version_before, int)
-                                         else model_version_before)
-            row.model_version_after = (f"v{model_version_after}"
-                                        if isinstance(model_version_after, int)
-                                        else model_version_after)
-            row.post = post
-            row.learning_trace = trace
+    with result_lock:
+        trace = dict(trace)
+        engine_update = trace["engine_update"]
+        learning_status = trace["learning_status"]
+        model_version_after = trace["model_version_after"]
     return {"feedback_id": fb_id, "engine_update": engine_update,
             "note": note, "category": category, "image_path": image_path,
             "pre": pre, "post": post, "learning_trace": trace,
             "feedback_status": "stored",
-            "learning_status": "applied" if engine_update else "unavailable",
+            "learning_status": learning_status,
             "consolidation_status": "not_requested",
             "model_activation_status": "unchanged",
             "model_version_before": model_version_before,
@@ -488,6 +667,15 @@ def feedback_summary(category: Optional[str] = None,
     }
 
 
+def _feedback_threshold_status(pending_count: int) -> Dict:
+    threshold = int(get_settings().get("self_learning", "trigger_min_feedback", 10))
+    reached = threshold > 0 and pending_count >= threshold
+    return {"trigger_min_feedback": threshold,
+            "pending_feedback_count": pending_count,
+            "threshold_reached": reached,
+            "consolidation_status": "pending_consolidation" if reached else "not_requested"}
+
+
 def pending_update_status() -> Dict:
     """各品类快照版本 + 未巩固反馈数。
 
@@ -506,7 +694,8 @@ def pending_update_status() -> Dict:
         pending_rows = (s.query(Detection.category, func.count(Feedback.id))
                         .join(Feedback, Feedback.detection_id == Detection.id)
                         .filter(Feedback.consumed == False,  # noqa: E712
-                                Feedback.invalidated == False)  # noqa: E712
+                                Feedback.invalidated == False,
+                                Feedback.feedback_type != "open_alert")  # noqa: E712
                         .group_by(Detection.category).all())
     db_pending = {cat: int(cnt) for cat, cnt in pending_rows}
 
@@ -528,13 +717,22 @@ def pending_update_status() -> Dict:
             "prepared": cur is not None,
             "feedback_log_len": feedback_log_len,
             "unconsumed_db": db_pending.get(cat, 0),
+            **_feedback_threshold_status(db_pending.get(cat, 0)),
         })
     return {"categories": categories}
 
 
 # ── 巩固落盘（旧"增量更新"语义的新实现）────────────────────
-def consolidate(category: str, note: str = "") -> Dict:
-    """固化在线学习，并记录本次快照包含的反馈集合与版本血缘。"""
+def consolidate(category: str, note: str = "", *,
+                activate: Optional[bool] = None) -> Dict:
+    """固化在线学习，并记录本次快照包含的反馈集合与版本血缘。
+
+    activate=None 时按设置中心 self_learning.auto_activate（默认 false＝仅生成
+    候选版本，人工 A/B 后再激活）；UI-P0.4：此前 None 被当作激活，配置项失效。
+    """
+    if activate is None:
+        from ..core.config import get_settings
+        activate = bool(get_settings().get("self_learning", "auto_activate", False))
     engine = get_engine()
     before = engine.current_version(category)
     with session_scope() as s:
@@ -545,14 +743,15 @@ def consolidate(category: str, note: str = "") -> Dict:
                         Feedback.invalidated.is_(False)).all())
         feedback_ids = [int(row[0]) for row in rows]
     try:
-        new_v = engine.consolidate(category, note=note or "consolidate via API")
+        new_v = engine.consolidate(category, note=note or "consolidate via API",
+                                   activate=activate)
     except RuntimeError as e:
         raise ValueError(f"品类 '{category}' 未准备，无法巩固（{e}）")
     with session_scope() as s:
         batch = ConsolidationBatch(
             category=category, from_version=before, to_version=new_v,
             feedback_count=len(feedback_ids), note=note,
-            status="activated")
+            status="activated" if activate else "candidate")
         s.add(batch)
         s.flush()
         for feedback_id in feedback_ids:
@@ -568,11 +767,210 @@ def consolidate(category: str, note: str = "") -> Dict:
                f"feedback_count={len(feedback_ids)} note={note}",
                extra=trace)
     notify_event("consolidate", {"category": category, "version": new_v})
+    pseudo = None
+    if not activate:
+        # 伪标签只进候选排队（teacher=巩固前激活版本），不写库、不激活
+        try:
+            pseudo = pseudo_label_candidates(category)
+        except Exception as exc:  # 伪标签失败不影响巩固主流程
+            logger.warning("[pseudo_label] %s 生成失败：%s", category, exc)
+            pseudo = {"category": category, "error": str(exc), "items": [], "counts": {}}
     return {"category": category, "version": f"v{new_v}",
             "version_num": new_v, "from_version": before,
             "consolidation_id": consolidation_id,
             "feedback_ids": feedback_ids, "feedback_count": len(feedback_ids),
-            "activated": True, "message": "巩固落盘完成，已激活为新版本"}
+            "activated": activate,
+            "pseudo_candidates": pseudo,
+            "message": ("巩固落盘完成，已激活为新版本" if activate
+                         else "候选版本已生成，等待独立验收和批准激活")}
+
+
+def label_lateness(label_at, detected_at, tolerance_days: Optional[int] = None) -> Dict:
+    """AC-072：标签相对检测的迟到天数；tolerance 缺省取 business_budget.label_late_tolerance_days。"""
+    if tolerance_days is None:
+        from ..core.config import get_settings
+        tolerance_days = int(get_settings().business_budget()["label_late_tolerance_days"])
+    if label_at is None or detected_at is None:
+        return {"late": False, "lag_days": None, "tolerance_days": tolerance_days}
+    lag = (label_at - detected_at).total_seconds() / 86400.0
+    return {"late": lag > tolerance_days, "lag_days": round(lag, 3),
+            "tolerance_days": tolerance_days}
+
+
+def late_label_stats(category: Optional[str] = None) -> Dict:
+    """AC-072：迟到标签统计（late_excluded 只计数，不入训）。"""
+    with session_scope() as s:
+        q = s.query(Feedback, Detection).join(Detection, Feedback.detection_id == Detection.id)
+        if category:
+            q = q.filter(Detection.category == category)
+        late = [fb.id for fb, _ in q.all()
+                if (fb.learning_trace or {}).get("learning_status") == "late_excluded"]
+    return {"late_excluded": len(late), "feedback_ids": late}
+
+
+def label_order_audit(category: Optional[str] = None) -> Dict:
+    """AC-042：反馈标签释放时序审计（只读；不改反馈、不触发训练）。"""
+    from ..core.config import get_settings
+    from .label_audit import audit_label_order
+    tol = int(get_settings().business_budget()["label_late_tolerance_days"])
+    with session_scope() as s:
+        q = s.query(Feedback, Detection).join(Detection, Feedback.detection_id == Detection.id)
+        if category:
+            q = q.filter(Detection.category == category)
+        events = [{"feedback_id": fb.id, "detection_id": det.id,
+                   "image_key": det.image_id or det.image_path,
+                   "detected_at": det.created_at, "label_at": fb.created_at}
+                  for fb, det in q.all() if not fb.invalidated]
+    return audit_label_order(events, tol)
+
+
+def build_feedback_candidate(feedback_id: int, parent_version: int) -> Dict:
+    """把已落库且未消费的事件显式应用于独立候选，不置生产consumed。"""
+    with session_scope() as s:
+        fb = s.get(Feedback, feedback_id)
+        if (fb is None or fb.invalidated or fb.consumed
+                or not (fb.learning_trace or {}).get("candidate_only")):
+            raise ValueError("仅显式候选路径的未消费有效反馈可构建候选")
+        det = s.get(Detection, fb.detection_id)
+        category, path = det.category, det.image_path
+        verdict, label = map_verdict_label(fb.feedback_type, fb.operator_label)
+        region, _ = region_box_pre(fb.region)
+        trace = dict(fb.learning_trace or {})
+        fb_defect_type = (fb.defect_type or "").strip() or None
+        # AC-072：标签迟到超出 business_budget.label_late_tolerance_days → 只统计不入训
+        late = label_lateness(fb.created_at, det.created_at)
+        if late["late"]:
+            fb.learning_trace = {**trace, "learning_status": "late_excluded",
+                                 "label_lateness": late}
+            return {"status": "late_excluded", "feedback_id": fb.id,
+                    "label_lateness": late, "trained": False}
+        review = (det.n_tiles or {}).get("region_review") or {}
+        trace.update(
+            learning_status="candidate_pending",
+            candidate_parent=parent_version,
+            candidate_guard={
+                "feedback_id": fb.id,
+                "detection_id": det.id,
+                "invalidated": bool(fb.invalidated),
+                "region_revision": int(review.get("revision", 0)),
+                # AC-063 region 级消费快照：发布前逐框复核修订/删除/作废（fail-closed）
+                "regions": consumable_regions(review),
+            })
+        fb.learning_trace = trace
+    box = _region_to_norm_box(path, region) if region and label == 1 else None
+    try:
+        out = get_engine().learn_candidate(
+            category, path, verdict=verdict, label=label, box=box,
+            event_id=f"feedback:{feedback_id}", parent_version=parent_version,
+            **({"defect_type": fb_defect_type} if fb_defect_type else {}))
+    except Exception as exc:
+        from .candidate_release import failure_details
+        failure = failure_details(exc, "build")
+        with session_scope() as s:
+            fb = s.get(Feedback, feedback_id)
+            if fb is not None:
+                fb.learning_trace = {**trace, "learning_status": "candidate_failed",
+                                     "reason": str(exc), **failure}
+        raise
+    consumption = _record_region_consumption(feedback_id, trace["candidate_guard"], out)
+    with session_scope() as s:
+        fb = s.get(Feedback, feedback_id)
+        fb.learning_trace = {**trace, "learning_status": "candidate", "candidate": out,
+                             "region_consumption": consumption}
+    return out
+
+
+def pseudo_label_candidates(category: str, *, now: Optional[datetime] = None,
+                            cfg: Optional[Dict] = None) -> Dict:
+    """teacher 伪标签候选集（只读 DB；不写 Feedback/Detection、不触发训练/激活）。
+
+    teacher=当前激活版本；只取该版本推理的检测（n_tiles.model_version 一致），
+    分数远离阈值者出 LabelRecord(kind=pseudo)，与人工反馈经 resolve_labels 合并
+    （人工优先）。产物仅供候选训练集/候选排队，在线推理不受影响。
+    配置 self_learning.pseudo_label：enabled/ok_ratio/ng_ratio/valid_days/max_items。"""
+    from .label_audit import (PSEUDO_DEFAULTS, LabelRecord, generate_pseudo_labels,
+                              merge_pseudo_with_human)
+    if cfg is None:
+        from ..core.config import get_settings
+        cfg = get_settings().get("self_learning", "pseudo_label", None) or {}
+    c = {**PSEUDO_DEFAULTS, **(cfg or {})}
+    if not c.get("enabled", True):
+        return {"category": category, "enabled": False, "items": [], "counts": {}}
+    teacher = get_engine().current_version(category)
+    if teacher is None:
+        return {"category": category, "enabled": True, "teacher_version": None,
+                "items": [], "counts": {}, "reason": "no_active_version"}
+    now = now or datetime.now()
+    valid_until = now + timedelta(days=float(c["valid_days"]))
+    samples, human = [], []
+    with session_scope() as s:
+        dets = (s.query(Detection).filter(Detection.category == category)
+                .order_by(Detection.id.desc()).limit(int(c["max_items"])).all())
+        det_ids = [d.id for d in dets]
+        for d in dets:
+            nt = d.n_tiles or {}
+            mv = nt.get("model_version")
+            if mv is None or str(mv) != str(teacher):
+                continue  # 非当前 teacher 推理的分数不复用
+            samples.append({"sample_id": str(d.id), "score": d.final_score,
+                            "threshold": nt.get("threshold")})
+        fbs = (s.query(Feedback).filter(Feedback.detection_id.in_(det_ids),
+                                        Feedback.invalidated.is_(False)).all()
+               if det_ids else [])
+        for fb in fbs:
+            _, lab = map_verdict_label(fb.feedback_type, fb.operator_label)
+            if lab is None:
+                continue
+            human.append(LabelRecord(sample_id=str(fb.detection_id), label=int(lab),
+                                     kind="human", revision=int(fb.id),
+                                     created_at=fb.created_at))
+    pseudo = generate_pseudo_labels(samples, teacher, ok_ratio=float(c["ok_ratio"]),
+                                    ng_ratio=float(c["ng_ratio"]), now=now,
+                                    valid_until=valid_until)
+    resolved = merge_pseudo_with_human(pseudo, human, now, teacher)
+    items = [{"detection_id": int(sid), "label": r["label"], "source": r["source"]}
+             for sid, r in resolved.items() if r.get("usable")]
+    items.sort(key=lambda x: x["detection_id"])
+    counts = {"pseudo_generated": len(pseudo),
+              "pseudo_used": sum(1 for x in items if x["source"] == "pseudo"),
+              "human_used": sum(1 for x in items if x["source"] == "human"),
+              "pseudo_ok": sum(1 for x in items if x["source"] == "pseudo" and x["label"] == 0),
+              "pseudo_ng": sum(1 for x in items if x["source"] == "pseudo" and x["label"] == 1)}
+    return {"category": category, "enabled": True, "teacher_version": teacher,
+            "ok_ratio": float(c["ok_ratio"]), "ng_ratio": float(c["ng_ratio"]),
+            "candidate_only": True, "items": items, "counts": counts}
+
+
+def _record_region_consumption(feedback_id: int, guard: Dict, out: Dict,
+                               candidate_id: Optional[str] = None,
+                               kind: str = "candidate") -> Dict:
+    """候选训练/即时学习成功后把 region 级消费记录回写 region_review.consumption（CAS，不改
+    revision）。CAS 冲突仅记状态不抛错：fail-closed 以 candidate_guard.regions 为准。"""
+    snap = guard.get("regions") or []
+    if not snap:
+        return {"status": "none", "count": 0}
+    out = out or {}
+    now = datetime.now().isoformat()
+    recs = [{**r, "review_revision": guard.get("region_revision"),
+             "candidate_id": candidate_id or f"candidate:feedback:{feedback_id}",
+             "feedback_id": feedback_id, "version": out.get("version_num"),
+             "parent_version": out.get("parent_version"), "kind": kind,
+             "at": now} for r in snap]
+    for _ in range(3):
+        with session_scope() as s:
+            det = s.get(Detection, guard["detection_id"])
+            if det is None:
+                return {"status": "detection_missing", "count": 0}
+            old = det.n_tiles or {}
+            rv = old.get("region_review") or {}
+            updated = {**old, "region_review": record_consumption(rv, recs)}
+            changed = (s.query(Detection).filter(Detection.id == det.id,
+                       Detection.n_tiles == old)
+                       .update({Detection.n_tiles: updated}, synchronize_session=False))
+            if changed == 1:
+                return {"status": "recorded", "count": len(recs), "at": now}
+    logger.warning("region consumption CAS conflict: feedback=%s", feedback_id)
+    return {"status": "cas_conflict", "count": 0}
 
 
 # ── 模型切换 ────────────────────────────────────────────────
@@ -592,20 +990,26 @@ def resolve_model_version(model_id: int) -> Tuple[str, int]:
     return category, int(m.group(1))
 
 
-def activate_model(model_id: int) -> Dict:
+def activate_model(model_id: int, *, allow_stale: bool = False,
+                   recovery_authorization: Optional[Dict] = None) -> Dict:
     """按 Model 行的 (category, version) 调 engine.activate 热切换，并记录前后版本。"""
     category, version = resolve_model_version(model_id)
     engine = get_engine()
     before = engine.current_version(category)
 
-    engine.activate(category, version)  # 版本不存在时抛 ValueError
+    # 版本不存在 / 特征表示过期（AC-015）时抛 ValueError；allow_stale 须带恢复授权（AC-073）
+    published = engine.activate(category, version, allow_stale=allow_stale,
+                                recovery_authorization=recovery_authorization)
 
-    with session_scope() as s:
-        s.query(Model).filter(Model.category == category,
-                              Model.id != model_id).update(
-            {"is_active": False}, synchronize_session=False)
-        s.query(Model).filter(Model.id == model_id).update(
-            {"is_active": True}, synchronize_session=False)
+    if not isinstance(published, dict) or "model_mirror" not in published:
+        with session_scope() as s:
+            s.query(Model).filter(Model.category == category,
+                                  Model.id != model_id).update(
+                {"is_active": False}, synchronize_session=False)
+            s.query(Model).filter(Model.id == model_id).update(
+                {"is_active": True}, synchronize_session=False)
+    else:
+        model_id = published["model_mirror"]["model_id"]
 
     trace = {"model_id": model_id, "category": category,
              "from_version": before, "to_version": version,

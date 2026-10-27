@@ -1,0 +1,57 @@
+INFO:     127.0.0.1:6915 - "GET /api/health HTTP/1.1" 200 OK
+INFO:     127.0.0.1:6916 - "GET /api/datasources HTTP/1.1" 200 OK
+── 1. probe 识别各数据集根 ─────────────────
+INFO:     127.0.0.1:6917 - "POST /api/datasets/probe HTTP/1.1" 200 OK
+  ✅ mvtec 识别为 mvtec_like（cats=15）
+  ✅ mvtec 品类 bottle 计数合理（{'train_normal': 209, 'test_normal': 20, 'test_anomaly': 63, 'val_normal': 0, 'val_anomaly': 0, 'template': 0, 'unknown': 0}）
+INFO:     127.0.0.1:6918 - "POST /api/datasets/probe HTTP/1.1" 200 OK
+  ✅ BTAD 识别为 mvtec_like（包装目录下钻）（cats=['01', '02', '03']）
+  ✅ BTAD 01 ok/ko 正确映射（{'train_normal': 400, 'test_normal': 21, 'test_anomaly': 49, 'val_normal': 0, 'val_anomaly': 0, 'template': 0, 'unknown': 0} masks=49）
+INFO:     127.0.0.1:6919 - "POST /api/datasets/probe HTTP/1.1" 200 OK
+  ✅ GYU-DET 识别为 yolo_split
+  ✅ GYU-DET txt 标签生效（缺陷占多数）（train N/A=584/8314）
+INFO:     127.0.0.1:6925 - "POST /api/datasets/probe HTTP/1.1" 200 OK
+  ✅ data_local 识别为 mvtec_like
+  ✅ data_local component 模板命名识别（{'train_normal': 2, 'test_normal': 0, 'test_anomaly': 14, 'val_normal': 0, 'val_anomaly': 0, 'template': 8, 'unknown': 0}）
+  ✅ data_local gold_finger 掩码计数（masks=46）
+INFO:     127.0.0.1:6926 - "POST /api/datasets/probe HTTP/1.1" 200 OK
+  ✅ solder 识别为 dir_rules（images=164）
+  ✅ solder _OK 成对正常图识别（bridge_pair={'name': 'bridge_pair', 'dir': 'bridge_pair', 'normal': 20, 'anomaly': 0, 'template': 0, 'unknown': 48, 'samples': ['bridge_pair\\pair1\\PixPin_2026-07-01_09-30-12_OK.png', 'bridge_pair\\pair1\\PixPin_2026-07-01_09-30-13.png', 'bridge_pair\\pair1\\PixPin_2026-07-01_09-31-13.png']}）
+  ✅ solder 未识别分组有告警
+INFO:     127.0.0.1:6927 - "POST /api/datasets/probe HTTP/1.1" 200 OK
+  ✅ shift 电容底座三类标记识别（tpl/n/a=16/1/8）
+INFO:     127.0.0.1:6928 - "POST /api/datasets/probe HTTP/1.1" 200 OK
+  ✅ jump ok/NG 目录标记识别（ok={'name': 'ok', 'dir': 'ok', 'normal': 140, 'anomaly': 0, 'template': 0, 'unknown': 0, 'samples': ['ok\\templ_100_jumper.jpg', 'ok\\templ_101_jumper.jpg', 'ok\\templ_102_jumper.jpg']} NG={'name': 'NG', 'dir': 'NG', 'normal': 0, 'anomaly': 65, 'template': 0, 'unknown': 0, 'samples': ['NG\\cross\\20251023175457872609_47_jumper_OK.jpg', 'NG\\cross\\20251023175457872609_592_jumper_OK.jpg', 'NG\\cross\\20251023180805211403_456_jumper_wrongPartORmissing.jpg']}）
+INFO:     127.0.0.1:6929 - "POST /api/datasets/probe HTTP/1.1" 200 OK
+  ✅ 误报目录按正常识别（假报警=正常）（{'name': '误报', 'dir': '误报', 'normal': 20, 'anomaly': 0, 'template': 0, 'unknown': 0, 'samples': ['误报\\20260811152723832262_50_jumper_wrongPartORmissing.jpg', '误报\\20260811152723832262_70_jumper_wrongPartORmissing.jpg', '误报\\20260811152818932486_50_jumper_wrongPartORmissing.jpg']}）
+  ✅ 良品/模板小图识别
+INFO:     127.0.0.1:6930 - "POST /api/datasets/probe HTTP/1.1" 400 Bad Request
+  ✅ 不存在目录返回 400
+── 2. 确认导入 dir_rules（solder，分组 override）──────
+INFO:     127.0.0.1:6931 - "POST /api/datasources HTTP/1.1" 200 OK
+  ✅ 建数据源（id=1）
+INFO:     127.0.0.1:6932 - "POST /api/datasets/adapt_import HTTP/1.1" 200 OK
+  ✅ adapt_import 提交
+INFO:     127.0.0.1:6933 - "GET /api/tasks/1 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:6934 - "GET /api/tasks/1 HTTP/1.1" 200 OK
+  ✅ 导入任务完成（done 完成）
+INFO:     127.0.0.1:6935 - "GET /api/images?category=solder&page_size=300 HTTP/1.1" 200 OK
+  ✅ solder 图片入库（正常+缺陷）（normal=41 anomaly=22）
+  ✅ 正常图 _OK 命名且 split=train
+  ✅ 缺陷图带缺陷类型（分组目录名）（types=['excess', 'insufficient', 'less_tin']）
+INFO:     127.0.0.1:6936 - "GET /api/datasources/1/groups HTTP/1.1" 200 OK
+  ✅ 预训练组含 _OK 正常图（pretrain={'normal': 41, 'anomaly': 0}）
+INFO:     127.0.0.1:6937 - "DELETE /api/datasources/1 HTTP/1.1" 200 OK
+── 3. mvtec_like 单品类导入（component，模板进 L3）────
+INFO:     127.0.0.1:6938 - "POST /api/datasources HTTP/1.1" 200 OK
+INFO:     127.0.0.1:6939 - "POST /api/datasets/adapt_import HTTP/1.1" 200 OK
+INFO:     127.0.0.1:6940 - "GET /api/tasks/2 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:6941 - "GET /api/tasks/2 HTTP/1.1" 200 OK
+  ✅ component 导入完成（完成）
+INFO:     127.0.0.1:6942 - "GET /api/images?category=component&page_size=100 HTTP/1.1" 200 OK
+  ✅ component 模板图 8 张进 L3（tpl=8）
+  ✅ component test/缺陷目录识别（anomaly=14）
+INFO:     127.0.0.1:6943 - "DELETE /api/datasources/1 HTTP/1.1" 200 OK
+
+==============================================
+验证全部通过 ✅（27）

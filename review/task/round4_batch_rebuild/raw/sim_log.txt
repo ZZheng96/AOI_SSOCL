@@ -1,0 +1,500 @@
+﻿[split] seed=0 fit=8 eval=9 Image_2026:6/6 t_fov:2/3 E1_def=10 E2_def=9 orig_normal=32
+[prepare B_before] normal=14 defect=0
+python.exe : d:\CGAIC\AOI_SSOCL\AOI_tree\assets\dinov2\dinov2\layers\swiglu_ffn.py:51: UserWarning: xFormers is not ava
+ilable (SwiGLU)
+所在位置 C:\Users\imia\AppData\Local\Temp\trae\run-command\scripts\ps-script-203a076f-cec4-442d-a15b-ed8e28ce0053.ps1:19 字符
+: 39
++ ... offscreen"; & "C:\Program Files\Python311\python.exe" "$env:TEMP\aoi_ ...
++                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: (d:\CGAIC\AOI_SS...ilable (SwiGLU):String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+  warnings.warn("xFormers is not available (SwiGLU)")
+d:\CGAIC\AOI_SSOCL\AOI_tree\assets\dinov2\dinov2\layers\attention.py:33: UserWarning: xFormers is not available (Attent
+ion)
+  warnings.warn("xFormers is not available (Attention)")
+d:\CGAIC\AOI_SSOCL\AOI_tree\assets\dinov2\dinov2\layers\block.py:40: UserWarning: xFormers is not available (Block)
+  warnings.warn("xFormers is not available (Block)")
+[dino] 使用随包 vendor 权重: d:\CGAIC\AOI_SSOCL\AOI_tree\assets\dinov2\dinov2_vits14_pretrain.pth
+[disc] 加载预训练头 d:\CGAIC\AOI_SSOCL\AOI_tree\AOI_Core\assets\disc_pretrain.pt
+  [fit] init_normal 提取 14 张完成 (1s)
+  [fit] 槽位 sem 完成 (2s)
+  [fit] 槽位 disc 完成 (2s)
+[shead] epoch 10/50 loss_n=7.9021 loss_a=5.2966
+[shead] epoch 20/50 loss_n=7.4822 loss_a=5.1739
+[shead] epoch 30/50 loss_n=6.4243 loss_a=6.4045
+[shead] epoch 40/50 loss_n=5.7168 loss_a=6.7731
+[shead] epoch 50/50 loss_n=6.1146 loss_a=6.3158
+[shead] fit 完成: normal=14 pseudo=42 real_defect=0 pos_total=42 X=56 batch=32 lr=0.001
+  [fit] 槽位 shead 完成 (3s)
+  [fit] 视图模式 profile_missing（min_defect_px 未提供，保持整图） 局部分支=关（auto_profile）
+  -> {'version': 1, 'n_normal': 14, 'n_defect': 0, 'tau_high': 0.8951302083333331, 'tau_gray': 0.7881510416666666, 'weights': {'sem': 0.3333333333333333, 'disc': 0.3333333333333333, 'shead': 0.3333333333333333}, 'prepare_s': 7.5}
+[prepare B_after] normal=22 defect=0
+[disc] 加载预训练头 d:\CGAIC\AOI_SSOCL\AOI_tree\AOI_Core\assets\disc_pretrain.pt
+    [extract] 20/22 (2s)
+  [fit] init_normal 提取 22 张完成 (2s)
+  [fit] 槽位 sem 完成 (3s)
+  [fit] 槽位 disc 完成 (3s)
+[shead] epoch 10/50 loss_n=3.8649 loss_a=9.1680
+[shead] epoch 20/50 loss_n=5.2209 loss_a=6.6492
+[shead] epoch 30/50 loss_n=5.9215 loss_a=6.3211
+[shead] epoch 40/50 loss_n=6.5612 loss_a=5.6648
+[shead] epoch 50/50 loss_n=6.6692 loss_a=5.5706
+[shead] fit 完成: normal=18 pseudo=54 real_defect=0 pos_total=54 X=72 batch=32 lr=0.001
+  [fit] 槽位 shead 完成 (4s)
+  [fit] 视图模式 profile_missing（min_defect_px 未提供，保持整图） 局部分支=关（auto_profile）
+    [extract] 20/20 (2s)
+  -> {'version': 1, 'n_normal': 22, 'n_defect': 0, 'tau_high': 0.6633072916666666, 'tau_gray': 0.6498697916666666, 'weights': {'sem': 0.3333333333333333, 'disc': 0.3333333333333333, 'shead': 0.3333333333333333}, 'prepare_s': 13.7}
+[prepare A_before] normal=14 defect=30
+[disc] 加载预训练头 d:\CGAIC\AOI_SSOCL\AOI_tree\AOI_Core\assets\disc_pretrain.pt
+  [fit] init_normal 提取 14 张完成 (1s)
+    [extract] 20/30 (1s)
+  [fit] init_defect 提取 30 张完成 (3s)
+C:\Users\imia\AppData\Roaming\Python\Python311\site-packages\sklearn\base.py:525: InconsistentVersionWarning: Trying to
+ unpickle estimator DecisionTreeClassifier from version 1.9.1 when using version 1.9.0. This might lead to breaking cod
+e or invalid results. Use at your own risk. For more info please refer to:
+https://scikit-learn.org/stable/model_persistence.html#security-maintainability-limitations
+  warnings.warn(
+C:\Users\imia\AppData\Roaming\Python\Python311\site-packages\sklearn\base.py:525: InconsistentVersionWarning: Trying to
+ unpickle estimator RandomForestClassifier from version 1.9.1 when using version 1.9.0. This might lead to breaking cod
+e or invalid results. Use at your own risk. For more info please refer to:
+https://scikit-learn.org/stable/model_persistence.html#security-maintainability-limitations
+  warnings.warn(
+  [fit] 加载全局类型判别器（d:\CGAIC\AOI_SSOCL\AOI_tree\assets\defect_clf.pkl）
+  [fit] 槽位 sem 完成 (4s)
+  [fit] 槽位 disc 完成 (4s)
+[shead] epoch 10/50 loss_n=4.4622 loss_a=7.9117
+[shead] epoch 20/50 loss_n=5.4702 loss_a=6.1180
+[shead] epoch 30/50 loss_n=4.9097 loss_a=6.0643
+[shead] epoch 40/50 loss_n=4.6767 loss_a=6.1766
+[shead] epoch 50/50 loss_n=5.1482 loss_a=5.8678
+[shead] fit 完成: normal=14 pseudo=42 real_defect=30 pos_total=72 X=86 batch=32 lr=0.001
+  [fit] 槽位 shead 完成 (6s)
+[fusion] sanity 加权: sem=0.361 disc=0.278 shead=0.361
+[fusion] train 域 fused AUROC=0.819（初始权重质量，协议内）
+[route] base=0.8190 router=0.8214 enabled=False (margin=0.005)
+[route] 准入=trace_only（未在 val/test 同时胜固定权重与硬规则（或权重坍缩），只做追溯）
+  [fit] 视图模式 domain_first（存在未排除的域差（档案或机制C train_auroc 低），先排除域差） 局部分支=关（auto_profile）
+  -> {'version': 1, 'n_normal': 14, 'n_defect': 30, 'tau_high': 0.8281202498726222, 'tau_gray': 0.8121825729591259, 'weights': {'sem': 0.36118659420289856, 'disc': 0.2776268115942029, 'shead': 0.36118659420289856}, 'prepare_s': 9.4}
+[prepare A_after] normal=22 defect=30
+[disc] 加载预训练头 d:\CGAIC\AOI_SSOCL\AOI_tree\AOI_Core\assets\disc_pretrain.pt
+    [extract] 20/22 (2s)
+  [fit] init_normal 提取 22 张完成 (2s)
+    [extract] 20/30 (1s)
+  [fit] init_defect 提取 30 张完成 (4s)
+C:\Users\imia\AppData\Roaming\Python\Python311\site-packages\sklearn\base.py:525: InconsistentVersionWarning: Trying to
+ unpickle estimator DecisionTreeClassifier from version 1.9.1 when using version 1.9.0. This might lead to breaking cod
+e or invalid results. Use at your own risk. For more info please refer to:
+https://scikit-learn.org/stable/model_persistence.html#security-maintainability-limitations
+  warnings.warn(
+C:\Users\imia\AppData\Roaming\Python\Python311\site-packages\sklearn\base.py:525: InconsistentVersionWarning: Trying to
+ unpickle estimator RandomForestClassifier from version 1.9.1 when using version 1.9.0. This might lead to breaking cod
+e or invalid results. Use at your own risk. For more info please refer to:
+https://scikit-learn.org/stable/model_persistence.html#security-maintainability-limitations
+  warnings.warn(
+  [fit] 加载全局类型判别器（d:\CGAIC\AOI_SSOCL\AOI_tree\assets\defect_clf.pkl）
+  [fit] 槽位 sem 完成 (5s)
+  [fit] 槽位 disc 完成 (5s)
+[shead] epoch 10/50 loss_n=5.8220 loss_a=6.5899
+[shead] epoch 20/50 loss_n=6.4779 loss_a=5.4987
+[shead] epoch 30/50 loss_n=4.7570 loss_a=6.5687
+[shead] epoch 40/50 loss_n=5.3523 loss_a=5.3152
+[shead] epoch 50/50 loss_n=4.6108 loss_a=6.3052
+[shead] fit 完成: normal=18 pseudo=54 real_defect=30 pos_total=84 X=102 batch=32 lr=0.001
+  [fit] 槽位 shead 完成 (7s)
+[fusion] sanity 加权: sem=0.253 disc=0.000 shead=0.747
+[fusion] train 域 fused AUROC=0.675（初始权重质量，协议内）
+[route] base=0.6750 router=0.6750 enabled=False (margin=0.005)
+[route] 准入=trace_only（样本不足（每集正/负 <3），只做追溯）
+  [fit] 视图模式 domain_first（存在未排除的域差（档案或机制C train_auroc 低），先排除域差） 局部分支=关（auto_profile）
+    [extract] 20/20 (2s)
+  -> {'version': 1, 'n_normal': 22, 'n_defect': 30, 'tau_high': 0.7488903407655382, 'tau_gray': 0.748699429951996, 'weights': {'sem': 0.25265285497726125, 'disc': 0.0, 'shead': 0.7473471450227388}, 'prepare_s': 18.2}
+  [1/60] eval_normal    y=0 B_before=0.673/n B_after=0.380/n A_before=1.719/a A_after=-0.672/n (+56s)
+  [2/60] eval_normal    y=0 B_before=0.990/a B_after=0.083/n A_before=1.987/a A_after=-0.640/n (+56s)
+  [3/60] eval_normal    y=0 B_before=0.392/n B_after=-0.038/n A_before=1.483/a A_after=-0.663/n (+56s)
+  [4/60] eval_normal    y=0 B_before=0.495/n B_after=-0.547/n A_before=1.576/a A_after=-0.664/n (+57s)
+  [5/60] eval_normal    y=0 B_before=0.400/n B_after=-0.513/n A_before=1.496/a A_after=-0.633/n (+58s)
+  [6/60] eval_normal    y=0 B_before=0.993/a B_after=0.968/a A_before=1.713/a A_after=-0.698/n (+60s)
+  [7/60] eval_normal    y=0 B_before=1.000/a B_after=0.663/g A_before=1.994/a A_after=0.768/a (+60s)
+  [8/60] eval_normal    y=0 B_before=1.336/a B_after=1.230/a A_before=1.994/a A_after=0.894/a (+61s)
+  [9/60] eval_normal    y=0 B_before=1.328/a B_after=1.511/a A_before=1.995/a A_after=0.776/a (+62s)
+  [10/60] E1_defect      y=1 B_before=1.566/a B_after=1.654/a A_before=1.994/a A_after=1.995/a (+62s)
+  [11/60] E1_defect      y=1 B_before=1.005/a B_after=0.641/n A_before=1.993/a A_after=1.995/a (+63s)
+  [12/60] E1_defect      y=1 B_before=0.996/a B_after=0.663/g A_before=1.994/a A_after=1.998/a (+64s)
+  [13/60] E1_defect      y=1 B_before=1.007/a B_after=0.597/n A_before=1.982/a A_after=1.998/a (+64s)
+  [14/60] E1_defect      y=1 B_before=1.003/a B_after=0.650/g A_before=1.994/a A_after=1.997/a (+65s)
+  [15/60] E1_defect      y=1 B_before=0.665/n B_after=0.572/n A_before=1.714/a A_after=1.998/a (+66s)
+  [16/60] E1_defect      y=1 B_before=1.361/a B_after=0.994/a A_before=1.993/a A_after=1.998/a (+66s)
+  [17/60] E1_defect      y=1 B_before=1.104/a B_after=0.615/n A_before=1.990/a A_after=1.998/a (+67s)
+  [18/60] E1_defect      y=1 B_before=1.004/a B_after=0.610/n A_before=1.989/a A_after=1.998/a (+68s)
+  [19/60] E1_defect      y=1 B_before=0.996/a B_after=0.650/n A_before=1.994/a A_after=1.998/a (+68s)
+  [20/60] E2_pair_defect y=1 B_before=0.998/a B_after=0.414/n A_before=1.989/a A_after=-0.673/n (+70s)
+  [21/60] E2_pair_defect y=1 B_before=0.970/a B_after=0.083/n A_before=1.972/a A_after=-0.626/n (+73s)
+  [22/60] E2_pair_defect y=1 B_before=0.391/n B_after=-0.168/n A_before=1.487/a A_after=-0.638/n (+74s)
+  [23/60] E2_pair_defect y=1 B_before=0.611/n B_after=0.392/n A_before=1.662/a A_after=0.425/n (+76s)
+  [24/60] E2_pair_defect y=1 B_before=0.470/n B_after=-0.516/n A_before=1.554/a A_after=-0.638/n (+78s)
+  [25/60] E2_pair_defect y=1 B_before=1.015/a B_after=1.010/a A_before=1.714/a A_after=-0.667/n (+80s)
+  [26/60] E2_pair_defect y=1 B_before=0.999/a B_after=0.661/g A_before=1.994/a A_after=0.761/a (+81s)
+  [27/60] E2_pair_defect y=1 B_before=1.025/a B_after=1.119/a A_before=1.994/a A_after=0.865/a (+82s)
+  [28/60] E2_pair_defect y=1 B_before=1.352/a B_after=1.556/a A_before=1.995/a A_after=0.893/a (+83s)
+  [29/60] orig_normal    y=0 B_before=1.578/a B_after=1.651/a A_before=1.994/a A_after=1.995/a (+84s)
+  [30/60] orig_normal    y=0 B_before=1.008/a B_after=0.634/n A_before=1.992/a A_after=1.996/a (+84s)
+  [31/60] orig_normal    y=0 B_before=0.995/a B_after=0.648/n A_before=1.994/a A_after=1.998/a (+85s)
+  [32/60] orig_normal    y=0 B_before=1.310/a B_after=0.595/n A_before=1.979/a A_after=1.998/a (+86s)
+  [33/60] orig_normal    y=0 B_before=1.343/a B_after=0.649/n A_before=1.993/a A_after=1.997/a (+87s)
+  [34/60] orig_normal    y=0 B_before=0.617/n B_after=0.535/n A_before=1.674/a A_after=1.998/a (+88s)
+  [35/60] orig_normal    y=0 B_before=1.356/a B_after=0.963/a A_before=1.992/a A_after=1.998/a (+88s)
+  [36/60] orig_normal    y=0 B_before=1.057/a B_after=0.606/n A_before=1.988/a A_after=1.998/a (+89s)
+  [37/60] orig_normal    y=0 B_before=1.024/a B_after=0.619/n A_before=1.991/a A_after=1.998/a (+90s)
+  [38/60] orig_normal    y=0 B_before=0.996/a B_after=0.650/n A_before=1.994/a A_after=1.998/a (+91s)
+  [39/60] orig_normal    y=0 B_before=1.364/a B_after=1.117/a A_before=1.994/a A_after=1.997/a (+91s)
+  [40/60] orig_normal    y=0 B_before=0.997/a B_after=0.629/n A_before=1.992/a A_after=1.995/a (+92s)
+  [41/60] orig_normal    y=0 B_before=1.365/a B_after=1.048/a A_before=1.992/a A_after=1.996/a (+93s)
+  [42/60] orig_normal    y=0 B_before=0.670/n B_after=0.577/n A_before=1.719/a A_after=1.998/a (+93s)
+  [43/60] orig_normal    y=0 B_before=1.013/a B_after=0.644/n A_before=1.993/a A_after=1.998/a (+94s)
+  [44/60] orig_normal    y=0 B_before=0.990/a B_after=0.601/n A_before=1.985/a A_after=1.998/a (+95s)
+  [45/60] orig_normal    y=0 B_before=1.372/a B_after=0.990/a A_before=1.992/a A_after=1.993/a (+95s)
+  [46/60] orig_normal    y=0 B_before=0.999/a B_after=0.639/n A_before=1.993/a A_after=1.996/a (+96s)
+  [47/60] orig_normal    y=0 B_before=0.983/a B_after=0.597/n A_before=1.983/a A_after=1.998/a (+97s)
+  [48/60] orig_normal    y=0 B_before=1.003/a B_after=0.633/n A_before=1.993/a A_after=1.998/a (+97s)
+  [49/60] orig_normal    y=0 B_before=1.013/a B_after=0.640/n A_before=1.993/a A_after=1.994/a (+98s)
+  [50/60] orig_normal    y=0 B_before=0.997/a B_after=0.898/a A_before=1.994/a A_after=1.995/a (+99s)
+  [51/60] orig_normal    y=0 B_before=1.377/a B_after=0.973/a A_before=1.995/a A_after=1.997/a (+99s)
+  [52/60] orig_normal    y=0 B_before=1.398/a B_after=1.456/a A_before=1.995/a A_after=1.997/a (+100s)
+  [53/60] orig_normal    y=0 B_before=1.343/a B_after=0.966/a A_before=1.995/a A_after=1.986/a (+101s)
+  [54/60] orig_normal    y=0 B_before=1.341/a B_after=0.975/a A_before=1.995/a A_after=1.994/a (+101s)
+  [55/60] orig_normal    y=0 B_before=1.416/a B_after=1.300/a A_before=1.995/a A_after=1.996/a (+102s)
+  [56/60] orig_normal    y=0 B_before=1.351/a B_after=0.944/a A_before=1.994/a A_after=1.996/a (+103s)
+  [57/60] orig_normal    y=0 B_before=1.407/a B_after=0.976/a A_before=1.994/a A_after=1.995/a (+104s)
+  [58/60] orig_normal    y=0 B_before=1.000/a B_after=0.974/a A_before=1.995/a A_after=1.994/a (+104s)
+  [59/60] orig_normal    y=0 B_before=1.167/a B_after=0.803/a A_before=1.994/a A_after=1.997/a (+105s)
+  [60/60] orig_normal    y=0 B_before=1.000/a B_after=0.955/a A_before=1.994/a A_after=1.997/a (+106s)
+{
+ "fit": {
+  "B_before": {
+   "version": 1,
+   "n_normal": 14,
+   "n_defect": 0,
+   "tau_high": 0.8951302083333331,
+   "tau_gray": 0.7881510416666666,
+   "weights": {
+    "sem": 0.3333333333333333,
+    "disc": 0.3333333333333333,
+    "shead": 0.3333333333333333
+   },
+   "prepare_s": 7.5
+  },
+  "B_after": {
+   "version": 1,
+   "n_normal": 22,
+   "n_defect": 0,
+   "tau_high": 0.6633072916666666,
+   "tau_gray": 0.6498697916666666,
+   "weights": {
+    "sem": 0.3333333333333333,
+    "disc": 0.3333333333333333,
+    "shead": 0.3333333333333333
+   },
+   "prepare_s": 13.7
+  },
+  "A_before": {
+   "version": 1,
+   "n_normal": 14,
+   "n_defect": 30,
+   "tau_high": 0.8281202498726222,
+   "tau_gray": 0.8121825729591259,
+   "weights": {
+    "sem": 0.36118659420289856,
+    "disc": 0.2776268115942029,
+    "shead": 0.36118659420289856
+   },
+   "prepare_s": 9.4
+  },
+  "A_after": {
+   "version": 1,
+   "n_normal": 22,
+   "n_defect": 30,
+   "tau_high": 0.7488903407655382,
+   "tau_gray": 0.748699429951996,
+   "weights": {
+    "sem": 0.25265285497726125,
+    "disc": 0.0,
+    "shead": 0.7473471450227388
+   },
+   "prepare_s": 18.2
+  }
+ },
+ "metrics": {
+  "B_before": {
+   "E1": {
+    "n_normal": 9,
+    "n_defect": 10,
+    "auroc": 0.7556,
+    "fixed_fpr": 0.5556,
+    "fixed_recall": 0.9,
+    "wp_fpr5": {
+     "recall": 0.2,
+     "fpr": 0.0,
+     "threshold": 1.3605531862253033,
+     "tp": 2,
+     "fp": 0,
+     "fn": 8,
+     "tn": 9,
+     "max_fpr": 0.05,
+     "note": "参考工作点，不修改生产阈值"
+    }
+   },
+   "E2": {
+    "n_normal": 9,
+    "n_defect": 9,
+    "auroc": 0.5432,
+    "fixed_fpr": 0.5556,
+    "fixed_recall": 0.6667,
+    "wp_fpr5": {
+     "recall": 0.1111,
+     "fpr": 0.0,
+     "threshold": 1.3524213583709022,
+     "tp": 1,
+     "fp": 0,
+     "fn": 8,
+     "tn": 9,
+     "max_fpr": 0.05,
+     "note": "参考工作点，不修改生产阈值"
+    }
+   },
+   "E1+E2": {
+    "n_normal": 9,
+    "n_defect": 19,
+    "auroc": 0.655,
+    "fixed_fpr": 0.5556,
+    "fixed_recall": 0.7895,
+    "wp_fpr5": {
+     "recall": 0.1579,
+     "fpr": 0.0,
+     "threshold": 1.3524213583709022,
+     "tp": 3,
+     "fp": 0,
+     "fn": 16,
+     "tn": 9,
+     "max_fpr": 0.05,
+     "note": "参考工作点，不修改生产阈值"
+    }
+   },
+   "fpr_eval_normal": 0.5556,
+   "fpr_orig_normal": 0.9375,
+   "fpr_eval_Image_2026": 0.3333,
+   "fpr_eval_t_fov": 1.0,
+   "orig_normal_fused_max": 1.5778
+  },
+  "B_after": {
+   "E1": {
+    "n_normal": 9,
+    "n_defect": 10,
+    "auroc": 0.6222,
+    "fixed_fpr": 0.3333,
+    "fixed_recall": 0.2,
+    "wp_fpr5": {
+     "recall": 0.1,
+     "fpr": 0.0,
+     "threshold": 1.6541556056782745,
+     "tp": 1,
+     "fp": 0,
+     "fn": 9,
+     "tn": 9,
+     "max_fpr": 0.05,
+     "note": "参考工作点，不修改生产阈值"
+    }
+   },
+   "E2": {
+    "n_normal": 9,
+    "n_defect": 9,
+    "auroc": 0.5432,
+    "fixed_fpr": 0.3333,
+    "fixed_recall": 0.3333,
+    "wp_fpr5": {
+     "recall": 0.1111,
+     "fpr": 0.0,
+     "threshold": 1.5560696141497647,
+     "tp": 1,
+     "fp": 0,
+     "fn": 8,
+     "tn": 9,
+     "max_fpr": 0.05,
+     "note": "参考工作点，不修改生产阈值"
+    }
+   },
+   "E1+E2": {
+    "n_normal": 9,
+    "n_defect": 19,
+    "auroc": 0.5848,
+    "fixed_fpr": 0.3333,
+    "fixed_recall": 0.2632,
+    "wp_fpr5": {
+     "recall": 0.1053,
+     "fpr": 0.0,
+     "threshold": 1.5560696141497647,
+     "tp": 2,
+     "fp": 0,
+     "fn": 17,
+     "tn": 9,
+     "max_fpr": 0.05,
+     "note": "参考工作点，不修改生产阈值"
+    }
+   },
+   "fpr_eval_normal": 0.3333,
+   "fpr_orig_normal": 0.5,
+   "fpr_eval_Image_2026": 0.1667,
+   "fpr_eval_t_fov": 0.6667,
+   "orig_normal_fused_max": 1.6513
+  },
+  "A_before": {
+   "E1": {
+    "n_normal": 9,
+    "n_defect": 10,
+    "auroc": 0.6556,
+    "fixed_fpr": 1.0,
+    "fixed_recall": 1.0,
+    "wp_fpr5": {
+     "recall": 0.0,
+     "fpr": 0.0,
+     "threshold": 1.9948113416123154,
+     "tp": 0,
+     "fp": 0,
+     "fn": 10,
+     "tn": 9,
+     "max_fpr": 0.05,
+     "note": "参考工作点，不修改生产阈值"
+    }
+   },
+   "E2": {
+    "n_normal": 9,
+    "n_defect": 9,
+    "auroc": 0.5309,
+    "fixed_fpr": 1.0,
+    "fixed_recall": 1.0,
+    "wp_fpr5": {
+     "recall": 0.0,
+     "fpr": 0.0,
+     "threshold": 1.9948113416123154,
+     "tp": 0,
+     "fp": 0,
+     "fn": 9,
+     "tn": 9,
+     "max_fpr": 0.05,
+     "note": "参考工作点，不修改生产阈值"
+    }
+   },
+   "E1+E2": {
+    "n_normal": 9,
+    "n_defect": 19,
+    "auroc": 0.5965,
+    "fixed_fpr": 1.0,
+    "fixed_recall": 1.0,
+    "wp_fpr5": {
+     "recall": 0.0,
+     "fpr": 0.0,
+     "threshold": 1.9948113416123154,
+     "tp": 0,
+     "fp": 0,
+     "fn": 19,
+     "tn": 9,
+     "max_fpr": 0.05,
+     "note": "参考工作点，不修改生产阈值"
+    }
+   },
+   "fpr_eval_normal": 1.0,
+   "fpr_orig_normal": 1.0,
+   "fpr_eval_Image_2026": 1.0,
+   "fpr_eval_t_fov": 1.0,
+   "orig_normal_fused_max": 1.9948
+  },
+  "A_after": {
+   "E1": {
+    "n_normal": 9,
+    "n_defect": 10,
+    "auroc": 1.0,
+    "fixed_fpr": 0.3333,
+    "fixed_recall": 1.0,
+    "wp_fpr5": {
+     "recall": 1.0,
+     "fpr": 0.0,
+     "threshold": 1.9952276326828935,
+     "tp": 10,
+     "fp": 0,
+     "fn": 0,
+     "tn": 9,
+     "max_fpr": 0.05,
+     "note": "参考工作点，不修改生产阈值"
+    }
+   },
+   "E2": {
+    "n_normal": 9,
+    "n_defect": 9,
+    "auroc": 0.5802,
+    "fixed_fpr": 0.3333,
+    "fixed_recall": 0.3333,
+    "wp_fpr5": {
+     "recall": 0.0,
+     "fpr": 0.0,
+     "threshold": 0.894123032155622,
+     "tp": 0,
+     "fp": 0,
+     "fn": 9,
+     "tn": 9,
+     "max_fpr": 0.05,
+     "note": "参考工作点，不修改生产阈值"
+    }
+   },
+   "E1+E2": {
+    "n_normal": 9,
+    "n_defect": 19,
+    "auroc": 0.8012,
+    "fixed_fpr": 0.3333,
+    "fixed_recall": 0.6842,
+    "wp_fpr5": {
+     "recall": 0.5263,
+     "fpr": 0.0,
+     "threshold": 1.9952276326828935,
+     "tp": 10,
+     "fp": 0,
+     "fn": 9,
+     "tn": 9,
+     "max_fpr": 0.05,
+     "note": "参考工作点，不修改生产阈值"
+    }
+   },
+   "fpr_eval_normal": 0.3333,
+   "fpr_orig_normal": 1.0,
+   "fpr_eval_Image_2026": 0.0,
+   "fpr_eval_t_fov": 1.0,
+   "orig_normal_fused_max": 1.9984
+  }
+ },
+ "latency": {
+  "B_before": {
+   "n": 60,
+   "p50": 174.3,
+   "p95": 432.8,
+   "max": 593.6
+  },
+  "B_after": {
+   "n": 60,
+   "p50": 165.4,
+   "p95": 454.5,
+   "max": 570.2
+  },
+  "A_before": {
+   "n": 60,
+   "p50": 180.8,
+   "p95": 473.5,
+   "max": 692.9
+  },
+  "A_after": {
+   "n": 60,
+   "p50": 182.5,
+   "p95": 492.1,
+   "max": 574.8
+  }
+ }
+}
+[done] 106s temp=C:\Users\imia\AppData\Local\Temp\aoi_r4_12n3oiyj

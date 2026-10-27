@@ -73,6 +73,8 @@ class BatchInspectResult:
     ok_count: int = 0
     ng_count: int = 0
     error_count: int = 0
+    review_count: int = 0
+    skip_count: int = 0
     summary_path: Path | None = None
     cancelled: bool = False
 
@@ -345,6 +347,10 @@ class InspectService:
                 batch.error_count += 1
             elif run.summary.overall_ok:
                 batch.ok_count += 1
+            elif run.summary.overall == "SKIP":
+                batch.skip_count += 1
+            elif run.summary.overall in {"REVIEW", "GRAY"}:
+                batch.review_count += 1
             else:
                 batch.ng_count += 1
         if write_summary and batch.results:
@@ -366,7 +372,9 @@ class InspectService:
                 algorithm="aoi_feature",
                 item_id="aoi_feature",
                 display_name="AOI 特征学习",
-                ok=feat["decision"] != "anomaly",
+                ok=feat["decision"] == "normal",
+                status={"normal": "OK", "anomaly": "NG", "gray": "REVIEW",
+                        "error": "ERROR"}.get(feat["decision"], "REVIEW"),
                 message=f"AOI: {feat['decision']} score={feat['score']} "
                         f"主导槽={feat.get('triggered_slot')} ({feat.get('latency_ms')}ms)",
                 boxes=[DefectBox(x=b["x"], y=b["y"], w=b["w"], h=b["h"],
@@ -392,6 +400,24 @@ class InspectService:
             template_id=ds.template_id,
             template_version=ds.template_version,
             source=source,
+            metadata={
+                "dual": True,
+                "traditional": {
+                    "overall": trad.overall if trad is not None else "ERROR",
+                    "elapsed_ms": trad.elapsed_ms if trad is not None else 0,
+                    "ng_count": trad.ng_count if trad is not None else 0,
+                    "error": trad.gate_message if trad is not None and trad.overall == "ERROR" else "",
+                },
+                "feature": {
+                    "overall": {"normal": "OK", "anomaly": "NG", "gray": "GRAY", "error": "ERROR"}.get(
+                        feat.get("decision") if feat else "error", "ERROR"
+                    ),
+                    "score": feat.get("score") if feat else None,
+                    "elapsed_ms": feat.get("latency_ms") if feat else 0,
+                    "error": ds.feature_error,
+                },
+                "fusion_overall": ds.overall,
+            },
         )
         return InspectRunResult(test_path=test_path, summary=summary, error=ds.feature_error)
 
@@ -404,12 +430,17 @@ class InspectService:
             from app.engines.feature import get_engine
             from app.inspect.fusion import feature_to_dict
             engine = get_engine()
+            # 仅使用模板绑定的有效标准图；未绑定或文件失效时保持旧推理路径。
+            standard_path = template.standard_image.path
+            pair_kwargs = {}
+            if standard_path and Path(standard_path).is_file():
+                pair_kwargs["pair_template"] = str(Path(standard_path).resolve())
             if isinstance(test_image, (str, Path)):
-                r = engine.predict_image_path(category, str(test_image))
+                r = engine.predict_image_path(category, str(test_image), **pair_kwargs)
             else:
                 import cv2
                 rgb = cv2.cvtColor(test_image, cv2.COLOR_BGR2RGB)
-                r = engine.predict_ndarray(category, rgb)
+                r = engine.predict_ndarray(category, rgb, **pair_kwargs)
             return feature_to_dict(r), ""
         except Exception as exc:  # noqa: BLE001
             return None, f"特征引擎失败: {exc}"
@@ -529,6 +560,10 @@ class InspectService:
                 batch.error_count += 1
             elif run.summary.overall_ok:
                 batch.ok_count += 1
+            elif run.summary.overall == "SKIP":
+                batch.skip_count += 1
+            elif run.summary.overall in {"REVIEW", "GRAY"}:
+                batch.review_count += 1
             else:
                 batch.ng_count += 1
 
@@ -574,6 +609,8 @@ class InspectService:
             "ok_count": batch.ok_count,
             "ng_count": batch.ng_count,
             "error_count": batch.error_count,
+            "review_count": batch.review_count,
+            "skip_count": batch.skip_count,
             "total": batch.total,
             "cancelled": batch.cancelled,
             "items": rows,

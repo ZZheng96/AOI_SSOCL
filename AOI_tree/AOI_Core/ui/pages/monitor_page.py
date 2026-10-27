@@ -5,20 +5,22 @@
       → 本页以 1.5s 轮询 /api/detections/live 订阅产线帧
         （target_type ∈ pipeline/stream/plc；试检的 upload/image 不进流）
 
-布局：左栏（上=试检旁路面板，下=检测组数据流队列，可回队插队）
-     + 中央 ImageViewer（原图/热力图/叠加图）+ 判定条带 + 分数曲线(含 EMA 平滑)
-     + 右结果面板（ScoreGauge、三态判定、槽位分、延迟对比、缺陷框数）
+布局：左栏试检旁路面板 + 中央 ImageViewer / 判定条带 / 分数曲线
+     + 右结果面板；下方全宽动态分组队列，可拖动高度、回队重检。
 时序语义对应 algo §6：持续帧流 + EMA 平滑抑制单帧抖动；连续异常由后端
 AlarmMonitor 滑窗聚合，本页红色横幅呈现（停线检查信号）。
-底部：对当前显示帧【标记误检】【标记漏检】【确认正确】（反馈即学）。
+底部：对固定检测目标非模态反馈；反馈记录与候选学习 / 激活分离。
 """
 from __future__ import annotations
 
+import hashlib
 import json
+from copy import deepcopy
 from datetime import datetime
+from pathlib import Path
 
-from PySide6.QtCore import Qt, QTimer, Signal
-from PySide6.QtGui import QColor
+from PySide6.QtCore import Qt, QTimer, Signal, QSettings
+from PySide6.QtGui import QColor, QImageReader
 from PySide6.QtWidgets import (
     QButtonGroup,
     QCheckBox,
@@ -27,6 +29,7 @@ from PySide6.QtWidgets import (
     QFileDialog,
     QFormLayout,
     QGroupBox,
+    QHeaderView,
     QHBoxLayout,
     QInputDialog,
     QLabel,
@@ -52,7 +55,7 @@ from ui.pages.common import (
     run_async,
     warn,
 )
-from ui.theme import DANGER, PRIMARY, SUCCESS, WARNING
+from ui.theme import DANGER, PRIMARY, SUCCESS, TEXT_SUB, WARNING
 from ui.widgets.charts import LineChart
 from ui.widgets.feedback_dialog import FeedbackDialog
 from ui.widgets.gauge import ScoreGauge
@@ -98,7 +101,7 @@ def _ema(values: list[float], alpha: float = EMA_ALPHA) -> list[float]:
 def _row_to_det(row: dict, alarm: dict | None = None) -> dict:
     """Detection 表行（to_dict）→ _show_detection 使用的扁平结构。
 
-    产线帧不落热力图（速度红线），slots/weights/decision/缺陷框等均从
+    产线帧的热力图/叠加图路径由后端直接返回，slots/weights/decision/缺陷框等均从
     n_tiles JSON 还原（_persist 已落 threshold/gray_threshold/boxes）。
     """
     nt = row.get("n_tiles") or {}
@@ -113,15 +116,22 @@ def _row_to_det(row: dict, alarm: dict | None = None) -> dict:
         "persisted": bool(row.get("persisted", True)),
         "feedback_supported": bool(row.get("feedback_supported", False)),
         "image_path": row.get("image_path"),
+        "target_type": row.get("target_type"),
         "heatmap_path": row.get("heatmap_path"),
         "overlay_path": row.get("overlay_path"),
         "final_score": row.get("final_score") or 0.0,
         "is_anomaly": is_anomaly,
-        "decision": nt.get("decision") or ("anomaly" if is_anomaly else "normal"),
+        "decision": nt.get("decision"),
         "threshold": nt.get("threshold"),
         "gray_threshold": nt.get("gray_threshold"),
         "slots": nt.get("slots") or {},
         "weights": nt.get("weights") or {},
+        "raw_scores": nt.get("raw") or {},
+        "cal_scores": nt.get("cal") or nt.get("slots") or {},
+        "actual_router": nt.get("actual_router") or nt.get("router_w") or {},
+        "candidate_router": nt.get("candidate_router"),
+        "feature_metadata": nt.get("feature_metadata"),
+        "model_version": nt.get("model_version"),
         "triggered_slot": nt.get("triggered_slot") or "",
         "defect_boxes": nt.get("boxes") or [],
         "defect_types": nt.get("types") or [],
@@ -135,6 +145,91 @@ def _row_to_det(row: dict, alarm: dict | None = None) -> dict:
         "category": row.get("category"),
         "alarm": alarm,
     }
+
+
+_EV_LEVEL_CN = {"region": "框内区域证据", "image_fallback": "无区域证据·整图口径",
+                "none": "无正向区域证据"}
+
+
+def format_box_evidence(box_ev: list, n_boxes: int) -> tuple[str, str]:
+    """AC-014：逐框主导槽位（区域证据）文本 + tooltip 明细。无记录时只报框数。"""
+    if not box_ev:
+        return f"{n_boxes} 个", ""
+    lines, tips = [], []
+    for i, b in enumerate(box_ev[:5], 1):
+        ev = b.get("evidence") or {}
+        dom = b.get("dominant_slot") or ""
+        src = "局部分支" if b.get("source") == "local_branch" else "全局"
+        lines.append(f"#{i} {SLOT_CN.get(dom, dom) or '—'}（{_EV_LEVEL_CN.get(ev.get('level'), '未知')}·{src}）")
+        parts = [f"{SLOT_CN.get(s['slot'], s['slot'])}: 框内均值 {s['region_mean']:.3f} / 峰值 "
+                 f"{s['region_peak']:.3f}，对比整图 {s['contrast']:+.3f}，加权 {s['weighted']:+.3f}"
+                 for s in ev.get("slots") or []]
+        only = ev.get("image_only_slots") or []
+        if only:
+            parts.append("仅整图分（无热图/平坦）：" + "、".join(SLOT_CN.get(n, n) for n in only))
+        tips.append(f"#{i} bbox={b.get('bbox')}\n  " + "\n  ".join(parts or ["无"]))
+    more = f"\n… 另 {len(box_ev) - 5} 个" if len(box_ev) > 5 else ""
+    tip = "\n".join(tips) + "\n口径：" + str((box_ev[0].get("evidence") or {}).get(
+        "semantics", "框内相对热图强度，非缺陷概率"))
+    return f"{len(box_ev)} 个\n" + "\n".join(lines) + more, tip
+
+
+def format_explain(data: dict) -> str:
+    """AC-014：单帧解释文本（记录口径 + trad 测量）；不含性能增益/融合贡献。"""
+    L = [f"检测 #{data.get('detection_id')} ｜ 判定 {data.get('decision')} ｜ 模型 v{data.get('model_version')}",
+         f"融合分 {float(data.get('score') or 0):.4f}（{data.get('score_semantics', '')}）",
+         "", "【实际槽位】raw → cal × 生效权重"]
+    raw, cal, w = (data.get(k) or {} for k in ("raw_scores", "cal_scores", "weights"))
+    for n in sorted(set(raw) | set(cal) | set(w)):
+        f = lambda v: f"{float(v):.4f}" if isinstance(v, (int, float)) else "-"  # noqa: E731
+        L.append(f"  {SLOT_CN.get(n, n)}: raw {f(raw.get(n))} → cal {f(cal.get(n))} × w {f(w.get(n))}")
+    L.append("  注：cal 为正常分布 CDF 位置，非缺陷概率")
+    trace = data.get("decision_trace") or []
+    L += ["", "【决策路径】", "  " + (" → ".join(map(str, trace)) or "未保存")]
+    L += ["", "【逐框证据】", format_box_evidence(data.get("box_evidence") or [], 0)[1] or "  无框"]
+    t = data.get("trad") or {}
+    L += ["", "【传统特征测量】"]
+    if t.get("status") != "available":
+        L.append(f"  {t.get('status', 'unavailable')}：{t.get('reason', '')}")
+        return "\n".join(L)
+    if t.get("version_note"):
+        L.append(f"  ⚠ {t['version_note']}")
+    L.append(f"  距离 {t['score']:.4f}（{t['score_semantics']}；评分 {t.get('scoring')}）")
+    L.append("  组距离分解（偏离正常程度，非增益/非融合贡献）：")
+    for g in t.get("group_breakdown") or []:
+        p5, p95 = g.get("normal_p5"), g.get("normal_p95")
+        rng = f"[{p5:.3f}, {p95:.3f}]" if isinstance(p5, (int, float)) and isinstance(p95, (int, float)) else "未知"
+        flag = " 超出" if g.get("out_of_range") else ""
+        en = "" if g.get("enabled") else "（未启用）"
+        L.append(f"    {g['name']}{en}: {g['distance']:.4f} 正常范围 {rng}{flag}")
+    L.append("  偏离最大的测量维：")
+    for d in t.get("top_dims") or []:
+        L.append(f"    dim{d['dim']}({d.get('group')}): 值 {d['value']:.4f} 正常 "
+                 f"[{d['normal_p5']:.4f}, {d['normal_p95']:.4f}] z={d['z']:+.2f}")
+    L.append("  参考近邻（正常库）：")
+    for r in t.get("neighbors") or []:
+        L.append(f"    #{r['index']} 距离 {r['distance']:.4f} {r.get('path') or ''}")
+    return "\n".join(L)
+
+
+class ExplainDialog(QDialog):
+    """AC-014：单帧图像解释（只读）。"""
+
+    def __init__(self, data: dict, parent: QWidget | None = None):
+        super().__init__(parent)
+        self.setWindowTitle("图像解释")
+        self.resize(760, 560)
+        lay = QVBoxLayout(self)
+        lbl = QLabel(format_explain(data))
+        lbl.setTextInteractionFlags(Qt.TextSelectableByMouse)
+        lbl.setAlignment(Qt.AlignLeft | Qt.AlignTop)
+        sc = QScrollArea()
+        sc.setWidgetResizable(True)
+        sc.setWidget(lbl)
+        lay.addWidget(sc)
+        bb = QDialogButtonBox(QDialogButtonBox.Close)
+        bb.rejected.connect(self.reject)
+        lay.addWidget(bb)
 
 
 class ImagePickDialog(QDialog):
@@ -217,6 +312,7 @@ class MonitorPage(QWidget):
         self._get_category = get_category
         self._get_budget = get_budget or (lambda: 200.0)
         self._current_detection: dict | None = None
+        self._feedback_dialog: FeedbackDialog | None = None
         # 产线实时流状态
         self._frames: list[dict] = []       # 窗口内帧（旧→新，cap LIVE_WINDOW）
         self._last_id = 0                   # 已消费的最大 detection id
@@ -224,6 +320,10 @@ class MonitorPage(QWidget):
         self._live_retry_count = 0
         self._live_last_error = ""
         self._live_dropped_count = 0
+        self._pair_generation = 0
+        self._pair_settings = QSettings("AOI_Core", "MonitorPairs")
+        self._pair_cache: dict[tuple[str, str], dict] = {}
+        self._pair_inflight: set[tuple[str, str]] = set()
         self._strip_cells: list[QPushButton] = []
         self._selected_frame: int = -1      # 条带选中下标（-1=跟随最新）
 
@@ -235,7 +335,8 @@ class MonitorPage(QWidget):
         top = QHBoxLayout()
         top.addWidget(make_banner("实时异常检测"))
         attach_level_badge(self, top)   # U-workorder：数据条件徽标
-        title = QLabel("订阅产线检测流：画面随产线滚动，发现错检随手标记（即学生效）")
+        title = QLabel("订阅产线检测流：检测与人工反馈并行；反馈先记录，不代表自动学习或发布")
+        title.setWordWrap(True)
         title.setProperty("subtext", True)
         top.addWidget(title)
         top.addStretch(1)
@@ -256,22 +357,23 @@ class MonitorPage(QWidget):
         self.lbl_pipeline = QLabel("产线：-")
         self.lbl_pipeline.setProperty("badge", "muted")
         ph.addWidget(self.lbl_pipeline)
-        self.chk_auto_resume = QCheckBox("学习完自动恢复产线")
+        self.chk_auto_resume = QCheckBox("固化后自动恢复（含已停止产线）")
         self.chk_auto_resume.toggled.connect(self._save_auto_resume)
         ph.addWidget(self.chk_auto_resume)
         self.btn_pp_pause = QPushButton("暂停产线")
+        self.btn_pp_pause.setToolTip("暂停后续送检，不强杀在途推理；已发出的检测仍可能完成并显示。")
         self.btn_pp_pause.clicked.connect(lambda: self._pipeline_ctl("pause"))
         self.btn_pp_resume = QPushButton("恢复产线")
         self.btn_pp_resume.clicked.connect(lambda: self._pipeline_ctl("resume"))
         self.btn_pp_stop = QPushButton("停止产线")
         self.btn_pp_stop.setProperty("danger", True)
         self.btn_pp_stop.setToolTip(
-            "停止 = 结束本次任务排产：清空回队队列（暂停期间编排的重检批次），"
-            "不会被自动恢复，只能手动「恢复产线」重新启动")
+            "停止后续送检并清空回队队列；保留普通数据和旧检测结果，不强杀在途推理。"
+            "手动恢复或固化时 auto_resume 开启均可能恢复产线。")
         self.btn_pp_stop.clicked.connect(self._on_pipeline_stop)
-        self.btn_pp_learn = QPushButton("学习提升")
-        self.btn_pp_learn.setToolTip("批量应用该工单积累的反馈并固化；"
-                                     "学完按工单配置自动恢复产线")
+        self.btn_pp_learn = QPushButton("固化学习快照")
+        self.btn_pp_learn.setToolTip("按当前工单挂接数据源的品类范围固化现有内存态；"
+                                     "不消费 pending 反馈候选，不自动构建、验收或激活模型。")
         self.btn_pp_learn.clicked.connect(self._pipeline_learn)
         self.btn_pp_report = QPushButton("导出报告CSV")
         self.btn_pp_report.setToolTip(
@@ -296,22 +398,41 @@ class MonitorPage(QWidget):
         ph.addStretch(1)
         root.addWidget(pbox)
 
-        # ── 中部三栏（左栏 = 试检 + 数据流队列 上下布局，队列高度弹性）──
+        flow_box = QGroupBox("全局数据流与生命周期（展开查看）")
+        flow_box.setCheckable(True)
+        flow_box.setChecked(False)
+        flow_layout = QVBoxLayout(flow_box)
+        self.lbl_dataflow = QLabel(
+            "<b>数据源 / 导入 → Image → 工单消费者 → Detection → 实时显示 / 持久待复核</b><br>"
+            "人工复核 → Feedback 候选待消费 → 候选构建 → 验收 → 激活；"
+            "本页「固化学习快照」仅固化挂接源品类范围的现有内存态，不自动执行候选链路。<br>"
+            "暂停 / 停止只阻止后续送检，不强杀在途推理；停止清回队但保留普通数据和旧结果。"
+            "恢复会继续送检；固化时 auto_resume 也可能恢复已停止产线。<br>"
+            "回队是独立重检，产生新的 Detection；统计 / CSV 不修改原判定。"
+            "条带仅保留近 50 帧，完整待复核请到「标注反馈」页。")
+        self.lbl_dataflow.setWordWrap(True)
+        self.lbl_dataflow.setTextInteractionFlags(Qt.TextSelectableByMouse)
+        self.lbl_dataflow.hide()
+        flow_layout.addWidget(self.lbl_dataflow)
+        flow_box.toggled.connect(self.lbl_dataflow.setVisible)
+        root.addWidget(flow_box)
+
+        # 主图区与全宽队列之间可拖动分配高度。
+        self.monitor_splitter = QSplitter(Qt.Vertical)
         splitter = QSplitter(Qt.Horizontal)
-        left_col = QWidget()
-        lc = QVBoxLayout(left_col)
-        lc.setContentsMargins(0, 0, 0, 0)
-        lc.setSpacing(8)
-        lc.addWidget(self._build_control_panel())
-        lc.addWidget(self._build_queue_panel(), 1)
-        splitter.addWidget(left_col)
+        splitter.addWidget(self._build_control_panel())
         splitter.addWidget(self._build_viewer_panel())
         splitter.addWidget(self._build_result_panel())
         splitter.setStretchFactor(0, 0)
         splitter.setStretchFactor(1, 1)
         splitter.setStretchFactor(2, 0)
         splitter.setSizes([340, 740, 290])
-        root.addWidget(splitter, 1)
+        self.monitor_splitter.addWidget(splitter)
+        self.monitor_splitter.addWidget(self._build_queue_panel())
+        self.monitor_splitter.setStretchFactor(0, 3)
+        self.monitor_splitter.setStretchFactor(1, 1)
+        self.monitor_splitter.setSizes([600, 230])
+        root.addWidget(self.monitor_splitter, 1)
 
         # ── 底部：反馈按钮（对当前显示帧）──
         bottom = QHBoxLayout()
@@ -328,6 +449,16 @@ class MonitorPage(QWidget):
         for b in (self.btn_fp, self.btn_fn, self.btn_ok):
             b.setEnabled(False)
             bottom.addWidget(b)
+        # AC-014：按需图像解释（不进推理热路径）
+        self.btn_explain = QPushButton("图像解释")
+        self.btn_explain.setToolTip("查看实际槽位 raw/cal、生效权重、决策路径、逐框证据与传统特征测量（非缺陷概率）")
+        self.btn_explain.setEnabled(False)
+        self.btn_explain.clicked.connect(self._open_explain)
+        bottom.addWidget(self.btn_explain)
+        self.btn_go_feedback = QPushButton("去标注反馈页（持久待复核）")
+        self.btn_go_feedback.setToolTip("判定条带仅近 50 帧，不是完整复核清单；锁图和反馈不暂停生产。")
+        self.btn_go_feedback.clicked.connect(lambda: self.goto_page.emit("标注反馈"))
+        bottom.addWidget(self.btn_go_feedback)
         bottom.addStretch(1)
         root.addLayout(bottom)
 
@@ -368,6 +499,15 @@ class MonitorPage(QWidget):
         tip.setProperty("subtext", True)
         tip.setWordWrap(True)
         lay.addWidget(tip)
+        btn_pair = QPushButton("选择标准图并确认当前帧同位…")
+        btn_pair.clicked.connect(self._confirm_pair)
+        lay.addWidget(btn_pair)
+        btn_unpair = QPushButton("撤销当前帧同位确认")
+        btn_unpair.clicked.connect(self._clear_pair)
+        lay.addWidget(btn_unpair)
+        self.lbl_pair = QLabel("同位辅助：未确认（不影响生产判定）")
+        self.lbl_pair.setWordWrap(True)
+        lay.addWidget(self.lbl_pair)
         lay.addStretch(1)
 
         # 实时流状态
@@ -396,8 +536,8 @@ class MonitorPage(QWidget):
             b = QPushButton(LAYER_NAMES[layer])
             b.setCheckable(True)
             b.setProperty("segment", True)
-            if i == 0:
-                b.setChecked(True)
+            if layer == "overlay":
+                b.setChecked(True)   # 默认叠加图（产线帧已落叠加图/热力图）
             b.clicked.connect(lambda _c=False, l=layer: self.viewer.set_layer(l))
             self.layer_group.addButton(b, i)
             self._layer_btns[layer] = b
@@ -405,9 +545,15 @@ class MonitorPage(QWidget):
         bar.addStretch(1)
         self.chk_follow = QCheckBox("跟随最新帧")
         self.chk_follow.setChecked(True)
-        self.chk_follow.setToolTip("勾选时画面随产线最新帧滚动；"
-                                   "点击判定条带回看历史帧会自动取消跟随")
+        self.chk_follow.setToolTip("取消跟随仅锁定画面，不暂停生产或轮询；独立反馈窗口始终固定原检测目标。")
+        self.chk_follow.toggled.connect(self._on_follow_changed)
         bar.addWidget(self.chk_follow)
+        self.btn_lock_frame = QPushButton("锁定当前画面")
+        self.btn_lock_frame.clicked.connect(lambda: self.chk_follow.setChecked(False))
+        bar.addWidget(self.btn_lock_frame)
+        self.btn_latest = QPushButton("返回最新")
+        self.btn_latest.clicked.connect(self._return_latest)
+        bar.addWidget(self.btn_latest)
         btn_fit = QPushButton("适应窗口")
         btn_fit.setProperty("flat", True)
         btn_fit.clicked.connect(lambda: self.viewer.fit_to_view())
@@ -459,7 +605,7 @@ class MonitorPage(QWidget):
 
         self.gauge = ScoreGauge()
         self.gauge.setToolTip(
-            "综合异常分（0~1）：多个评分依据按融合权重加权后的总评分；\n"
+            "综合异常分：多个评分依据融合后的分数，不是缺陷概率，可超出 0~1；\n"
             "指针为判定阈值——低于阈值判正常，超过判异常，\n"
             "接近阈值的进入灰区转人工复核")
         lay.addWidget(self.gauge, 0, Qt.AlignHCenter)
@@ -481,13 +627,13 @@ class MonitorPage(QWidget):
         lay.addWidget(self.lbl_review_hint)
 
         # 开放集未知模式徽标（open_alert 时显示：不像任何已知正常，新型缺陷/错料）
-        self.badge_open = QLabel("未知模式")
+        self.badge_open = QLabel("未知模式 · 非缺陷结论")
         self.badge_open.setAlignment(Qt.AlignCenter)
         self.badge_open.setStyleSheet(
             "background:#7C3AED; color:white; font-weight:700; "
             "padding:3px 10px; border-radius:4px;")
         self.badge_open.setToolTip(
-            "开放集哨兵告警：该样本不像任何已知正常模式（可能是新型缺陷/光照突变/错料）")
+            "未知不等于缺陷：可能是光照/工艺变化。请到标注反馈页的开放告警样本队列查看并处置；不自动训练或发布。")
         self.badge_open.hide()
         lay.addWidget(self.badge_open)
 
@@ -516,7 +662,7 @@ class MonitorPage(QWidget):
         slot_head = QLabel("各项评分依据（黄色=本次主要依据）")
         slot_head.setToolTip(
             "模型从多个维度独立打分（如语义相似/缺陷判别/模板比对等），\n"
-            "每条的值是该维度判「异常」的分数（0~1，越高越像缺陷）；\n"
+            "每条为该维度异常评分，非缺陷概率，数值可超出 0~1；条长仅裁剪显示；\n"
             "上方仪表盘的综合分 = 各项按「融合权重」加权求和，\n"
             "黄色高亮项是本次判定贡献最大的依据")
         slot_head.setProperty("subtext", True)
@@ -530,10 +676,23 @@ class MonitorPage(QWidget):
         form.addRow("检测延迟(端到端)", self.lbl_latency)
         self.lbl_threshold = QLabel("-")
         form.addRow("决策阈值", self.lbl_threshold)
+        self.lbl_model = QLabel("-")
+        form.addRow("实际模型版本", self.lbl_model)
+        self.lbl_scores = QLabel("-")
+        form.addRow("raw / cal 分", self.lbl_scores)
         self.lbl_weights = QLabel("-")
-        form.addRow("融合权重", self.lbl_weights)
+        form.addRow("实际融合权重", self.lbl_weights)
+        self.lbl_router = QLabel("-")
+        form.addRow("实际 / 候选 router", self.lbl_router)
+        self.lbl_features = QLabel("-")
+        self.lbl_features.setWordWrap(True)
+        form.addRow("生产特征元数据", self.lbl_features)
         self.lbl_boxes = QLabel("-")
-        form.addRow("缺陷框", self.lbl_boxes)
+        self.lbl_boxes.setWordWrap(True)
+        form.addRow("缺陷框（逐框依据）", self.lbl_boxes)
+        self.lbl_trace = QLabel("-")
+        self.lbl_trace.setWordWrap(True)
+        form.addRow("决策路径", self.lbl_trace)
         self.lbl_trigger = QLabel("-")
         form.addRow("主要评分依据", self.lbl_trigger)
         lay.addLayout(form)
@@ -579,7 +738,7 @@ class MonitorPage(QWidget):
 
     def _set_pipeline_badge(self, status) -> None:
         # status: "running" / "paused"（人工）/ "auto_paused"（背压自动）/
-        # "stopped"（停止任务，回队队列已清空，只能手动恢复），
+        # "stopped"（停止任务，回队队列已清空；固化配置可能恢复），
         # 也兼容旧调用传 bool（True=running）。
         if isinstance(status, bool):
             status = "running" if status else "paused"
@@ -588,7 +747,7 @@ class MonitorPage(QWidget):
         elif status == "auto_paused":
             text, badge = "产线：自动暂停（复判积压限流）", "warning"
         elif status == "stopped":
-            text, badge = "产线：已停止（回队队列已清空，需手动恢复）", "danger"
+            text, badge = "产线：已停止（回队已清空；固化自动恢复需谨慎）", "danger"
         else:
             text, badge = "产线：已暂停", "warning"
         self.lbl_pipeline.setText(text)
@@ -616,7 +775,7 @@ class MonitorPage(QWidget):
             self.lbl_pipeline_hint.setText(
                 f"待复核 {n_rev} 条"
                 + (" · 复判积压限流已启动（产线暂停送检）"
-                   if not running and n_rev > 0 else ""))
+                   if st == "auto_paused" and n_rev > 0 else ""))
             self.lbl_pipeline_hint.show()
             self.btn_go_prepare.hide()
             return
@@ -653,10 +812,10 @@ class MonitorPage(QWidget):
 
         def _ok(r) -> None:
             if action == "pause":
-                msg = "产线已暂停（复判/学习/编排数据流不受影响）"
+                msg = "已暂停后续送检；在途推理仍可完成，复核与轮询不受影响"
             elif action == "stop":
                 n = int((r or {}).get("cleared_requeued") or 0)
-                msg = f"产线已停止（已清空回队批次 {n} 个；需手动恢复产线）"
+                msg = f"产线已停止（清空回队批次 {n} 个；保留普通数据与旧结果，在途推理仍可完成）"
             else:
                 msg = "产线已恢复"
             notify(self, msg)
@@ -675,14 +834,15 @@ class MonitorPage(QWidget):
                   _ok, _fail)
 
     def _on_pipeline_stop(self) -> None:
-        """停止产线（带确认）：清空回队队列，不会被自动恢复。"""
+        """停止后续送检并确认清空回队队列。"""
         if self._workorder_id() is None:
             warn(self, "请先在顶栏选择当前工单")
             return
         ret = QMessageBox.question(
             self, "停止产线",
             "停止产线将清空该工单的回队队列（暂停期间编排的重检批次），"
-            "且不会被自动恢复，只能手动「恢复产线」重新启动。\n确定停止？",
+            "但保留普通数据和旧检测结果，不强杀在途推理。\n"
+            "可手动恢复；之后固化快照时若 auto_resume 开启，也可能恢复已停止产线。\n确定停止？",
             QMessageBox.Yes | QMessageBox.No, QMessageBox.No)
         if ret == QMessageBox.Yes:
             self._pipeline_ctl("stop")
@@ -720,11 +880,20 @@ class MonitorPage(QWidget):
         if wid is None:
             warn(self, "请先在顶栏选择当前工单")
             return
+        ret = QMessageBox.question(
+            self, "固化学习快照",
+            "将按当前工单挂接数据源的品类范围固化现有内存态（可能涉及共享品类）。\n"
+            "不会消费 pending 反馈候选，也不自动构建、验收或激活模型。\n"
+            "注意：auto_resume 开启时可能恢复产线，包括已停止的产线；"
+            "请确认工单配置后继续。\n是否固化？",
+            QMessageBox.Yes | QMessageBox.No, QMessageBox.No)
+        if ret != QMessageBox.Yes:
+            return
         self.btn_pp_learn.setEnabled(False)
 
         def _done(res) -> None:
             self.btn_pp_learn.setEnabled(True)
-            notify(self, str((res or {}).get("message") or "学习提升完成"))
+            notify(self, "快照固化请求完成；不代表反馈候选已消费或新模型已激活。请核对产线状态。")
             self.reload_pipeline()
 
         run_async(self, lambda: self._client.workorder_learn(wid),
@@ -740,29 +909,36 @@ class MonitorPage(QWidget):
 
     # ══════════════════ 检测组数据流队列 ══════════════════
     def _build_queue_panel(self) -> QWidget:
-        """当前工单的检测组数据流队列（30 图/批）：待检/检测/不良/反馈统计，
-        错检批次标记 + 回队/取消（产线暂停期间可编排；运行中也可插队）。
-        位于左栏试检面板下方（左右布局），高度随窗口弹性伸展；
-        可折叠：点击标题栏收起/展开。"""
-        box = QGroupBox("数据流队列（当前工单 · 30图/批）")
-        box.setToolTip("错检批次可回队重新检测（允许插队）；"
-                       "产线运行中回队 = 立即优先重检该批")
+        """动态分组批次队列：全宽展示，批大小由数据源配置决定。"""
+        box = QGroupBox("数据流队列（当前工单 · 动态分组 / 批大小可配置）")
+        box.setToolTip("分组由数据源 batch_size 配置决定，不固定 30 张；回队将优先重检并产生新检测记录。")
         box.setCheckable(True)
         box.setChecked(True)
         body = QWidget()
         v = QVBoxLayout(body)
         v.setContentsMargins(10, 6, 10, 6)
         v.setSpacing(4)
-        self.queue_table = QTableWidget(0, 6)
+        self.queue_table = QTableWidget(0, 9)
         self.queue_table.setHorizontalHeaderLabels(
-            ["批次", "数据源", "品类", "图片/检测/不良/反馈", "错检批次", "回队"])
+            ["批次", "数据源", "品类", "图片", "检测记录", "异常记录", "反馈记录", "关注提示", "回队"])
         self.queue_table.setEditTriggers(QTableWidget.NoEditTriggers)
         self.queue_table.setSelectionBehavior(QTableWidget.SelectRows)
         self.queue_table.verticalHeader().setVisible(False)
-        self.queue_table.horizontalHeader().setStretchLastSection(True)
+        self.queue_table.setWordWrap(True)
+        self.queue_table.setTextElideMode(Qt.ElideNone)
+        header = self.queue_table.horizontalHeader()
+        header.setSectionResizeMode(QHeaderView.Stretch)
+        header.setMinimumSectionSize(
+            max(header.fontMetrics().horizontalAdvance(self.queue_table.horizontalHeaderItem(c).text())
+                for c in range(self.queue_table.columnCount())) + 20)
+        header.sectionResized.connect(lambda *_: self.queue_table.resizeRowsToContents())
+        self.queue_table.setToolTip(
+            "图片为分组图片数；检测 / 异常 / 反馈为该组图片跨工单累计记录数，非去重图片数。\n"
+            "待关注仅表示异常记录占比 ≥50% 或反馈记录 ≥3，不能证明错检；计数不足也不代表正在消费。")
         v.addWidget(self.queue_table, 1)
         row = QHBoxLayout()
-        self.lbl_queue_hint = QLabel("选中行后操作")
+        self.lbl_queue_hint = QLabel("选中行后回队独立重检；记录数跨工单累计、非去重；待关注不等于错检")
+        self.lbl_queue_hint.setWordWrap(True)
         self.lbl_queue_hint.setProperty("subtext", True)
         row.addWidget(self.lbl_queue_hint)
         row.addStretch(1)
@@ -794,39 +970,44 @@ class MonitorPage(QWidget):
     def _fill_queue(self, data) -> None:
         data = data or {}
         items = data.get("items") or []
+        self.queue_table.clearSpans()
+        for r in range(self.queue_table.rowCount()):
+            for c in range(3):
+                self.queue_table.removeCellWidget(r, c)
+        self.queue_table.clearContents()
         self.queue_table.setRowCount(max(len(items), 1))
         if not items:
             cell = QTableWidgetItem("（当前工单无检测组批次：请先在数据管理为数据源"
                                     "配置分组并挂接到工单）")
             cell.setFlags(Qt.ItemIsEnabled)
             self.queue_table.setItem(0, 0, cell)
-            self.queue_table.setSpan(0, 0, 1, 6)
+            self.queue_table.setSpan(0, 0, 1, 9)
             return
-        highlighted = False
         for r, it in enumerate(items):
             cells = [
-                str(it.get("name")), str(it.get("source")),
-                str(it.get("category")),
-                f"{it.get('n_images')}/{it.get('n_detected')}/"
-                f"{it.get('n_anomaly')}/{it.get('n_feedback')}",
-                "⚠ 错检高发" if it.get("bad_batch") else "—",
-                "已回队" if it.get("requeued") else "—",
+                str(it.get("name") or "—"), str(it.get("source") or "—"),
+                str(it.get("category") or "—"),
+                *(str(it.get(k, "—")) for k in
+                  ("n_images", "n_detected", "n_anomaly", "n_feedback")),
+                "待关注" if it.get("bad_batch") else "—",
+                ("已回队 · " if it.get("requeued") else "")
+                + f"可检 {it.get('n_pending', 0)} / 在途 {it.get('n_claiming', 0)} / 失败 {it.get('n_failed', 0)}",
             ]
-            # 正在消费中的批次（首个未检完的批次）高亮
-            in_progress = (not highlighted
-                           and int(it.get("n_detected") or 0)
-                           < int(it.get("n_images") or 0))
             for c, txt in enumerate(cells):
                 cell = QTableWidgetItem(txt)
+                cell.setToolTip(txt + "\n" + self.queue_table.toolTip())
                 if it.get("bad_batch"):
                     cell.setForeground(QColor("#E67E22"))
-                if in_progress:
-                    cell.setBackground(QColor("#DBEAFE"))
                 self.queue_table.setItem(r, c, cell)
+                if c < 3:
+                    identity = QLabel(txt)
+                    identity.setWordWrap(True)
+                    identity.setToolTip(txt)
+                    identity.setContentsMargins(4, 2, 4, 2)
+                    self.queue_table.setCellWidget(r, c, identity)
                 if c == 0:
                     cell.setData(Qt.UserRole, it.get("batch_key"))
-            highlighted = highlighted or in_progress
-        self.queue_table.resizeColumnsToContents()
+        self.queue_table.resizeRowsToContents()
 
     def _selected_queue_keys(self) -> list[str]:
         out = []
@@ -925,7 +1106,14 @@ class MonitorPage(QWidget):
     # ══════════════════ 产线实时流（轮询订阅）══════════════════
     def _reset_live(self) -> None:
         """重订阅实时流：清空窗口并拉取最新 LIVE_WINDOW 帧。"""
+        self._live_gen = getattr(self, "_live_gen", 0) + 1
+        self._pair_generation += 1
+        self.lbl_pair.setText("同位辅助：等待选中产线帧")
         self._frames = []
+        self._current_detection = None
+        self.viewer.clear_images()
+        self._refresh_strip()
+        self._refresh_chart()
         self._last_id = 0
         self._live_retry_count = 0
         self._live_last_error = ""
@@ -937,9 +1125,15 @@ class MonitorPage(QWidget):
         if not self.isVisible() or self._polling:
             return
         self._polling = True
+        gen = getattr(self, "_live_gen", 0)
+        workorder_id = self._workorder_id()
+        after_id = self._last_id
 
         def _done(data) -> None:
             self._polling = False
+            if gen != getattr(self, "_live_gen", 0):
+                self._poll_live()
+                return
             was_error = bool(self._live_last_error)
             self._live_retry_count = 0
             self._live_last_error = ""
@@ -951,6 +1145,9 @@ class MonitorPage(QWidget):
 
         def _err(message) -> None:
             self._polling = False
+            if gen != getattr(self, "_live_gen", 0):
+                self._poll_live()
+                return
             self._live_retry_count += 1
             self._live_last_error = str(message)
             self.lbl_live.setText(
@@ -960,19 +1157,27 @@ class MonitorPage(QWidget):
             self.lbl_live_kpi.setText(f"最近错误：{self._live_last_error}")
 
         run_async(self, lambda: self._client.detections_live(
-            after_id=self._last_id, limit=LIVE_WINDOW,
-            workorder_id=self._workorder_id()), _done, _err)
+            after_id=after_id, limit=LIVE_WINDOW,
+            workorder_id=workorder_id), _done, _err)
 
     def _on_live_batch(self, data) -> None:
         if data is None:
             return  # 离线/失败静默（detections_live 为 silent）
         items = data.get("items") or []
         alarm_map = data.get("alarm") or {}
-        if data.get("gap") or data.get("reset_required"):
+        if data.get("reset_required"):
+            # 服务端库重建/重置：游标超过全表最大 ID，从 0 重新订阅
+            self._last_id = 0
+            self.lbl_live.setText("实时流：服务端记录已重置，重新订阅")
+            self.lbl_live.setProperty("badge", "warning")
+            self._repolish(self.lbl_live)
+            return
+        if data.get("gap"):
+            # 仅统计全表缺失 ID（删除/未落库），不等于相机丢帧
             dropped = int(data.get("dropped_count") or 0)
             self._live_dropped_count += max(0, dropped)
             self.lbl_live.setText(
-                f"实时流警告：检测记录丢帧 {dropped} 条，已重置订阅位置")
+                f"实时流警告：检测记录缺失 {dropped} 条（删除或未落库，非相机丢帧）")
             self.lbl_live.setProperty("badge", "warning")
             self._repolish(self.lbl_live)
         if not items:
@@ -989,10 +1194,14 @@ class MonitorPage(QWidget):
             alarm = alarm_map.get(str(row.get("category") or ""))
             self._frames.append(_row_to_det(row, alarm))
         self._frames = self._frames[-LIVE_WINDOW:]
+        if not self.chk_follow.isChecked():
+            did = (self._current_detection or {}).get("detection_id")
+            self._selected_frame = next(
+                (i for i, fr in enumerate(self._frames) if fr.get("detection_id") == did), -1)
         self._refresh_strip()
         self._refresh_chart()
         # 跟随最新：画面/结果面板滚动到最新帧
-        if self.chk_follow.isChecked() or self._selected_frame < 0:
+        if self.chk_follow.isChecked():
             self._selected_frame = -1
             self._show_detection(self._frames[-1], from_frame=True)
         self._update_live_kpi()
@@ -1017,7 +1226,7 @@ class MonitorPage(QWidget):
             pass
         if self._live_dropped_count:
             self.lbl_live.setText(
-                f"实时流警告：丢帧 {self._live_dropped_count} 条 · 最新 #{self._last_id}")
+                f"实时流警告：记录缺失 {self._live_dropped_count} 条 · 最新 #{self._last_id}")
             self.lbl_live.setProperty("badge", "warning")
         else:
             self.lbl_live.setText(
@@ -1026,7 +1235,7 @@ class MonitorPage(QWidget):
         self._repolish(self.lbl_live)
         self.lbl_live_kpi.setText(
             f"异常 {n_anom} · 灰区 {n_gray} · 吞吐 {fps_text}"
-            f" · 重试 {self._live_retry_count} · 丢帧 {self._live_dropped_count}")
+            f" · 重试 {self._live_retry_count} · 缺失 {self._live_dropped_count}")
         self.lbl_strip_stats.setText(
             f"异常率 {n_anom / n:.0%}（{n_anom}/{n}）")
 
@@ -1042,9 +1251,9 @@ class MonitorPage(QWidget):
         self._strip_cells = []
         self._pulses = _pulse_flags(self._frames)
         for i, fr in enumerate(self._frames):
-            decision = str(fr.get("decision") or "normal")
+            decision = str(fr.get("decision") or "未知 / 未判定")
             pulse = self._pulses[i]
-            color = WARNING if pulse else DECISION_COLORS.get(decision, SUCCESS)
+            color = WARNING if pulse else DECISION_COLORS.get(decision, TEXT_SUB)
             cell = QPushButton()
             cell.setFixedSize(14, 22)
             cell.setFlat(True)
@@ -1069,22 +1278,36 @@ class MonitorPage(QWidget):
         pulses = getattr(self, "_pulses", [False] * len(self._frames))
         for i, cell in enumerate(self._strip_cells):
             fr = self._frames[i]
-            decision = str(fr.get("decision") or "normal")
+            decision = str(fr.get("decision") or "未知 / 未判定")
             color = (WARNING if pulses[i]
-                     else DECISION_COLORS.get(decision, SUCCESS))
+                     else DECISION_COLORS.get(decision, TEXT_SUB))
             border = ("2px solid #111827"
                       if i == self._selected_frame else "none")
             cell.setStyleSheet(
                 f"QPushButton {{ background: {color}; border: {border}; "
                 f"border-radius: 2px; }}")
 
+    def _return_latest(self) -> None:
+        self.chk_follow.setChecked(True)
+        self._on_follow_changed(True)
+
+    def _on_follow_changed(self, checked: bool) -> None:
+        if checked:
+            self._selected_frame = -1
+            if self._frames:
+                self._show_detection(self._frames[-1], from_frame=True)
+        else:
+            did = (self._current_detection or {}).get("detection_id")
+            self._selected_frame = next(
+                (i for i, fr in enumerate(self._frames) if fr.get("detection_id") == did), -1)
+        self._mark_strip_selection()
+        self.btn_lock_frame.setText("锁定当前画面" if checked else "画面已锁定（生产继续）")
+
     def _on_strip_click(self, idx: int) -> None:
         """点击条带回看历史帧：取消跟随，展示该帧。"""
         if not (0 <= idx < len(self._frames)):
             return
-        self.chk_follow.blockSignals(True)
         self.chk_follow.setChecked(False)
-        self.chk_follow.blockSignals(False)
         self._selected_frame = idx
         self._mark_strip_selection()
         self._show_detection(self._frames[idx], from_frame=True)
@@ -1137,9 +1360,9 @@ class MonitorPage(QWidget):
                 fv = float(slots.get(name) or 0.0)
             except (TypeError, ValueError):
                 fv = 0.0
-            fv = max(0.0, min(1.0, fv))
-            bar.setValue(int(fv * 1000))
+            bar.setValue(int(max(0.0, min(1.0, fv)) * 1000))
             bar.setFormat(f"{fv:.3f}")
+            bar.setToolTip(f"实际评分 {fv:.3f}，非概率；条长按 0~1 裁剪显示")
             hit = bool(triggered_slot) and name == triggered_slot
             color = WARNING if hit else PRIMARY
             bar.setStyleSheet(
@@ -1147,17 +1370,150 @@ class MonitorPage(QWidget):
             lb.setStyleSheet(
                 f"color: {WARNING}; font-weight: 700;" if hit else "")
 
+    def _pair_key(self, det: dict) -> str:
+        scope = [getattr(self._client, "base_url", ""), self._workorder_id(),
+                 det.get("category"), str(Path(det.get("image_path") or "").resolve())]
+        return "pairs/" + hashlib.sha256(json.dumps(scope).encode()).hexdigest()
+
+    @staticmethod
+    def _pair_identity(path: str) -> dict:
+        size = QImageReader(path).size()
+        if not size.isValid():
+            raise ValueError("图片无法读取")
+        return {"sha256": hashlib.sha256(Path(path).read_bytes()).hexdigest(),
+                "size": [size.width(), size.height()]}
+
+    def _confirm_pair(self) -> None:
+        det = self._current_detection
+        if not det or det.get("target_type") not in {"pipeline", "stream", "plc"}:
+            warn(self, "请先选择一帧真实产线检测")
+            return
+        det = deepcopy(det)
+        binding_key = self._pair_key(det)
+        template, _ = QFileDialog.getOpenFileName(
+            self, "选择当前帧的同位标准图", "", "图片 (*.png *.jpg *.jpeg *.bmp *.tif *.tiff)")
+        if not template:
+            return
+        image_path = str(det.get("image_path") or "")
+        try:
+            image_identity = self._pair_identity(image_path)
+            template_identity = self._pair_identity(template)
+        except (OSError, ValueError) as exc:
+            warn(self, str(exc))
+            return
+        if image_identity["size"] != template_identity["size"]:
+            warn(self, "尺寸不同，禁止自动缩放配对")
+            return
+        answer = QMessageBox.question(
+            self, "确认同位（仅当前图片）",
+            f"工单：{self._workorder_id()} · 品类：{det.get('category')}\n"
+            f"检测 #{det.get('detection_id')}：{image_path}\n标准图：{template}\n"
+            f"尺寸：{image_identity['size']}\n"
+            "请人工确认相同视角和位置；尺寸相同不代表同位。\n"
+            "仅保存这张图片的确认，不授权目录中其他图片；辅助图不改变生产判定。",
+            QMessageBox.Yes | QMessageBox.No, QMessageBox.No)
+        if answer != QMessageBox.Yes:
+            return
+        if self._pair_key(det) != binding_key:
+            warn(self, "工单已切换，请重新确认同位")
+            return
+        self._pair_settings.setValue(binding_key, json.dumps({
+            "template": template, "same_view_confirmed": True,
+            "image_identity": image_identity, "template_identity": template_identity,
+        }))
+        self._pair_settings.sync()
+        self._invalidate_pair_layers()
+
+    def _clear_pair(self) -> None:
+        if self._current_detection:
+            self._pair_settings.remove(self._pair_key(self._current_detection))
+            self._pair_settings.sync()
+            self._invalidate_pair_layers()
+
+    def _invalidate_pair_layers(self) -> None:
+        self._pair_generation += 1
+        self._pair_cache.clear()
+        self._pair_inflight.clear()
+        for det in self._frames + [self._current_detection or {}]:
+            for key in ("pair_heatmap_path", "pair_overlay_path", "pair_raw_path", "pair_template_path"):
+                det.pop(key, None)
+        if self._current_detection:
+            self._show_detection(self._current_detection)
+
+    def _pair_binding(self, det: dict) -> tuple[str, str] | None:
+        if det.get("target_type") not in {"pipeline", "stream", "plc"}:
+            return None
+        try:
+            binding = json.loads(self._pair_settings.value(self._pair_key(det), "{}"))
+            if binding.get("same_view_confirmed") is not True:
+                return None
+            image_path = str(det.get("image_path") or "")
+            template = str(binding.get("template") or "")
+            image_identity = self._pair_identity(image_path)
+            template_identity = self._pair_identity(template)
+            if (image_identity != binding.get("image_identity")
+                    or template_identity != binding.get("template_identity")
+                    or image_identity["size"] != template_identity["size"]):
+                return None
+        except (OSError, ValueError, TypeError):
+            return None
+        return image_path, template
+
+    def _request_pair_heatmap(self, det: dict) -> None:
+        binding = self._pair_binding(det)
+        if binding is None:
+            for key in ("pair_heatmap_path", "pair_overlay_path", "pair_raw_path", "pair_template_path"):
+                det.pop(key, None)
+            self.lbl_pair.setText("同位辅助：未确认或文件已变化（不自动配对/缩放）")
+            return
+        image_path, template = binding
+        self.lbl_pair.setText(f"同位辅助：当前图片已人工确认 · {Path(template).name}")
+        key = (image_path, template)
+        cached = self._pair_cache.get(key)
+        if cached:
+            det.update(cached)
+            return
+        if key in self._pair_inflight:
+            return
+        self._pair_inflight.add(key)
+        generation = self._pair_generation
+        detection_id = det.get("detection_id")
+
+        def _done(result) -> None:
+            self._pair_inflight.discard(key)
+            if generation != self._pair_generation or not result:
+                return
+            current = self._current_detection
+            if not current or current.get("detection_id") != detection_id:
+                return
+            if str(current.get("image_path") or "") != image_path:
+                return
+            paths = {
+                "pair_heatmap_path": result.get("heatmap_path"),
+                "pair_overlay_path": result.get("overlay_path"),
+                "pair_raw_path": result.get("raw_path"),
+                "pair_template_path": template,
+            }
+            self._pair_cache[key] = paths
+            current.update(paths)
+            self._show_detection(current)
+
+        run_async(self, lambda: self._client.pair_heatmap(
+            image_path, template, same_view_confirmed=True), _done,
+                  lambda _e: None)
+
     def _show_detection(self, det, from_frame: bool = False) -> None:
         if not det or not isinstance(det, dict):
             return
         self._current_detection = det
+        self._request_pair_heatmap(det)
 
-        # 图像三图层（产线帧不落热力图：无热力图时清空旧图层防串图）
-        if not det.get("heatmap_path") and not det.get("overlay_path"):
-            self.viewer.clear_images()
+        # 每帧建立独立图层世代：旧帧的异步下载完成后不得覆盖当前帧。
+        # 三层都只显示各自资源，避免 overlay 缺失时静默伪装成原图。
+        self.viewer.clear_images()
         path_map = {"original": det.get("image_path"),
-                    "heatmap": det.get("heatmap_path"),
-                    "overlay": det.get("overlay_path")}
+                    "heatmap": det.get("pair_heatmap_path") or det.get("heatmap_path"),
+                    "overlay": det.get("pair_overlay_path") or det.get("overlay_path")}
         for layer in LAYERS:
             p = path_map.get(layer)
             if p:
@@ -1167,13 +1523,13 @@ class MonitorPage(QWidget):
 
         # 仪表盘与三态判定（normal 绿 / anomaly 红 / gray 黄"待复核"）
         score = float(det.get("final_score", 0) or 0)
-        self.gauge.set_score(score, det.get("threshold"))
-        decision = str(det.get("decision") or
-                       ("anomaly" if det.get("is_anomaly") else "normal"))
+        decision = det.get("decision")
+        self.gauge.set_score(score, det.get("threshold"), decision=decision)
         text, badge = {
+            "normal": ("正 常", "success"),
             "anomaly": ("异 常", "danger"),
             "gray": ("待复核（灰区）", "warning"),
-        }.get(decision, ("正 常", "success"))
+        }.get(decision, ("未知 / 未判定", "info"))
         self.badge_verdict.setText(text)
         self.badge_verdict.setProperty("badge", badge)
         self._repolish(self.badge_verdict)
@@ -1249,20 +1605,63 @@ class MonitorPage(QWidget):
         if isinstance(gray_thr, (int, float)):
             thr_text += f"（灰区 ≥{float(gray_thr):.3f}）"
         self.lbl_threshold.setText(thr_text)
+        model_version = det.get("model_version")
+        self.lbl_model.setText(f"v{model_version}" if model_version is not None else "未知（历史记录未保存）")
+        raw_scores = det.get("raw_scores") if isinstance(det.get("raw_scores"), dict) else {}
+        cal_scores = det.get("cal_scores") if isinstance(det.get("cal_scores"), dict) else slots
+        def _score_text(values):
+            return "  ".join(f"{SLOT_CN.get(k, k)}={float(v):.3f}" for k, v in sorted(values.items())
+                              if isinstance(v, (int, float))) or "未知（历史记录未保存）"
+        self.lbl_scores.setText(f"raw: {_score_text(raw_scores)} ｜ cal: {_score_text(cal_scores)}")
         weights = det.get("weights") if isinstance(det.get("weights"), dict) else {}
         self.lbl_weights.setText(
             "  ".join(f"{SLOT_CN.get(k, k)}={float(v):.2f}"
                       for k, v in sorted(weights.items())
                       if isinstance(v, (int, float))) or "-")
-        self.lbl_boxes.setText(f"{len(boxes)} 个")
-        self.lbl_trigger.setText(SLOT_CN.get(triggered_slot, triggered_slot)
-                                 or "无（多依据综合判定）")
+        actual_router = det.get("actual_router") if isinstance(det.get("actual_router"), dict) else {}
+        candidate_router = det.get("candidate_router")
+        candidate_text = json.dumps(candidate_router, ensure_ascii=False, sort_keys=True) if isinstance(candidate_router, dict) else "未知（未保存）"
+        self.lbl_router.setText(f"实际输出（仅追溯）：{_score_text(actual_router)} ｜ 候选门控：{candidate_text}")
+        self.lbl_router.setWordWrap(True)
+        metadata = det.get("feature_metadata")
+        if isinstance(metadata, dict):
+            self.lbl_features.setText(
+                f"状态：{metadata.get('status', '未知')} ｜ 维度：{metadata.get('dimension', '未知')}\n"
+                f"实现 SHA256：{metadata.get('implementation_sha256') or '未知'}\n"
+                f"配置 SHA256：{metadata.get('config_sha256') or '未知'}")
+            self.lbl_features.setToolTip(json.dumps(metadata, ensure_ascii=False, sort_keys=True, indent=2))
+        else:
+            self.lbl_features.setText("未知（历史记录未保存）")
+            self.lbl_features.setToolTip("")
+        box_text, box_tip = format_box_evidence(det.get("box_evidence") or [], len(boxes))
+        self.lbl_boxes.setText(box_text)
+        self.lbl_boxes.setToolTip(box_tip)
+        trace = det.get("decision_trace") or []
+        self.lbl_trace.setText(" → ".join(str(t) for t in trace) if trace else "未知（未保存）")
+        self.lbl_trigger.setText((SLOT_CN.get(triggered_slot, triggered_slot)
+                                  or "无（多依据综合判定）") + "（整图口径）")
 
         # 反馈按钮：无 detection_id 时禁用
         has_id = det.get("detection_id", det.get("id")) is not None
         feedback_supported = det.get("feedback_supported") is True
         for b in (self.btn_fp, self.btn_fn, self.btn_ok):
             b.setEnabled(has_id and feedback_supported)
+        self.btn_explain.setEnabled(has_id and det.get("persisted") is True)
+
+    def _open_explain(self) -> None:
+        det = self._current_detection or {}
+        did = det.get("detection_id", det.get("id"))
+        if did is None:
+            return
+        self.btn_explain.setEnabled(False)
+
+        def ok(data):
+            self.btn_explain.setEnabled(True)
+            if data:
+                ExplainDialog(data, self).exec()
+
+        run_async(self, lambda: self._client.detection_explain(int(did)), ok,
+                  lambda _m: self.btn_explain.setEnabled(True))
 
     def _repolish(self, w: QWidget) -> None:
         w.style().unpolish(w)
@@ -1273,6 +1672,19 @@ class MonitorPage(QWidget):
         if not self._current_detection:
             warn(self, "当前没有可标注的检测记录")
             return
-        dlg = FeedbackDialog(self._client, self._current_detection,
+        if self._feedback_dialog is not None:
+            self._feedback_dialog.show()
+            self._feedback_dialog.raise_()
+            self._feedback_dialog.activateWindow()
+            return
+        self.chk_follow.setChecked(False)
+        dlg = FeedbackDialog(self._client, deepcopy(self._current_detection),
                              preset_type=preset, parent=self)
-        dlg.exec()
+        self._feedback_dialog = dlg
+        dlg.setWindowModality(Qt.NonModal)
+        dlg.finished.connect(lambda _result: self._clear_feedback_dialog(dlg))
+        dlg.show()
+
+    def _clear_feedback_dialog(self, dlg: FeedbackDialog) -> None:
+        if self._feedback_dialog is dlg:
+            self._feedback_dialog = None

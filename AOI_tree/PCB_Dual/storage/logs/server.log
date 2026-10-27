@@ -1524,3 +1524,118 @@
 2026-10-09 10:04:13,388 WARNING urllib3.connectionpool: Connection pool is full, discarding connection: 127.0.0.1. Connection pool size: 16
 2026-10-09 10:04:13,393 WARNING urllib3.connectionpool: Connection pool is full, discarding connection: 127.0.0.1. Connection pool size: 16
 2026-10-09 10:04:13,400 WARNING urllib3.connectionpool: Connection pool is full, discarding connection: 127.0.0.1. Connection pool size: 16
+2026-10-14 21:58:20,802 INFO server: PCB_Ins v2 后台服务启动: http://127.0.0.1:8022
+2026-10-14 21:58:22,197 INFO app.core.task_queue: [taskq] 检测任务队列已启动（2 worker）
+2026-10-15 16:29:36,199 INFO server: PCB_Ins v2 后台服务启动: http://127.0.0.1:8022
+2026-10-15 16:29:37,893 INFO app.core.task_queue: [taskq] 检测任务队列已启动（2 worker）
+2026-10-15 16:29:38,138 INFO app.core.aoi_core_launcher: 已拉起 AOI_Core 子进程 pid=15172
+2026-10-16 14:29:21,029 INFO server: PCB_Ins v2 后台服务启动: http://127.0.0.1:8022
+2026-10-16 14:29:25,285 INFO app.core.task_queue: [taskq] 检测任务队列已启动（2 worker）
+2026-10-17 08:45:07,422 INFO app.core.aoi_core_launcher: 已拉起 AOI_Core 子进程 pid=11712
+2026-10-18 18:40:10,948 INFO server: PCB_Ins v2 后台服务启动: http://127.0.0.1:8022
+2026-10-18 18:40:12,798 INFO app.core.task_queue: [taskq] 检测任务队列已启动（2 worker）
+2026-10-18 18:40:12,914 INFO app.core.aoi_core_launcher: 已拉起 AOI_Core 子进程 pid=22784
+2026-10-18 18:43:30,398 INFO server: PCB_Ins v2 后台服务启动: http://127.0.0.1:8022
+2026-10-18 18:43:31,735 INFO app.core.task_queue: [taskq] 检测任务队列已启动（2 worker）
+2026-10-18 18:43:32,564 INFO app.core.aoi_core_launcher: 已拉起 AOI_Core 子进程 pid=10668
+2026-10-18 19:44:50,687 INFO server: PCB_Ins v2 后台服务启动: http://127.0.0.1:8022
+2026-10-18 19:44:51,876 INFO app.core.task_queue: [taskq] 检测任务队列已启动（2 worker）
+2026-10-18 19:44:52,751 INFO app.core.aoi_core_launcher: 已拉起 AOI_Core 子进程 pid=21956
+2026-10-18 19:55:21,403 INFO server: PCB_Ins v2 后台服务启动: http://127.0.0.1:8022
+2026-10-18 19:55:22,560 INFO app.core.task_queue: [taskq] 检测任务队列已启动（2 worker）
+2026-10-18 19:55:23,460 INFO app.core.aoi_core_launcher: 已拉起 AOI_Core 子进程 pid=13576
+2026-10-18 20:19:43,692 INFO server: PCB_Ins v2 后台服务启动: http://127.0.0.1:8022
+2026-10-18 20:19:44,842 INFO app.core.task_queue: [taskq] 检测任务队列已启动（2 worker）
+2026-10-18 20:19:45,748 INFO app.core.aoi_core_launcher: 已拉起 AOI_Core 子进程 pid=18616
+2026-10-18 20:30:23,907 INFO server: PCB_Ins v2 后台服务启动: http://127.0.0.1:8022
+2026-10-18 20:30:25,091 INFO app.core.task_queue: [taskq] 检测任务队列已启动（2 worker）
+2026-10-18 20:30:25,965 INFO app.core.aoi_core_launcher: 已拉起 AOI_Core 子进程 pid=21288
+2026-10-18 20:45:11,612 INFO server: PCB_Ins v2 后台服务启动: http://127.0.0.1:8022
+2026-10-18 20:45:12,818 INFO app.core.task_queue: [taskq] 检测任务队列已启动（2 worker）
+2026-10-18 20:45:13,659 INFO app.core.aoi_core_launcher: 已拉起 AOI_Core 子进程 pid=5076
+2026-10-18 20:47:34,138 INFO server: PCB_Ins v2 后台服务启动: http://127.0.0.1:8022
+2026-10-18 20:47:35,735 INFO app.core.task_queue: [taskq] 检测任务队列已启动（2 worker）
+2026-10-18 20:47:36,182 INFO app.core.aoi_core_launcher: 已拉起 AOI_Core 子进程 pid=9668
+2026-10-18 20:50:13,867 INFO server: PCB_Ins v2 后台服务启动: http://127.0.0.1:8022
+2026-10-18 20:50:15,296 INFO app.core.task_queue: [taskq] 检测任务队列已启动（2 worker）
+2026-10-18 20:50:15,920 INFO app.core.aoi_core_launcher: 已拉起 AOI_Core 子进程 pid=18140
+2026-10-18 21:06:18,286 INFO server: PCB_Ins v2 后台服务启动: http://127.0.0.1:8022
+2026-10-18 21:06:19,456 INFO app.core.task_queue: [taskq] 检测任务队列已启动（2 worker）
+2026-10-18 21:06:20,337 INFO app.core.aoi_core_launcher: 已拉起 AOI_Core 子进程 pid=22184
+2026-10-18 21:21:43,758 INFO server: PCB_Ins v2 后台服务启动: http://127.0.0.1:8022
+2026-10-18 21:21:44,943 INFO app.core.task_queue: [taskq] 检测任务队列已启动（2 worker）
+2026-10-18 21:21:45,805 INFO app.core.aoi_core_launcher: 已拉起 AOI_Core 子进程 pid=20080
+2026-10-18 21:55:07,233 INFO server: PCB_Ins v2 后台服务启动: http://127.0.0.1:8022
+2026-10-18 21:55:08,551 INFO app.core.task_queue: [taskq] 检测任务队列已启动（2 worker）
+2026-10-18 21:55:44,262 INFO server: PCB_Ins v2 后台服务启动: http://127.0.0.1:8022
+2026-10-18 21:55:45,501 INFO app.core.task_queue: [taskq] 检测任务队列已启动（2 worker）
+2026-10-19 11:03:00,853 INFO server: PCB_Ins v2 后台服务启动: http://127.0.0.1:8022
+2026-10-19 11:03:05,089 INFO app.core.task_queue: [taskq] 检测任务队列已启动（2 worker）
+2026-10-19 11:12:28,134 INFO server: PCB_Ins v2 后台服务启动: http://127.0.0.1:8022
+2026-10-19 11:12:30,176 INFO app.core.task_queue: [taskq] 检测任务队列已启动（2 worker）
+2026-10-19 11:56:23,724 INFO server: PCB_Ins v2 后台服务启动: http://127.0.0.1:8022
+2026-10-19 11:56:25,043 INFO app.core.task_queue: [taskq] 检测任务队列已启动（2 worker）
+2026-10-19 12:14:03,896 INFO server: PCB_Ins v2 后台服务启动: http://127.0.0.1:8022
+2026-10-19 12:14:06,205 INFO app.core.task_queue: [taskq] 检测任务队列已启动（2 worker）
+2026-10-19 12:18:42,175 INFO server: PCB_Ins v2 后台服务启动: http://127.0.0.1:8022
+2026-10-19 12:18:44,581 INFO app.core.task_queue: [taskq] 检测任务队列已启动（2 worker）
+2026-10-19 13:26:34,127 INFO server: PCB_Ins v2 后台服务启动: http://127.0.0.1:8022
+2026-10-19 13:26:35,248 INFO app.core.task_queue: [taskq] 检测任务队列已启动（2 worker）
+2026-10-19 15:13:24,827 INFO server: PCB_Ins v2 后台服务启动: http://127.0.0.1:8022
+2026-10-19 15:13:28,641 INFO app.core.task_queue: [taskq] 检测任务队列已启动（2 worker）
+2026-10-19 18:04:11,983 INFO server: PCB_Ins v2 后台服务启动: http://127.0.0.1:8022
+2026-10-19 18:04:14,169 INFO app.core.task_queue: [taskq] 检测任务队列已启动（2 worker）
+2026-10-19 19:28:01,636 INFO server: PCB_Ins v2 后台服务启动: http://127.0.0.1:8022
+2026-10-19 19:28:02,774 INFO app.core.task_queue: [taskq] 检测任务队列已启动（2 worker）
+2026-10-19 19:28:03,647 INFO app.core.aoi_core_launcher: 已拉起 AOI_Core 子进程 pid=16300
+2026-10-19 20:21:38,159 INFO server: PCB_Ins v2 后台服务启动: http://127.0.0.1:8022
+2026-10-19 20:21:39,571 INFO app.core.task_queue: [taskq] 检测任务队列已启动（2 worker）
+2026-10-19 20:21:40,232 INFO app.core.aoi_core_launcher: 已拉起 AOI_Core 子进程 pid=23548
+2026-10-19 20:28:57,516 INFO server: PCB_Ins v2 后台服务启动: http://127.0.0.1:8022
+2026-10-19 20:28:58,806 INFO app.core.task_queue: [taskq] 检测任务队列已启动（2 worker）
+2026-10-19 20:28:59,587 INFO app.core.aoi_core_launcher: 已拉起 AOI_Core 子进程 pid=20576
+2026-10-19 20:31:09,198 INFO server: PCB_Ins v2 后台服务启动: http://127.0.0.1:8022
+2026-10-19 20:31:10,707 INFO app.core.task_queue: [taskq] 检测任务队列已启动（2 worker）
+2026-10-19 20:31:11,225 INFO app.core.aoi_core_launcher: 已拉起 AOI_Core 子进程 pid=14732
+2026-10-19 21:14:23,852 INFO server: PCB_Ins v2 后台服务启动: http://127.0.0.1:8022
+2026-10-19 21:14:25,129 INFO app.core.task_queue: [taskq] 检测任务队列已启动（2 worker）
+2026-10-19 21:14:25,934 INFO app.core.aoi_core_launcher: 已拉起 AOI_Core 子进程 pid=4676
+2026-10-19 21:30:07,809 INFO server: PCB_Ins v2 后台服务启动: http://127.0.0.1:8022
+2026-10-19 21:30:09,144 INFO app.core.task_queue: [taskq] 检测任务队列已启动（2 worker）
+2026-10-19 21:30:09,879 INFO app.core.aoi_core_launcher: 已拉起 AOI_Core 子进程 pid=12884
+2026-10-19 21:48:42,257 INFO server: PCB_Ins v2 后台服务启动: http://127.0.0.1:8022
+2026-10-19 21:48:43,559 INFO app.core.task_queue: [taskq] 检测任务队列已启动（2 worker）
+2026-10-19 21:48:44,338 INFO app.core.aoi_core_launcher: 已拉起 AOI_Core 子进程 pid=3128
+2026-10-19 22:50:49,802 INFO server: PCB_Ins v2 后台服务启动: http://127.0.0.1:8022
+2026-10-19 22:50:51,062 INFO app.core.task_queue: [taskq] 检测任务队列已启动（2 worker）
+2026-10-19 22:50:51,878 INFO app.core.aoi_core_launcher: 已拉起 AOI_Core 子进程 pid=23320
+2026-10-19 22:57:56,761 INFO server: PCB_Ins v2 后台服务启动: http://127.0.0.1:8022
+2026-10-19 22:57:58,028 INFO app.core.task_queue: [taskq] 检测任务队列已启动（2 worker）
+2026-10-19 22:57:58,859 INFO app.core.aoi_core_launcher: 已拉起 AOI_Core 子进程 pid=11440
+2026-10-19 22:59:41,846 INFO server: PCB_Ins v2 后台服务启动: http://127.0.0.1:8022
+2026-10-19 22:59:43,122 INFO app.core.task_queue: [taskq] 检测任务队列已启动（2 worker）
+2026-10-19 22:59:43,898 INFO app.core.aoi_core_launcher: 已拉起 AOI_Core 子进程 pid=10924
+2026-10-19 23:21:48,880 INFO server: PCB_Ins v2 后台服务启动: http://127.0.0.1:8022
+2026-10-19 23:21:50,194 INFO app.core.task_queue: [taskq] 检测任务队列已启动（2 worker）
+2026-10-19 23:21:51,017 INFO app.core.aoi_core_launcher: 已拉起 AOI_Core 子进程 pid=18000
+2026-10-19 23:24:14,879 INFO server: PCB_Ins v2 后台服务启动: http://127.0.0.1:8022
+2026-10-19 23:24:16,125 INFO app.core.task_queue: [taskq] 检测任务队列已启动（2 worker）
+2026-10-19 23:24:16,943 INFO app.core.aoi_core_launcher: 已拉起 AOI_Core 子进程 pid=1676
+2026-10-19 23:26:07,373 INFO server: PCB_Ins v2 后台服务启动: http://127.0.0.1:8022
+2026-10-19 23:26:08,746 INFO app.core.task_queue: [taskq] 检测任务队列已启动（2 worker）
+2026-10-19 23:26:09,504 INFO app.core.aoi_core_launcher: 已拉起 AOI_Core 子进程 pid=21340
+2026-10-19 23:27:47,118 INFO server: PCB_Ins v2 后台服务启动: http://127.0.0.1:8022
+2026-10-19 23:27:48,398 INFO app.core.task_queue: [taskq] 检测任务队列已启动（2 worker）
+2026-10-19 23:27:49,172 INFO app.core.aoi_core_launcher: 已拉起 AOI_Core 子进程 pid=13900
+2026-10-19 23:36:55,526 INFO server: PCB_Ins v2 后台服务启动: http://127.0.0.1:8022
+2026-10-19 23:36:56,750 INFO app.core.task_queue: [taskq] 检测任务队列已启动（2 worker）
+2026-10-19 23:36:57,574 INFO app.core.aoi_core_launcher: 已拉起 AOI_Core 子进程 pid=22980
+2026-10-19 23:38:55,209 INFO server: PCB_Ins v2 后台服务启动: http://127.0.0.1:8022
+2026-10-19 23:38:56,453 INFO app.core.task_queue: [taskq] 检测任务队列已启动（2 worker）
+2026-10-19 23:38:57,266 INFO app.core.aoi_core_launcher: 已拉起 AOI_Core 子进程 pid=19160
+2026-10-21 14:15:25,307 INFO server: PCB_Ins v2 后台服务启动: http://127.0.0.1:8022
+2026-10-21 14:15:27,425 INFO app.core.aoi_core_launcher: 已拉起 AOI_Core 子进程 pid=5368
+2026-10-21 14:15:27,816 INFO app.core.task_queue: [taskq] 检测任务队列已启动（2 worker）
+2026-10-21 14:18:56,912 INFO server: PCB_Ins v2 后台服务启动: http://127.0.0.1:8022
+2026-10-21 14:18:58,256 INFO app.core.task_queue: [taskq] 检测任务队列已启动（2 worker）
+2026-10-21 14:18:58,977 INFO app.core.aoi_core_launcher: 已拉起 AOI_Core 子进程 pid=12172

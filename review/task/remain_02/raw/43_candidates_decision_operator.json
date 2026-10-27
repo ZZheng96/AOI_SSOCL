@@ -1,0 +1,16 @@
+{
+  "name": "candidates_decision_operator",
+  "method": "POST",
+  "path": "/api/candidates/gold_finger/1/decision",
+  "role": "operator",
+  "request_body": {
+    "approved": true,
+    "report_hash": "x",
+    "reason": "r"
+  },
+  "status_code": 403,
+  "response": {
+    "detail": "权限不足：该操作需要 admin 及以上角色（当前 operator）"
+  },
+  "note": ""
+}

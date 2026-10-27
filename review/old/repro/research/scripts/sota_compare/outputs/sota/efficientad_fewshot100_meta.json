@@ -1,0 +1,4 @@
+{
+  "note": "EfficientAD-S few-shot100, train_steps=2500",
+  "log": "<PROJECT_ROOT>\\demo5\\scripts\\sota_compare\\outputs\\sota\\efficientad"
+}

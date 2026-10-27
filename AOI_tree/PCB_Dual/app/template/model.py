@@ -10,6 +10,7 @@ from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any
 
+from app.config import get_acceptance_settings
 from app.template.regions import (
     calibration_from_region_sets,
     count_regions,
@@ -238,6 +239,7 @@ class InspectionTemplate:
             "region_sets": deepcopy(self.region_sets),
             "calibration": deepcopy(self.calibration),
             "gate": self.gate.to_dict(),
+            "acceptance_policy": get_acceptance_settings(),
             "engine_mode": self.engine_mode,
             "model_category": self.model_category,
             "px_calibration": deepcopy(self.px_calibration),

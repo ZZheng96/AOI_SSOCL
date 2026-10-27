@@ -1,0 +1,6 @@
+# TEST-05 复跑命令
+
+py -3.11 d:\CGAIC\AOI_SSOCL\review\task\test05_offline_weights\raw\bench_test05.py
+
+# 子进程：raw\child_load.py（受控环境下加载主干并报告来源/耗时/错误）
+# 产物：raw\scenarios.json（各场景 rc/wall/stdout/stderr/fake_home 清单）

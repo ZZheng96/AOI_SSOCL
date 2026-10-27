@@ -1,0 +1,1 @@
+﻿{"pads": 1, "mode": "roi", "run_cfg": {"solder_mode": "roi", "solder_roi": {"shape": "rect", "x": 4.390243902439024, "y": 7.317073170731707, "w": 92.03252032520325, "h": 93.17073170731707}, "bridge_joints": null}}

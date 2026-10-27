@@ -1,0 +1,16 @@
+﻿python.exe : D:\CGAIC\AOI_SSOCL\AOI_tree\AOI_feature\feature_lib.py:209: FutureWarning: Parameter `min_size` is depreca
+ted since version 0.26.0 and will be removed in 2.0.0 (or later). To avoid this warning, please use the parameter `max_
+size` instead. For more details, see the documentation of `remove_small_objects`. Note that the new threshold removes o
+bjects smaller than **or equal to** its value, while the previous parameter only removed smaller ones.
+At line:15 char:3344
++ ... gress\raw"; & "C:\Program Files\Python311\python.exe" -u run_eval.py  ...
++                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: (D:\CGAIC\AOI_SS...d smaller ones.:String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+  bw = morphology.remove_small_objects(bw.astype(bool), min_size=p["min_size"])
+D:\CGAIC\AOI_SSOCL\AOI_tree\AOI_feature\feature_lib.py:209: FutureWarning: Parameter `min_size` is deprecated since ver
+sion 0.26.0 and will be removed in 2.0.0 (or later). To avoid this warning, please use the parameter `max_size` instead
+. For more details, see the documentation of `remove_small_objects`. Note that the new threshold removes objects smalle
+r than **or equal to** its value, while the previous parameter only removed smaller ones.
+  bw = morphology.remove_small_objects(bw.astype(bool), min_size=p["min_size"])

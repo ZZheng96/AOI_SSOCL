@@ -59,6 +59,7 @@ class AlgorithmParamPanel(QWidget):
         values_provider: Callable[[], tuple[dict[str, Any], str]] | None = None,
         show_preview: bool = True,
         compact: bool = False,
+        excluded_keys: set[str] | None = None,
         parent=None,
     ) -> None:
         super().__init__(parent)
@@ -73,7 +74,8 @@ class AlgorithmParamPanel(QWidget):
         self.show_preview = show_preview
         self.compact = compact
         self.adapter = get_adapter_for(algorithm_id)
-        self.specs = self.adapter.param_specs(algorithm_id) if self.adapter is not None else []
+        self.specs = [s for s in self.adapter.param_specs(algorithm_id)
+                      if s.key not in (excluded_keys or set())] if self.adapter is not None else []
         self.sliders: dict[str, ParamSlider] = {}
         self._tolerance_keys: list[str] = [
             s.key for s in self.specs if getattr(s, "tolerance", None)
@@ -92,7 +94,7 @@ class AlgorithmParamPanel(QWidget):
         self.setSizePolicy(QSizePolicy.Policy.Preferred, QSizePolicy.Policy.Maximum)
 
         if self.adapter is None:
-            lbl = QLabel("该算法尚未接入真实适配器，无可调参数（对照检测将返回 stub OK）。")
+            lbl = QLabel("该算法尚未接入真实适配器，无可调参数；调试结果为未执行，不能视为通过。")
             lbl.setProperty("class", "Hint")
             root.addWidget(lbl)
             return
@@ -233,7 +235,10 @@ class AlgorithmParamPanel(QWidget):
         self._applying_tolerance = True
         try:
             for key, slider in self.sliders.items():
-                slider.set_value(resolved.get(key, slider.spec.default))
+                value = resolved.get(key, slider.spec.default)
+                if slider.spec.kind == "enum" and isinstance(value, bool):
+                    value = str(value).lower()
+                slider.set_value(value)
         finally:
             self._applying_tolerance = False
         self._sync_tolerance_combo()
@@ -379,7 +384,7 @@ class AlgorithmParamPanel(QWidget):
             self.preview_image.set_image(None)
             return
 
-        status = "SKIP" if result.skipped else ("OK" if result.ok else "NG")
+        status = result.status or ("SKIP" if result.skipped else ("OK" if result.ok else "NG"))
         self.preview_pill.set_status(status)
         self.lbl_preview_msg.setText(result.message)
         if result.diff_image is not None and not need_std:

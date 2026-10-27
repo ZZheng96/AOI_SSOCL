@@ -1,0 +1,327 @@
+{
+  "native": true,
+  "seed": 20261013,
+  "n": 40,
+  "images": [
+    {
+      "path": "d:\\CGAIC\\AOI_SSOCL\\stable_AOI_tree\\AOI_Core\\storage\\archive\\gold_finger\\20261011\\det878_bench_00.png",
+      "sha256": "4f2a817931149ec0e70325a0b06c6e5514bd56ea37ead68d5da16218bc8f2ec0",
+      "source_size": [
+        2500,
+        2500
+      ]
+    },
+    {
+      "path": "d:\\CGAIC\\AOI_SSOCL\\stable_AOI_tree\\AOI_Core\\storage\\archive\\gold_finger\\20261011\\det664_det1_bench_00.png",
+      "sha256": "4f2a817931149ec0e70325a0b06c6e5514bd56ea37ead68d5da16218bc8f2ec0",
+      "source_size": [
+        2500,
+        2500
+      ]
+    },
+    {
+      "path": "d:\\CGAIC\\AOI_SSOCL\\stable_AOI_tree\\AOI_Core\\storage\\archive\\gold_finger\\20261011\\det27_bench_07.png",
+      "sha256": "117b4ca07aba22d6298f8e63a1c1e1132481a4412a8d187127f6269e0a7d2370",
+      "source_size": [
+        2500,
+        2500
+      ]
+    },
+    {
+      "path": "d:\\CGAIC\\AOI_SSOCL\\stable_AOI_tree\\AOI_Core\\storage\\archive\\gold_finger\\20261011\\det824_det1_bench_00.png",
+      "sha256": "4f2a817931149ec0e70325a0b06c6e5514bd56ea37ead68d5da16218bc8f2ec0",
+      "source_size": [
+        2500,
+        2500
+      ]
+    },
+    {
+      "path": "d:\\CGAIC\\AOI_SSOCL\\stable_AOI_tree\\AOI_Core\\storage\\archive\\gold_finger\\20261011\\det900_bench_02.png",
+      "sha256": "4344bbbac170e51b0880614fb86ba77ff76f6aee4a1f6226c78c83e46b72cbb9",
+      "source_size": [
+        2500,
+        2500
+      ]
+    },
+    {
+      "path": "d:\\CGAIC\\AOI_SSOCL\\stable_AOI_tree\\AOI_Core\\storage\\archive\\gold_finger\\20261011\\det469_det1_bench_00.png",
+      "sha256": "4f2a817931149ec0e70325a0b06c6e5514bd56ea37ead68d5da16218bc8f2ec0",
+      "source_size": [
+        2500,
+        2500
+      ]
+    },
+    {
+      "path": "d:\\CGAIC\\AOI_SSOCL\\stable_AOI_tree\\AOI_Core\\storage\\archive\\gold_finger\\20261011\\det699_det14_bench_02.png",
+      "sha256": "4344bbbac170e51b0880614fb86ba77ff76f6aee4a1f6226c78c83e46b72cbb9",
+      "source_size": [
+        2500,
+        2500
+      ]
+    },
+    {
+      "path": "d:\\CGAIC\\AOI_SSOCL\\stable_AOI_tree\\AOI_Core\\storage\\archive\\gold_finger\\20261011\\det190_det1_bench_00.png",
+      "sha256": "4f2a817931149ec0e70325a0b06c6e5514bd56ea37ead68d5da16218bc8f2ec0",
+      "source_size": [
+        2500,
+        2500
+      ]
+    },
+    {
+      "path": "d:\\CGAIC\\AOI_SSOCL\\stable_AOI_tree\\AOI_Core\\storage\\archive\\gold_finger\\20261011\\det601_det14_bench_02.png",
+      "sha256": "4344bbbac170e51b0880614fb86ba77ff76f6aee4a1f6226c78c83e46b72cbb9",
+      "source_size": [
+        2500,
+        2500
+      ]
+    },
+    {
+      "path": "d:\\CGAIC\\AOI_SSOCL\\stable_AOI_tree\\AOI_Core\\storage\\archive\\gold_finger\\20261011\\det881_bench_01.png",
+      "sha256": "85cb10e187d56cd2494e9996286bdcfcaa7b9c36ce690d9e19839d6b2558a409",
+      "source_size": [
+        2500,
+        2500
+      ]
+    },
+    {
+      "path": "d:\\CGAIC\\AOI_SSOCL\\stable_AOI_tree\\AOI_Core\\storage\\archive\\gold_finger\\20261011\\det880_bench_00.png",
+      "sha256": "4f2a817931149ec0e70325a0b06c6e5514bd56ea37ead68d5da16218bc8f2ec0",
+      "source_size": [
+        2500,
+        2500
+      ]
+    },
+    {
+      "path": "d:\\CGAIC\\AOI_SSOCL\\stable_AOI_tree\\AOI_Core\\storage\\archive\\gold_finger\\20261011\\det902_bench_04.png",
+      "sha256": "c669c8ae1b4ff3f7149f0663d9fc06e1208503ffad53c9f57ee29764d234d5d6",
+      "source_size": [
+        2500,
+        2500
+      ]
+    },
+    {
+      "path": "d:\\CGAIC\\AOI_SSOCL\\stable_AOI_tree\\AOI_Core\\storage\\archive\\gold_finger\\20261011\\det852_det14_bench_02.png",
+      "sha256": "4344bbbac170e51b0880614fb86ba77ff76f6aee4a1f6226c78c83e46b72cbb9",
+      "source_size": [
+        2500,
+        2500
+      ]
+    },
+    {
+      "path": "d:\\CGAIC\\AOI_SSOCL\\stable_AOI_tree\\AOI_Core\\storage\\archive\\gold_finger\\20261011\\det152_det14_bench_02.png",
+      "sha256": "4344bbbac170e51b0880614fb86ba77ff76f6aee4a1f6226c78c83e46b72cbb9",
+      "source_size": [
+        2500,
+        2500
+      ]
+    },
+    {
+      "path": "d:\\CGAIC\\AOI_SSOCL\\stable_AOI_tree\\AOI_Core\\storage\\archive\\gold_finger\\20261011\\det336_det14_bench_02.png",
+      "sha256": "4344bbbac170e51b0880614fb86ba77ff76f6aee4a1f6226c78c83e46b72cbb9",
+      "source_size": [
+        2500,
+        2500
+      ]
+    },
+    {
+      "path": "d:\\CGAIC\\AOI_SSOCL\\stable_AOI_tree\\AOI_Core\\storage\\archive\\gold_finger\\20261011\\det842_det14_bench_02.png",
+      "sha256": "4344bbbac170e51b0880614fb86ba77ff76f6aee4a1f6226c78c83e46b72cbb9",
+      "source_size": [
+        2500,
+        2500
+      ]
+    },
+    {
+      "path": "d:\\CGAIC\\AOI_SSOCL\\stable_AOI_tree\\AOI_Core\\storage\\archive\\gold_finger\\20261011\\det172_det1_bench_00.png",
+      "sha256": "4f2a817931149ec0e70325a0b06c6e5514bd56ea37ead68d5da16218bc8f2ec0",
+      "source_size": [
+        2500,
+        2500
+      ]
+    },
+    {
+      "path": "d:\\CGAIC\\AOI_SSOCL\\stable_AOI_tree\\AOI_Core\\storage\\archive\\gold_finger\\20261011\\det119_det1_bench_00.png",
+      "sha256": "4f2a817931149ec0e70325a0b06c6e5514bd56ea37ead68d5da16218bc8f2ec0",
+      "source_size": [
+        2500,
+        2500
+      ]
+    },
+    {
+      "path": "d:\\CGAIC\\AOI_SSOCL\\stable_AOI_tree\\AOI_Core\\storage\\archive\\gold_finger\\20261011\\det316_det1_bench_00.png",
+      "sha256": "4f2a817931149ec0e70325a0b06c6e5514bd56ea37ead68d5da16218bc8f2ec0",
+      "source_size": [
+        2500,
+        2500
+      ]
+    },
+    {
+      "path": "d:\\CGAIC\\AOI_SSOCL\\stable_AOI_tree\\AOI_Core\\storage\\archive\\gold_finger\\20261011\\det819_det1_bench_00.png",
+      "sha256": "4f2a817931149ec0e70325a0b06c6e5514bd56ea37ead68d5da16218bc8f2ec0",
+      "source_size": [
+        2500,
+        2500
+      ]
+    },
+    {
+      "path": "d:\\CGAIC\\AOI_SSOCL\\stable_AOI_tree\\AOI_Core\\storage\\archive\\gold_finger\\20261011\\det805_det1_bench_00.png",
+      "sha256": "4f2a817931149ec0e70325a0b06c6e5514bd56ea37ead68d5da16218bc8f2ec0",
+      "source_size": [
+        2500,
+        2500
+      ]
+    },
+    {
+      "path": "d:\\CGAIC\\AOI_SSOCL\\stable_AOI_tree\\AOI_Core\\storage\\archive\\gold_finger\\20261011\\det19_bench_07.png",
+      "sha256": "117b4ca07aba22d6298f8e63a1c1e1132481a4412a8d187127f6269e0a7d2370",
+      "source_size": [
+        2500,
+        2500
+      ]
+    },
+    {
+      "path": "d:\\CGAIC\\AOI_SSOCL\\stable_AOI_tree\\AOI_Core\\storage\\archive\\gold_finger\\20261011\\det370_det14_bench_02.png",
+      "sha256": "4344bbbac170e51b0880614fb86ba77ff76f6aee4a1f6226c78c83e46b72cbb9",
+      "source_size": [
+        2500,
+        2500
+      ]
+    },
+    {
+      "path": "d:\\CGAIC\\AOI_SSOCL\\stable_AOI_tree\\AOI_Core\\storage\\archive\\gold_finger\\20261011\\det856_det1_bench_00.png",
+      "sha256": "4f2a817931149ec0e70325a0b06c6e5514bd56ea37ead68d5da16218bc8f2ec0",
+      "source_size": [
+        2500,
+        2500
+      ]
+    },
+    {
+      "path": "d:\\CGAIC\\AOI_SSOCL\\stable_AOI_tree\\AOI_Core\\storage\\archive\\gold_finger\\20261011\\det223_det14_bench_02.png",
+      "sha256": "4344bbbac170e51b0880614fb86ba77ff76f6aee4a1f6226c78c83e46b72cbb9",
+      "source_size": [
+        2500,
+        2500
+      ]
+    },
+    {
+      "path": "d:\\CGAIC\\AOI_SSOCL\\stable_AOI_tree\\AOI_Core\\storage\\archive\\gold_finger\\20261011\\det290_det1_bench_00.png",
+      "sha256": "4f2a817931149ec0e70325a0b06c6e5514bd56ea37ead68d5da16218bc8f2ec0",
+      "source_size": [
+        2500,
+        2500
+      ]
+    },
+    {
+      "path": "d:\\CGAIC\\AOI_SSOCL\\stable_AOI_tree\\AOI_Core\\storage\\archive\\gold_finger\\20261011\\det659_det14_bench_02.png",
+      "sha256": "4344bbbac170e51b0880614fb86ba77ff76f6aee4a1f6226c78c83e46b72cbb9",
+      "source_size": [
+        2500,
+        2500
+      ]
+    },
+    {
+      "path": "d:\\CGAIC\\AOI_SSOCL\\stable_AOI_tree\\AOI_Core\\storage\\archive\\gold_finger\\20261011\\det705_det14_bench_02.png",
+      "sha256": "4344bbbac170e51b0880614fb86ba77ff76f6aee4a1f6226c78c83e46b72cbb9",
+      "source_size": [
+        2500,
+        2500
+      ]
+    },
+    {
+      "path": "d:\\CGAIC\\AOI_SSOCL\\stable_AOI_tree\\AOI_Core\\storage\\archive\\gold_finger\\20261011\\det245_det14_bench_02.png",
+      "sha256": "4344bbbac170e51b0880614fb86ba77ff76f6aee4a1f6226c78c83e46b72cbb9",
+      "source_size": [
+        2500,
+        2500
+      ]
+    },
+    {
+      "path": "d:\\CGAIC\\AOI_SSOCL\\stable_AOI_tree\\AOI_Core\\storage\\archive\\gold_finger\\20261011\\det143_det1_bench_00.png",
+      "sha256": "4f2a817931149ec0e70325a0b06c6e5514bd56ea37ead68d5da16218bc8f2ec0",
+      "source_size": [
+        2500,
+        2500
+      ]
+    },
+    {
+      "path": "d:\\CGAIC\\AOI_SSOCL\\stable_AOI_tree\\AOI_Core\\storage\\archive\\gold_finger\\20261011\\det22_bench_02.png",
+      "sha256": "4344bbbac170e51b0880614fb86ba77ff76f6aee4a1f6226c78c83e46b72cbb9",
+      "source_size": [
+        2500,
+        2500
+      ]
+    },
+    {
+      "path": "d:\\CGAIC\\AOI_SSOCL\\stable_AOI_tree\\AOI_Core\\storage\\archive\\gold_finger\\20261011\\det317_det1_bench_00.png",
+      "sha256": "4f2a817931149ec0e70325a0b06c6e5514bd56ea37ead68d5da16218bc8f2ec0",
+      "source_size": [
+        2500,
+        2500
+      ]
+    },
+    {
+      "path": "d:\\CGAIC\\AOI_SSOCL\\stable_AOI_tree\\AOI_Core\\storage\\archive\\gold_finger\\20261011\\det272_det14_bench_02.png",
+      "sha256": "4344bbbac170e51b0880614fb86ba77ff76f6aee4a1f6226c78c83e46b72cbb9",
+      "source_size": [
+        2500,
+        2500
+      ]
+    },
+    {
+      "path": "d:\\CGAIC\\AOI_SSOCL\\stable_AOI_tree\\AOI_Core\\storage\\archive\\gold_finger\\20261011\\det833_det1_bench_00.png",
+      "sha256": "4f2a817931149ec0e70325a0b06c6e5514bd56ea37ead68d5da16218bc8f2ec0",
+      "source_size": [
+        2500,
+        2500
+      ]
+    },
+    {
+      "path": "d:\\CGAIC\\AOI_SSOCL\\stable_AOI_tree\\AOI_Core\\storage\\archive\\gold_finger\\20261011\\det870_det1_bench_00.png",
+      "sha256": "4f2a817931149ec0e70325a0b06c6e5514bd56ea37ead68d5da16218bc8f2ec0",
+      "source_size": [
+        2500,
+        2500
+      ]
+    },
+    {
+      "path": "d:\\CGAIC\\AOI_SSOCL\\stable_AOI_tree\\AOI_Core\\storage\\archive\\gold_finger\\20261011\\det911_bench_05.png",
+      "sha256": "8a3d30bbc60d5827f06b8c2a7f0dac472124f6b3024479bee29b4e7e61a7d619",
+      "source_size": [
+        2500,
+        2500
+      ]
+    },
+    {
+      "path": "d:\\CGAIC\\AOI_SSOCL\\stable_AOI_tree\\AOI_Core\\storage\\archive\\gold_finger\\20261011\\det567_det1_bench_00.png",
+      "sha256": "4f2a817931149ec0e70325a0b06c6e5514bd56ea37ead68d5da16218bc8f2ec0",
+      "source_size": [
+        2500,
+        2500
+      ]
+    },
+    {
+      "path": "d:\\CGAIC\\AOI_SSOCL\\stable_AOI_tree\\AOI_Core\\storage\\archive\\gold_finger\\20261011\\det908_bench_02.png",
+      "sha256": "4344bbbac170e51b0880614fb86ba77ff76f6aee4a1f6226c78c83e46b72cbb9",
+      "source_size": [
+        2500,
+        2500
+      ]
+    },
+    {
+      "path": "d:\\CGAIC\\AOI_SSOCL\\stable_AOI_tree\\AOI_Core\\storage\\archive\\gold_finger\\20261011\\det497_det1_bench_00.png",
+      "sha256": "4f2a817931149ec0e70325a0b06c6e5514bd56ea37ead68d5da16218bc8f2ec0",
+      "source_size": [
+        2500,
+        2500
+      ]
+    },
+    {
+      "path": "d:\\CGAIC\\AOI_SSOCL\\stable_AOI_tree\\AOI_Core\\storage\\archive\\gold_finger\\20261011\\det690_det1_bench_00.png",
+      "sha256": "4f2a817931149ec0e70325a0b06c6e5514bd56ea37ead68d5da16218bc8f2ec0",
+      "source_size": [
+        2500,
+        2500
+      ]
+    }
+  ]
+}

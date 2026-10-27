@@ -1,0 +1,53 @@
+{
+  "temp": "C:\\Users\\imia\\AppData\\Local\\Temp\\aoi_test02_wpg66vsb",
+  "categories": [
+    "gold_finger",
+    "gold_finger_b"
+  ],
+  "requests_per_level": 24,
+  "learning_events": 8,
+  "levels": {
+    "c1_idle": {
+      "n": 24,
+      "wall_p50": 188.8865,
+      "wall_p95": 242.05075,
+      "wall_max": 248.097,
+      "queue_p95": 0.0
+    },
+    "c1_learning": {
+      "n": 24,
+      "wall_p50": 180.95499999999998,
+      "wall_p95": 394.0521999999998,
+      "wall_max": 449.451,
+      "queue_p95": 0.0
+    },
+    "c2_idle": {
+      "n": 24,
+      "wall_p50": 197.9245,
+      "wall_p95": 214.89455,
+      "wall_max": 260.659,
+      "queue_p95": 0.0
+    },
+    "c2_learning": {
+      "n": 24,
+      "wall_p50": 204.6255,
+      "wall_p95": 694.6793,
+      "wall_max": 898.85,
+      "queue_p95": 0.0
+    },
+    "c4_idle": {
+      "n": 24,
+      "wall_p50": 226.353,
+      "wall_p95": 358.13174999999984,
+      "wall_max": 416.129,
+      "queue_p95": 0.0
+    },
+    "c4_learning": {
+      "n": 24,
+      "wall_p50": 238.14800000000002,
+      "wall_p95": 768.2571499999997,
+      "wall_max": 824.192,
+      "queue_p95": 0.0
+    }
+  }
+}

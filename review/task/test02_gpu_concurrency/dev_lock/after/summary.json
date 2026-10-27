@@ -1,0 +1,62 @@
+{
+  "temp": "C:\\Users\\imia\\AppData\\Local\\Temp\\aoi_test02_lock_c45muqq6",
+  "prefetch": true,
+  "categories": [
+    "gold_finger",
+    "gold_finger_b"
+  ],
+  "requests_per_level": 24,
+  "learning_events": 9,
+  "learning_errors": 0,
+  "acc_c4_vs_serial_mismatch": 0,
+  "levels": {
+    "c1_idle": {
+      "n": 24,
+      "wall_p50": 187.0375,
+      "wall_p95": 258.30595,
+      "wall_max": 263.015,
+      "lock_wait_p95": 0.010249999999999988,
+      "infer_p50": 70.4925
+    },
+    "c1_learning": {
+      "n": 24,
+      "wall_p50": 192.652,
+      "wall_p95": 1530.2356999999993,
+      "wall_max": 1641.753,
+      "lock_wait_p95": 1298.1871999999994,
+      "infer_p50": 68.607
+    },
+    "c2_idle": {
+      "n": 24,
+      "wall_p50": 186.4205,
+      "wall_p95": 248.9471999999999,
+      "wall_max": 311.878,
+      "lock_wait_p95": 0.017349999999999977,
+      "infer_p50": 57.483999999999995
+    },
+    "c2_learning": {
+      "n": 24,
+      "wall_p50": 202.1165,
+      "wall_p95": 899.3440999999999,
+      "wall_max": 1120.271,
+      "lock_wait_p95": 695.0108999999998,
+      "infer_p50": 77.221
+    },
+    "c4_idle": {
+      "n": 24,
+      "wall_p50": 240.9155,
+      "wall_p95": 303.1131999999999,
+      "wall_max": 338.444,
+      "lock_wait_p95": 0.006699999999999996,
+      "infer_p50": 99.9585
+    },
+    "c4_learning": {
+      "n": 24,
+      "wall_p50": 246.2635,
+      "wall_p95": 963.4934999999995,
+      "wall_max": 1035.672,
+      "lock_wait_p95": 732.5694999999996,
+      "infer_p50": 88.743
+    }
+  }
+}

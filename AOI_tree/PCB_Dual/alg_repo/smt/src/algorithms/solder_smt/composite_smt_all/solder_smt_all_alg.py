@@ -175,6 +175,7 @@ class SolderSmtAllAlg(IDetectionAlgorithm):
         roi_bbox: Optional[BoundingBox] = None,
         original_template_image: Optional[np.ndarray] = None,
         multiple_roi_images: Optional[List[np.ndarray]] = None,
+        *, _shared_cache=None,
     ) -> AlgorithmResult:
         """检测入口。算法池只调用此方法。
 
@@ -192,6 +193,7 @@ class SolderSmtAllAlg(IDetectionAlgorithm):
                 image = image[:, :, :3]
 
             # ── 2. ROI裁剪 ──
+            original_image = image
             roi_offset = (0, 0)
             if roi_bbox is not None:
                 rx, ry = int(roi_bbox.x), int(roi_bbox.y)
@@ -269,49 +271,46 @@ class SolderSmtAllAlg(IDetectionAlgorithm):
                 if _resize_scale < 1.0 and cfg.get("pad_frames"):
                     cfg["pad_frames"] = scale_pad_rects(cfg["pad_frames"], _resize_scale)
 
-            # ── 5. Step1: 干扰排除 (预计算HSV供后续复用) ──
-            loose_inter = cfg.get("loose", has_tpl or provide_pad_frames)
-            _hsv_shared = cv2.cvtColor(image[:, :, :3], cv2.COLOR_BGR2HSV)
-            interference = _remove_interference(image, cfg, loose=loose_inter, hsv=_hsv_shared)
-
-            # ── 6. 焊盘框定位 (仅从pad.json) ──
-            tpl_info: Optional[Dict[str, Any]] = None
-            pad_rects: List[Tuple[int, int, int, int]] = []
-            outer_rects: List[Tuple[int, int, int, int]] = []
-            group_rects: List[Tuple[int, int, int, int]] = []
-
+            # 缓存只在 run_many 调用栈存活；判定参数不参与前处理键。
+            decision_keys = {
+                "detect_excess", "detect_insufficient", "detect_bridge", "detect_cold_solder",
+                "excess_thresh", "excess_min_area", "insufficient_thresh",
+                "diff_insufficient_thresh", "insufficient_use_diff", "bridge_min_area",
+                "pin_type", "cold_solder_dark_ratio", "cold_solder_v_dark",
+                "cold_solder_rim_ratio", "toe_metal_ratio_thresh", "cold_diff_ratio_thresh",
+                "toe_frames", "rim_frames",
+            }
+            cache_key = repr(sorted((k, v) for k, v in cfg.items() if k not in decision_keys))
+            prepared = _shared_cache.get(cache_key) if _shared_cache is not None else None
             pad_source = "ROI"
-            raw_pads = cfg.get("pad_frames", [])
-            if not raw_pads:
-                return self._fail_result("no pad_frames in config", t0)
-
-            # 有模板时做对齐映射
-            if has_tpl:
-                tpl_info = align_template(tpl, image, cfg)
+            if prepared is None:
+                loose_inter = cfg.get("loose", has_tpl or provide_pad_frames)
+                _hsv_shared = cv2.cvtColor(image[:, :, :3], cv2.COLOR_BGR2HSV)
+                interference = _remove_interference(image, cfg, loose=loose_inter, hsv=_hsv_shared)
+                raw_pads = cfg.get("pad_frames", [])
+                if not raw_pads:
+                    return self._fail_result("no pad_frames in config", t0)
+                tpl_info = align_template(tpl, image, cfg) if has_tpl else None
                 if tpl_info is not None:
-                    pad_rects = [tuple(int(v) for v in map_rect_to_original(r, tpl_info))
-                                 for r in raw_pads]
-                    pad_rects = [(x, y, rw, rh) for (x, y, rw, rh) in pad_rects
-                                 if rw > 5 and rh > 5]
+                    pad_rects = [tuple(int(v) for v in map_rect_to_original(r, tpl_info)) for r in raw_pads]
+                    pad_rects = [r for r in pad_rects if r[2] > 5 and r[3] > 5]
                 else:
                     pad_rects = [tuple(int(v) for v in r) for r in raw_pads]
-            else:
-                pad_rects = [tuple(int(v) for v in r) for r in raw_pads]
-            outer_rects = self._compute_outers(pad_rects, w, h, cfg)
-            group_rects = _merge_overlapping_rects(outer_rects)
-
-            # ── 7. 模板对齐(如果还未对齐) ──
+                outer_rects = self._compute_outers(pad_rects, w, h, cfg)
+                group_rects = _merge_overlapping_rects(outer_rects)
+                if has_tpl and tpl_info is None:
+                    tpl_info = align_template(tpl, image, cfg)
+                _gray_shared = cv2.cvtColor(image[:, :, :3], cv2.COLOR_BGR2GRAY)
+                extracted = extract_solder(image, interference, pad_rects, group_rects, cfg,
+                                           hsv=_hsv_shared, gray=_gray_shared)
+                prepared = (_hsv_shared, _gray_shared, tpl_info, pad_rects, outer_rects, group_rects, extracted)
+                if _shared_cache is not None:
+                    _shared_cache[cache_key] = prepared
+            _hsv_shared, _gray_shared, tpl_info, pad_rects, outer_rects, group_rects, extracted = prepared
             if has_tpl and tpl_info is None:
-                tpl_info = align_template(tpl, image, cfg)
-
-            # ── 8. Step2: 焊锡提取 ──
-            # HSV已在Step1预计算, 只需Gray
-            _gray_shared = cv2.cvtColor(image[:, :, :3], cv2.COLOR_BGR2GRAY)
-            (mask_blue, mask_merged, mask_filled,
-             mask_texture, mask_final, std_map,
-             non_inter_heavy, w_channel) = extract_solder(
-                image, interference, pad_rects, group_rects, cfg,
-                hsv=_hsv_shared, gray=_gray_shared)
+                return self._fail_result("template alignment failed; inspection unavailable", t0)
+            (mask_blue, mask_merged, mask_filled, mask_texture, mask_final, std_map,
+             non_inter_heavy, w_channel) = extracted
             solder_mask = mask_final
 
             # DEBUG: 保存焊锡mask+pad中间图(可选)
@@ -327,6 +326,11 @@ class SolderSmtAllAlg(IDetectionAlgorithm):
                 cv2.imwrite(_os.path.join(_dbg_dir, f"{_dbg_tag}.png"), _dbg_vis)
 
             # ── 9. Step3: 缺陷判定(grow) ──
+            diagnostics = {} if cfg.get("diagnostics") else None
+            if diagnostics is not None:
+                cfg["_diagnostics"] = diagnostics
+            diff_mask_exc = diff_mask_cold = None
+            exc_blobs = []
             grow_ins: List[Tuple] = []
             grow_exc: List[Tuple] = []
             grow_brg: List[Tuple] = []
@@ -455,18 +459,7 @@ class SolderSmtAllAlg(IDetectionAlgorithm):
                                       "method": "grow",
                                       "reasons": reasons}))
 
-            # ── 12. ROI坐标还原 ──
-            if roi_offset != (0, 0):
-                for p in parts:
-                    p.x += roi_offset[0]
-                    p.y += roi_offset[1]
-
-            # ── 13. 构建输出可视化图 ──
-            vis = None
-            if cfg.get("enable_visualization", True):
-                vis = self._build_output_image(image, parts)
-
-            # ── 13b. auto_resize坐标还原: 把parts坐标缩放回原图尺寸 ──
+            # ── 12. auto_resize坐标还原: 先缩放局部坐标，再加原图ROI偏移 ──
             if _resize_scale < 1.0:
                 _inv = 1.0 / _resize_scale
                 for p in parts:
@@ -474,7 +467,24 @@ class SolderSmtAllAlg(IDetectionAlgorithm):
                     p.y = int(p.y * _inv)
                     p.width = int(p.width * _inv)
                     p.height = int(p.height * _inv)
+            if roi_offset != (0, 0):
+                for p in parts:
+                    p.x += roi_offset[0]
+                    p.y += roi_offset[1]
+            vis = self._build_output_image(original_image, parts) if cfg.get("enable_visualization", True) else None
 
+            if diagnostics is not None:
+                diagnostics.update(solder_mask=solder_mask, pad_coverage=grow_ins if det_insuf else "不可用：少锡判定未执行",
+                                   ring_geometry={"outer": outer_rects, "pad": pad_rects},
+                                   diff_excess=diff_mask_exc if diff_mask_exc is not None else "不可用：差分未执行/配准无效",
+                                   diff_cold=diff_mask_cold if diff_mask_cold is not None else "不可用：虚焊差分未执行",
+                                   excess_components=exc_blobs if det_excess else "不可用：多锡未执行",
+                                   bridge_components=grow_brg if det_bridge else "不可用：连锡未执行",
+                                   cold_results=grow_cold if det_cold else "不可用：虚焊未执行",
+                                   coordinates={"space": "检测工作图", "scale": _resize_scale, "roi_offset": roi_offset})
+                diagnostics.setdefault("ring_mask", "不可用：当前检测项未执行多锡ring判定")
+                diagnostics.setdefault("rim_toe", "不可用：缺toe/rim或当前判定路径不支持")
+                diagnostics.setdefault("crack", "不可用：当前判定路径未执行/未导出")
             # ── 14. 返回结果 ──
             return AlgorithmResult(
                 code=0, message="ok",
@@ -483,6 +493,7 @@ class SolderSmtAllAlg(IDetectionAlgorithm):
                 result_type=ResultType.PARTS,
                 parts=parts,
                 metadata={
+                    **({"diagnostics": diagnostics} if diagnostics is not None else {}),
                     "num_defects": len(parts),
                     "mode": "diff_grow_ROI",
                     "has_template": has_tpl,

@@ -1,0 +1,353 @@
+{
+  "eval_runs": {
+    "total": 1,
+    "items": [
+      {
+        "id": 1,
+        "name": "TEST04桌面联调",
+        "run_type": "accuracy",
+        "category": "gold_finger",
+        "dataset_desc": "v2 split=test, n=20",
+        "n_images": 20,
+        "metrics": {
+          "model_version": 2,
+          "snapshot_meta_sha256": "25fd40a21e11c683c25605498a52871bd22d2029b6deafe2f578168e25d07764",
+          "status": "completed",
+          "auroc": 0.5,
+          "ap": 0.5,
+          "f1": 0.6666666666666666,
+          "threshold": 1.999999999,
+          "tn": 0,
+          "fp": 10,
+          "fn": 0,
+          "tp": 10,
+          "accuracy": 0.5,
+          "precision": 0.5,
+          "recall_defect": 1.0,
+          "fpr": 1.0,
+          "fnr": 0.0,
+          "specificity": 0.0,
+          "budget_ms": 200.0,
+          "latency_basis": "e2e",
+          "latency_pass": false,
+          "per_image": [
+            {
+              "image_id": 55,
+              "score": 2.0,
+              "label": 1,
+              "pred": 1
+            },
+            {
+              "image_id": 56,
+              "score": 2.0,
+              "label": 1,
+              "pred": 1
+            },
+            {
+              "image_id": 57,
+              "score": 2.0,
+              "label": 1,
+              "pred": 1
+            },
+            {
+              "image_id": 58,
+              "score": 2.0,
+              "label": 1,
+              "pred": 1
+            },
+            {
+              "image_id": 59,
+              "score": 2.0,
+              "label": 1,
+              "pred": 1
+            },
+            {
+              "image_id": 60,
+              "score": 2.0,
+              "label": 1,
+              "pred": 1
+            },
+            {
+              "image_id": 61,
+              "score": 2.0,
+              "label": 1,
+              "pred": 1
+            },
+            {
+              "image_id": 62,
+              "score": 2.0,
+              "label": 1,
+              "pred": 1
+            },
+            {
+              "image_id": 63,
+              "score": 2.0,
+              "label": 1,
+              "pred": 1
+            },
+            {
+              "image_id": 64,
+              "score": 2.0,
+              "label": 1,
+              "pred": 1
+            },
+            {
+              "image_id": 45,
+              "score": 2.0,
+              "label": 0,
+              "pred": 1
+            },
+            {
+              "image_id": 46,
+              "score": 2.0,
+              "label": 0,
+              "pred": 1
+            },
+            {
+              "image_id": 47,
+              "score": 2.0,
+              "label": 0,
+              "pred": 1
+            },
+            {
+              "image_id": 48,
+              "score": 2.0,
+              "label": 0,
+              "pred": 1
+            },
+            {
+              "image_id": 49,
+              "score": 2.0,
+              "label": 0,
+              "pred": 1
+            },
+            {
+              "image_id": 50,
+              "score": 2.0,
+              "label": 0,
+              "pred": 1
+            },
+            {
+              "image_id": 51,
+              "score": 2.0,
+              "label": 0,
+              "pred": 1
+            },
+            {
+              "image_id": 52,
+              "score": 2.0,
+              "label": 0,
+              "pred": 1
+            },
+            {
+              "image_id": 53,
+              "score": 2.0,
+              "label": 0,
+              "pred": 1
+            },
+            {
+              "image_id": 54,
+              "score": 2.0,
+              "label": 0,
+              "pred": 1
+            }
+          ]
+        },
+        "latency": {
+          "mean": 759.6937400085153,
+          "p50": 803.4944999963045,
+          "p95": 1042.1876000094926,
+          "max": 1062.3237999971025,
+          "min": 497.5809000316076
+        },
+        "created_at": "2026-10-14T01:12:55.917445"
+      }
+    ]
+  },
+  "task18": {
+    "id": 18,
+    "task_type": "eval",
+    "status": "done",
+    "progress": 1.0,
+    "message": "完成",
+    "payload": {
+      "category": "gold_finger",
+      "version": null,
+      "split": "test",
+      "name": "TEST04桌面联调",
+      "limit": 100
+    },
+    "result": {
+      "eval_run_id": 1,
+      "n_images": 20,
+      "metrics": {
+        "model_version": 2,
+        "snapshot_meta_sha256": "25fd40a21e11c683c25605498a52871bd22d2029b6deafe2f578168e25d07764",
+        "status": "completed",
+        "auroc": 0.5,
+        "ap": 0.5,
+        "f1": 0.6666666666666666,
+        "threshold": 1.999999999,
+        "tn": 0,
+        "fp": 10,
+        "fn": 0,
+        "tp": 10,
+        "accuracy": 0.5,
+        "precision": 0.5,
+        "recall_defect": 1.0,
+        "fpr": 1.0,
+        "fnr": 0.0,
+        "specificity": 0.0,
+        "budget_ms": 200.0,
+        "latency_basis": "e2e",
+        "latency_pass": false
+      },
+      "per_image": [
+        {
+          "image_id": 55,
+          "score": 2.0,
+          "label": 1,
+          "is_anomaly": true,
+          "latency_ms": 717.3564999829978
+        },
+        {
+          "image_id": 56,
+          "score": 2.0,
+          "label": 1,
+          "is_anomaly": true,
+          "latency_ms": 577.652899955865
+        },
+        {
+          "image_id": 57,
+          "score": 2.0,
+          "label": 1,
+          "is_anomaly": true,
+          "latency_ms": 564.0263999812305
+        },
+        {
+          "image_id": 58,
+          "score": 2.0,
+          "label": 1,
+          "is_anomaly": true,
+          "latency_ms": 559.3421999947168
+        },
+        {
+          "image_id": 59,
+          "score": 2.0,
+          "label": 1,
+          "is_anomaly": true,
+          "latency_ms": 497.5809000316076
+        },
+        {
+          "image_id": 60,
+          "score": 2.0,
+          "label": 1,
+          "is_anomaly": true,
+          "latency_ms": 512.6020000316203
+        },
+        {
+          "image_id": 61,
+          "score": 2.0,
+          "label": 1,
+          "is_anomaly": true,
+          "latency_ms": 499.63870004285127
+        },
+        {
+          "image_id": 62,
+          "score": 2.0,
+          "label": 1,
+          "is_anomaly": true,
+          "latency_ms": 536.9425999815576
+        },
+        {
+          "image_id": 63,
+          "score": 2.0,
+          "label": 1,
+          "is_anomaly": true,
+          "latency_ms": 503.9253000286408
+        },
+        {
+          "image_id": 64,
+          "score": 2.0,
+          "label": 1,
+          "is_anomaly": true,
+          "latency_ms": 560.2063999976963
+        },
+        {
+          "image_id": 45,
+          "score": 2.0,
+          "label": 0,
+          "is_anomaly": true,
+          "latency_ms": 1062.3237999971025
+        },
+        {
+          "image_id": 46,
+          "score": 2.0,
+          "label": 0,
+          "is_anomaly": true,
+          "latency_ms": 939.1506000538357
+        },
+        {
+          "image_id": 47,
+          "score": 2.0,
+          "label": 0,
+          "is_anomaly": true,
+          "latency_ms": 1041.1278000101447
+        },
+        {
+          "image_id": 48,
+          "score": 2.0,
+          "label": 0,
+          "is_anomaly": true,
+          "latency_ms": 945.8268000162207
+        },
+        {
+          "image_id": 49,
+          "score": 2.0,
+          "label": 0,
+          "is_anomaly": true,
+          "latency_ms": 941.8529000249691
+        },
+        {
+          "image_id": 50,
+          "score": 2.0,
+          "label": 0,
+          "is_anomaly": true,
+          "latency_ms": 926.1967000202276
+        },
+        {
+          "image_id": 51,
+          "score": 2.0,
+          "label": 0,
+          "is_anomaly": true,
+          "latency_ms": 925.5895999958739
+        },
+        {
+          "image_id": 52,
+          "score": 2.0,
+          "label": 0,
+          "is_anomaly": true,
+          "latency_ms": 889.6325000096112
+        },
+        {
+          "image_id": 53,
+          "score": 2.0,
+          "label": 0,
+          "is_anomaly": true,
+          "latency_ms": 977.1667000022717
+        },
+        {
+          "image_id": 54,
+          "score": 2.0,
+          "label": 0,
+          "is_anomaly": true,
+          "latency_ms": 1015.7335000112653
+        }
+      ]
+    },
+    "final_status": null,
+    "is_defect": false,
+    "requires_review": false,
+    "is_system_error": false
+  }
+}

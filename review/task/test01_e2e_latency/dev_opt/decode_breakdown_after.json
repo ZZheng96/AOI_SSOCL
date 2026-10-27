@@ -1,0 +1,177 @@
+{
+  "tag": "after",
+  "n_images": 6,
+  "reps": 5,
+  "cv2": "5.0.0",
+  "has_IMREAD_COLOR_RGB": true,
+  "summary_ms": {
+    "pil_header": {
+      "median": 0.08,
+      "p95": 0.12
+    },
+    "fromfile": {
+      "median": 5.06,
+      "p95": 7.54
+    },
+    "imdecode_bgr": {
+      "median": 98.07,
+      "p95": 112.42
+    },
+    "cvtColor": {
+      "median": 6.45,
+      "p95": 8.39
+    },
+    "imdecode_rgb": {
+      "median": 94.53,
+      "p95": 101.93
+    },
+    "pil_full": {
+      "median": 118.32,
+      "p95": 134.51
+    },
+    "decode_rgb_current": {
+      "median": 99.1,
+      "p95": 108.98
+    }
+  },
+  "rows": [
+    {
+      "image": "det878_bench_00.png",
+      "format": "PNG",
+      "mode": "RGB",
+      "size": [
+        2500,
+        2500
+      ],
+      "file_kb": 9656.1,
+      "png_info_keys": [],
+      "med_ms": {
+        "pil_header": 0.09,
+        "fromfile": 4.49,
+        "imdecode_bgr": 100.24,
+        "cvtColor": 7.22,
+        "imdecode_rgb": 95.93,
+        "pil_full": 120.16,
+        "decode_rgb_current": 101.62
+      },
+      "maxdiff_cv2_vs_pil": 0,
+      "maxdiff_cv2rgb_vs_pil": 0,
+      "maxdiff_current_vs_pil": 0
+    },
+    {
+      "image": "det27_bench_07.png",
+      "format": "PNG",
+      "mode": "RGB",
+      "size": [
+        2500,
+        2500
+      ],
+      "file_kb": 9760.1,
+      "png_info_keys": [],
+      "med_ms": {
+        "pil_header": 0.1,
+        "fromfile": 6.49,
+        "imdecode_bgr": 95.71,
+        "cvtColor": 5.88,
+        "imdecode_rgb": 88.08,
+        "pil_full": 108.84,
+        "decode_rgb_current": 92.21
+      },
+      "maxdiff_cv2_vs_pil": 0,
+      "maxdiff_cv2rgb_vs_pil": 0,
+      "maxdiff_current_vs_pil": 0
+    },
+    {
+      "image": "det900_bench_02.png",
+      "format": "PNG",
+      "mode": "RGB",
+      "size": [
+        2500,
+        2500
+      ],
+      "file_kb": 9638.6,
+      "png_info_keys": [],
+      "med_ms": {
+        "pil_header": 0.07,
+        "fromfile": 4.15,
+        "imdecode_bgr": 101.52,
+        "cvtColor": 7.92,
+        "imdecode_rgb": 95.27,
+        "pil_full": 115.69,
+        "decode_rgb_current": 101.35
+      },
+      "maxdiff_cv2_vs_pil": 0,
+      "maxdiff_cv2rgb_vs_pil": 0,
+      "maxdiff_current_vs_pil": 0
+    },
+    {
+      "image": "det881_bench_01.png",
+      "format": "PNG",
+      "mode": "RGB",
+      "size": [
+        2500,
+        2500
+      ],
+      "file_kb": 9623.3,
+      "png_info_keys": [],
+      "med_ms": {
+        "pil_header": 0.08,
+        "fromfile": 5.71,
+        "imdecode_bgr": 103.42,
+        "cvtColor": 6.06,
+        "imdecode_rgb": 97.03,
+        "pil_full": 130.94,
+        "decode_rgb_current": 103.52
+      },
+      "maxdiff_cv2_vs_pil": 0,
+      "maxdiff_cv2rgb_vs_pil": 0,
+      "maxdiff_current_vs_pil": 0
+    },
+    {
+      "image": "det902_bench_04.png",
+      "format": "PNG",
+      "mode": "RGB",
+      "size": [
+        2500,
+        2500
+      ],
+      "file_kb": 9727.8,
+      "png_info_keys": [],
+      "med_ms": {
+        "pil_header": 0.08,
+        "fromfile": 6.26,
+        "imdecode_bgr": 96.65,
+        "cvtColor": 5.7,
+        "imdecode_rgb": 95.75,
+        "pil_full": 115.98,
+        "decode_rgb_current": 101.31
+      },
+      "maxdiff_cv2_vs_pil": 0,
+      "maxdiff_cv2rgb_vs_pil": 0,
+      "maxdiff_current_vs_pil": 0
+    },
+    {
+      "image": "det911_bench_05.png",
+      "format": "PNG",
+      "mode": "RGB",
+      "size": [
+        2500,
+        2500
+      ],
+      "file_kb": 9609.7,
+      "png_info_keys": [],
+      "med_ms": {
+        "pil_header": 0.08,
+        "fromfile": 5.15,
+        "imdecode_bgr": 96.67,
+        "cvtColor": 7.14,
+        "imdecode_rgb": 93.49,
+        "pil_full": 123.51,
+        "decode_rgb_current": 97.68
+      },
+      "maxdiff_cv2_vs_pil": 0,
+      "maxdiff_cv2rgb_vs_pil": 0,
+      "maxdiff_current_vs_pil": 0
+    }
+  ]
+}

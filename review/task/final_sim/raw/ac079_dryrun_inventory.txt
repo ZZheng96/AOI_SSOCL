@@ -1,0 +1,5 @@
+storage=D:\CGAIC\AOI_SSOCL\AOI_tree\AOI_Core\storage
+files_fingerprinted=137（前后一致）
+
+tmp 不存在，跳过
+heatmaps 不存在，跳过

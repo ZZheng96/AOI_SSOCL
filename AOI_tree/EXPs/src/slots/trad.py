@@ -15,15 +15,22 @@ import torch
 from .base import Slot
 
 # 复用 demo4 的传统特征提取器
-_DEMO4_TRAD = os.path.join(os.path.dirname(__file__), "..", "..", "..", "demo4", "src", "features", "traditional.py")
-if os.path.exists(_DEMO4_TRAD):
+# 2026-10-11 复现链修复：优先使用包内自包含副本（EXPs/vendor/traditional.py，
+# 与产生全部随包快照的开发机 demo4 版逐字节一致，SHA256 前缀 982CA052A7356468），
+# 消除对包外 ../../../demo4 相对路径的硬依赖；开发机原路径保留为兜底。
+_TRAD_CANDS = [
+    os.path.join(os.path.dirname(__file__), "..", "..", "vendor", "traditional.py"),
+    os.path.join(os.path.dirname(__file__), "..", "..", "..", "demo4", "src", "features", "traditional.py"),
+]
+_DEMO4_TRAD = next((p for p in _TRAD_CANDS if os.path.exists(p)), None)
+if _DEMO4_TRAD:
     import importlib.util
     _spec = importlib.util.spec_from_file_location("demo4_trad", _DEMO4_TRAD)
     _mod = importlib.util.module_from_spec(_spec)
     _spec.loader.exec_module(_mod)
     TraditionalExtractor = _mod.TraditionalFeatureExtractor
 else:
-    raise ImportError("demo4/traditional.py 不存在")
+    raise ImportError("传统特征提取器不存在（候选: %s）" % _TRAD_CANDS)
 
 
 class TradSlot(Slot):

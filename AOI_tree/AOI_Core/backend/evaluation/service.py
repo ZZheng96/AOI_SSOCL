@@ -81,6 +81,30 @@ def _eval_prediction(pipe, path: str) -> tuple[float, bool]:
     return score, decision == "anomaly"
 
 
+def _reference_reports(pipe, images, scores: np.ndarray, labels: np.ndarray) -> Dict:
+    """只读参考报告：FPR 预算工作点 + 批次覆盖告警。失败只记日志，不阻断评估，
+    也不修改生产阈值/训练集。"""
+    from algo.eval.coverage import batch_coverage, max_recall_at_fpr, parse_batch_list
+    out: Dict = {"budget_working_point": None, "batch_coverage": None}
+    st = get_settings()
+    try:
+        max_fpr = st.business_budget()["g2_max_fpr_pct"] / 100.0
+        out["budget_working_point"] = max_recall_at_fpr(scores, labels, max_fpr)
+    except Exception:
+        logger.exception("FPR 预算工作点计算失败（不影响评估）")
+    try:
+        dec = getattr(pipe, "decider", None)
+        out["batch_coverage"] = batch_coverage(
+            list(getattr(pipe, "_train_normal_paths", None) or []),
+            [p for _i, p, _l in images], scores, labels,
+            train_ref=None if dec is None else float(dec.tau_high),
+            approved=parse_batch_list(
+                st.governance_decisions()["approved_extra_good_batches"]))
+    except Exception:
+        logger.exception("批次覆盖检查失败（不影响评估）")
+    return out
+
+
 def _fail_eval_run(run_id: int, error: Exception) -> None:
     with session_scope() as s:
         run = s.query(EvalRun).filter(EvalRun.id == run_id).one()
@@ -111,7 +135,7 @@ def run_accuracy_eval(
                          ImageRow.split == split,
                          ImageRow.label == lbl)
                  .order_by(ImageRow.id))
-            if n:
+            if n is not None:
                 q = q.limit(n)
             return q.all()
 
@@ -121,6 +145,20 @@ def run_accuracy_eval(
         else:
             rows = _fetch("anomaly", None) + _fetch("normal", None)
         images = [(r.id, r.path, 1 if r.label == "anomaly" else 0) for r in rows]
+    # round4 防泄漏：登记批次（approved_extra_good_batches）的 fit 子集已并入
+    # train/good，评估时剔除（同 seed=0 划分）；默认空登记时不生效。
+    # 划分基于全部 test 正常图（与 prepare 一致），不受 limit 截断影响。
+    from algo.eval.coverage import parse_batch_list, split_extra_good
+    approved = parse_batch_list(
+        get_settings().governance_decisions()["approved_extra_good_batches"])
+    if approved:
+        with session_scope() as s:
+            pool = [p for (p,) in (s.query(ImageRow.path)
+                                   .filter(ImageRow.category == category,
+                                           ImageRow.split == "test",
+                                           ImageRow.label == "normal").all())]
+        fit_set = set(split_extra_good(pool, approved, seed=0)["fit"])
+        images = [t for t in images if t[1] not in fit_set]
     if not images:
         raise ValueError(f"category={category} split={split} 无有标注图像")
 
@@ -217,6 +255,7 @@ def run_accuracy_eval(
                       for p in per_image[:200]],
     }
     latency = lat_stats
+    metrics.update(_reference_reports(pipe, images, scores, labels))
 
     # 4. 更新 EvalRun
     try:
@@ -241,8 +280,8 @@ def run_accuracy_eval(
 
 def run_latency_benchmark(
     category: str,
-    n_images: int = 30,
-    warmup: int = 5,
+    n_images: Optional[int] = None,
+    warmup: Optional[int] = None,
     progress_cb: Optional[Callable[[int, int], None]] = None,
 ) -> Dict:
     """延迟基准。优先使用大图（>=2000px）以贴近 2500x2500 考核场景。
@@ -251,6 +290,12 @@ def run_latency_benchmark(
               "budget_ms":200,"pass":bool,"per_image_ms":[...]}
     """
     import torch
+
+    cfg = get_settings()
+    if n_images is None:
+        n_images = int(cfg.get("evaluation", "benchmark_n_images", 30))
+    if warmup is None:
+        warmup = int(cfg.get("evaluation", "benchmark_warmup", 5))
 
     # 1. 选图：优先 width>=2000 的大图，不足则取任意图补齐
     with session_scope() as s:
@@ -701,8 +746,8 @@ def run_robustness_eval(
 
     rows = _fetch("anomaly", limit // 2) + _fetch("normal", limit - limit // 2)
     images = [(r.id, r.path, 1 if r.label == "anomaly" else 0) for r in rows]
-    if len(images) < 8:
-        raise ValueError(f"category={category} split={split} 标注样本不足")
+    if len(images) < 8 or len({lbl for _, _, lbl in images}) < 2:
+        raise ValueError(f"category={category} split={split} 标注样本不足，需至少 8 张且正常/异常两类齐全")
 
     tmp_dir = get_settings().storage("tmp")
     tmp_dir.mkdir(parents=True, exist_ok=True)
@@ -726,13 +771,16 @@ def run_robustness_eval(
             raise RuntimeError(f"扰动图写入失败: {p}")
         return str(p)
 
-    # 基线
+    # 基线与全部扰动前向共用一个进度分母，100% 不代表记录已落库。
+    total = len(images) * (1 + len(noise_kinds) * len(levels))
+    done = 0
     y = np.array([lbl for _, _, lbl in images])
     base = []
     for i, (img_id, path, lbl) in enumerate(images):
         base.append(_score(path))
+        done += 1
         if progress_cb:
-            progress_cb(i + 1, len(images))
+            progress_cb(done, total)
     base_auc = float(roc_auc_score(y, np.array(base)))
 
     curves = {}
@@ -748,6 +796,9 @@ def run_robustness_eval(
                 tmp_path = _perturb(img, kind, lv, seed=int(i))
                 try:
                     scores.append(_score(tmp_path))
+                    done += 1
+                    if progress_cb:
+                        progress_cb(done, total)
                 finally:
                     Path(tmp_path).unlink(missing_ok=True)
             aucs.append(float(roc_auc_score(y, np.array(scores))))
@@ -761,6 +812,7 @@ def run_robustness_eval(
                       dataset_desc=f"v{eval_version} split={split}, n={len(images)}, kinds={noise_kinds}",
                       n_images=len(images),
                       metrics={"model_version": eval_version,
+                               "levels": list(levels),
                                "baseline_auroc": base_auc, "curves": curves})
         s.add(run)
         s.flush()
@@ -770,7 +822,7 @@ def run_robustness_eval(
                f"category={category} baseline={base_auc:.4f} "
                f"a_rob=" + ",".join(f"{k}={c['a_rob']:.4f}" for k, c in curves.items()))
     return {"eval_run_id": run_id, "category": category,
-            "baseline_auroc": base_auc, "curves": curves}
+            "baseline_auroc": base_auc, "levels": list(levels), "curves": curves}
 
 
 # ── M2b：学习曲线回放 / 槽位贡献档案（检测引擎评估能力）───────
@@ -941,7 +993,30 @@ def evaluate_contribution(
 
     if progress_cb:
         progress_cb(0, 1, f"贡献档案计算中（eval={len(eval_items)}）...")
-    profile = get_engine().contribution_report(category, eval_items)
+    eng = get_engine()
+    profile = eng.contribution_report(category, eval_items)
+    tg = profile.get("trad_groups")
+    if isinstance(tg, dict):
+        with session_scope() as s:
+            images = (s.query(ImageRow).filter(ImageRow.category == category,
+                                               ImageRow.split == "test",
+                                               ImageRow.path.in_([p for p, _ in eval_items])).all())
+            ids = {}
+            for image in images:
+                ids.setdefault(str(image.path), []).append(image.id)
+        rows = tg.get("per_image") or []
+        if rows and all(len(ids.get(str(row.get("path")), [])) == 1 for row in rows):
+            for row in rows:
+                row["image_id"] = ids[str(row["path"])][0]
+        else:
+            tg["per_image"] = []
+            tg["per_image_status"] = "unavailable"
+            tg["per_image_reason"] = tg.get("per_image_reason") or "引擎无逐图分数或路径无法唯一映射 image_id；请重新生成档案"
+    if isinstance(tg, dict) and isinstance(tg.get("meta"), dict):
+        # AC-012 档案维度：版本×组×品类×缺陷×视图
+        tg["meta"]["category"] = category
+        tg["meta"]["model_version"] = eng.current_version(category)
+        tg["meta"]["data_source"] = f"test n={len(eval_items)}"
     if progress_cb:
         progress_cb(1, 1, "完成")
 

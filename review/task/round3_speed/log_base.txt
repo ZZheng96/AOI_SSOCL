@@ -1,0 +1,134 @@
+﻿[gold_finger] 26 张，装载+预热
+python.exe : d:\CGAIC\AOI_SSOCL\AOI_tree\AOI_Core\algo\persist.py:853: UserWarning: 快照降级加载：layout 快照缺少必要拟合统计: count_med
+ian, count_std, area_hi, spacing_median, spacing_std, sym_median, sym_std；无法从旧 PCA 状态可靠重建，请用原训练数据重新 prepare
+所在位置 C:\Users\imia\AppData\Local\Temp\trae\run-command\scripts\ps-script-a9d58814-9986-4d6d-8819-b8e612c8f158.ps1:19 字符
+: 39
++ ... offscreen"; & "C:\Program Files\Python311\python.exe" d:\CGAIC\AOI_SS ...
++                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: (d:\CGAIC\AOI_SS...原训练数据重新 prepare:String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+  warnings.warn("快照降级加载：" + str(e))
+C:\Users\imia\AppData\Roaming\Python\Python311\site-packages\sklearn\base.py:525: InconsistentVersionWarning: Trying to
+ unpickle estimator DecisionTreeClassifier from version 1.9.1 when using version 1.9.0. This might lead to breaking cod
+e or invalid results. Use at your own risk. For more info please refer to:
+https://scikit-learn.org/stable/model_persistence.html#security-maintainability-limitations
+  warnings.warn(
+C:\Users\imia\AppData\Roaming\Python\Python311\site-packages\sklearn\base.py:525: InconsistentVersionWarning: Trying to
+ unpickle estimator RandomForestClassifier from version 1.9.1 when using version 1.9.0. This might lead to breaking cod
+e or invalid results. Use at your own risk. For more info please refer to:
+https://scikit-learn.org/stable/model_persistence.html#security-maintainability-limitations
+  warnings.warn(
+d:\CGAIC\AOI_SSOCL\AOI_tree\AOI_Core\algo\vendor\traditional.py:264: FutureWarning: Parameter `min_size` is deprecated 
+since version 0.26.0 and will be removed in 2.0.0 (or later). To avoid this warning, please use the parameter `max_size
+` instead. For more details, see the documentation of `remove_small_objects`. Note that the new threshold removes objec
+ts smaller than **or equal to** its value, while the previous parameter only removed smaller ones.
+  bw = morphology.remove_small_objects(bw.astype(bool), min_size=50)
+    warmup {'version': 2, 'load_ms': 723.0, 'replay_ms': 0.1, 'budget': {'max_load_ms': 30000, 'max_replay_ms': 10000, 'max_first_infer_ms': 5000, 'max_warm_ms': 1000}, 'violations': [], 'within_budget': True, 'first_infer_ms': 310.45, 'warmup_runs': 3, 'warm_ms': 267.76, 'warm_samples_ms': [267.72, 268.6, 267.76]} (2.2s)
+    [gold_finger r0 1/26] 2500x2500 lat=260.8 dec=91 anomaly 2.0000 tm={'io': 0.0, 'tile': 0.0, 'forward': 0.0, 'score': 213.37, 'hier': 47.66, 'decide': 0.0, 'tta': 0.0, 'total': 261.03} slot:blob=208(+0) slot:trad=213(+0) _align_offset=13(+213) _img_features=53(+208)
+    [gold_finger r0 2/26] 4096x3000 lat=393.1 dec=300 anomaly 2.0000 tm={'io': 0.0, 'tile': 0.0, 'forward': 0.0, 'score': 392.23, 'hier': 0.0, 'decide': 0.0, 'tta': 0.0, 'total': 392.23} slot:trad=204(+0) _img_features=85(+204) _align_offset=35(+289) slot:blob=393(+0)
+    [gold_finger r0 3/26] 1024x1024 lat=172.7 dec=44 anomaly 2.0000 tm={'io': 0.0, 'tile': 0.0, 'forward': 0.0, 'score': 173.08, 'hier': 0.0, 'decide': 0.0, 'tta': 0.0, 'total': 173.08} slot:blob=33(+0) _img_features=73(+33) _align_offset=2(+107) slot:trad=172(+0)
+    [gold_finger r0 4/26] 2500x2500 lat=235.0 dec=163 anomaly 2.0000 tm={'io': 0.0, 'tile': 0.0, 'forward': 0.0, 'score': 200.65, 'hier': 34.26, 'decide': 0.0, 'tta': 0.0, 'total': 234.91} slot:blob=169(+0) slot:trad=199(+0) _align_offset=15(+200) _img_features=66(+169)
+    [gold_finger r0 5/26] 2500x2500 lat=261.8 dec=169 anomaly 2.0000 tm={'io': 0.0, 'tile': 0.0, 'forward': 0.0, 'score': 228.11, 'hier': 33.35, 'decide': 0.0, 'tta': 0.0, 'total': 261.46} slot:blob=194(+0) slot:trad=228(+0) _align_offset=14(+228) _img_features=67(+195)
+    [gold_finger r0 6/26] 4096x3000 lat=370.3 dec=300 anomaly 2.0000 tm={'io': 0.0, 'tile': 0.0, 'forward': 0.0, 'score': 369.24, 'hier': 1.0, 'decide': 0.0, 'tta': 0.0, 'total': 370.24} slot:trad=191(+0) _img_features=80(+191) _align_offset=30(+271) slot:blob=370(+0)
+    [gold_finger r0 7/26] 2500x2500 lat=274.5 dec=170 anomaly 2.0000 tm={'io': 0.0, 'tile': 0.0, 'forward': 0.0, 'score': 232.85, 'hier': 41.2, 'decide': 0.9, 'tta': 0.0, 'total': 274.95} slot:blob=218(+0) slot:trad=232(+0) _align_offset=13(+232) _img_features=56(+218)
+    [gold_finger r0 8/26] 304x432 lat=105.0 dec=29 normal 0.6781 tm={'io': 0.0, 'tile': 0.0, 'forward': 0.0, 'score': 105.43, 'decide': 0.0, 'tta': 0.0, 'total': 105.43} slot:blob=3(+0) _img_features=6(+3) _align_offset=2(+10) slot:trad=104(+0)
+    [gold_finger r0 9/26] 2500x2500 lat=267.8 dec=170 anomaly 2.0000 tm={'io': 0.0, 'tile': 0.0, 'forward': 0.0, 'score': 222.73, 'hier': 45.09, 'decide': 0.0, 'tta': 0.0, 'total': 267.83} slot:blob=195(+0) slot:trad=222(+0) _align_offset=14(+222) _img_features=73(+195)
+    [gold_finger r0 10/26] 2500x2500 lat=273.5 dec=168 anomaly 2.0000 tm={'io': 0.0, 'tile': 0.0, 'forward': 0.0, 'score': 240.8, 'hier': 32.76, 'decide': 0.0, 'tta': 0.0, 'total': 273.56} slot:blob=217(+0) slot:trad=241(+0) _align_offset=13(+241) _img_features=56(+217)
+    [gold_finger r0 11/26] 2500x2500 lat=260.6 dec=168 anomaly 2.0000 tm={'io': 0.0, 'tile': 0.0, 'forward': 0.0, 'score': 218.88, 'hier': 42.28, 'decide': 0.0, 'tta': 0.0, 'total': 261.15} slot:blob=197(+0) slot:trad=218(+0) _align_offset=14(+218) _img_features=63(+197)
+    [gold_finger r0 12/26] 1024x1024 lat=165.4 dec=56 anomaly 2.0000 tm={'io': 0.0, 'tile': 0.0, 'forward': 0.0, 'score': 165.59, 'hier': 0.0, 'decide': 0.0, 'tta': 0.0, 'total': 165.59} slot:blob=33(+0) _img_features=64(+33) _align_offset=3(+97) slot:trad=165(+0)
+    [gold_finger r0 13/26] 1024x1024 lat=181.3 dec=57 anomaly 2.0000 tm={'io': 0.0, 'tile': 0.0, 'forward': 0.0, 'score': 181.43, 'hier': 0.0, 'decide': 0.0, 'tta': 0.0, 'total': 181.43} slot:blob=37(+0) _img_features=81(+37) _align_offset=2(+118) slot:trad=181(+0)
+    [gold_finger r0 14/26] 2500x2500 lat=238.7 dec=176 anomaly 2.0000 tm={'io': 0.0, 'tile': 0.0, 'forward': 0.0, 'score': 223.66, 'hier': 12.99, 'decide': 2.03, 'tta': 0.0, 'total': 238.68} slot:blob=172(+0) slot:trad=223(+0) _img_features=64(+172) _align_offset=15(+223)
+    [gold_finger r0 15/26] 2500x2500 lat=276.7 dec=166 anomaly 2.0000 tm={'io': 0.0, 'tile': 0.0, 'forward': 0.0, 'score': 226.04, 'hier': 51.83, 'decide': 0.0, 'tta': 0.0, 'total': 277.87} slot:blob=202(+0) slot:trad=225(+0) _align_offset=16(+225) _img_features=74(+202)
+    [gold_finger r0 16/26] 4096x3000 lat=390.1 dec=288 anomaly 2.0000 tm={'io': 0.0, 'tile': 0.0, 'forward': 0.0, 'score': 390.78, 'hier': 0.0, 'decide': 0.0, 'tta': 0.0, 'total': 390.78} slot:trad=173(+0) _img_features=124(+174) _align_offset=27(+298) slot:blob=389(+0)
+    [gold_finger r0 17/26] 304x432 lat=106.5 dec=26 normal 0.6781 tm={'io': 0.0, 'tile': 0.0, 'forward': 0.0, 'score': 105.67, 'decide': 0.0, 'tta': 0.0, 'total': 105.67} slot:blob=2(+0) _img_features=5(+2) _align_offset=1(+7) slot:trad=106(+0)
+    [gold_finger r0 18/26] 1024x1024 lat=189.9 dec=43 anomaly 2.0000 tm={'io': 0.0, 'tile': 0.0, 'forward': 0.0, 'score': 190.27, 'hier': 0.0, 'decide': 0.0, 'tta': 0.0, 'total': 190.27} slot:blob=32(+0) _img_features=92(+32) _align_offset=3(+124) slot:trad=190(+0)
+    [gold_finger r0 19/26] 4096x3000 lat=375.1 dec=297 anomaly 2.0000 tm={'io': 0.0, 'tile': 0.0, 'forward': 0.0, 'score': 375.46, 'hier': 0.0, 'decide': 0.0, 'tta': 0.0, 'total': 375.46} slot:trad=166(+0) _img_features=49(+166) _align_offset=35(+215) slot:blob=374(+0)
+    [gold_finger r0 20/26] 1024x1024 lat=177.2 dec=62 anomaly 2.0000 tm={'io': 0.0, 'tile': 0.0, 'forward': 0.0, 'score': 176.94, 'hier': 0.0, 'decide': 0.0, 'tta': 0.0, 'total': 176.94} slot:blob=33(+0) _img_features=69(+33) _align_offset=4(+102) slot:trad=177(+0)
+    [gold_finger r0 21/26] 4096x3000 lat=354.3 dec=100 anomaly 2.0000 tm={'io': 0.0, 'tile': 0.0, 'forward': 0.0, 'score': 353.19, 'hier': 0.0, 'decide': 1.02, 'tta': 0.0, 'total': 354.21} slot:trad=187(+0) _img_features=84(+187) _align_offset=31(+271) slot:blob=354(+0)
+    [gold_finger r0 22/26] 4096x3000 lat=397.7 dec=83 anomaly 2.0000 tm={'io': 0.0, 'tile': 0.0, 'forward': 0.0, 'score': 397.71, 'hier': 0.0, 'decide': 0.0, 'tta': 0.0, 'total': 397.71} slot:trad=196(+0) _img_features=85(+196) _align_offset=33(+281) slot:blob=397(+0)
+    [gold_finger r0 23/26] 4096x3000 lat=355.8 dec=80 anomaly 2.0000 tm={'io': 0.0, 'tile': 0.0, 'forward': 0.0, 'score': 355.83, 'hier': 0.0, 'decide': 0.0, 'tta': 0.0, 'total': 355.83} slot:trad=172(+0) _img_features=86(+172) _align_offset=33(+258) slot:blob=355(+0)
+    [gold_finger r0 24/26] 852x1223 lat=131.4 dec=46 normal 0.1690 tm={'io': 0.0, 'tile': 0.0, 'forward': 0.0, 'score': 131.57, 'decide': 0.0, 'tta': 0.0, 'total': 131.57} slot:blob=35(+0) _img_features=45(+35) _align_offset=3(+80) slot:trad=131(+0)
+    [gold_finger r0 25/26] 852x1223 lat=146.6 dec=37 normal 0.2971 tm={'io': 0.0, 'tile': 0.0, 'forward': 0.0, 'score': 146.69, 'decide': 0.0, 'tta': 0.0, 'total': 146.69} slot:blob=40(+0) _img_features=50(+40) _align_offset=3(+90) slot:trad=146(+0)
+    [gold_finger r0 26/26] 5120x5120 lat=773.3 dec=387 anomaly 2.0000 tm={'io': 0.0, 'tile': 0.0, 'forward': 0.0, 'score': 773.15, 'hier': 0.0, 'decide': 0.0, 'tta': 0.0, 'total': 773.15} slot:trad=213(+0) _img_features=131(+213) _align_offset=31(+344) slot:blob=773(+0)
+[gold_finger] latency {'n': 26, 'p50': 260.8, 'p95': 397.7, 'mean': 274.4, 'max': 773.3}
+    latency_ms                   p50=   260.8 p95=   397.7 max=   773.3
+    decode_ms                    p50=   100.0 p95=   300.0 max=   386.6
+    serialize_ms                 p50=     0.0 p95=     0.0 max=     0.1
+    t_io                         p50=     0.0 p95=     0.0 max=     0.0
+    t_tile                       p50=     0.0 p95=     0.0 max=     0.0
+    t_forward                    p50=     0.0 p95=     0.0 max=     0.0
+    t_score                      p50=   222.7 p95=   397.7 max=   773.1
+    t_hier                       p50=     0.0 p95=    47.7 max=    51.8
+    t_decide                     p50=     0.0 p95=     1.0 max=     2.0
+    t_total                      p50=   261.1 p95=   397.7 max=   773.1
+    run:_align_offset            p50=    14.0 p95=    34.6 max=    34.9
+    wait:_align_offset           p50=   217.9 p95=   297.7 max=   344.4
+    run:_img_features            p50=    66.9 p95=   124.2 max=   131.1
+    wait:_img_features           p50=   172.5 p95=   216.9 max=   217.8
+    run:slot:blob                p50=   194.8 p95=   397.0 max=   772.8
+    wait:slot:blob               p50=     0.1 p95=     0.2 max=     0.2
+    run:slot:trad                p50=   189.5 p95=   232.4 max=   241.0
+    wait:slot:trad               p50=     0.1 p95=     0.3 max=     0.3
+[smt_solder] 18 张，装载+预热
+d:\CGAIC\AOI_SSOCL\AOI_tree\assets\dinov2\dinov2\layers\swiglu_ffn.py:51: UserWarning: xFormers is not available (SwiGL
+U)
+  warnings.warn("xFormers is not available (SwiGLU)")
+d:\CGAIC\AOI_SSOCL\AOI_tree\assets\dinov2\dinov2\layers\attention.py:33: UserWarning: xFormers is not available (Attent
+ion)
+  warnings.warn("xFormers is not available (Attention)")
+d:\CGAIC\AOI_SSOCL\AOI_tree\assets\dinov2\dinov2\layers\block.py:40: UserWarning: xFormers is not available (Block)
+  warnings.warn("xFormers is not available (Block)")
+C:\Users\imia\AppData\Roaming\Python\Python311\site-packages\sklearn\base.py:525: InconsistentVersionWarning: Trying to
+ unpickle estimator DecisionTreeClassifier from version 1.9.1 when using version 1.9.0. This might lead to breaking cod
+e or invalid results. Use at your own risk. For more info please refer to:
+https://scikit-learn.org/stable/model_persistence.html#security-maintainability-limitations
+  warnings.warn(
+C:\Users\imia\AppData\Roaming\Python\Python311\site-packages\sklearn\base.py:525: InconsistentVersionWarning: Trying to
+ unpickle estimator RandomForestClassifier from version 1.9.1 when using version 1.9.0. This might lead to breaking cod
+e or invalid results. Use at your own risk. For more info please refer to:
+https://scikit-learn.org/stable/model_persistence.html#security-maintainability-limitations
+  warnings.warn(
+[dino] 使用随包 vendor 权重: d:\CGAIC\AOI_SSOCL\AOI_tree\assets\dinov2\dinov2_vits14_pretrain.pth
+[disc] 加载预训练头 D:\CGAIC\AOI_SSOCL\AOI_tree\AOI_Core\assets\disc_pretrain.pt
+    warmup {'version': 4, 'load_ms': 1746.12, 'replay_ms': 0.1, 'budget': {'max_load_ms': 30000, 'max_replay_ms': 10000, 'max_first_infer_ms': 5000, 'max_warm_ms': 1000}, 'violations': [], 'within_budget': True, 'first_infer_ms': 185.08, 'warmup_runs': 3, 'warm_ms': 42.16, 'warm_samples_ms': [42.05, 44.52, 42.16]} (2.1s)
+    [smt_solder r0 1/18] 792x286 lat=44.1 dec=11 anomaly 0.8497 tm={'io': 0.0, 'tile': 0.0, 'forward': 29.41, 'score': 9.97, 'hier': 4.5, 'decide': 0.0, 'tta': 0.0, 'total': 43.88} _align_offset=3(+0) slot:sem=4(+0) slot:disc=2(+0) slot:shead=3(+0) _img_features=13(+0)
+    [smt_solder r0 2/18] 757x274 lat=39.8 dec=22 normal 0.4902 tm={'io': 0.0, 'tile': 0.0, 'forward': 30.43, 'score': 8.99, 'decide': 0.0, 'tta': 0.0, 'total': 39.42} _align_offset=2(+0) slot:sem=4(+0) slot:disc=2(+0) slot:shead=2(+0) _img_features=12(+0)
+    [smt_solder r0 3/18] 291x600 lat=46.0 dec=20 anomaly 1.3043 tm={'io': 0.0, 'tile': 0.0, 'forward': 30.46, 'score': 11.02, 'hier': 3.5, 'decide': 0.99, 'tta': 0.0, 'total': 45.97} _align_offset=2(+0) slot:sem=4(+0) slot:disc=2(+0) slot:shead=3(+0) _img_features=11(+0)
+    [smt_solder r0 4/18] 709x579 lat=55.6 dec=22 anomaly 1.3080 tm={'io': 0.0, 'tile': 0.0, 'forward': 29.51, 'score': 7.98, 'hier': 18.47, 'decide': 0.0, 'tta': 0.0, 'total': 55.96} _align_offset=3(+0) slot:sem=3(+0) slot:disc=1(+0) slot:shead=2(+0) _img_features=25(+0)
+    [smt_solder r0 5/18] 274x540 lat=40.0 dec=10 anomaly 1.3080 tm={'io': 0.0, 'tile': 0.0, 'forward': 29.44, 'score': 6.97, 'hier': 2.99, 'decide': 1.0, 'tta': 0.0, 'total': 40.4} _align_offset=2(+0) slot:sem=3(+0) slot:disc=1(+0) slot:shead=2(+0) _img_features=8(+0)
+    [smt_solder r0 6/18] 278x686 lat=40.9 dec=11 anomaly 1.4345 tm={'io': 0.0, 'tile': 0.0, 'forward': 28.62, 'score': 7.98, 'hier': 3.99, 'decide': 0.0, 'tta': 0.0, 'total': 40.59} _align_offset=2(+0) slot:sem=3(+0) slot:disc=2(+0) slot:shead=2(+0) _img_features=10(+0)
+    [smt_solder r0 7/18] 712x704 lat=83.0 dec=48 anomaly 1.3098 tm={'io': 0.0, 'tile': 0.0, 'forward': 32.42, 'score': 8.98, 'hier': 41.9, 'decide': 0.0, 'tta': 0.0, 'total': 83.3} _align_offset=3(+0) slot:sem=4(+0) slot:disc=2(+0) slot:shead=2(+0) _img_features=49(+0)
+    [smt_solder r0 8/18] 595x825 lat=65.5 dec=32 anomaly 1.3117 tm={'io': 0.0, 'tile': 0.0, 'forward': 32.44, 'score': 8.02, 'hier': 25.19, 'decide': 0.0, 'tta': 0.0, 'total': 65.65} _align_offset=3(+0) slot:sem=3(+0) slot:disc=1(+0) slot:shead=3(+0) _img_features=32(+0)
+    [smt_solder r0 9/18] 656x304 lat=48.7 dec=17 anomaly 1.2987 tm={'io': 0.0, 'tile': 0.0, 'forward': 31.33, 'score': 9.48, 'hier': 7.49, 'decide': 0.0, 'tta': 0.0, 'total': 48.31} _align_offset=3(+0) slot:sem=4(+0) slot:disc=2(+0) slot:shead=3(+0) _img_features=15(+0)
+    [smt_solder r0 10/18] 260x246 lat=45.5 dec=19 anomaly 1.3098 tm={'io': 0.0, 'tile': 0.0, 'forward': 31.94, 'score': 9.97, 'hier': 3.99, 'decide': 0.0, 'tta': 0.0, 'total': 45.91} _align_offset=2(+0) slot:sem=4(+0) _img_features=4(+0) slot:disc=2(+0) slot:shead=2(+0)
+    [smt_solder r0 11/18] 644x637 lat=56.1 dec=24 anomaly 1.3080 tm={'io': 0.0, 'tile': 0.0, 'forward': 29.01, 'score': 7.99, 'hier': 18.49, 'decide': 0.0, 'tta': 0.0, 'total': 55.48} _align_offset=2(+0) slot:sem=3(+0) slot:disc=1(+0) slot:shead=2(+0) _img_features=26(+0)
+    [smt_solder r0 12/18] 217x754 lat=39.8 dec=13 anomaly 1.2968 tm={'io': 0.0, 'tile': 0.0, 'forward': 29.1, 'score': 6.98, 'hier': 3.51, 'decide': 0.0, 'tta': 0.0, 'total': 39.59} _align_offset=2(+0) slot:sem=3(+0) slot:disc=1(+0) slot:shead=2(+0) _img_features=7(+0)
+    [smt_solder r0 13/18] 792x286 lat=43.5 dec=23 anomaly 1.3694 tm={'io': 0.0, 'tile': 0.0, 'forward': 28.92, 'score': 8.5, 'hier': 6.5, 'decide': 0.0, 'tta': 0.0, 'total': 43.93} _align_offset=2(+0) slot:sem=2(+0) slot:disc=2(+0) slot:shead=2(+0) _img_features=13(+0)
+    [smt_solder r0 14/18] 1081x647 lat=69.2 dec=23 anomaly 1.4233 tm={'io': 0.0, 'tile': 0.0, 'forward': 30.95, 'score': 9.97, 'hier': 28.43, 'decide': 0.0, 'tta': 0.0, 'total': 69.36} slot:sem=4(+0) _align_offset=5(+0) slot:disc=2(+0) slot:shead=2(+0) _img_features=36(+0)
+    [smt_solder r0 15/18] 278x686 lat=44.4 dec=20 anomaly 1.4345 tm={'io': 0.0, 'tile': 0.0, 'forward': 29.98, 'score': 9.48, 'hier': 4.99, 'decide': 0.0, 'tta': 0.0, 'total': 44.45} _align_offset=2(+0) slot:sem=4(+0) slot:disc=2(+0) slot:shead=3(+0) _img_features=12(+0)
+    [smt_solder r0 16/18] 712x580 lat=56.4 dec=18 anomaly 1.3452 tm={'io': 0.0, 'tile': 0.0, 'forward': 30.5, 'score': 7.9, 'hier': 17.95, 'decide': 0.0, 'tta': 0.0, 'total': 56.35} _align_offset=2(+0) slot:sem=3(+0) slot:disc=2(+0) slot:shead=2(+0) _img_features=25(+0)
+    [smt_solder r0 17/18] 296x604 lat=40.2 dec=9 anomaly 1.2764 tm={'io': 0.0, 'tile': 0.0, 'forward': 28.94, 'score': 7.98, 'hier': 2.99, 'decide': 0.0, 'tta': 0.0, 'total': 39.91} _align_offset=2(+0) slot:sem=3(+0) slot:disc=2(+0) slot:shead=2(+0) _img_features=8(+0)
+    [smt_solder r0 18/18] 291x600 lat=41.0 dec=17 anomaly 1.2726 tm={'io': 0.0, 'tile': 0.0, 'forward': 29.03, 'score': 7.98, 'hier': 3.5, 'decide': 0.0, 'tta': 0.0, 'total': 40.51} _align_offset=2(+0) slot:sem=3(+0) slot:disc=2(+0) slot:shead=2(+0) _img_features=9(+0)
+[smt_solder] latency {'n': 18, 'p50': 44.4, 'p95': 69.2, 'mean': 50.0, 'max': 83.0}
+    latency_ms                   p50=    44.4 p95=    69.2 max=    83.0
+    decode_ms                    p50=    19.2 p95=    31.6 max=    48.0
+    serialize_ms                 p50=     0.1 p95=     0.1 max=     0.1
+    t_io                         p50=     0.0 p95=     0.0 max=     0.0
+    t_tile                       p50=     0.0 p95=     0.0 max=     0.0
+    t_forward                    p50=    29.5 p95=    32.4 max=    32.4
+    t_score                      p50=     8.0 p95=    10.0 max=    11.0
+    t_hier                       p50=     5.0 p95=    28.4 max=    41.9
+    t_decide                     p50=     0.0 p95=     1.0 max=     1.0
+    t_total                      p50=    44.5 p95=    69.4 max=    83.3
+    run:_align_offset            p50=     2.3 p95=     3.2 max=     4.7
+    wait:_align_offset           p50=     0.1 p95=     0.1 max=     0.1
+    run:_img_features            p50=    12.2 p95=    36.1 max=    48.7
+    wait:_img_features           p50=     0.1 p95=     0.1 max=     0.1
+    run:slot:disc                p50=     1.6 p95=     2.1 max=     2.4
+    wait:slot:disc               p50=     0.0 p95=     0.0 max=     0.0
+    run:slot:sem                 p50=     3.2 p95=     3.9 max=     4.1
+    wait:slot:sem                p50=     0.0 p95=     0.0 max=     0.0
+    run:slot:shead               p50=     2.4 p95=     2.7 max=     2.8
+    wait:slot:shead              p50=     0.0 p95=     0.0 max=     0.0
+saved d:\CGAIC\AOI_SSOCL\review\task\round3_speed\bench_base.json

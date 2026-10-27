@@ -1,0 +1,17 @@
+{
+  "name": "draft_operator",
+  "method": "POST",
+  "path": "/api/models/feature-set/gold_finger/draft",
+  "role": "operator",
+  "request_body": {
+    "groups": [
+      "glcm"
+    ],
+    "scoring": "grouped"
+  },
+  "status_code": 403,
+  "response": {
+    "detail": "权限不足：该操作需要 engineer 及以上角色（当前 operator）"
+  },
+  "note": ""
+}

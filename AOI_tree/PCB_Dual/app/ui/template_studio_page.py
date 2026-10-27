@@ -117,6 +117,7 @@ class TemplateStudioPage(QWidget):
         self._suppress_algo_toggle = False
         self._algo_hint = ""
         self._group_hosts: dict[str, QWidget] = {}
+        self._selected_algo_id: str | None = None
         self._build()
         self.list_panel.refresh()
 
@@ -325,11 +326,26 @@ class TemplateStudioPage(QWidget):
             group_lay.setContentsMargins(0, 0, 0, 0)
             group_lay.setSpacing(2)
             for alg_id, label in items:
+                row = QWidget()
+                row_lay = QHBoxLayout(row)
+                row_lay.setContentsMargins(0, 0, 0, 0)
+                row_lay.setSpacing(6)
                 cb = QCheckBox(label)
                 cb.toggled.connect(self._on_algo_toggled)
                 self.algo_checks[alg_id] = cb
                 self._algo_label_by_id[alg_id] = label
-                group_lay.addWidget(cb)
+                row_lay.addWidget(cb, 1)
+                select_btn = QToolButton()
+                select_btn.setText("参数")
+                select_btn.setCheckable(True)
+                select_btn.setAutoExclusive(True)
+                select_btn.setToolTip("选中后只显示该检测项的参数设置")
+                select_btn.clicked.connect(
+                    lambda _checked=False, item_id=alg_id: self._select_algo_for_params(item_id)
+                )
+                self._tool_buttons[alg_id] = select_btn
+                row_lay.addWidget(select_btn)
+                group_lay.addWidget(row)
             item_host_lay.addWidget(group_w)
             self._group_hosts[group_name] = group_w
         item_host_lay.addStretch(1)
@@ -642,6 +658,7 @@ class TemplateStudioPage(QWidget):
             self._refresh_association_label()
             return
 
+        self._loading_template = True
         self.edit_name.setText(tpl.display_name)
         self.pill_status.set_status("PUB" if tpl.status == "published" else "DRAFT")
         eng_idx = self.combo_engine.findData(tpl.engine_mode or "dual")
@@ -665,6 +682,7 @@ class TemplateStudioPage(QWidget):
         self._sync_major_combo_from_selection()
         self._refresh_item_host()
 
+        self._loading_template = False
         self._load_standard_image(tpl)
         self._refresh_calib_targets()
         self._refresh_param_panels()
@@ -763,8 +781,24 @@ class TemplateStudioPage(QWidget):
         self._refresh_association_label()
         self._refresh_checklist()
 
+    def _select_algo_for_params(self, alg_id: str) -> None:
+        if alg_id not in self._selected_ids():
+            self._set_algo_hint("请先勾选该检测项，再查看它的参数")
+            button = self._tool_buttons.get(alg_id)
+            if button is not None:
+                button.setChecked(False)
+            return
+        for item_id, button in self._tool_buttons.items():
+            button.setChecked(item_id == alg_id)
+        self._selected_algo_id = alg_id
+        self._refresh_param_panels()
+
     def _refresh_param_panels(self) -> None:
         selected = self._selected_ids()
+        if self._selected_algo_id not in selected:
+            self._selected_algo_id = selected[0] if selected else None
+        for item_id, button in self._tool_buttons.items():
+            button.setChecked(item_id == self._selected_algo_id)
         # 清掉旧面板
         while self.param_host_lay.count():
             item = self.param_host_lay.takeAt(0)
@@ -781,7 +815,8 @@ class TemplateStudioPage(QWidget):
             return
         catalog = get_catalog()
         shown_shared: list[str] = []
-        for alg_id in selected:
+        visible_ids = [self._selected_algo_id] if self._selected_algo_id else selected
+        for alg_id in visible_ids:
             shared = catalog.shared_param_id(alg_id)
             if shared and shared not in shown_shared:
                 shown_shared.append(shared)
@@ -820,6 +855,8 @@ class TemplateStudioPage(QWidget):
             self.param_host_lay.addWidget(panel)
 
     def _refresh_checklist(self) -> None:
+        if getattr(self, "_loading_template", False):
+            return
         tpl = self._collect_into_current()
         if tpl is None:
             self.lbl_checklist.setText(self._algo_hint)
@@ -884,7 +921,11 @@ class TemplateStudioPage(QWidget):
         key = tpl.id
         for alg_id, panel in self._param_panels.items():
             if panel.has_params():
-                values = {k: s.value() for k, s in panel.sliders.items()}
+                adapter = get_adapter_for(alg_id)
+                defaults = adapter.default_params(alg_id) if adapter else {}
+                values, _hit = self.param_store.resolve(key, tpl.category or None, alg_id, defaults)
+                frozen = next((a.params for a in tpl.algorithms if a.algorithm_id == alg_id), {})
+                values = {**frozen, **values, **{k: s.value() for k, s in panel.sliders.items()}}
                 self.param_store.save("template_algorithm", alg_id, values, template_name=key)
 
         ids = list(tpl.enabled_algorithm_ids())
@@ -932,24 +973,78 @@ class TemplateStudioPage(QWidget):
             QMessageBox.information(self, "提示", "请先选择标准图新建/加载模板")
             return
         from app.ui.tuner_dialog import TunerDialog
+        self._persist_current_shapes()
+        tpl = self._collect_into_current()
         # 模板 ROI 框（pad/toe/rim），叠加显示在调参画布上
         roi_boxes: list[tuple[str, int, int, int, int]] = []
-        for key in ("smt_pads", "smt_toe", "smt_rim"):
+        for key in ("smt_pads", "smt_toe", "smt_rim", "shift", "th"):
             for s in tpl.get_region_shapes(key):
                 if str(s.get("shape") or "rect") == "rect":
                     roi_boxes.append((key, int(s["x"]), int(s["y"]),
                                       int(s["w"]), int(s["h"])))
-        # 模板当前算法参数合并（供各抽色对象初始化）
-        merged_params: dict = {}
-        for a in tpl.detection_items:
-            if a.params:
-                merged_params.update(a.params)
+        self._freeze_params(tpl)
+        from copy import deepcopy
+        from app.detect.scheduler import DetectScheduler
+        from app.utils.cv_io import imread_unicode
+        from app.tools.tuner import discover_hsv_objects
+        ids = list(tpl.enabled_algorithm_ids())
+        overrides = {a.algorithm_id: deepcopy(a.params) for a in tpl.algorithms}
+        regions = deepcopy(tpl.region_sets)
+        standard = imread_unicode(tpl.standard_image.path)
+        scheduler = DetectScheduler(param_store=self.param_store)
+        merged_params = {}
+        for alg_id in ids:
+            adapter = get_adapter_for(alg_id)
+            if adapter:
+                resolved, _hit = scheduler._resolve_params(adapter, alg_id, tpl.id, tpl.category, overrides, True)
+                merged_params.update(resolved)
+        hsv_keys = {key for spec in discover_hsv_objects(ids) for key in spec.keys.values()}
+
+        def updated_layers(edits, hsv_params):
+            current = deepcopy(overrides)
+            for target, values in edits.items():
+                current.setdefault(target, {}).update(values)
+            for item in ids:
+                shared = get_catalog().shared_param_id(item)
+                if shared:
+                    for key in edits.get(shared, {}):
+                        current.setdefault(item, {}).pop(key, None)
+                adapter = get_adapter_for(item)
+                target = shared or item
+                keys = {p.key for p in adapter.param_specs(target)} if adapter else set()
+                updates = {k: v for k, v in hsv_params.items() if k in hsv_keys and k in keys}
+                current.setdefault(target, {}).update(updates)
+                if shared:
+                    for key in updates:
+                        current.setdefault(item, {}).pop(key, None)
+            return current
+
+        def apply_params(edits, hsv_params):
+            try:
+                current = updated_layers(edits, hsv_params)
+                for target, values in current.items():
+                    self.param_store.save("template_algorithm", target, values, template_name=tpl.id)
+                for item in tpl.algorithms:
+                    item.params = deepcopy(current.get(item.algorithm_id, item.params))
+                self._refresh_param_panels()
+                QMessageBox.information(self, "已应用", "已写入当前模板参数；保存/发布时冻结。")
+            except Exception as exc:
+                QMessageBox.warning(self, "应用失败", str(exc))
+
+        def preview(payload):
+            alg_id, image, hsv_params = payload
+            current = updated_layers(hsv_params.get("__parameter_layers__", {}), hsv_params)
+            return scheduler.run(standard, image, tpl.category, tpl.id, [alg_id],
+                                 param_overrides=current, allow_stub=False, prefer_frozen_params=True,
+                                 region_sets=regions, template_id=tpl.id, template_version=tpl.version,
+                                 diagnostics=True)
         dlg = TunerDialog(
             image_path=tpl.standard_image.path,
             apply_callback=lambda spec, hsv: self._apply_hsv_params(tpl, spec, hsv),
             roi_boxes=roi_boxes,
             initial_params=merged_params,
-            parent=self,
+            parent=self, preview_runner=preview, algorithm_ids=ids,
+            algorithm_params=overrides, params_apply_callback=apply_params,
         )
         dlg.exec()
 
@@ -983,11 +1078,12 @@ class TemplateStudioPage(QWidget):
         for alg_id in selected:
             shared = catalog.shared_param_id(alg_id)
             adapter = get_adapter_for(alg_id)
-            if not shared or shared in seen_shared or adapter is None:
+            target = shared or alg_id
+            if target in seen_shared or adapter is None:
                 continue
-            seen_shared.add(shared)
+            seen_shared.add(target)
             try:
-                shared_specs = list(adapter.param_specs(shared) or [])
+                shared_specs = list(adapter.param_specs(target) or [])
             except Exception:  # noqa: BLE001
                 continue
             spec_keys = {p.key for p in shared_specs}
@@ -995,11 +1091,23 @@ class TemplateStudioPage(QWidget):
             if not sub:
                 continue
             defaults = {p.key: p.default for p in shared_specs}
-            resolved, _hit = self.param_store.resolve(tpl.id, None, shared, defaults)
+            resolved, _hit = self.param_store.resolve(tpl.id, tpl.category or None, target, defaults)
             merged = {**resolved, **sub}
-            self.param_store.save("template_algorithm", shared, merged,
+            self.param_store.save("template_algorithm", target, merged,
                                   template_name=tpl.id)
-            written.append(f"{shared}({len(sub)}项)")
+            for item in tpl.algorithms:
+                if not shared and item.algorithm_id == target:
+                    item.params.update(sub)
+                elif shared and catalog.shared_param_id(item.algorithm_id) == shared:
+                    for key in sub:
+                        item.params.pop(key, None)
+                    own_adapter = get_adapter_for(item.algorithm_id)
+                    defaults_own = own_adapter.default_params(item.algorithm_id) if own_adapter else {}
+                    own, _ = self.param_store.resolve(tpl.id, tpl.category or None, item.algorithm_id, defaults_own)
+                    for key in sub:
+                        own.pop(key, None)
+                    self.param_store.save("template_algorithm", item.algorithm_id, own, template_name=tpl.id)
+            written.append(f"{target}({len(sub)}项)")
         if not written:
             QMessageBox.information(
                 self, "提示",
